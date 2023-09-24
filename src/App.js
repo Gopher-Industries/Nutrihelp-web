@@ -1,12 +1,11 @@
 import React from 'react';
-
-import Landing from './components/Landing';
+import PreferencesComponent from './components/pref-dis-health';
 
 
 function App() {
     return (
       <div>
-        <Landing />
+        <PreferencesComponent />
       </div>
     );
   }

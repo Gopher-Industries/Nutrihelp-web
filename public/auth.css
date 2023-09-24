@@ -143,6 +143,7 @@ figure {
   padding: 10px 29px;
   border-color: #ac82be;
   margin-top: 10px;
+  margin-right: 10px;
   cursor:cell;  
 }
 .sel:hover {
@@ -155,6 +156,12 @@ figure {
   content: "\2713"; 
   margin-right: 5px; 
 }
+
+.sel.confirm::before{
+  content: "\2717"; 
+  margin-right: 5px; 
+}
+
 .optbuttons {
   
   display: inline-block;
@@ -267,22 +274,45 @@ figure {
 }
 
 /* Initially hide the dropdown */
-.searchable-dropdown #dropdown-list {
+.searchable-dropdown #diet-list {
   display: none;
 }
 
-.searchable-dropdown #dropdown-list li{
+.searchable-dropdown #diet-list li{
   border-radius: 20px;
   padding: 5px;
   cursor: pointer;
 }
 
-.searchable-dropdown #dropdown-list li:hover{
+.searchable-dropdown #diet-list li:hover{
   background-color: #d6ccf8;
   
 }
 
-#dropdown-list{
+#diet-list{
+ background-color: #ebe6fb;
+ height: 70px;
+ overflow-y:auto;
+
+}
+
+/* Initially hide the dropdown */
+.searchable-dropdown #allergy-list {
+  display: none;
+}
+
+.searchable-dropdown #allergy-list li{
+  border-radius: 20px;
+  padding: 5px;
+  cursor: pointer;
+}
+
+.searchable-dropdown #allergy-list li:hover{
+  background-color: #d6ccf8;
+  
+}
+
+#allergy-list{
  background-color: #ebe6fb;
  height: 70px;
  overflow-y:auto;
