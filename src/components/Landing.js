@@ -1,7 +1,7 @@
 import React from 'react';
 import '../styles/landing.css';
 
-const App = () => {
+const Landing = () => {
   return (
     <>
       <header id="header" className="fixed-top">
@@ -336,4 +336,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default Landing;

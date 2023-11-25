@@ -1,0 +1,11 @@
+.input-div {
+    display: flex;
+}
+
+.label {
+    width: 180px;
+}
+
+.input {
+    border-radius: 5px;
+}
