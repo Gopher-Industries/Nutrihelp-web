@@ -70,6 +70,10 @@ const Login = () => {
         }
     };
 
+    const handleForgotPasswordClick = () => {
+        navigate("/forgotPassword"); // Navigate to forgot password page
+    }
+
     return (
         <div className="login-style">
 
@@ -113,6 +117,11 @@ const Login = () => {
             </Button>
 
             <br></br>
+
+            <p className="forgot-password"
+                onClick={handleForgotPasswordClick}>
+                Forgot Password?
+            </p>
 
             <Link className="link-div" to='/signup'>Create Account</Link>
 

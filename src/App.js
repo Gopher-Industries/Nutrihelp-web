@@ -91,6 +91,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Login from './routes/Login/Login';
 import SignUp from './routes/SignUp/SignUp';
 import Landing from './components/Landing';
+import ForgotPassword from './routes/ForgotPassword/ForgotPassword';
 
 
 
@@ -107,6 +108,7 @@ function App() {
           {/* List all the possible routes of under the path '/' (below): */}
           <Route path='login' element={<Login />} />
           <Route path='signUp' element={<SignUp />} />
+          <Route path='forgotPassword' element={<ForgotPassword />} />
 
         </Route>
       </Routes >
