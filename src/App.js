@@ -8,8 +8,9 @@ import Login from './routes/Login/Login';
 import SignUp from './routes/SignUp/SignUp';
 import Landing from './components/Landing';
 import ForgotPassword from './routes/ForgotPassword/ForgotPassword';
-
-
+import NavigationBarAndFooterSignedIn from './components/navigation_bars_and_footer/signed_in/NavigationBarAndFooterSignedIn';
+import NavigationBarAndFooterSignedOut from './components/navigation_bars_and_footer/signed_out/NavigationBarAndFooterSignedOut';
+import { UserContext } from "./context/user.context";
 
 function App() {
 
@@ -25,25 +26,36 @@ function App() {
   }, []);  // Empty dependency array ensures this runs only once after component mount
 
 
+
+  //Obtain the current user from the UserContext (from user.context.jsx)
+  const { currentUser } = useContext(UserContext)
+  var isLoggedIn = false;
+
+  //If the user has logged in, set the isLoggedIn variable to true, else false
+  if (currentUser) {
+    isLoggedIn = true;
+  }
+  else {
+    isLoggedIn = false
+  }
+
   return (
+
     <Router>
       <Routes>
-        {/* Define the routes under the path '/' */}
-        <Route path='/' >
+        <Route path='/' element={isLoggedIn ? <NavigationBarAndFooterSignedIn /> : <NavigationBarAndFooterSignedOut />}>
 
           {/* Let the Login page be accessible by the path '/' alone */}
           <Route index element={<Landing />} />
 
-          {/* List all the possible routes of under the path '/' (below): */}
+          {/* All the possible routes of under the path '/', followed by the path-name: */}
           <Route path='login' element={<Login />} />
           <Route path='signUp' element={<SignUp />} />
           <Route path='forgotPassword' element={<ForgotPassword />} />
-
         </Route>
-      </Routes >
+      </Routes>
     </Router>
   );
 }
-
 
 export default App;

@@ -1,40 +1,62 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import { Link } from 'react-router-dom';
+
+
 import '../styles/landing.css';
+import { UserContext } from "./../context/user.context";
 
 const Landing = () => {
+
+  const { currentUser } = useContext(UserContext)
+  const isLoggedIn = Boolean(currentUser);
   return (
     <>
-      <header id="header" className="fixed-top">
-        <div className="container d-flex align-items-center justify-content-between">
-          <a href="index.html" className="logo">
-            <img src="" alt="" />
-          </a>
-          <nav id="navbar" className="navbar">
-            <ul>
-              <li>
-                <a className="nav-link scrollto active" href="index.html">
-                  Home
-                </a>
-              </li>
-              <li>
-                <a className="nav-link scrollto" href="#about">
-                  About
-                </a>
-              </li>
-              <li>
-                <a className="nav-link scrollto" href="#services">
-                  Services
-                </a>
-              </li>
-              <li>
-                <a className="nav-link scrollto" href="#contact">
-                  Contact
-                </a>
-              </li>
-            </ul>
-          </nav>
-        </div>
-      </header>
+      {!isLoggedIn && (
+        <header id="header" className="fixed-top">
+          <div className="container d-flex align-items-center justify-content-between">
+            <a href="index.html" className="logo">
+              <img src="" alt="" />
+            </a>
+            <nav id="navbar" className="navbar">
+              <ul>
+                <li>
+                  <a className="nav-link scrollto active" href="index.html">
+                    Home
+                  </a>
+                </li>
+                <li>
+                  <a className="nav-link scrollto" href="#about">
+                    About
+                  </a>
+                </li>
+                <li>
+                  <a className="nav-link scrollto" href="#services">
+                    Services
+                  </a>
+                </li>
+                <li>
+                  <a className="nav-link scrollto" href="#contact">
+                    Contact
+                  </a>
+                </li>
+
+                <li>
+                  <Link to="/login" className="nav-link scrollto">
+                    Sign In
+                  </Link>
+                </li>
+
+                <li>
+                  <Link to="/signUp" className="nav-link scrollto">
+                    Create Account
+                  </Link>
+                </li>
+
+              </ul>
+            </nav>
+          </div>
+        </header>
+      )}
 
       <section id="hero" className="d-flex align-items-center">
         <div className="container">

@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-// import { UserContext } from "../../context/user.context";
+import { UserContext } from "../../context/user.context";
 import Input from "../../components/general_components/Input/Input";
 import { Button, Icon } from 'semantic-ui-react';
 import { auth, signInWithGooglePopup, createUserDocFromAuth, signInAutUserWithEmailAndPassword, firestore } from "../../utils/firebase";
@@ -11,7 +11,7 @@ import './Login.css'
 const Login = () => {
 
     const navigate = useNavigate(); // Define navigation
-    // const { setCurrentUser } = useContext(UserContext); // Extract context methods
+    const { setCurrentUser } = useContext(UserContext); // Extract context methods
 
     // State management for user credentials and MFA flow
     const [contact, setContact] = useState({ email: '', password: '' });
@@ -35,17 +35,17 @@ const Login = () => {
         try {
             // Attempt email/password sign-in
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
-            // const user = userCredential.user;
+            const user = userCredential.user;
 
-            // Check for email verification before allowing login
+            // // Check for email verification before allowing login
             // if (!user.emailVerified) {
             //     alert('Please verify your email before logging in.');
             //     return;
             // }
 
-            // setCurrentUser(userCredential.user);  // Update context with new user
-            // navigate('/user'); // Navigate to user page
-            navigate('/'); // Navigate to user page
+            setCurrentUser(userCredential.user);  // Update context with new user
+            console.log(user.displayName)
+            navigate('/'); // Navigate to Landing Page
 
             alert("Successfully signed in with Email and Password. \nEmail: " + email)
         } catch (error) {
@@ -62,7 +62,7 @@ const Login = () => {
             // Sign in with Google and navigate upon success
             const { user } = await signInWithGooglePopup();
             const userDocRef = await createUserDocFromAuth(user);
-            // setCurrentUser(user);
+            setCurrentUser(user);
             if (userDocRef) alert("Successfully signed in with Google account. \nDisplay name: " + user.displayName);
             if (userDocRef) navigate('/');
         } catch (error) {

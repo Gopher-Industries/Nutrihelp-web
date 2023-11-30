@@ -1,0 +1,9 @@
+.footer-link-div {
+    display: flex;
+    justify-content: left;
+    color: rgb(59, 58, 58);
+}
+
+.footer-link-div a {
+    color: black;
+}
