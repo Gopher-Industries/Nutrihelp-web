@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }, 200); // Adjust the delay time as needed
   });
 
-  // Move the click event listeners outside the focus event listener
+  // Move the click event listeners outside the focus event listeners
   var options = Array.from(dietList.getElementsByTagName("li"));
   let interestButtons = document.querySelectorAll(".sel");
 
