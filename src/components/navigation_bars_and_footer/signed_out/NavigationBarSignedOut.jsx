@@ -13,27 +13,8 @@ function NavigationBarSignedOut() {
                 <Link className="link" to='/'>NutriHelp</Link>
 
                 <div className="navigation-links-container">
-
-                    {/* <li>
-                        <a className="nav-link scrollto" href="#about">
-                            About
-                        </a>
-                    </li>
-
-                    <li>
-                        <a className="nav-link scrollto" href="#services">
-                            Services
-                        </a>
-                    </li>
-                    <li>
-                        <a className="nav-link scrollto" href="#contact">
-                            Contact
-                        </a>
-                    </li> */}
-
                     <Link className="link" to='/login'>Sign In</Link>
                     <Link className="link" to='/signUp'>Create Account</Link>
-
                 </div>
             </div>
 

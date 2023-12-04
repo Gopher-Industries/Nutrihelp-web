@@ -1,0 +1,10 @@
+.button-div {
+    display: flex;
+    width: 740px;
+    justify-content: flex-end;
+    margin-top: 50px;
+}
+
+.button-div button {
+    width: 150px;
+}

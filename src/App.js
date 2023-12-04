@@ -1,16 +1,15 @@
 import React, { useContext, useEffect } from 'react';
 import 'semantic-ui-css/semantic.min.css'
 import './App.css';
-// import { Routes, Route, Navigate } from 'react-router-dom'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-
+import { UserContext } from "./context/user.context";
 import Login from './routes/Login/Login';
 import SignUp from './routes/SignUp/SignUp';
 import Landing from './components/Landing';
 import ForgotPassword from './routes/ForgotPassword/ForgotPassword';
 import NavigationBarAndFooterSignedIn from './components/navigation_bars_and_footer/signed_in/NavigationBarAndFooterSignedIn';
 import NavigationBarAndFooterSignedOut from './components/navigation_bars_and_footer/signed_out/NavigationBarAndFooterSignedOut';
-import { UserContext } from "./context/user.context";
+import CreateRecipe from './routes/CreateRecipe/CreateRecipe';
 
 function App() {
 
@@ -52,6 +51,7 @@ function App() {
           <Route path='login' element={<Login />} />
           <Route path='signUp' element={<SignUp />} />
           <Route path='forgotPassword' element={<ForgotPassword />} />
+          <Route path='createRecipe' element={<CreateRecipe />} />
         </Route>
       </Routes>
     </Router>

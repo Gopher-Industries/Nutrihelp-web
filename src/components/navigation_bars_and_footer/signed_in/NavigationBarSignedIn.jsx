@@ -52,8 +52,8 @@ function NavigationBarSignedIn() {
                     <Link className="link" to='/'>Groceries</Link>
                     <Link className="link" to='/'>Nutrient Intake Report</Link>
                     <Link className="link" to='/'>Meal Planning</Link>
-                    <Link className="link" to='/'>Recipes Creation</Link>
-                    <Link className="link" to='/'>Search Recipes</Link>
+                    <Link className="link" to='/CreateRecipe'>Create Recipe</Link>
+                    <Link className="link" to='/SearchRecipes'>Search Recipes</Link>
 
                     <button className="link-style-button" onClick={logout}>Logout</button>
                 </div>
