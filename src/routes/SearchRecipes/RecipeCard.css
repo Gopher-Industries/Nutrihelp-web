@@ -1,0 +1,73 @@
+.recipe-card-div {
+    overflow: hidden;
+    width: 220px;
+    margin: 10px;
+    border-style: solid;
+    border-width: 1.5px;
+    border-color: rgb(187, 184, 184);
+    border-radius: 6px;
+    box-shadow: 3px 3px 3px #d0caca;
+}
+
+.image {
+    max-width: 100%;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+}
+
+/* Name */
+.header {
+    font-size: 20px;
+    font-weight: bold;
+    margin: 5px;
+}
+
+/* Job Title */
+.meta {
+    margin: 15px 5px 5px 5px;
+    color: rgb(73, 71, 71);
+    font-size: 16px;
+}
+
+/* Bio */
+.description {
+    margin: 15px 5px 5px 5px;
+    font-size: 14px;
+}
+
+/* Star Ratings */
+.extra.content {
+    margin: 15px 5px 0px 5px;
+    font-size: 16px;
+}
+
+/* .recipe-card-container {
+    display: flex;
+    flex-direction: column;
+    padding: 5px;
+    margin: 20px;
+    justify-content: center;
+    align-items: center;
+    width: auto;
+} */
+
+.recipe-card-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 5px;
+    margin: 20px auto;
+    justify-content: center;
+    width: auto;
+}
+
+.button {
+    align-items: center;
+    width: 20%;
+}
+
+
+.delete-button {
+    align-items: center;
+    width: 60%;
+}

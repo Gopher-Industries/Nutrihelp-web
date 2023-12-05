@@ -1,0 +1,15 @@
+.recipes-div {
+    display: grid;
+    justify-items: center;
+}
+
+.recipes-container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 20px 80px;
+}
+
+.search-input {
+    text-align: center;
+}

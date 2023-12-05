@@ -19,20 +19,21 @@ const CuisineField = (props) => {
                 cuisine={props.cuisine}
                 onCuisineChange={props.onCuisineChange}
                 options={[
-                    { value: 'french', label: 'French' },
-                    { value: 'chinese', label: 'Chinese' },
-                    { value: 'japanese', label: 'Japanese' },
-                    { value: 'italian', label: 'Italian' },
-                    { value: 'greek', label: 'Greek' },
-                    { value: 'spanish', label: 'Spanish' },
-                    { value: 'lebanese', label: 'Lebanese' },
-                    { value: 'turkey', label: 'Turkey' },
-                    { value: 'thai', label: 'Thai' },
-                    { value: 'indian', label: 'Indian' },
-                    { value: 'mexican', label: 'Mexican' },
-                    { value: 'vietnamese', label: 'Vietnamese' },
-                    { value: 'australian', label: 'Australian' },
-                    { value: 'other', label: 'Other' }
+                    { value: 'Universal', label: 'Universal' },
+                    { value: 'French', label: 'French' },
+                    { value: 'Chinese', label: 'Chinese' },
+                    { value: 'Japanese', label: 'Japanese' },
+                    { value: 'Italian', label: 'Italian' },
+                    { value: 'Greek', label: 'Greek' },
+                    { value: 'Spanish', label: 'Spanish' },
+                    { value: 'Lebanese', label: 'Lebanese' },
+                    { value: 'Turkey', label: 'Turkey' },
+                    { value: 'Thai', label: 'Thai' },
+                    { value: 'Indian', label: 'Indian' },
+                    { value: 'Mexican', label: 'Mexican' },
+                    { value: 'Vietnamese', label: 'Vietnamese' },
+                    { value: 'Australian', label: 'Australian' },
+                    { value: 'Other', label: 'Other' }
                 ]}
             />
         </div>

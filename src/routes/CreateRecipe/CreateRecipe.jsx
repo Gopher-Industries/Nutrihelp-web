@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { firestore } from '../../utils/firebase';
 import { collection, doc, setDoc, addDoc } from 'firebase/firestore';
 import RecipeDescriptionSection from './RecipeDescriptionSection';
@@ -7,14 +8,17 @@ import OtherDetailsSection from './OtherDetailsSection';
 import IngredientsSection from './IngredientsSection';
 import InstructionsSection from './InstructionsSection';
 import SubmitButton from './SubmitButton';
+import AddAnImageSection from './AddAnImageSection';
 
 
-// Post Job page
+// Create Recipe page
 function CreateRecipe() {
+
+    const navigate = useNavigate();
 
     //Recipe Description Section
     const [recipeName, setRecipeName] = useState('');
-    const [cuisine, setCuisine] = useState('');
+    const [cuisine, setCuisine] = useState('Universal');
 
     //Cooking Details Section
     const [preparationTime, setPreparationTime] = useState('');
@@ -85,7 +89,7 @@ function CreateRecipe() {
 
     //--------------- Instructions Section -----------------
 
-    //Handle changes to the Ingredients field
+    //Handle changes to the Instructions field
     const handleInstructionsChange = (value) => {
         setInstructions(value);
         console.log('Instructions: ' + value);
@@ -94,6 +98,15 @@ function CreateRecipe() {
     //==================== Send data to the Firestore ====================
     const sendDataToFirestore = async () => {
         try {
+            if (!isFormValid()) {
+                setAttemptedSubmit(true);
+                window.scrollTo(0, 0); // Scroll to the top of the page
+                return; // Prevent further execution if the form is not valid
+            }
+
+            setAttemptedSubmit(false); // Reset the flag if the form is valid
+
+
             const dataCollection = collection(firestore, 'recipesData');
 
             // Create a specific document ID
@@ -115,15 +128,42 @@ function CreateRecipe() {
             });
 
             console.log('Data successfully written to Firestore with custom ID!');
+            // Show success alert
+            alert("Recipe Creation was successful!");
+
+            // Navigate to /searchRecipes route
+            navigate('/searchRecipes');
+
         } catch (error) {
             console.error('Error writing document: ', error);
         }
     };
 
+    // Function to validate all fields are filled
+    const isFormValid = () => {
+        return recipeName && cuisine && preparationTime && totalServings &&
+            caloriesPerServing && recipeNotes && ingredients && instructions && isImageAdded;
+    }
+
+    const [isImageAdded, setIsImageAdded] = useState(false);
+
+    const handleImageAdded = () => {
+        setIsImageAdded(true);
+    }
+
+    const [attemptedSubmit, setAttemptedSubmit] = useState(false);
+
+
     //==================== Render the component ====================
     return (
 
         <div>
+            {attemptedSubmit && !isFormValid() && (
+                <p style={{ color: 'red', fontSize: '22px' }}> {/* Adjust font size here */}
+                    **Please fill in all fields and upload an image before submitting.**
+                </p>
+            )}
+
             <RecipeDescriptionSection
                 recipeName={recipeName}
                 onRecipeNameChange={handleRecipeNameChange}
@@ -155,10 +195,14 @@ function CreateRecipe() {
                 onInstructionsChange={handleInstructionsChange}
             />
 
+            <AddAnImageSection onImageAdded={handleImageAdded} />
+
+
             <SubmitButton
                 text="Create Recipe"
                 onSubmit={sendDataToFirestore}
             />
+
         </div>
     );
 }

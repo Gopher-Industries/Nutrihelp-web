@@ -10,6 +10,7 @@ import ForgotPassword from './routes/ForgotPassword/ForgotPassword';
 import NavigationBarAndFooterSignedIn from './components/navigation_bars_and_footer/signed_in/NavigationBarAndFooterSignedIn';
 import NavigationBarAndFooterSignedOut from './components/navigation_bars_and_footer/signed_out/NavigationBarAndFooterSignedOut';
 import CreateRecipe from './routes/CreateRecipe/CreateRecipe';
+import SearchRecipes from './routes/SearchRecipes/SearchRecipes';
 
 function App() {
 
@@ -52,6 +53,7 @@ function App() {
           <Route path='signUp' element={<SignUp />} />
           <Route path='forgotPassword' element={<ForgotPassword />} />
           <Route path='createRecipe' element={<CreateRecipe />} />
+          <Route path='searchRecipes' element={<SearchRecipes />} />
         </Route>
       </Routes>
     </Router>
