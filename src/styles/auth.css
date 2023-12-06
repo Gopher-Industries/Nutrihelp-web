@@ -172,16 +172,10 @@ figure {
   .toggle-container {
     display: inline-block;
     vertical-align: middle;
-    margin-right: 10px; /* Adjust as needed for spacing */
+    margin-right: 10px; 
   }
   
-  h3 {
-    margin: 10; /* Remove default margin */
-    font-size: 14px; /* Adjust font size as needed */
-    line-height: 25px; /* Align vertically with the toggle */
-  }
-  
-  .switch {
+ .switch {
     font-size: 12px;
     position: relative;
     display: inline-block;
@@ -331,7 +325,6 @@ figure {
   margin-top: 16px; }
 
 .signup-image-link {
-  font-size: 14px;
   color: #222;
   display: block;
   text-align: center; }
@@ -595,4 +588,124 @@ label {
     margin-right: 0px;
     margin-bottom: 10px; } }
 
+  .mainpre{
+    text-align: center;
+  }
 
+  .selection {
+    text-align: left;
+    margin-left: 400px; 
+    margin-top: 0;
+  }
+
+.containerpre 
+{
+  width: 520px;
+  background: #e1e0e3;
+  margin: 0 auto;
+  box-shadow: 0px 15px 16.83px 0.17px rgba(0, 0, 0, 0.05);
+  -moz-box-shadow: 0px 15px 16.83px 0.17px rgba(0, 0, 0, 0.05);
+  -webkit-box-shadow: 0px 15px 16.83px 0.17px rgba(0, 0, 0, 0.05);
+  -o-box-shadow: 0px 15px 16.83px 0.17px rgba(0, 0, 0, 0.05);
+  -ms-box-shadow: 0px 15px 16.83px 0.17px rgba(0, 0, 0, 0.05);
+  border-radius: 10px;
+}
+
+.selpre{
+ 
+  display: inline-block;
+  background: #dbd2ec;
+  color: #0a0a0a;
+  border-bottom: none;
+  border-right: none;
+  width: auto;
+  border-radius: 10px;
+  padding: 10px 29px;
+  border-color: #dbd2ec;
+  margin-top: 10px;
+  margin: 10px;
+  position: relative;
+  cursor: pointer;
+}
+
+h3 {
+  font-size: 17px; 
+  font-weight: bold; 
+  font-family: 'Lato', sans-serif; 
+  margin: 10px 0; 
+  margin-left: 15px;
+}
+
+h4 {
+  font-size: 18px; 
+  font-family: 'Lato', sans-serif; 
+  font-weight: initial;
+}
+
+.buttonpre {
+  text-align: center;
+  margin-top: 0;
+}
+
+.btn-pre {
+  display: inline-block;
+  background: #968da7;
+  color: #fff;
+  border: none;
+  width: 380px;
+  padding: 15px 0;
+  height: 50px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 5px 10px 0;
+  font-size: 18px;
+  font-family: 'Lato', sans-serif;
+}
+
+.btn-pre:hover {
+  background: rgb(140, 53, 227);
+}
+
+.buttonre {
+  text-align: center;
+  margin-top: 0;
+}
+
+.btn-redo {
+  background: rgb(156, 151, 151);
+  color: #fff;
+  border: none;
+  width: 380px;
+  padding: 15px 0;
+  height: 50px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 5px 10px 0;
+  font-size: 18px;
+  font-family: 'Lato', sans-serif;
+}
+
+.btn-redo:hover {
+  background: #777; 
+}
+
+.pref-img {
+  height: 20px;
+  margin-right: 20px;
+  vertical-align:top;
+}
+
+.pref-image {
+  max-width: 390px;
+  height: auto;
+  margin-right: 20px;
+}
+
+.close-icon {
+  position: absolute;
+  top: 50%;
+  right: 5px; 
+  transform: translateY(-50%);
+  width: 20px; 
+  height: auto;
+}

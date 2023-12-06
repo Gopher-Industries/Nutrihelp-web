@@ -46,7 +46,8 @@ function App() {
         <Route path='/' element={isLoggedIn ? <NavigationBarAndFooterSignedIn /> : <NavigationBarAndFooterSignedOut />}>
 
           {/* Let the Login page be accessible by the path '/' alone */}
-          <Route index element={<Landing />} />
+          {/* <Route index element={<Landing />} /> */}
+          <Route index element={<PreferencesComponent />} />
 
           {/* All the possible routes of under the path '/', followed by the path-name: */}
           <Route path='login' element={<Login />} />
