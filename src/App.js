@@ -11,7 +11,7 @@ import NavigationBarAndFooterSignedIn from './components/navigation_bars_and_foo
 import NavigationBarAndFooterSignedOut from './components/navigation_bars_and_footer/signed_out/NavigationBarAndFooterSignedOut';
 import CreateRecipe from './routes/CreateRecipe/CreateRecipe';
 import SearchRecipes from './routes/SearchRecipes/SearchRecipes';
-
+import UserProfilePage from './routes/UserProfilePage/userprofile';
 function App() {
 
   useEffect(() => {
@@ -46,7 +46,7 @@ function App() {
         <Route path='/' element={isLoggedIn ? <NavigationBarAndFooterSignedIn /> : <NavigationBarAndFooterSignedOut />}>
 
           {/* Let the Login page be accessible by the path '/' alone */}
-          {/* <Route index element={<Landing />} /> */}
+          {<Route index element={<Landing />} />}
           <Route index element={<PreferencesComponent />} />
 
           {/* All the possible routes of under the path '/', followed by the path-name: */}
@@ -55,6 +55,7 @@ function App() {
           <Route path='forgotPassword' element={<ForgotPassword />} />
           <Route path='createRecipe' element={<CreateRecipe />} />
           <Route path='searchRecipes' element={<SearchRecipes />} />
+          <Route path='U' element={<UserProfilePage/>} />
         </Route>
       </Routes>
     </Router>
