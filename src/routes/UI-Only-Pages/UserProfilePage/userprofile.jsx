@@ -1,6 +1,9 @@
 // src/App.js
 import React, { useState } from 'react';
-import './userprofile.css';
+
+//Un-comment the line below to show the CSS
+// import './userprofile.css';
+
 const UserProfilePage = () => {
   const [userProfile, setUserProfile] = useState({
     firstName: '',
