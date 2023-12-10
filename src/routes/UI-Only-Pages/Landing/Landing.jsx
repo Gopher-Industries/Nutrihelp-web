@@ -3,8 +3,8 @@ import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 
 
-import '../styles/landing.css';
-import { UserContext } from "./../context/user.context";
+import './landing.css';
+import { UserContext } from "../../../context/user.context";
 
 const Landing = () => {
   return (

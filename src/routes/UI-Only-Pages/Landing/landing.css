@@ -36,8 +36,8 @@
   font-size: 16px;
   font-weight: 500;
   line-height: 28px;
-  color: #fff; 
-  background-color: #ba49e7; 
+  color: #fff;
+  background-color: #ba49e7;
   border: none;
   padding: 10px 20px;
   cursor: pointer;
@@ -80,7 +80,7 @@
   line-height: 20px;
   text-align: center;
   white-space: nowrap;
-  margin-bottom: 20px; 
+  margin-bottom: 20px;
 }
 
 .label3 .text-wrapper3 {
@@ -99,13 +99,13 @@
 .label4 .text-wrapper4 {
   color: #22145b;
   font-family: "Poppins-Regular", Helvetica;
-  font-size: 20px; 
+  font-size: 20px;
   font-weight: 400;
   letter-spacing: 0;
   line-height: 36px;
   text-align: center;
   white-space: nowrap;
-  margin-bottom: 20px; 
+  margin-bottom: 20px;
   width: 572px;
 }
 
@@ -113,11 +113,11 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 0; 
+  margin-top: 0;
 }
 
 .image .img {
-  max-height: 100px; 
+  max-height: 100px;
   width: auto;
   object-fit: contain;
 }

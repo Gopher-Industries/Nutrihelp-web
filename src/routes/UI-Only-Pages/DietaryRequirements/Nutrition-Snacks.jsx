@@ -1,7 +1,9 @@
 import React from 'react';
-import '../styles/auth.css';
+import './../../../styles/auth.css';
 
 
+function DietaryRequirements() {
+    return (
         <><h2>Hard-Boiled Eggs</h2><p>Hard-boiled eggs are a quick grab-and-go snack that is also a great protein source. The eggs can be prepped in advance and will keep in the refrigerator for about 7 days. You can enjoy them plain, or with a sprinkle of salt and pepper.</p><div data-test="image-block-inline-outer-wrapper">
             <figure>
                 <div data-animation-role="image">
@@ -66,9 +68,13 @@ import '../styles/auth.css';
                         </div>
                     </div>
                 </figure>
-            </div></>  
-        
-   
+            </div></>
+
+    );
+}
+
+export default DietaryRequirements;
+
 
 
 
