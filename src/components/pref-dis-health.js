@@ -35,7 +35,6 @@ function YourPreferences() {
         </div>
       </div>
 
-
       <div className="buttonpre">
         <button className="btn-pre">CONFIRM CHOICES</button>
       </div>
@@ -45,8 +44,6 @@ function YourPreferences() {
 
 
     </div>
-
-
   );
 }
 

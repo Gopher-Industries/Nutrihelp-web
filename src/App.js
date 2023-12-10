@@ -65,14 +65,6 @@ function App() {
 
           {/* Let the Login page be accessible by the path '/' alone */}
           {<Route index element={<Landing />} />}
-          {/* <Route index element={<PreferencesComponent />} /> */}
-
-          {/* <Route path='login' element={<Login />} />
-          <Route path='signUp' element={<SignUp />} />
-          <Route path='forgotPassword' element={<ForgotPassword />} />
-          <Route path='createRecipe' element={<CreateRecipe />} />
-          <Route path='searchRecipes' element={<SearchRecipes />} />
-          <Route path='U' element={<UserProfilePage/>} /> */}
 
           {/* All the possible routes of under the path '/', followed by the path-name: */}
           <Route path='login' element={<Login />} />
