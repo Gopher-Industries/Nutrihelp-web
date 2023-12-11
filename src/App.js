@@ -16,7 +16,7 @@ import SignInSignUp from './routes/UI-Only-Pages/SignInSignUp/SignInSignUp';
 import UserProfilePage from './routes/UI-Only-Pages/UserProfilePage/userprofile';
 import Home from './routes/Home/Home';
 import DietaryRequirements from './routes/UI-Only-Pages/DietaryRequirements/Nutrition-Snacks';
-// import Menu from './routes/UI-Only-Pages/Menu/Menu';
+import Menu from './routes/UI-Only-Pages/Menu/Menu';
 
 function App() {
 
@@ -30,8 +30,6 @@ function App() {
       window.kommunicate = m; m._globals = kommunicateSettings;
     })(document, window.kommunicate || {});
   }, []);  // Empty dependency array ensures this runs only once after component mount
-
-
 
   //Obtain the current user from the UserContext (from user.context.jsx)
   const { currentUser } = useContext(UserContext)
@@ -67,7 +65,7 @@ function App() {
           <Route path='signInSignUp' element={<SignInSignUp />} />
           <Route path='userProfile' element={<UserProfilePage />} />
           <Route path='dietaryRequirements' element={<DietaryRequirements />} />
-          {/* <Route path='menu' element={<Menu />} /> */}
+          <Route path='menu' element={<Menu />} />
 
         </Route>
       </Routes>
