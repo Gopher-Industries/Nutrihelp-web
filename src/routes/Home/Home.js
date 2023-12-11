@@ -1,18 +1,51 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 
 import './Home.css';
 import { UserContext } from "../../context/user.context";
 
+import CreateAccountPopUp from './CreateAccountPopUp';
+import LoginPopUp from './LoginPopUp';
+
 const Home = () => {
 
     const { currentUser } = useContext(UserContext)
     const isLoggedIn = Boolean(currentUser);
+
+    const [createPopUp, setCreatePopup] = useState(false);
+    const [loginPopUp, setLoginPopup] = useState(false);
+
+    const [showHeader, setShowHeader] = useState(true);
+    const [prevScrollPos, setPrevScrollPos] = useState(0);
+
+    useEffect(() => {
+        const handleScroll = () => {
+          const currentScrollPos = window.scrollY;
+    
+          if (currentScrollPos > prevScrollPos) {
+            // Scrolling down
+            setShowHeader(false);
+          } else {
+            // Scrolling up
+            setShowHeader(true);
+          }
+    
+          setPrevScrollPos(currentScrollPos);
+        };
+    
+        window.addEventListener('scroll', handleScroll);
+
+        return () => {
+
+            window.removeEventListener('scroll', handleScroll);
+        };
+      }, [prevScrollPos]);
+
     return (
         <>
             {!isLoggedIn && (
-                <header id="header" className="fixed-top">
+                <header id="header" className={`fixed-top ${showHeader ? 'header-visible' : 'header-hidden'}`}>
                     <div className="container d-flex align-items-center justify-content-between">
                         <a href="index.html" className="logo">
                             <img src="" alt="" />
@@ -41,13 +74,13 @@ const Home = () => {
                                 </li>
 
                                 <li>
-                                    <Link to="/login" className="nav-link scrollto">
+                                    <Link onClick={() => setLoginPopup(true) & setCreatePopup(false)} className="nav-link scrollto">
                                         Sign In
                                     </Link>
                                 </li>
 
                                 <li>
-                                    <Link to="/signUp" className="nav-link scrollto">
+                                    <Link onClick={() => setCreatePopup(true) & setLoginPopup(false)} className="nav-link scrollto">
                                         Create Account
                                     </Link>
                                 </li>
@@ -59,10 +92,17 @@ const Home = () => {
             )}
 
             <section id="hero" className="d-flex align-items-center">
+      
+                <CreateAccountPopUp trigger={createPopUp} setTrigger={setCreatePopup}>
+                </CreateAccountPopUp>
+
+                <LoginPopUp trigger={loginPopUp} setTrigger={setLoginPopup}>
+                </LoginPopUp>
+
                 <div className="container">
                     <div className="row">
                         <div className="col-lg-6 pt-4 pt-lg-0 order-2 order-lg-1 d-flex flex-column justify-content-center">
-                            <h1>NutriHelp</h1>
+                        <img src="/images/logos_white.png" alt="NutriHelp Logo" style={{ width: '850px', height: '280px' }} />
                             <h2>
                                 NutriHelp supports you in managing your general wellbeing,
                                 nutrient-related diseases and deficiencies through personalised

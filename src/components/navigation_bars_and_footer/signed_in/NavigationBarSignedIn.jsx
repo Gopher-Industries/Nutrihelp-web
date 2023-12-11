@@ -33,15 +33,19 @@ function NavigationBarSignedIn() {
             <div className="navigation-bar-container">
 
                 {/*NOTE: CSS for links is in "index.css"*/}
-                <Link className="link" to='/'>NutriHelp</Link>
+                <Link to='/'>
+                <img className="logo" src="/images/logos_black.png" alt="NutriHelp Logo" style={{ width: '150px', height: '75px' }} />
+
+                </Link>
+
 
                 <div className="navigation-links-container">
 
                     {/* If the user is logged in, display their email.
                     Else, display "Not Logged in" */}
                     {currentUser ? (
-                        <h3 className="single-line">
-                            {"Logged in as "}
+                        <h3 className="link">
+                            {"Hello "}
                             <br />
                             {currentUser.email}
                         </h3>

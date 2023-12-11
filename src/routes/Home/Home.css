@@ -53,15 +53,21 @@ h6 {
 }
 
 #header {
-    background: #e5f0f9;
+    background: #F8E7FF;
     transition: all 0.5s;
     z-index: 997;
     padding: 20px 0;
     box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.05);
+
+    transition: transform 1s ease; /* Add transition for smooth appearance/disappearance */
 }
 
+#header.header-hidden {
+    transform: translateY(-100%);
+  }
+
 .navbar {
-    padding: 10px;
+    padding: 0x;
 }
 
 .navbar ul {

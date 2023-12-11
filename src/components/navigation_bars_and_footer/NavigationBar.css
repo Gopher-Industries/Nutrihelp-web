@@ -10,8 +10,8 @@
 }
 
 .navigation-bar-div {
-    color: white;
-    background-color: teal;
+    color: black;
+    background-color: #F8E7FF;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -23,10 +23,22 @@
 }
 
 .link-style-button {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0 10px 30px;
+    font-family: "Montserrat", sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: #000000;
+    white-space: nowrap;
+    transition: 0.3s;
+    text-transform: uppercase;
+
+
     background: none;
     border: none;
-    padding: 0;
-    font-family: arial, sans-serif;
+    font-family: "Montserrat", sans-serif;
     font-weight: 700;
     cursor: pointer;
     margin-right: 15px;
@@ -37,13 +49,13 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    color: rgb(228, 228, 144);
+    color: rgb(0, 0, 0);
 }
 
 .navigation-bar-container {
     display: flex;
     width: 100%;
-    background-color: teal;
+    background-color: #F8E7FF;
 }
 
 .navigation-links-container {
@@ -63,5 +75,15 @@ a {
 }
 
 .link {
-    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0 10px 30px;
+    font-family: "Montserrat", sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: #000000;
+    white-space: nowrap;
+    transition: 0.3s;
+    text-transform: uppercase;
 }
