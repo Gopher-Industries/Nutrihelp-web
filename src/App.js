@@ -14,9 +14,13 @@ import SearchRecipes from './routes/SearchRecipes/SearchRecipes';
 import YourPreferences from './routes/UI-Only-Pages/YourPreferences/pref-dis-health'
 import SignInSignUp from './routes/UI-Only-Pages/SignInSignUp/SignInSignUp';
 import UserProfilePage from './routes/UI-Only-Pages/UserProfilePage/userprofile';
+<<<<<<< Updated upstream
 import Home from './routes/Home/Home';
 import DietaryRequirements from './routes/UI-Only-Pages/DietaryRequirements/Nutrition-Snacks';
 import Menu from './routes/UI-Only-Pages/Menu/Menu';
+=======
+import Recipe from './components/Recipe';
+>>>>>>> Stashed changes
 
 function App() {
 
@@ -50,7 +54,11 @@ function App() {
         <Route path='/' element={isLoggedIn ? <NavigationBarAndFooterSignedIn /> : <NavigationBarAndFooterSignedOut />}>
 
           {/* Let the Login page be accessible by the path '/' alone */}
+<<<<<<< Updated upstream
           {<Route index element={<Home />} />}
+=======
+          {<Route index element={<Landing />} />}
+>>>>>>> Stashed changes
 
           {/* All the possible routes of under the path '/', followed by the path-name: */}
           <Route path='login' element={<Login />} />
@@ -64,8 +72,12 @@ function App() {
           <Route path='yourPreferences' element={<YourPreferences />} />
           <Route path='signInSignUp' element={<SignInSignUp />} />
           <Route path='userProfile' element={<UserProfilePage />} />
+<<<<<<< Updated upstream
           <Route path='dietaryRequirements' element={<DietaryRequirements />} />
           <Route path='menu' element={<Menu />} />
+=======
+          <Route path='recipe' element={<Recipe />} />
+>>>>>>> Stashed changes
 
         </Route>
       </Routes>
