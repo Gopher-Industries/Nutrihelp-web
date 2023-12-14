@@ -828,3 +828,93 @@ h4 {
   width: 20px;
   height: auto;
 }
+
+
+.left-side {
+  flex: 1;
+  background-color: rgb(119, 104, 159);
+  padding: 20px;
+  border-radius: 20px 0 0 20px;
+  text-align: center;
+  color: white;
+
+}
+
+.right-side {
+  flex: 1;
+  padding: 20px;
+  border-radius: 0 20px 20px 0;
+  background-color: white;
+  box-shadow: -4px 0 6px -4px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  font-family: "Montserrat", "sans-serif";
+  margin-top: 40%;
+}
+
+h2{
+  font-family: "Montserrat", "sans-serif";
+  font-size: 40px;
+  text-align: center;
+}
+
+h3 {
+  font-family: "Montserrat", "sans-serif";
+  font-size: medium;
+}
+.text{
+  margin-left: 10%;
+}
+.signIN, .signUP {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: rgb(119, 104, 159);
+  color: #ffffff;
+  border: 1px solid #ffffff;
+  border-radius: 20px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background-color 0.3s ease-in-out;
+  font-family: "Montserrat", "sans-serif";
+}
+
+.signUP{
+  margin-left: 35%;
+  margin-top: -2px;
+}
+
+.signIN:hover, .signUP:hover {
+  background-color: #2980b9;
+}
+
+.fb, .ggle, .li {
+  border: 0.5px solid black;
+  border-radius: 20px;
+  width: 8%;
+  height: auto;
+  margin: 5px;
+  cursor: pointer;
+  margin-left: 15%;
+}
+
+form {
+  text-align: left;
+  font-family: "Montserrat", "sans-serif";
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+input {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+  font-family: "Montserrat", "sans-serif";
+  border-radius: 18px;
+  border: 1px solid black;
+}
