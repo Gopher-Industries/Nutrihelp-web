@@ -11,5 +11,21 @@
 }
 
 .search-input {
+    position: relative;
     text-align: center;
+    width: 75%;
+    margin: auto;
+}
+
+.recipe-search-box {
+    padding: 15px 25px 15px 42px;
+    border-radius: 25px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.search-input img {
+    width: 14px;
+    position: absolute;
+    top: 16px;
+    left: 20px;
 }

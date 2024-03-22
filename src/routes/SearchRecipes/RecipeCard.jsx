@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
-import { Card, Icon } from 'semantic-ui-react'
 import './RecipeCard.css'
+
+import { Card, Icon } from 'semantic-ui-react'
+import React, { useState } from 'react';
+
 import RecipeCardExtension from './RecipeCardExtension';
 
 const RecipeCard = (props) => {

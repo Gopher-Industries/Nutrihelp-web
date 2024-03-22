@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import RecipeCard from "./RecipeCard"
 import './RecipeCard.css'
+
+import React, { useEffect, useState } from 'react';
+
+import RecipeCard from "./RecipeCard"
 import { fetchRecipes } from './fetchRecipes';
 
 //Component to display a list of cards representing recipes
@@ -38,7 +40,7 @@ function RecipeCardList(props) {
 
     //Render the component
     return (
-        <div className="row">
+        <div className="row recipe-card-row">
             {filteredRecipe.map(RecipeCardComponent)}
         </div>
     );
