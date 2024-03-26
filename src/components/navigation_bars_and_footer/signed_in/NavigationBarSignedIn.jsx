@@ -43,7 +43,7 @@ function NavigationBarSignedIn() {
 
                     {/* If the user is logged in, display their email.
                     Else, display "Not Logged in" */}
-                    {currentUser ? (
+                    {/* {currentUser ? (
                         <h3 className="link">
                             {"Hello "}
                             <br />
@@ -51,15 +51,30 @@ function NavigationBarSignedIn() {
                         </h3>
                     ) : (
                         "Not logged in"
-                    )}
+                    )} */}
 
-                    <Link className="link" to='/'>Groceries</Link>
-                    <Link className="link" to='/'>Nutrient Intake Report</Link>
+
+                    <Link className="link" to='/'>Menu</Link>
                     <Link className="link" to='/'>Meal Planning</Link>
-                    <Link className="link" to='/CreateRecipe'>Create Recipe</Link>
-                    <Link className="link" to='/SearchRecipes'>Search Recipes</Link>
 
-                    <button className="link-style-button" onClick={logout}>Logout</button>
+                    <div className="dropdown">
+                    <Link className="link" >Recipies</Link>
+                        <div className="dropdown-content">
+                        <Link className="link" to='/CreateRecipe'>Create Recipe</Link>
+                    <Link className="link" to='/SearchRecipes'>Search Recipes</Link>
+                        </div>
+                    </div>
+                   
+                    <div className="dropdown">
+                    <Link className="link" >User</Link>
+                        <div className="dropdown-content">
+                        <Link className="link" to='/'>Preference</Link>
+                    <Link className="link" to='/'>Profile</Link>
+                        </div>
+                    </div>
+                    <Link className="link" to='/'>Scan Products</Link>
+
+                    {/* <button className="link-style-button" onClick={logout}>Logout</button> */}
                 </div>
             </div>
 
