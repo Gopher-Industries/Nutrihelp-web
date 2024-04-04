@@ -1,53 +1,95 @@
-import './RecipeCard.css'
+import "./RecipeCard.css";
 
-import { Card, Icon } from 'semantic-ui-react'
-import React, { useState } from 'react';
+import {
+  Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardMeta,
+  Grid,
+  GridColumn,
+  GridRow,
+  Header,
+  Icon,
+  Image,
+  Modal,
+  ModalActions,
+  ModalContent,
+} from "semantic-ui-react";
+import React, { useState } from "react";
 
-import RecipeCardExtension from './RecipeCardExtension';
+import RecipeCardExtension from "./RecipeCardExtension";
 
 const RecipeCard = (props) => {
-    const [isVisible, setIsVisible] = useState(true); // Introduce local state
+  const [open, setOpen] = React.useState(false);
 
-    const [isExpanded, setIsExpanded] = useState(false);
+  const [isVisible, setIsVisible] = useState(true); // Introduce local state
 
-    // If the card is not visible, return null to prevent rendering
-    if (!isVisible) return null;
+  const [isExpanded, setIsExpanded] = useState(false);
 
-    //Handle clicks on deleting/removing a Recipe card
-    const handleDeleteClick = (e) => {
-        setIsVisible(false)
-    }
+  // If the card is not visible, return null to prevent rendering
+  if (!isVisible) return null;
 
-    //Handle clicks on a Recipe card
-    const handleCardClick = (e) => {
-        setIsExpanded(!isExpanded)
-    }
+  //Handle clicks on deleting/removing a Recipe card
+  const handleDeleteClick = (e) => {
+    setIsVisible(false);
+  };
 
-    return (
-        <div className='recipe-card-container'
-            onClick={handleCardClick}
-        >
-            <Card className='recipe-card-div'
+  //Handle clicks on a Recipe card
+  const handleCardClick = (e) => {
+    setIsExpanded(!isExpanded);
+  };
+
+  return (
+    <>
+     <GridColumn onClick={handleCardClick}>
+      {/* <Card className='recipe-card-div'
                 image={props.imageUrl} //Display Picture
                 header={props.recipeName} //Recipe Name
                 meta={props.cuisine} //Recipe Description
                 description={props.recipeNotes} //Recipe Notes
-            />
-
-            {/* Display more information (i.e., expand the RecipeCard)
+            /> */}
+      {/* New Card Design */}
+      <Card>
+        <Image src={props.imageUrl} wrapped ui={false} />
+        <CardContent>
+          <CardHeader>{props.recipeName}</CardHeader>
+          <CardMeta>
+            <span className="date">{props.cuisine}</span>
+          </CardMeta>
+          <CardDescription>{props.recipeNotes}</CardDescription>
+        </CardContent>
+        <CardContent extra>
+          <div className="recipe-card-btn-wrap">
+            <button className="button-primary" onClick={handleCardClick}>
+              View Recipe
+            </button>
+            <button className="button-secondary" onClick={handleDeleteClick}>
+              Remove Recipe
+            </button>
+          </div>
+        </CardContent>
+      </Card>
+      {/* Display more information (i.e., expand the RecipeCard)
             if and only if the isExpanded variable is "true"*/}
-            {isExpanded == true &&
-                <RecipeCardExtension
-                    preparationTime={props.preparationTime}
-                    totalServings={props.totalServings}
-                    caloriesPerServing={props.caloriesPerServing}
-                    ingredients={props.ingredients}
-                    instructions={props.instructions}
-                />}
+      {isExpanded == true && (
+        <RecipeCardExtension
+          preparationTime={props.preparationTime}
+          totalServings={props.totalServings}
+          caloriesPerServing={props.caloriesPerServing}
+          ingredients={props.ingredients}
+          instructions={props.instructions}
+        />
+      )}
+    </GridColumn>
+    
+    
+    
+    
+    </>
+   
+  );
+};
 
-            <button className='delete-button' onClick={handleDeleteClick}>Remove Recipe</button> {/* Add onClick handler */}
-        </div>
-    )
-}
-
-export default RecipeCard
+export default RecipeCard;

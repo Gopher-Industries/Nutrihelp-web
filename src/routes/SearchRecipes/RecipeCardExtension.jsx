@@ -1,5 +1,6 @@
-import React from 'react';
 import { Card, Icon } from 'semantic-ui-react'
+
+import React from 'react';
 import RecipeCardExtensionField from './RecipeCardExtensionField';
 
 const RecipeCardExtension = (props) => {
