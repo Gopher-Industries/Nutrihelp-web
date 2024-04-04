@@ -1,16 +1,18 @@
-import React from 'react';
-import './RecipeCardExtensionField.css'
+import "./RecipeCardExtensionField.css";
+
+import React from "react";
 
 const RecipeCardExtensionField = (props) => {
+  return (
+    <>
+      <div>
+        <h3>{props.fieldName}: </h3>
+        <p> {props.fieldValue}</p>
+      </div>
 
-    return (
-        <div className='recipe-card-extension-field-div'>
-            <h4>{props.fieldName}: </h4>
-            &nbsp; &nbsp;
-            <p> {props.fieldValue}</p>
+      <br />
+    </>
+  );
+};
 
-        </div>
-    )
-}
-
-export default RecipeCardExtensionField
+export default RecipeCardExtensionField;

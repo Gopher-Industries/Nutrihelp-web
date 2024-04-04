@@ -7,15 +7,8 @@ import {
   CardDescription,
   CardHeader,
   CardMeta,
-  Grid,
   GridColumn,
-  GridRow,
-  Header,
-  Icon,
   Image,
-  Modal,
-  ModalActions,
-  ModalContent,
 } from "semantic-ui-react";
 import React, { useState } from "react";
 
@@ -43,52 +36,48 @@ const RecipeCard = (props) => {
 
   return (
     <>
-     <GridColumn onClick={handleCardClick}>
-      {/* <Card className='recipe-card-div'
+      <GridColumn onClick={handleCardClick}>
+        {/* <Card className='recipe-card-div'
                 image={props.imageUrl} //Display Picture
                 header={props.recipeName} //Recipe Name
                 meta={props.cuisine} //Recipe Description
                 description={props.recipeNotes} //Recipe Notes
             /> */}
-      {/* New Card Design */}
-      <Card>
-        <Image src={props.imageUrl} wrapped ui={false} />
-        <CardContent>
-          <CardHeader>{props.recipeName}</CardHeader>
-          <CardMeta>
-            <span className="date">{props.cuisine}</span>
-          </CardMeta>
-          <CardDescription>{props.recipeNotes}</CardDescription>
-        </CardContent>
-        <CardContent extra>
-          <div className="recipe-card-btn-wrap">
-            <button className="button-primary" onClick={handleCardClick}>
-              View Recipe
-            </button>
-            <button className="button-secondary" onClick={handleDeleteClick}>
-              Remove Recipe
-            </button>
-          </div>
-        </CardContent>
-      </Card>
-      {/* Display more information (i.e., expand the RecipeCard)
+        {/* New Card Design */}
+        <Card>
+          <Image src={props.imageUrl} wrapped ui={false} />
+          <CardContent>
+            <CardHeader>{props.recipeName}</CardHeader>
+            <CardMeta>
+              <span className="date">{props.cuisine}</span>
+            </CardMeta>
+            <CardDescription>{props.recipeNotes}</CardDescription>
+          </CardContent>
+          <CardContent extra>
+            <div className="recipe-card-btn-wrap">
+              <button className="button-primary" onClick={handleCardClick}>
+                View Recipe
+              </button>
+              <button className="button-secondary" onClick={handleDeleteClick}>
+                Remove Recipe
+              </button>
+            </div>
+          </CardContent>
+        </Card>
+        {/* Display more information (i.e., expand the RecipeCard)
             if and only if the isExpanded variable is "true"*/}
-      {isExpanded == true && (
-        <RecipeCardExtension
-          preparationTime={props.preparationTime}
-          totalServings={props.totalServings}
-          caloriesPerServing={props.caloriesPerServing}
-          ingredients={props.ingredients}
-          instructions={props.instructions}
-        />
-      )}
-    </GridColumn>
-    
-    
-    
-    
+        {isExpanded == true && (
+          <RecipeCardExtension
+            recipeName={props.recipeName}
+            preparationTime={props.preparationTime}
+            totalServings={props.totalServings}
+            caloriesPerServing={props.caloriesPerServing}
+            ingredients={props.ingredients}
+            instructions={props.instructions}
+          />
+        )}
+      </GridColumn>
     </>
-   
   );
 };
 
