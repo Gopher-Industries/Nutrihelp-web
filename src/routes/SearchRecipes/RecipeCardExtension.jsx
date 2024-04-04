@@ -9,7 +9,7 @@ const RecipeCardExtension = (props) => {
   return (
     <div className="recipe-card-modal">
       <div className="recipe-modal-content">
-        <Icon name="close" />
+        <Icon onClick={props.handleCardClick}  name="close" />
         <Image className="vector-bg-left" src={backgroundLeft} />
         <Image className="vector-bg-right" src={backgroundRight} />
         <div className="recipe-modal-box">

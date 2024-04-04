@@ -36,7 +36,7 @@ const RecipeCard = (props) => {
 
   return (
     <>
-      <GridColumn onClick={handleCardClick}>
+      <GridColumn >
         {/* <Card className='recipe-card-div'
                 image={props.imageUrl} //Display Picture
                 header={props.recipeName} //Recipe Name
@@ -47,7 +47,7 @@ const RecipeCard = (props) => {
         <Card>
           <Image src={props.imageUrl} wrapped ui={false} />
           <CardContent>
-            <CardHeader>{props.recipeName}</CardHeader>
+            <CardHeader style={{cursor: "pointer"}}  onClick={handleCardClick}>{props.recipeName}</CardHeader>
             <CardMeta>
               <span className="date">{props.cuisine}</span>
             </CardMeta>
@@ -64,9 +64,9 @@ const RecipeCard = (props) => {
             </div>
           </CardContent>
         </Card>
-        {/* Display more information (i.e., expand the RecipeCard)
-            if and only if the isExpanded variable is "true"*/}
-        {isExpanded == true && (
+      </GridColumn>
+
+      {isExpanded == true && (
           <RecipeCardExtension
             recipeName={props.recipeName}
             preparationTime={props.preparationTime}
@@ -74,9 +74,9 @@ const RecipeCard = (props) => {
             caloriesPerServing={props.caloriesPerServing}
             ingredients={props.ingredients}
             instructions={props.instructions}
+            handleCardClick={handleCardClick}
           />
         )}
-      </GridColumn>
     </>
   );
 };
