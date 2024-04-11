@@ -1,12 +1,13 @@
-import React from 'react'
 import './Field.css' // Importing CSS for styling
-import Prompt from './Prompt' // Importing Prompt component for displaying the label
+
 import DropdownSelectInput from './DropdownSelectInput' // Importing DropdownSelectInput component for the dropdown
+import Prompt from './Prompt' // Importing Prompt component for displaying the label
+import React from 'react'
 
 // CuisineField component definition
 const CuisineField = (props) => {
     return (
-        <div className='field-div'>
+        <div className='form-div'>
 
             {/* Display the prompt text*/}
             <Prompt text="Cuisine" />

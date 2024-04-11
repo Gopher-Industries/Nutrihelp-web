@@ -36,15 +36,8 @@ const RecipeCard = (props) => {
 
   return (
     <>
-      <GridColumn >
-        {/* <Card className='recipe-card-div'
-                image={props.imageUrl} //Display Picture
-                header={props.recipeName} //Recipe Name
-                meta={props.cuisine} //Recipe Description
-                description={props.recipeNotes} //Recipe Notes
-            /> */}
-        {/* New Card Design */}
-        <Card>
+      <GridColumn>
+        {/* <Card>
           <Image src={props.imageUrl} wrapped ui={false} />
           <CardContent>
             <CardHeader style={{cursor: "pointer"}}  onClick={handleCardClick}>{props.recipeName}</CardHeader>
@@ -63,20 +56,39 @@ const RecipeCard = (props) => {
               </button>
             </div>
           </CardContent>
+        </Card> */}
+
+        <Card
+          className="recipe-card-wrap"
+          style={{ backgroundImage: `url(${props.imageUrl})` }}
+        >
+          <span class="recipe-card-overlay"></span>
+          <CardContent className="recipe-card-content">
+            <CardHeader style={{ cursor: "pointer" }} onClick={handleCardClick}>
+              {props.recipeName}
+            </CardHeader>
+            <CardMeta>
+              <span className="date">{props.cuisine}</span>
+            </CardMeta>
+            <button className="recipe-card-btn" onClick={handleCardClick}>
+              View Recipe
+            </button>
+          </CardContent>
         </Card>
       </GridColumn>
 
       {isExpanded == true && (
-          <RecipeCardExtension
-            recipeName={props.recipeName}
-            preparationTime={props.preparationTime}
-            totalServings={props.totalServings}
-            caloriesPerServing={props.caloriesPerServing}
-            ingredients={props.ingredients}
-            instructions={props.instructions}
-            handleCardClick={handleCardClick}
-          />
-        )}
+        <RecipeCardExtension
+          recipeName={props.recipeName}
+          preparationTime={props.preparationTime}
+          totalServings={props.totalServings}
+          caloriesPerServing={props.caloriesPerServing}
+          ingredients={props.ingredients}
+          instructions={props.instructions}
+          handleCardClick={handleCardClick}
+          handleDeleteClick={handleDeleteClick}
+        />
+      )}
     </>
   );
 };
