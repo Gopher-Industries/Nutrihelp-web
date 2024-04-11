@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from 'react';
 import 'semantic-ui-css/semantic.min.css'
 import './App.css';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Switch } from 'react-router-dom';
 import { UserContext } from "./context/user.context";
 import Login from './routes/Login/Login';
 import SignUp from './routes/SignUp/SignUp';
@@ -18,7 +18,9 @@ import Home from './routes/Home/Home';
 import DietaryRequirements from './routes/UI-Only-Pages/DietaryRequirements/Nutrition-Snacks';
 import Menu from './routes/UI-Only-Pages/Menu/Menu';
 import Recipe from './components/Recipe';
-
+// import Allergy from './components/Allergy';
+// import Allergy from './Allergy';
+import Meal from './routes/Meal/Meal';
 function App() {
 
   useEffect(() => {
@@ -68,6 +70,8 @@ function App() {
           <Route path='dietaryRequirements' element={<DietaryRequirements />} />
           <Route path='menu' element={<Menu />} />
           <Route path='recipe' element={<Recipe />} />
+          {/* <Route path="/components/allergy" component={Allergy} /> */}
+          <Route path='Meal' element={<Meal />} />
 
         </Route>
       </Routes>
