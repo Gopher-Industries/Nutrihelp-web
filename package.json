@@ -1,7 +1,7 @@
 {
   "name": "nutrihelp",
   "version": "1.0.0",
-  "description": "",
+  "description": "These instructions will get you a copy of the web frontend up and running on your local machine for development and \r testing purposes.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

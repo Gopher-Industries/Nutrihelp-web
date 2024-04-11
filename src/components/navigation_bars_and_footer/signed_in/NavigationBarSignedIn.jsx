@@ -55,7 +55,7 @@ function NavigationBarSignedIn() {
 
 
                     <Link className="link" to='/'>Menu</Link>
-                    <Link className="link" to='/'>Meal Planning</Link>
+                    <Link className="link" to='/Meal'>Meal Planning</Link>
 
                     <div className="dropdown">
                     <Link className="link" >Recipies</Link>
