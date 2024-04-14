@@ -11,7 +11,7 @@ import NavigationBarAndFooterSignedIn from './components/navigation_bars_and_foo
 import NavigationBarAndFooterSignedOut from './components/navigation_bars_and_footer/signed_out/NavigationBarAndFooterSignedOut';
 import CreateRecipe from './routes/CreateRecipe/CreateRecipe';
 import SearchRecipes from './routes/SearchRecipes/SearchRecipes';
-import YourPreferences from './routes/UI-Only-Pages/YourPreferences/pref-dis-health'
+import YourPreferences from './routes/UI-Only-Pages/YourPreferences/YourPreferences'
 import SignInSignUp from './routes/UI-Only-Pages/SignInSignUp/SignInSignUp';
 import UserProfilePage from './routes/UI-Only-Pages/UserProfilePage/userprofile';
 import Home from './routes/Home/Home';
@@ -64,7 +64,7 @@ function App() {
 
           {/* UI-Only-Pages (in the path: ./routes/UI-Only-Pages/) */}
           <Route path='landing' element={<Landing />} />
-          <Route path='yourPreferences' element={<YourPreferences />} />
+          <Route path='YourPreferences' element={<YourPreferences />} />
           <Route path='signInSignUp' element={<SignInSignUp />} />
           <Route path='userProfile' element={<UserProfilePage />} />
           <Route path='dietaryRequirements' element={<DietaryRequirements />} />
