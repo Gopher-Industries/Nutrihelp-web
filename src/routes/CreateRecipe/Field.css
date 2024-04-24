@@ -1,11 +1,11 @@
 /* Common Properties */
-.field-div {
+.form-div {
     display: flex;
     margin-top: 15px;
     margin-left: 20px;
 }
 
-.field-div p {
+.form-div p {
     width: 110px;
 }
 

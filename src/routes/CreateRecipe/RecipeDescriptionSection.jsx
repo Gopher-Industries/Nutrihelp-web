@@ -1,14 +1,15 @@
-import React from 'react'
-import './Section.css'
-import SectionHeader from './SectionHeader'
-import RecipeNameField from './RecipeNameField'
+import './CreateRecipe.css'
+
 import CuisineField from './CuisineField'
+import React from 'react'
+import RecipeNameField from './RecipeNameField'
+import SectionHeader from './SectionHeader'
 
 // Define a component for the "Recipe Description" section of a form
 const RecipeDescriptionSection = (props) => {
 
     return (
-        <div className='section'>
+        <div className='form-section'>
             <SectionHeader text='Recipe Description' />
             <div>
                 <RecipeNameField

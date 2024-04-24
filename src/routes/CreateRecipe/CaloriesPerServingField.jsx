@@ -1,12 +1,13 @@
-import React from 'react'
 import './Field.css'
-import Prompt from './Prompt'
+
 import NumberInput from './NumberInput'
+import Prompt from './Prompt'
+import React from 'react'
 
 // "Calories Per Serving" field for the Create Recipe page
 const CaloriesPerServingField = (props) => (
 
-    <div className='field-div'>
+    <div className='form-div'>
         <Prompt text="Calories Per Serving" />
         <NumberInput
             caloriesPerServing={props.caloriesPerServing}

@@ -1,9 +1,11 @@
-import React, { useState } from 'react'
 import './Field.css'
-import Prompt from './Prompt'
+
+import React, { useState } from 'react'
+import { getDownloadURL, listAll, ref, uploadBytes } from 'firebase/storage'
+
 import { Button } from 'semantic-ui-react'
+import Prompt from './Prompt'
 import { storage } from '../../utils/firebase.js'
-import { ref, uploadBytes, listAll, getDownloadURL } from 'firebase/storage'
 
 const AddAnImageField = ({ onImageAdded }) => {
 
@@ -43,7 +45,7 @@ const AddAnImageField = ({ onImageAdded }) => {
     }
 
     return (
-        <div className='field-div'>
+        <div className='form-div'>
             <Prompt text="Image" />
 
             <input
@@ -51,7 +53,7 @@ const AddAnImageField = ({ onImageAdded }) => {
                 onChange={(event) => { setImageUpload(event.target.files[0]) }} />
 
             <div className='browse-and-upload-buttons-div'>
-                <Button style={{ width: 'auto', overflow: 'visible' }} onClick={uploadImage}>Upload Image</Button>
+                <Button className='button-primary' style={{ width: 'auto', overflow: 'visible' }} onClick={uploadImage}>Upload Image</Button>
             </div>
 
 

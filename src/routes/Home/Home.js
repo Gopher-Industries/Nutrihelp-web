@@ -1,12 +1,11 @@
-import React, { useContext, useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-
-
 import './Home.css';
-import { UserContext } from "../../context/user.context";
+
+import React, { useContext, useEffect, useState } from 'react';
 
 import CreateAccountPopUp from './CreateAccountPopUp';
+import { Link } from 'react-router-dom';
 import LoginPopUp from './LoginPopUp';
+import { UserContext } from "../../context/user.context";
 
 const Home = () => {
 

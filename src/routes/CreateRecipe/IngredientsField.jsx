@@ -1,11 +1,12 @@
-import React from 'react'
 import './Field.css'
-import Prompt from './Prompt'
+
 import MultipleLineTextInput from './MultipleLineTextInput'
+import Prompt from './Prompt'
+import React from 'react'
 
 // "Recipe Notes" field for the Create Recipe page
 const IngredientsField = (props) => (
-    <div className='field-div'>
+    <div className='form-div'>
         <Prompt text="Ingredients" />
         <MultipleLineTextInput
             ingredients={props.ingredients}

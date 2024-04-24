@@ -1,12 +1,13 @@
-import React from 'react';
-import { Button } from 'semantic-ui-react';
 import './SubmitButton.css';
+
+import { Button } from 'semantic-ui-react';
+import React from 'react';
 
 // Button to submit a form
 const SubmitButton = ({ text, onSubmit, disabled }) => {
 
     return (
-        <div className='button-div'><Button onClick={onSubmit} disabled={disabled}>
+        <div className=''><Button className='button-primary' onClick={onSubmit} disabled={disabled}>
             {text}
         </Button>
 

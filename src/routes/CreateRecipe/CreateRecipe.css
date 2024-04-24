@@ -1,0 +1,64 @@
+.form-section {
+    margin-bottom: 45px;
+}
+
+.form-section .ui.header {
+    text-align: left;
+}
+
+.form-div {
+    margin-left: 0;
+    align-items: center;
+}
+
+
+.create-recipe-form .single-line-text-input,
+.create-recipe-form .dropdown-select-input,
+.create-recipe-form .multiple-line-text-input {
+    width: 100%;
+    margin: 10px 0 10px 0;
+    border: 1px solid rgba(0, 0, 0, 0.4);
+    padding: 10px 15px;
+}
+
+.create-recipe-form .number-input {
+    width: 100px;
+    text-align: center;
+    border: 1px solid rgba(0, 0, 0, 0.4);
+}
+
+.button-primary {
+    background-color: #a82fea !important;
+    color: #fff !important;
+}
+
+.button-primary:hover {
+    opacity: 0.7;
+}
+
+.create-recipe-container {
+    background-color: #F8E7FF;
+    padding-top: 50px;
+    padding-bottom: 50px;
+}
+
+.create-recipe-form {
+    position: relative;
+    width: 60%;
+    background-color: #fff;
+    border-radius: 15px;
+    padding: 5% 10%;
+    text-align: center;
+    margin: auto;
+    margin-top: 50px;
+    z-index: 2;
+}
+
+.create-recipe-form-wrap {
+    position: relative;
+}
+
+.create-recipe-form-wrap .form-div {
+    margin-left: 0;
+    text-align: left;
+}

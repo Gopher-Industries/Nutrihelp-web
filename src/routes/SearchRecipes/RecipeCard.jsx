@@ -1,51 +1,96 @@
-import React, { useState } from 'react';
-import { Card, Icon } from 'semantic-ui-react'
-import './RecipeCard.css'
-import RecipeCardExtension from './RecipeCardExtension';
+import "./RecipeCard.css";
+
+import {
+  Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardMeta,
+  GridColumn,
+  Image,
+} from "semantic-ui-react";
+import React, { useState } from "react";
+
+import RecipeCardExtension from "./RecipeCardExtension";
 
 const RecipeCard = (props) => {
-    const [isVisible, setIsVisible] = useState(true); // Introduce local state
+  const [open, setOpen] = React.useState(false);
 
-    const [isExpanded, setIsExpanded] = useState(false);
+  const [isVisible, setIsVisible] = useState(true); // Introduce local state
 
-    // If the card is not visible, return null to prevent rendering
-    if (!isVisible) return null;
+  const [isExpanded, setIsExpanded] = useState(false);
 
-    //Handle clicks on deleting/removing a Recipe card
-    const handleDeleteClick = (e) => {
-        setIsVisible(false)
-    }
+  // If the card is not visible, return null to prevent rendering
+  if (!isVisible) return null;
 
-    //Handle clicks on a Recipe card
-    const handleCardClick = (e) => {
-        setIsExpanded(!isExpanded)
-    }
+  //Handle clicks on deleting/removing a Recipe card
+  const handleDeleteClick = (e) => {
+    setIsVisible(false);
+  };
 
-    return (
-        <div className='recipe-card-container'
-            onClick={handleCardClick}
+  //Handle clicks on a Recipe card
+  const handleCardClick = (e) => {
+    setIsExpanded(!isExpanded);
+  };
+
+  return (
+    <>
+      <GridColumn>
+        {/* <Card>
+          <Image src={props.imageUrl} wrapped ui={false} />
+          <CardContent>
+            <CardHeader style={{cursor: "pointer"}}  onClick={handleCardClick}>{props.recipeName}</CardHeader>
+            <CardMeta>
+              <span className="date">{props.cuisine}</span>
+            </CardMeta>
+            <CardDescription>{props.recipeNotes}</CardDescription>
+          </CardContent>
+          <CardContent extra>
+            <div className="recipe-card-btn-wrap">
+              <button className="button-primary" onClick={handleCardClick}>
+                View Recipe
+              </button>
+              <button className="button-secondary" onClick={handleDeleteClick}>
+                Remove Recipe
+              </button>
+            </div>
+          </CardContent>
+        </Card> */}
+
+        <Card
+          className="recipe-card-wrap"
+          style={{ backgroundImage: `url(${props.imageUrl})` }}
         >
-            <Card className='recipe-card-div'
-                image={props.imageUrl} //Display Picture
-                header={props.recipeName} //Recipe Name
-                meta={props.cuisine} //Recipe Description
-                description={props.recipeNotes} //Recipe Notes
-            />
+          <span class="recipe-card-overlay"></span>
+          <CardContent className="recipe-card-content">
+            <CardHeader style={{ cursor: "pointer" }} onClick={handleCardClick}>
+              {props.recipeName}
+            </CardHeader>
+            <CardMeta>
+              <span className="date">{props.cuisine}</span>
+            </CardMeta>
+            <button className="recipe-card-btn" onClick={handleCardClick}>
+              View Recipe
+            </button>
+          </CardContent>
+        </Card>
+      </GridColumn>
 
-            {/* Display more information (i.e., expand the RecipeCard)
-            if and only if the isExpanded variable is "true"*/}
-            {isExpanded == true &&
-                <RecipeCardExtension
-                    preparationTime={props.preparationTime}
-                    totalServings={props.totalServings}
-                    caloriesPerServing={props.caloriesPerServing}
-                    ingredients={props.ingredients}
-                    instructions={props.instructions}
-                />}
+      {isExpanded == true && (
+        <RecipeCardExtension
+          recipeName={props.recipeName}
+          preparationTime={props.preparationTime}
+          totalServings={props.totalServings}
+          caloriesPerServing={props.caloriesPerServing}
+          ingredients={props.ingredients}
+          instructions={props.instructions}
+          handleCardClick={handleCardClick}
+          handleDeleteClick={handleDeleteClick}
+        />
+      )}
+    </>
+  );
+};
 
-            <button className='delete-button' onClick={handleDeleteClick}>Remove Recipe</button> {/* Add onClick handler */}
-        </div>
-    )
-}
-
-export default RecipeCard
+export default RecipeCard;

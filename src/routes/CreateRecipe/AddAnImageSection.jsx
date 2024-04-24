@@ -1,12 +1,13 @@
-import React from 'react'
-import './Section.css'
+import './CreateRecipe.css'
 import './Field.css'
-import SectionHeader from './SectionHeader'
+
 import AddAnImageField from './AddAnImageField'
+import React from 'react'
+import SectionHeader from './SectionHeader'
 
 //Section to add images
 const AddAnImageSection = ({ onImageAdded }) => (
-    <div className='section'>
+    <div className='form-section'>
         <SectionHeader text='Add An Image' />
         <div>
             <AddAnImageField onImageAdded={onImageAdded} />
