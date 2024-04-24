@@ -46,7 +46,7 @@ const AddAnImageField = ({ onImageAdded }) => {
 
     return (
         <div className='form-div'>
-            <Prompt text="Image" />
+            {/* <Prompt text="Image" /> */}
 
             <input
                 type='file'

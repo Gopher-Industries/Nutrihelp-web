@@ -62,3 +62,9 @@
     margin-left: 0;
     text-align: left;
 }
+
+.flex-form {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}

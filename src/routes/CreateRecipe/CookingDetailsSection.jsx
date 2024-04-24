@@ -11,7 +11,7 @@ const CookingDetailsSection = (props) => {
     return (
         <div className='form-section'>
             <SectionHeader text='Cooking Details' />
-            <div>
+            <div className='flex-form'>
                 <PreparationTimeField
                     preparationTime={props.preparationTime}
                     onPreparationTimeChange={props.onPreparationTimeChange}

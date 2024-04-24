@@ -3,11 +3,14 @@ import './Field.css'
 import MultipleLineTextInput from './MultipleLineTextInput'
 import Prompt from './Prompt'
 import React from 'react'
+import SectionHeader from './SectionHeader'
 
 // "Recipe Notes" field for the Create Recipe page
 const RecipeNotesField = (props) => (
-    <div className='form-div'>
-        <Prompt text="Recipe Notes" />
+    <div className='form-section'>
+        {/* <Prompt text="Recipe Notes" /> */}
+        <br />
+        <SectionHeader text='Recipe Notes' />
         <MultipleLineTextInput
             recipeNotes={props.recipeNotes}
             onRecipeNotesChange={props.onRecipeNotesChange}

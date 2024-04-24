@@ -169,6 +169,8 @@ function CreateRecipe() {
     <div className="create-recipe-container">
       <br />
       <SubHeading text="Create Recipe" />
+      <br />
+      <p className="text-center">Please fill out the form below to create your favorite recipe</p>
       <div className="create-recipe-form">
         <Image className="vector-bg-left" src={backgroundLeft} />
         <Image className="vector-bg-right" src={backgroundRight} />
@@ -223,3 +225,19 @@ function CreateRecipe() {
 }
 
 export default CreateRecipe;
+
+
+
+
+
+// Create Recipe
+// -	Description below create recipe heading
+// -	Maintain grid
+// -	Remove ingredient and instruction title
+// Search Recipe
+// -	Background
+// -	Search recipe popup background purple
+
+
+
+

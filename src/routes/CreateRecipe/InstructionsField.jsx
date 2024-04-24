@@ -7,7 +7,7 @@ import React from 'react'
 // "Instructions" field for the Create Recipe page
 const InstructionsField = (props) => (
     <div className='form-div'>
-        <Prompt text="Instructions" />
+        {/* <Prompt text="Instructions" /> */}
         <MultipleLineTextInput
             instructions={props.instructions}
             onInstructionsChange={props.onInstructionsChange}
