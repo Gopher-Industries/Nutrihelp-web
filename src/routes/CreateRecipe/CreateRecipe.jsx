@@ -225,19 +225,3 @@ function CreateRecipe() {
 }
 
 export default CreateRecipe;
-
-
-
-
-
-// Create Recipe
-// -	Description below create recipe heading
-// -	Maintain grid
-// -	Remove ingredient and instruction title
-// Search Recipe
-// -	Background
-// -	Search recipe popup background purple
-
-
-
-
