@@ -1,9 +1,11 @@
+import './../NavigationBar.css'
+
+import { Link, Outlet, useNavigate } from "react-router-dom";
+import { useContext, useEffect, useState } from "react";
+
 import React from "react";
-import { Outlet, Link, useNavigate } from "react-router-dom";
-import { useEffect, useState, useContext } from "react";
 import { UserContext } from "../../../context/user.context";
 import { getAuth } from "firebase/auth";
-import './../NavigationBar.css'
 
 // Navigation bar for when the user is not logged in
 function NavigationBarSignedIn() {
@@ -29,7 +31,7 @@ function NavigationBarSignedIn() {
 
     return (
 
-        <div>
+        <div className="main-page-body">
             <div className="navigation-bar-container">
 
                 {/*NOTE: CSS for links is in "index.css"*/}

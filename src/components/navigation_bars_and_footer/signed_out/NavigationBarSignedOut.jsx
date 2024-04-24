@@ -1,12 +1,14 @@
-import React from "react";
-import { Outlet, Link } from "react-router-dom";
 import './../NavigationBar.css'
+
+import { Link, Outlet } from "react-router-dom";
+
+import React from "react";
 
 //Navigation bar for when the user is not logged in
 function NavigationBarSignedOut() {
     return (
 
-        <div>
+        <div className="main-page-body">
             <div className="navigation-bar-container">
 
                 {/*NOTE: CSS for links is in "index.css"*/}

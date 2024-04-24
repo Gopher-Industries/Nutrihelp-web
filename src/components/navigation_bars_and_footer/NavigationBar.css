@@ -131,3 +131,10 @@ a {
   .dropdown:hover .dropdown-content {
     display: block;
   }
+
+
+
+  /* Main Page Body */
+  .main-page-body {
+    background-color: #F8E7FF;
+  }
