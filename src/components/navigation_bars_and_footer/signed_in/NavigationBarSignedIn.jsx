@@ -68,7 +68,7 @@ function NavigationBarSignedIn() {
                     <div className="dropdown">
                     <Link className="link" >User</Link>
                         <div className="dropdown-content">
-                        <Link className="link" to='/'>Preference</Link>
+                        <Link className="link" to='/DietaryRequirements'>Dietary Preference</Link>
                     <Link className="link" to='/'>Profile</Link>
                         </div>
                     </div>
