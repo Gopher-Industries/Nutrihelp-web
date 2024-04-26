@@ -1,0 +1,201 @@
+.logo1Icon {
+  height: 60px;
+  width: 52.4px;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.visionCapital {
+  width: 104px;
+  position: relative;
+  font-size: var(--font-size-lg);
+  line-height: 40px;
+  display: none;
+  font-family: var(--font-poppins);
+  color: var(--color-darkorchid-100);
+  text-align: left;
+}
+.logo {
+  cursor: pointer;
+  border: 0;
+  padding: var(--padding-base-5) var(--padding-xl);
+  background-color: transparent;
+  width: 215px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  gap: var(--gap-xs);
+  background-image: url(/public/logo@3x.png);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: top;
+  flex-shrink: 0;
+}
+.placeholder {
+  margin: 0;
+  position: relative;
+  font-size: inherit;
+  line-height: 28px;
+  font-weight: 500;
+  font-family: inherit;
+  display: inline-block;
+  min-width: 129px;
+}
+.menuItem {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: var(--padding-9xs);
+  cursor: pointer;
+}
+.placeholder1 {
+  margin: 0;
+  position: relative;
+  font-size: inherit;
+  line-height: 28px;
+  font-weight: 500;
+  font-family: inherit;
+  display: inline-block;
+  min-width: 95px;
+}
+.menuItem1 {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: var(--padding-9xs);
+}
+.placeholder2 {
+  margin: 0;
+  position: relative;
+  font-size: inherit;
+  line-height: 28px;
+  font-weight: 500;
+  font-family: inherit;
+}
+.menuItem2 {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: var(--padding-9xs);
+}
+.placeholder3 {
+  margin: 0;
+  width: 99px;
+  position: relative;
+  font-size: inherit;
+  line-height: 28px;
+  font-weight: 500;
+  font-family: inherit;
+  display: inline-block;
+  flex-shrink: 0;
+}
+.menu,
+.menuItem3 {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: flex-start;
+  box-sizing: border-box;
+}
+.menuItem3 {
+  width: 75px;
+  padding: var(--padding-9xs) 0 var(--padding-9xs) var(--padding-9xs);
+  flex-shrink: 0;
+}
+.menu {
+  margin: 0;
+  width: 397px;
+  padding: 0;
+  gap: var(--gap-mid);
+  max-width: 100%;
+  white-space: nowrap;
+  text-align: left;
+  font-size: var(--font-size-5xl);
+  color: var(--main-body);
+  font-family: var(--font-poppins);
+}
+.profile {
+  margin: 0;
+  width: 106px;
+  position: relative;
+  font-size: inherit;
+  line-height: 28px;
+  font-weight: 500;
+  font-family: inherit;
+  white-space: pre-wrap;
+  display: inline-block;
+}
+.colright {
+  width: 805px;
+  align-items: center;
+  justify-content: center;
+  padding: var(--padding-xs-5) var(--padding-130xl) var(--padding-xs-5) 0;
+  box-sizing: border-box;
+  gap: var(--gap-134xl);
+  flex-shrink: 0;
+}
+.colright,
+.fRAME,
+.header {
+  display: flex;
+  flex-direction: row;
+  max-width: 100%;
+}
+.header {
+  width: 1567px;
+  overflow: hidden;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--padding-base) 0;
+  box-sizing: border-box;
+  gap: var(--gap-xl);
+}
+.fRAME {
+  width: 1877px;
+  align-items: flex-start;
+  justify-content: center;
+  text-align: left;
+  font-size: var(--font-size-5xl);
+  color: var(--color-black);
+  font-family: var(--font-poppins);
+}
+@media screen and (max-width: 1200px) {
+  .header {
+    flex-wrap: wrap;
+  }
+}
+@media screen and (max-width: 1050px) {
+  .colright {
+    flex-wrap: wrap;
+    gap: var(--gap-57xl);
+    padding-right: var(--padding-55xl);
+    box-sizing: border-box;
+  }
+}
+@media screen and (max-width: 750px) {
+  .menu {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+@media screen and (max-width: 450px) {
+  .placeholder,
+  .placeholder1,
+  .placeholder2,
+  .placeholder3,
+  .profile {
+    font-size: var(--font-size-lgi);
+    line-height: 22px;
+  }
+  .colright {
+    gap: var(--gap-19xl);
+    padding-right: var(--padding-xl);
+    box-sizing: border-box;
+  }
+}

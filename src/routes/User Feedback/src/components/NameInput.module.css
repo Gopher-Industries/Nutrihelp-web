@@ -1,0 +1,46 @@
+.contactNumber,
+.enterUsername {
+  display: inline-block;
+  position: relative;
+}
+.contactNumber {
+  min-width: 123px;
+}
+.enterUsername {
+  width: 87px;
+  border: 0;
+  outline: 0;
+  font-family: var(--font-montserrat);
+  font-size: var(--font-size-3xs);
+  background-color: transparent;
+  height: 12px;
+  font-style: italic;
+  color: var(--grayscale-tinted-gray);
+  text-align: left;
+  white-space: nowrap;
+  padding: 0;
+}
+.movingMadeEasy {
+  align-self: stretch;
+  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.18);
+  border-radius: var(--br-4xs);
+  background-color: var(--grayscale-white);
+  border: 1px solid var(--grayscale-tinted-gray);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  padding: var(--padding-2xs) var(--padding-3xs);
+}
+.nameInput {
+  width: 160px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: var(--gap-8xs);
+  text-align: left;
+  font-size: var(--font-size-sm);
+  color: var(--color-darkorchid-200);
+  font-family: var(--font-montserrat);
+}

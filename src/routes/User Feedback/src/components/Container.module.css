@@ -1,0 +1,183 @@
+.groupIcon,
+.groupIcon1 {
+  position: absolute;
+  margin: 0 !important;
+  object-fit: contain;
+  z-index: 1;
+}
+.groupIcon {
+  width: 1224.2px;
+  height: 12992.4px;
+  right: -593.8px;
+  bottom: -6562.1px;
+}
+.groupIcon1 {
+  width: 1682.3px;
+  height: 5078.6px;
+  top: -2683.4px;
+  right: -2299.8px;
+}
+.doubleArrowRightIcon,
+.image1Icon {
+  width: 47px;
+  height: 47px;
+  position: relative;
+  object-fit: cover;
+  z-index: 1;
+}
+.doubleArrowRightIcon {
+  width: 40px;
+  height: 42.1px;
+  overflow: hidden;
+  flex-shrink: 0;
+  object-fit: contain;
+}
+.groupIcon2,
+.groupIcon3 {
+  position: absolute;
+  top: 0;
+  left: 21px;
+  width: 9.6px;
+  height: 43.5px;
+  z-index: 1;
+}
+.groupIcon3 {
+  top: 1.2px;
+  left: 0;
+  width: 13.1px;
+  height: 42.3px;
+}
+.groupParent {
+  height: 43.5px;
+  width: 30.6px;
+  position: relative;
+}
+.infoNoteAction,
+.infoNoteActionInner {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+.infoNoteActionInner {
+  flex-direction: row;
+  padding: 0 var(--padding-8xs) 0 var(--padding-9xs);
+}
+.infoNoteAction {
+  flex-direction: column;
+  gap: var(--gap-base-9);
+}
+.infoNoteActionWrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: flex-end;
+  padding: 0 var(--padding-10xs) 0 var(--padding-9xs);
+}
+.containerInner,
+.image1Parent {
+  display: flex;
+  justify-content: flex-start;
+}
+.image1Parent {
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--gap-xl);
+}
+.containerInner {
+  flex-direction: row;
+  align-items: flex-start;
+  padding: 0 var(--padding-6xs) var(--padding-xs-1);
+}
+.heartCardiogram {
+  width: 57px;
+  height: 61px;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+  display: none;
+  z-index: 3;
+}
+.nutritionPanelIcon {
+  height: 34.8px;
+  width: 43.9px;
+  position: relative;
+  z-index: 1;
+}
+.nutritionPanelWrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: 0 var(--padding-3xs) 0 var(--padding-6xs);
+}
+.alertTriangle,
+.nutritionIcon {
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.alertTriangle {
+  width: 54px;
+  height: 55px;
+  display: none;
+  z-index: 5;
+}
+.nutritionIcon {
+  height: 62px;
+  width: 59px;
+  z-index: 2;
+}
+.nutritionWrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: 0 0 var(--padding-9xs-2);
+}
+.iNoteActionIcon {
+  height: 55px;
+  width: 56px;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+  z-index: 1;
+}
+.leftIndentMarker {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: 0 var(--padding-12xs) var(--padding-4xs-2) var(--padding-9xs);
+}
+.textLeftIndentSquareFillIcon {
+  height: 41px;
+  width: 49px;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+  z-index: 1;
+}
+.container,
+.squareFillShape {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: 0 var(--padding-2xs) 0 var(--padding-12xs);
+}
+.container {
+  border-radius: var(--br-5xl);
+  background-color: var(--color-ghostwhite);
+  overflow: hidden;
+  flex-direction: column;
+  padding: var(--padding-15xl) var(--padding-7xl) var(--padding-68xl);
+  position: relative;
+  gap: var(--gap-29xl-8);
+}
+@media screen and (max-width: 750px) {
+  .container {
+    padding-top: var(--padding-3xl);
+    padding-bottom: var(--padding-38xl);
+    box-sizing: border-box;
+  }
+}
