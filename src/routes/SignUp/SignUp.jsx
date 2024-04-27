@@ -166,7 +166,7 @@ const SignUp = (props) => {
             <br></br>
 
             <Button positive onClick={handleSubmit}>
-                Sign Up
+                Sign Up 
             </Button>
 
             <br></br>

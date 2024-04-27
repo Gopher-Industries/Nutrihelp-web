@@ -45,11 +45,19 @@ const Login = () => {
 
             setCurrentUser(userCredential.user);  // Update context with new user
             console.log(user.displayName)
-            navigate('/'); // Navigate to Landing Page
+            //land to mfa page
+            // navigate('/MFAform');
+            console.log("Navigating to MFA page...");
+
+            // before landing page
+            //  navigate('/'); 
+            // navigate("/forgotPassword");
+
 
             alert("Successfully signed in with Email and Password. \nEmail: " + email)
         } catch (error) {
-
+            console.log("Navigating to MFA page...");
+            navigate('/MFAform');
             alert("Failed to sign in: " + error.message);
 
         }
