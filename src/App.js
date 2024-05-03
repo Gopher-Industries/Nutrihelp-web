@@ -18,6 +18,7 @@ import Home from './routes/Home/Home';
 import DietaryRequirements from './routes/UI-Only-Pages/DietaryRequirements/DietaryRequirements';
 import Menu from './routes/UI-Only-Pages/Menu/Menu';
 import Recipe from './components/Recipe';
+import newMenu from './routes/NewMenu/newMenu';
 // import Allergy from './components/Allergy';
 // import Allergy from './Allergy';
 import Meal from './routes/Meal/Meal';
@@ -61,6 +62,7 @@ function App() {
           <Route path='forgotPassword' element={<ForgotPassword />} />
           <Route path='createRecipe' element={<CreateRecipe />} />
           <Route path='searchRecipes' element={<SearchRecipes />} />
+          <Route path='newMenu' element={<newMenu />} />
 
           {/* UI-Only-Pages (in the path: ./routes/UI-Only-Pages/) */}
           <Route path='landing' element={<Landing />} />
