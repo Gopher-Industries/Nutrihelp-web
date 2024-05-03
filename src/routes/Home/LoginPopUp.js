@@ -53,7 +53,8 @@ function LoginPopUp(props) {
 
             setCurrentUser(userCredential.user);  // Update context with new user
             console.log(user.displayName)
-            navigate('/'); // Navigate to Landing Page
+            // navigate('/'); // Navigate to Landing Page
+            navigate("/MFAform")
 
             alert("Successfully signed in with Email and Password. \nEmail: " + email)
         } catch (error) {

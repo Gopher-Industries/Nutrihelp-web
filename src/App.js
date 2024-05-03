@@ -22,7 +22,7 @@ import newMenu from './routes/NewMenu/newMenu';
 // import Allergy from './components/Allergy';
 // import Allergy from './Allergy';
 import Meal from './routes/Meal/Meal';
-import Dashboard from './routes/NewMenu/Dashboard';
+import MFAform from './routes/MFA/MFAform';
 function App() {
 
   useEffect(() => {
@@ -63,8 +63,7 @@ function App() {
           <Route path='forgotPassword' element={<ForgotPassword />} />
           <Route path='createRecipe' element={<CreateRecipe />} />
           <Route path='searchRecipes' element={<SearchRecipes />} />
-          <Route path='newMenu' element={<newMenu />} />
-          <Route path='dashboard' element={<Dashboard />} />
+          <Route path='MFAform' element={<MFAform/>} />
 
           {/* UI-Only-Pages (in the path: ./routes/UI-Only-Pages/) */}
           <Route path='landing' element={<Landing />} />
