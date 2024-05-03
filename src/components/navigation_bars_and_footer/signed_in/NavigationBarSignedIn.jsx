@@ -54,7 +54,7 @@ function NavigationBarSignedIn() {
                     )} */}
 
 
-                    <Link className="link" to='/newMenu'>Menu</Link>
+                    <Link className="link" to='/dashboard'>Menu</Link>
                     <Link className="link" to='/Meal'>Meal Planning</Link>
 
                     <div className="dropdown">

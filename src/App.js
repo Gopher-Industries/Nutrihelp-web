@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import 'semantic-ui-css/semantic.min.css'
 import './App.css';
 import { BrowserRouter as Router, Routes, Route, Switch } from 'react-router-dom';
@@ -22,6 +22,7 @@ import newMenu from './routes/NewMenu/newMenu';
 // import Allergy from './components/Allergy';
 // import Allergy from './Allergy';
 import Meal from './routes/Meal/Meal';
+import Dashboard from './routes/NewMenu/Dashboard';
 function App() {
 
   useEffect(() => {
@@ -63,6 +64,7 @@ function App() {
           <Route path='createRecipe' element={<CreateRecipe />} />
           <Route path='searchRecipes' element={<SearchRecipes />} />
           <Route path='newMenu' element={<newMenu />} />
+          <Route path='dashboard' element={<Dashboard />} />
 
           {/* UI-Only-Pages (in the path: ./routes/UI-Only-Pages/) */}
           <Route path='landing' element={<Landing />} />
