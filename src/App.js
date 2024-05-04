@@ -15,7 +15,7 @@ import YourPreferences from './routes/UI-Only-Pages/YourPreferences/pref-dis-hea
 import SignInSignUp from './routes/UI-Only-Pages/SignInSignUp/SignInSignUp';
 import UserProfilePage from './routes/UI-Only-Pages/UserProfilePage/userprofile';
 import Home from './routes/Home/Home';
-import DietaryRequirements from './routes/UI-Only-Pages/DietaryRequirements/Nutrition-Snacks';
+import DietaryRequirements from './routes/UI-Only-Pages/DietaryRequirements/DietaryRequirements';
 import Menu from './routes/UI-Only-Pages/Menu/Menu';
 import Recipe from './components/Recipe';
 // import Allergy from './components/Allergy';
