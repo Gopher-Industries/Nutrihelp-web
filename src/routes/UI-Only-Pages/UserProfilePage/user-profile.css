@@ -107,7 +107,7 @@ label {
     color: #000000;
 }
 
-input {
+input[type="email"],input[type="text"],input[type="password"],input[type="number"] {
     outline: 0;
     padding: 5px 12px;
     -moz-box-shadow: 0px 10px 10px -5px rgba(0, 0, 0, 0.715) inset;
@@ -134,7 +134,6 @@ input {
 .logout-btn-content {
     display: flex;
     justify-content: center;
-    align-items: center;
 }
 
 .logout-btn {

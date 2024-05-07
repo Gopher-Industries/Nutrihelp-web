@@ -51,7 +51,6 @@ const UserProfilePage = () => {
               </p>
 
               <div className="bottom-text">
-                <p>How can we help?</p>
                 <div className="bottom-text-pair">
                   <p>
                     <AiFillBug /> Report a bug
@@ -72,23 +71,19 @@ const UserProfilePage = () => {
                 <div className="form-content">
                   <label htmlFor="firstName">First Name</label>
                   <input type="text" name="firstName" id="firstName" />
-                  <button className="edit-btn">Edit</button>
                 </div>
                 
                 <div className="form-content">
                   <label htmlFor="lastName">Last Name</label>
                   <input type="text" name="lastName" id="lastName" />
-                  <button className="edit-btn">Edit</button>
                 </div>
                 <div className="form-content">
                   <label htmlFor="number">Number</label>
                   <input type="text" name="number" id="number" />
-                  <button className="edit-btn">Edit</button>
                 </div>
                 <div className="form-content">
                   <label htmlFor="email">Email</label>
                   <input type="email" name="email" id="email" />
-                  <button className="edit-btn">Edit</button>
                 </div>
                 
                 <div className="form-content">
@@ -99,24 +94,24 @@ const UserProfilePage = () => {
                     id="password"
                     autoComplete="new-password"
                   />
-                  <button className="edit-btn">Edit</button>
                 </div>
                 <div className="form-content">
-                  <label htmlFor="mfa">MFA</label>
+                <label htmlFor="mfa">MFA</label>
                   <div className="mfa-toggle">
+                  <label class="switch">
                     <input
                       type="checkbox"
                       id="mfa"
                       checked={isMFAEnabled}
                       onChange={toggleMFA}
                     />
-                    <label htmlFor="mfa" className="toggle-label"></label>
+                    <span class="slider round"></span>
+                    </label>
                   </div>
                 </div>
-                
 
                 <div className="logout-btn-content">
-                  <button onClick={handleInputValue} className="logout-btn">
+                  <button type="button" className="logout-btn">
                     LogOut
                   </button>
                 </div>
@@ -125,7 +120,8 @@ const UserProfilePage = () => {
           </div>
 
           <div className="logout-btn-content">
-            <button className="logout-btn">Next</button>
+            <button className="logout-btn">Save</button>
+            <button className="logout-btn">Clear</button>
           </div>
         </div>
       </div>
