@@ -16,6 +16,7 @@ import SignInSignUp from './routes/UI-Only-Pages/SignInSignUp/SignInSignUp';
 import UserProfilePage from './routes/UI-Only-Pages/UserProfilePage/userprofile';
 import Home from './routes/Home/Home';
 import DietaryRequirements from './routes/UI-Only-Pages/DietaryRequirements/DietaryRequirements';
+import ScanProducts from './routes/UI-Only-Pages/ScanProducts/ScanProducts';
 import Menu from './routes/UI-Only-Pages/Menu/Menu';
 import Recipe from './components/Recipe';
 import newMenu from './routes/NewMenu/newMenu';
@@ -74,6 +75,7 @@ function App() {
           <Route path='signInSignUp' element={<SignInSignUp />} />
           <Route path='userProfile' element={<UserProfilePage />} />
           <Route path='dietaryRequirements' element={<DietaryRequirements />} />
+          <Route path='ScanProducts' element={<ScanProducts />} />
           <Route path='menu' element={<Menu />} />
           <Route path='recipe' element={<Recipe />} />
           {/* <Route path="/components/allergy" component={Allergy} /> */}
