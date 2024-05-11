@@ -1,155 +1,108 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext } from "react";
 import { UserContext } from "../../context/user.context";
-import './CreateAccountPopUp.css'
 import { Link, useNavigate } from "react-router-dom";
 import Input from "../../components/general_components/Input/Input";
 import { Button, Icon } from 'semantic-ui-react';
-import { auth, signInWithGooglePopup, createUserDocFromAuth, signInAutUserWithEmailAndPassword, firestore } from "../../utils/firebase";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-import {
-    multiFactor,
-    PhoneAuthProvider,
-    PhoneMultiFactorGenerator,
-    RecaptchaVerifier,
-    sendEmailVerification
-} from "firebase/auth";
 import '../../App.css'
-import './SignUp.css'
+import './SignUp.css';
 
 function LoginPopUp(props) {
-
     const navigate = useNavigate(); // Define navigation
     const { setCurrentUser } = useContext(UserContext); // Extract context methods
 
-    // State management for user credentials and MFA flow
-    const [contact, setContact] = useState({ email: '', password: '' });
+    // State management for user credentials
+    const [contact, setContact] = useState({ username: '', password: '' });
 
-
-    // Define what happens when change is made into the email/username inputs
+    // Define what happens when change is made into the username/password inputs
     const handleChange = (event) => {
         const { name, value } = event.target;
-
         // Handle form input changes
         setContact(prevValue => ({ ...prevValue, [name]: value }));
     };
 
-    const { email, password } = contact;
+    const { username, password } = contact;
 
     const handleSignIn = async (e) => {
         e.preventDefault();
-
-        const { email, password } = contact;
-
         try {
-            // Attempt email/password sign-in
-            const userCredential = await signInWithEmailAndPassword(auth, email, password);
-            const user = userCredential.user;
+            // Make the fetch request to authenticate the user
+            const response = await fetch('http://localhost:80/api/login', {
+                method: 'POST',
+                body: JSON.stringify({ username, password }),
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+            });
 
-            // // Check for email verification before allowing login
-            // if (!user.emailVerified) {
-            //     alert('Please verify your email before logging in.');
-            //     return;
-            // }
-
-            setCurrentUser(userCredential.user);  // Update context with new user
-            console.log(user.displayName)
-            // navigate('/'); // Navigate to Landing Page
-            navigate("/MFAform")
-
-            alert("Successfully signed in with Email and Password. \nEmail: " + email)
+            // Check the response status
+            if (response.ok) {
+                const data = await response.json();
+                // Update context with authenticated user
+                console.log(data.user)
+                setCurrentUser(data.user);
+                // Navigate to the desired page upon successful login
+                navigate("/MFAform");
+                alert("Successfully signed in. Welcome back, " + username + "!");
+            } else {
+                // Handle unsuccessful login
+                alert("Failed to sign in. Please check your credentials and try again.");
+            }
         } catch (error) {
-
-            alert("Failed to sign in: " + error.message);
-
+            // Handle errors
+            console.error('Error signing in:', error.message);
+            alert("Failed to sign in. An error occurred.");
         }
     };
 
-    // Log in as Google user
+    // Function to handle Google sign-in
     const logGoogleUser = async () => {
-        // Similar to your previous implementation
-        try {
-            // Sign in with Google and navigate upon success
-            const { user } = await signInWithGooglePopup();
-            const userDocRef = await createUserDocFromAuth(user);
-            setCurrentUser(user);
-            if (userDocRef) alert("Successfully signed in with Google account. \nDisplay name: " + user.displayName);
-            if (userDocRef) navigate('/');
-        } catch (error) {
-            console.error('Error signing in with Google', error.message);
-        }
+        // Handle Google sign-in here
     };
 
+    // Function to handle forgot password click
     const handleForgotPasswordClick = () => {
         navigate("/forgotPassword"); // Navigate to forgot password page
-    }
+    };
 
-  return (props.trigger) ? (
-    <div className="createpopup">
-      <div className="createpopup-inner">
-        <button className="close-btn" onClick={() => props.setTrigger(false)}
-        >❌</button>
-        <div className="login-style">
-
-            <h3 style={{ paddingTop: '20px' }}>Login</h3>
-
-            <br></br>
-            <Input
-                label="Email"
-                name="email"
-                type='text'
-                placeholder="Email"
-                onChange={handleChange}
-                value={contact.email}
-            />
-
-            <br></br>
-
-            <Input
-                label="Password"
-                name='password'
-                type="password"
-                placeholder="Password"
-                onChange={handleChange}
-                value={contact.password}
-            />
-
-            <br></br>
-
-            <Button style={{ width: '300px' }}
-                positive onClick={handleSignIn}>
-                Sign In
-            </Button>
-
-            <br></br>
-
-            <Button style={{ width: '300px' }} 
-                onClick={logGoogleUser}
-                color='blue'>
-                <Icon
-                    name='google'
-                />
-                Sign In With Google
-            </Button>
-
-            <br></br>
-
-            <p className="forgot-password"
-                onClick={handleForgotPasswordClick}>
-                Forgot Password? 
-            </p>
-
-            {/* <Link className="link-div" to='/signup'>Create Account</Link> */}
-
-            <br></br>
-
-            </div>
-                  { props.children }
+    return (props.trigger) ? (
+        <div className="createpopup">
+            <div className="createpopup-inner">
+                <button className="close-btn" onClick={() => props.setTrigger(false)}>❌</button>
+                <div className="login-style">
+                    <h3 style={{ paddingTop: '20px' }}>Login</h3>
+                    <br></br>
+                    <Input
+                        label="Username"
+                        name="username"
+                        type='text'
+                        placeholder="Username"
+                        onChange={handleChange}
+                        value={username}
+                    />
+                    <br></br>
+                    <Input
+                        label="Password"
+                        name='password'
+                        type="password"
+                        placeholder="Password"
+                        onChange={handleChange}
+                        value={password}
+                    />
+                    <br></br>
+                    <Button style={{ width: '300px' }} positive onClick={handleSignIn}>Sign In</Button>
+                    <br></br>
+                    <Button style={{ width: '300px' }} onClick={logGoogleUser} color='blue'>
+                        <Icon name='google' />
+                        Sign In With Google
+                    </Button>
+                    <br></br>
+                    <p className="forgot-password" onClick={handleForgotPasswordClick}>Forgot Password?</p>
+                    <br></br>
                 </div>
-              </div>
-              
-            ) : "";
-          }
+                { props.children }
+            </div>
+        </div>
+    ) : "";
+}
 
-export default LoginPopUp
-
-
+export default LoginPopUp;
