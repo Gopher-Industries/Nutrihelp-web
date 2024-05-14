@@ -56,6 +56,7 @@ function NavigationBarSignedIn() {
 
                     <Link className="link" to='/dashboard'>Menu</Link>
                     <Link className="link" to='/Meal'>Meal Planning</Link>
+                    
 
                     <div className="dropdown">
                     <Link className="link" >Recipies</Link>
@@ -73,6 +74,7 @@ function NavigationBarSignedIn() {
                         </div>
                     </div>
                     <Link className="link" to='/ScanProducts'>Scan Products</Link>
+                    <Link className="link" to='/appointment'>Book an Appointment</Link>
 
                     {/* <button className="link-style-button" onClick={logout}>Logout</button> */}
                 </div>
