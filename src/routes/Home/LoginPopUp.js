@@ -52,7 +52,7 @@ function LoginPopUp(props) {
             // }
 
             setCurrentUser(userCredential.user);  // Update context with new user
-            console.log(user.displayName)
+            console.log("hello",userCredential.user)
             // navigate('/'); // Navigate to Landing Page
             navigate("/MFAform")
 
