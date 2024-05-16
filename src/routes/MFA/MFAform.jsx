@@ -3,7 +3,7 @@ import './MFAform.css'; // Import the CSS file
 import { Link, useNavigate } from "react-router-dom";
 
 const MFAform = () => {
-  const [code, setCode] = useState(['', '', '', '']);
+  const [code, setCode] = useState(['', '', '', '','','']);
   const [error, setError] = useState('');
   const navigate = useNavigate(); // Define navigation
 
@@ -22,7 +22,7 @@ const MFAform = () => {
   };
   const handlesubmitbtn = () => {
     const fullCode = code.join('');
-    if (fullCode.trim() == "0000") {
+    if (fullCode.trim() == "000000") {
       alert("Successfully logged in")
         navigate('/');
     } else {
