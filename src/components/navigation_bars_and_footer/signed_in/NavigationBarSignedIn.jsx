@@ -54,7 +54,7 @@ function NavigationBarSignedIn() {
                     )} */}
 
 
-                    <Link className="link" to='/dashboard'>Menu</Link>
+                    <Link className="link" to='/menu'>Menu</Link>
                     <Link className="link" to='/Meal'>Meal Planning</Link>
                     
 
@@ -73,7 +73,7 @@ function NavigationBarSignedIn() {
                     <Link className="link" to='/userProfile'>Profile</Link>
                         </div>
                     </div>
-                    <Link className="link" to='/ScanProducts'>Scan Products</Link>
+                    <Link className="link" to='/ScanProducts'>ScanProducts</Link>
                    
 
                     {/* <button className="link-style-button" onClick={logout}>Logout</button> */}

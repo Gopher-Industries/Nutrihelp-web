@@ -18,6 +18,7 @@ import Home from './routes/Home/Home';
 import DietaryRequirements from './routes/UI-Only-Pages/DietaryRequirements/DietaryRequirements';
 import Appointment from './routes/UI-Only-Pages/Appointment/Appointment';
 import Menu from './routes/UI-Only-Pages/Menu/Menu';
+import ScanProducts from './routes/UI-Only-Pages/ScanProducts/ScanProducts';
 import Recipe from './components/Recipe';
 // import Allergy from './components/Allergy';
 // import Allergy from './Allergy';
@@ -67,6 +68,7 @@ function App() {
 
           {/* UI-Only-Pages (in the path: ./routes/UI-Only-Pages/) */}
           <Route path='appointment' element={<Appointment />} /> 
+          <Route path='ScanProducts' element={<ScanProducts />} />
 
           <Route path='landing' element={<Landing />} />
           <Route path='yourPreferences' element={<YourPreferences />} />
