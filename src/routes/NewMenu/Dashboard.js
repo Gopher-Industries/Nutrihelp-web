@@ -1,47 +1,20 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 
-export default function Dashboard() {
+ 
 
-   
+const Dashboard = () => {
 
-    const [searchTerm, setSearchTerm] = useState('');
-    const [filteredItems, setFilteredItems] = useState([]);
-  
-    // List of food items
-    const foodItems = [
-      { category: 'breakfast', name: 'Banana Spice Smoothie' },
-      { category: 'breakfast', name: 'Pumpkin Oatmeal' },
-      { category: 'breakfast', name: 'Carrot Ginger Juice' },
-      { category: 'lunch', name: 'Stuffed Green Peppers' },
-      { category: 'lunch', name: 'Easy Chicken Enchilada Casserole' },
-      { category: 'lunch', name: 'Mushroom & Leek Risotto' },
-      { category: 'dinner', name: 'Mushroom & Leek Risotto' },
-      { category: 'dinner', name: 'Cottage Cheese with Pineapple Chunks' },
-      { category: 'dinner', name: 'Whole Grain Crackers' },
-      { category: 'extras', name: 'Soup' },
-      { category: 'extras', name: 'Salad' },
-      { category: 'extras', name: 'Fruit' },
-    ];
-  
-    useEffect(() => {
-      // Filter the items based on the search term
-      if (searchTerm) {
-        const filtered = foodItems.filter(item =>
-          item.name.toLowerCase().includes(searchTerm.toLowerCase())
-        );
-        setFilteredItems(filtered);
-      } else {
-        setFilteredItems([]);
-      }
-    }, [searchTerm]);
-  
-    const handleSearchChange = (e) => {
-      setSearchTerm(e.target.value);
-    };
-  
+      
+
     //html code including food items
     return (
+
       <main>
+
+       
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+        
           <div class="mainBox">
           
           <div class = "Title">
@@ -118,37 +91,59 @@ export default function Dashboard() {
             <p>Dinner</p>
           </div>
   
-          <div class="breakfastBox4">
-            <div class = "breakfastBoxSub41">
-            <div class="breakfastBoxSub4text1">
-              <p>Mushroom & Leek Risotto</p>
-            </div>
-            </div>
-            <div class = "breakfastBoxSub42">
-            <div class="breakfastBoxSub4text2">
-            <p>Cottage cheese with pieapple chunks</p>
-            </div>
-            </div>
-            <div class = "breakfastBoxSub43">
-            <div class="breakfastBoxSub4text3">
-              <p>whole grain crackers</p>
-              </div>
-            </div>
+  
+          
+          <div class = "widgetBox">
+
+            <i class="fa-solid fa-palette"></i>
+
+            <i class="fa-solid fa-paintbrush"></i>
+
+            <i class="fa-solid fa-caret-down"></i>
+
+            <i class="fa-solid fa-sun"></i>
+
+            <i class="fa-solid fa-moon"></i>
+
+            <i class="fa-solid fa-sliders"></i>
+
+
+
           </div>
+
+
+          <div class = "widgetBox2">
+
+          <i class="fa-solid fa-circle-plus"></i>
+
+          <i class="fa-solid fa-caret-down"></i>
+
+          <i class="fa-solid fa-utensils"></i>
+
+          <i class="fa-solid fa-heart-pulse"></i>
+
+          <i class="fa-solid fa-carrot"></i>
+
+          <i class="fa-solid fa-calendar-check"></i>
+
+          <i class="fa-solid fa-bars"></i>
+
+        </div>
+
+        <div class = "userfeedbackButton">
+
+          <i class="fa-solid fa-user"></i>
+
+          <i class="fa-solid fa-comment"></i>
+
+        </div>
   
-          <div class="breakfastBoxTitle4">
-            <p>Extras</p>
-            </div>
-  
-          {/* Render filtered food items */}
-          {filteredItems.map((item, index) => (
-            <div className="menuItem" key={index}>
-              <p>{item.name}</p>
-            </div>
-          ))}
+    
         </div>
       </main>
     );
 
   
 }
+
+export default Dashboard

@@ -94,9 +94,9 @@
       background-color: #f2f2f2; 
       border: 1px solid #ccc; 
       border-radius: 10px;
-      margin-top: -5px;
+      margin-top: 15px;
       position: relative;
-      left: 10%;
+      left: 8.5%;
   }
 
   .Title {
@@ -104,15 +104,15 @@
     font-weight: 800;
     font-style: normal;
     font-size: 22px;
-    
-    left: 46%;
-    
+    margin-left: -1%;
+    margin-top: 10px;
+
   }
 
   .daySelctionText {
     position: relative;
-    left: 46%;
-    top: 2%;
+    left: 44.4%;
+    top: -1%;
     font-weight: lighter;
     
   }
@@ -125,15 +125,15 @@
     border-radius: 5px;
     margin-top: 85px;
     position: relative;
-    left: 4%;
+    left: 10%;
     
   }
 
   .breakfastBoxTitle {
     position:static;
-    margin-left: 32%;
+    margin-left: 34%;
     margin-top: -111px;
-    font-weight: bold;
+    font-weight: Bold;
 
   }
 
@@ -196,7 +196,7 @@
     border-radius: 5px;
     margin-top: -325px;
     position: relative;
-    left: 27.5%;
+    left: 39.5%;
   }
 
   .breakfastBoxSub2text1{
@@ -216,7 +216,7 @@
 
   .breakfastBoxTitle2 {
     position: relative;
-    left: 34.5%;
+    left: 47.5%;
     margin-top: -32.8%;
     font-weight: bold;
 
@@ -260,7 +260,7 @@
 
   .breakfastBoxTitle3 {
     position: relative;
-    left: 58%;
+    left: 77.4%;
     margin-top: -32.8%;
     font-weight: bold;
 
@@ -290,7 +290,7 @@
     border-radius: 5px;
     margin-top: 40px;
     position: relative;
-    left: 51%;
+    left: 70%;
   }
 
   .breakfastBoxSub31 {
@@ -328,18 +328,6 @@
     position: relative;
     left: 4%;
     
-  }
-
-
-  .breakfastBox4 {
-    width: 220px;
-    height: 323px;
-    background-color: #f2f2f2; 
-    border: 3px solid #dcaadc; 
-    border-radius: 5px;
-    margin-top: 41px;
-    position: relative;
-    left: 75%;
   }
 
   .breakfastBoxSub4text1{
@@ -401,16 +389,25 @@
 
   }
 
-  .widgetBoxaa {
+  .widgetBox {
     width: 80px;
     height: 330px;
     background-color: #f2f2f2; 
     border: 1px solid #a6a4a4; 
     border-radius: 15px;
-    margin-top: -30%;
-    left: 2%;
+    margin-top: -7%;
+    margin-left: -8.3%;
   }
-
+  
+  .widgetBox2 {
+    width: 80px;
+    height: 430px;
+    background-color: #f2f2f2; 
+    border: 1px solid #a6a4a4; 
+    border-radius: 15px;
+    margin-top: -28%;
+    margin-left: 101.5%;
+  }
 
   .fa-palette{
     font-size: 35px;
@@ -435,7 +432,7 @@
 
   .fa-sun{
     font-size: 30px;
-    margin-top: 30px;
+    margin-top: 17px;
     margin-left: 24px;
   }
 
@@ -447,6 +444,64 @@
 
   .fa-sliders{
     font-size: 30px;
-    margin-top: 35px;
+    margin-top: 30px;
     margin-left: 26px;
+  }
+
+  .fa-circle-plus{
+    font-size: 35px;
+    margin-top: 20px;
+    margin-left: 23px;
+  }
+
+  .fa-utensils{
+    font-size: 35px;
+    margin-top: 15px;
+    margin-left: 23px;
+  }
+
+  .fa-heart-pulse{
+    font-size: 35px;
+    margin-top: 25px;
+    margin-left: 23px;
+  }
+
+  .fa-carrot{
+    font-size: 35px;
+    margin-top: 25px;
+    margin-left: 23px;
+  }
+
+  .fa-calendar-check{
+    font-size: 35px;
+    margin-top: 33px;
+    margin-left: 23px;
+  }
+
+  .fa-bars{
+    font-size: 35px;
+    margin-top: 33px;
+    margin-left: 23px;
+  }
+
+  .userfeedbackButton{
+    height: 70px;
+    width: 70px;
+    border-radius: 50%;
+    background-color: #f2f2f2; 
+    border: 1px solid #818181; 
+    margin-left: -8%;
+    margin-top: -60px;
+  }
+
+  .fa-user{
+    font-size: 30px;
+    margin-left: 21px;
+    margin-top: 16px;
+  }
+
+  .fa-comment{
+    margin-top: -210%;
+    margin-left: 49px;
+    font-size: 25px;
   }

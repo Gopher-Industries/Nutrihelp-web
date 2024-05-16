@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { createContext, useState } from 'react';
 import './Meal.css'; // Import your CSS file here
+import { Outlet, Link, useNavigate } from "react-router-dom";
+
 
 const Meal = () => {
     const [selectedItems, setSelectedItems] = useState([]);
@@ -271,7 +273,10 @@ const Meal = () => {
                             </ul>
                         </div>
                     </div>
-                    <button className="viewplan">View Meal Plan</button>
+                    <Link className="link" to='/dashboard'>
+                    <button className="viewplan">View Meal Plan</button> </Link>
+
+
                 </div>
             </div>
         </div>
