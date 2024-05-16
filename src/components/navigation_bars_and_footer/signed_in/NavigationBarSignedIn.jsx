@@ -74,7 +74,7 @@ function NavigationBarSignedIn() {
                         </div>
                     </div>
                     <Link className="link" to='/ScanProducts'>Scan Products</Link>
-                    <Link className="link" to='/appointment'>Book an Appointment</Link>
+                   
 
                     {/* <button className="link-style-button" onClick={logout}>Logout</button> */}
                 </div>
