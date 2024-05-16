@@ -41,6 +41,7 @@ function App() {
   //Obtain the current user from the UserContext (from user.context.jsx)
   const { currentUser } = useContext(UserContext)
   var isLoggedIn = false;
+  
 
   //If the user has logged in, set the isLoggedIn variable to true, else false
   if (currentUser) {
