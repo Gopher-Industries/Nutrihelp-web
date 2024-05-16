@@ -20,26 +20,26 @@ const Home = () => {
 
     useEffect(() => {
         const handleScroll = () => {
-          const currentScrollPos = window.scrollY;
-    
-          if (currentScrollPos > prevScrollPos) {
-            // Scrolling down
-            setShowHeader(false);
-          } else {
-            // Scrolling up
-            setShowHeader(true);
-          }
-    
-          setPrevScrollPos(currentScrollPos);
+            const currentScrollPos = window.scrollY;
+
+            if (currentScrollPos > prevScrollPos) {
+                // Scrolling down
+                setShowHeader(false);
+            } else {
+                // Scrolling up
+                setShowHeader(true);
+            }
+
+            setPrevScrollPos(currentScrollPos);
         };
-    
+
         window.addEventListener('scroll', handleScroll);
 
         return () => {
 
             window.removeEventListener('scroll', handleScroll);
         };
-      }, [prevScrollPos]);
+    }, [prevScrollPos]);
 
     return (
         <>
@@ -91,7 +91,7 @@ const Home = () => {
             )}
 
             <section id="hero" className="d-flex align-items-center">
-      
+
                 <CreateAccountPopUp trigger={createPopUp} setTrigger={setCreatePopup}>
                 </CreateAccountPopUp>
 
@@ -101,7 +101,7 @@ const Home = () => {
                 <div className="container">
                     <div className="row">
                         <div className="col-lg-6 pt-4 pt-lg-0 order-2 order-lg-1 d-flex flex-column justify-content-center">
-                        <img src="/images/logos_white.png" alt="NutriHelp Logo" style={{ width: '850px', height: '280px' }} />
+                            <img src="/images/logos_white.png" alt="NutriHelp Logo" style={{ width: '850px', height: '280px' }} />
                             <h2>
                                 NutriHelp supports you in managing your general wellbeing,
                                 nutrient-related diseases and deficiencies through personalised
@@ -189,54 +189,66 @@ const Home = () => {
                         <div className="section-title">
                             <h2>Services</h2>
                             <p>
-                                Lorem ipsum dolor sit, amet consectetur adipisicing elit. Animi
-                                mollitia alias consectetur doloremque voluptates, eos voluptate
-                                eligendi, vitae, quia est perferendis molestias laborum beatae
-                                deserunt placeat blanditiis cumque magnam in!
+                                At NutriHelp, we offer a range of services designed to support
+                                your overall well-being and nutritional needs. Our dedicated team is committed to
+                                providing personalized solutions to help you achieve your health goals and improve your quality of life.
+                                Explore our key services below:
                             </p>
                         </div>
 
                         <div className="row">
-                            <div className="col-lg-4 col-md-6">
+                            <div className="col-lg-3 col-md-6">
                                 <div className="icon-box">
                                     <div className="icon">
-                                        <img src="images/3.png" alt="" />
+                                        <img src="images/4.jpg" alt="" />
                                     </div>
                                     <h4 className="title">
-                                        <a href="">Lorem Ipsum</a>
+                                        <a href="#">Meal Planning</a>
                                     </h4>
                                     <p className="description">
-                                        Voluptatum deleniti atque corrupti quos dolores et quas
-                                        molestias excepturi sint occaecati cupiditate non provident
+                                        Access a variety of nutritious meal plans and recipes designed
+                                        to meet your everyday nutritional needs and preferences.
                                     </p>
                                 </div>
                             </div>
-                            <div className="col-lg-4 col-md-6">
+                            <div className="col-lg-3 col-md-6">
                                 <div className="icon-box">
                                     <div className="icon">
-                                        <img src="images/2.png" alt="" />
+                                        <img src="images/5.jpg" alt="" />
                                     </div>
                                     <h4 className="title">
-                                        <a href="">Dolor Sitema</a>
+                                        <a href="#">Dietary Needs</a>
                                     </h4>
                                     <p className="description">
-                                        Minim veniam, quis nostrud exercitation ullamco laboris nisi
-                                        ut aliquip ex ea commodo consequat tarad limino ata
+                                        Our meal planning services cater to specific dietary requirements,
+                                        allowing you to customize meal plans based on your needs.
                                     </p>
                                 </div>
                             </div>
-
-                            <div className="col-lg-4 col-md-6" data-wow-delay="0.1s">
+                            <div className="col-lg-3 col-md-6">
                                 <div className="icon-box">
                                     <div className="icon">
-                                        <img src="images/1.png" alt="" />
+                                        <img src="images/6.jpg" alt="" />
                                     </div>
                                     <h4 className="title">
-                                        <a href="">Sed ut perspiciatis</a>
+                                        <a href="#">Create Recipes</a>
                                     </h4>
                                     <p className="description">
-                                        Lorem, ipsum dolor sit amet consectetur adipisicing elit.
-                                        Magnam quas atque qui, iusto debitis modi labore fugit
+                                        Create your own personalized recipes tailored to your taste
+                                        preferences and dietary requirements that suit your lifestyle.
+                                    </p>
+                                </div>
+                            </div>
+                            <div className="col-lg-3 col-md-6">
+                                <div className="icon-box">
+                                    <div className="icon">
+                                        <img src="images/7.jpg" alt="" />
+                                    </div>
+                                    <h4 className="title">
+                                        <a href="#">Product Scanning</a>
+                                    </h4>
+                                    <p className="description">
+                                        Upload an image of a product to analyze its nutritional content and receive a detailed breakdown of its nutrients through a visual pie chart.
                                     </p>
                                 </div>
                             </div>
@@ -249,10 +261,8 @@ const Home = () => {
                         <div className="section-title">
                             <h2>Contact</h2>
                             <p>
-                                Magnam dolores commodi suscipit. Necessitatibus eius consequatur
-                                ex aliquid fuga eum quidem. Sit sint consectetur velit. Quisquam
-                                quos quisquam cupiditate. Et nemo qui impedit suscipit alias ea.
-                                Quia fugiat sit in iste officiis commodi quidem hic quas.
+                                Have questions or need assistance? Reach out to us!
+                                We are here to help you with any inquiries you may have.
                             </p>
                         </div>
 
@@ -297,7 +307,7 @@ const Home = () => {
                                                 required
                                             />
                                         </div>
-                                        <div className="col-md-6 form-group mt-3 mt-md-0">
+                                        <div className="col-md-6 form-group">
                                             <input
                                                 type="email"
                                                 className="form-control"
@@ -307,32 +317,29 @@ const Home = () => {
                                                 required
                                             />
                                         </div>
+                                        <div className="col-md-6 form-group">
+                                            <input
+                                                type="text"
+                                                name="subject"
+                                                className="form-control"
+                                                id="name"
+                                                placeholder="Subject"
+                                                required
+                                            />
+                                        </div>
+                                        <div className="col-md-6 form-group">
+                                            <textarea
+                                                className="form-control"
+                                                name="message"
+                                                rows="5"
+                                                placeholder="Message"
+                                                required
+                                            ></textarea>
+                                        </div>
                                     </div>
-                                    <div className="form-group mt-3">
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            name="subject"
-                                            id="subject"
-                                            placeholder="Subject"
-                                            required
-                                        />
-                                    </div>
-                                    <div className="form-group mt-3">
-                                        <textarea
-                                            className="form-control"
-                                            name="message"
-                                            rows="5"
-                                            placeholder="Message"
-                                            required
-                                        ></textarea>
-                                    </div>
-
-                                    <div style={{ marginTop: '20px', textAlign: 'center' }}>
-                                        <a href="#">
-                                            <b style={{ color: 'purple' }}>Submit</b>
-                                        </a>
-                                    </div>
+                                    <button type="submit" className="submit-btn">
+                                        Submit
+                                    </button>
                                 </form>
                             </div>
                         </div>
