@@ -340,10 +340,7 @@ section {
     margin-bottom: 0;
 }
 
-.contact .info {
-    width: 100%;
-    background: #fff;
-}
+
 
 .contact .info i {
     font-size: 20px;
@@ -500,4 +497,22 @@ section {
     background: #9c1de089;
     color: #fff;
     text-decoration: none;
+}
+
+.submit-btn {
+    display: block;
+    margin: 0 auto; 
+    margin-left: 340px;
+    width: 100px; 
+    background-color: #b21de0; 
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.submit-btn:hover {
+    background-color: green; 
 }
