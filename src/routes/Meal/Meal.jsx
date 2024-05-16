@@ -1,7 +1,7 @@
-import React, { createContext, useState } from 'react';
 import './Meal.css'; // Import your CSS file here
-import { Outlet, Link, useNavigate } from "react-router-dom";
 
+import { Link, Outlet, useNavigate } from "react-router-dom";
+import React, { createContext, useState } from 'react';
 
 const Meal = () => {
     const [selectedItems, setSelectedItems] = useState([]);
@@ -16,12 +16,15 @@ const Meal = () => {
     const [showLunch, setShowLunch] = useState(false);
     const [showDinner, setShowDinner] = useState(false);
 
-    const toggleItemSelection = itemName => {
-        setSelectedItems(prevSelectedItems =>
-            prevSelectedItems.includes(itemName)
-                ? prevSelectedItems.filter(item => item !== itemName)
-                : [...prevSelectedItems, itemName]
-        );
+    const toggleItemSelection = (item, mealType) => {
+        setSelectedItems(prevSelectedItems => {
+            const itemExists = prevSelectedItems.find(selectedItem => selectedItem.name === item.name);
+            if (itemExists) {
+                return prevSelectedItems.filter(selectedItem => selectedItem.name !== item.name);
+            } else {
+                return [...prevSelectedItems, { ...item, mealType }];
+            }
+        });
     };
     // List of food items
     const breakfast = [
@@ -190,19 +193,19 @@ const Meal = () => {
         let totalCalories = 0;
         let totalProteins = 0;
         let totalFats = 0;
-        let totalvitamins =0;
-        let totalsodium =0;
+        let totalVitamins = 0;
+        let totalSodium = 0;
 
-        selectedItems.forEach(itemName => {
-            const details = findItemDetails(itemName);
+        selectedItems.forEach(item => {
+            const details = findItemDetails(item.name);
             totalCalories += details.calories;
             totalProteins += details.proteins;
             totalFats += details.fats;
-            totalvitamins += details.vitamins;
-            totalsodium += details.sodium;
+            totalVitamins += details.vitamins;
+            totalSodium += details.sodium;
         });
 
-        setTotalNutrition({ calories: totalCalories, proteins: totalProteins, fats: totalFats, vitamins: totalvitamins, sodium: totalsodium});
+        setTotalNutrition({ calories: totalCalories, proteins: totalProteins, fats: totalFats, vitamins: totalVitamins, sodium: totalSodium });
     }, [selectedItems]);
 
     return (
@@ -215,11 +218,11 @@ const Meal = () => {
                 <div style={{ width: "100%" }}>
                     <h3 className='heading' style={{ marginTop: "20px" }} onClick={() => setShowBreakfast(!showBreakfast)}>Breakfast</h3>
                     <div className="menuContainer" style={{ maxHeight: showBreakfast ? '500px' : '0', overflow: 'hidden', transition: 'max-height 0.5s ease' }}>
-                        {showBreakfast && breakfast.map(item => (
+                    {showBreakfast && breakfast.map(item => (
                             <div
-                                className={`food-item ${selectedItems.includes(item.name) ? 'selected' : ''}`}
+                                className={`food-item ${selectedItems.some(selected => selected.name === item.name) ? 'selected' : ''}`}
                                 key={item.name}
-                                onClick={() => toggleItemSelection(item.name)}
+                                onClick={() => toggleItemSelection(item, 'breakfast')}
                             >
                                 <img src={item.imageUrl} alt={item.name} />
                                 <div className='names'>
@@ -230,11 +233,11 @@ const Meal = () => {
                     </div>
                     <h3 className='heading' onClick={() => setShowLunch(!showLunch)}>Lunch</h3>
                     <div className="menuContainer" style={{ maxHeight: showLunch ? '500px' : '0', overflow: 'hidden', transition: 'max-height 0.5s ease' }}>
-                        {showLunch && lunch.map(item => (
+                    {showLunch && lunch.map(item => (
                             <div
-                                className={`food-item ${selectedItems.includes(item.name) ? 'selected' : ''}`}
+                                className={`food-item ${selectedItems.some(selected => selected.name === item.name) ? 'selected' : ''}`}
                                 key={item.name}
-                                onClick={() => toggleItemSelection(item.name)}
+                                onClick={() => toggleItemSelection(item, 'lunch')}
                             >
                                 <img src={item.imageUrl} alt={item.name} />
                                 <div className='names'>
@@ -245,11 +248,11 @@ const Meal = () => {
                     </div>
                     <h3 className='heading' onClick={() => setShowDinner(!showDinner)}>Dinner</h3>
                     <div className="menuContainer" style={{ maxHeight: showDinner ? '500px' : '0', overflow: 'hidden', transition: 'max-height 0.5s ease' }}>
-                        {showDinner && dinner.map(item => (
+                    {showDinner && dinner.map(item => (
                             <div
-                                className={`food-item ${selectedItems.includes(item.name) ? 'selected' : ''}`}
+                                className={`food-item ${selectedItems.some(selected => selected.name === item.name) ? 'selected' : ''}`}
                                 key={item.name}
-                                onClick={() => toggleItemSelection(item.name)}
+                                onClick={() => toggleItemSelection(item, 'dinner')}
                             >
                                 <img src={item.imageUrl} alt={item.name} />
                                 <div className='names'>
@@ -265,16 +268,17 @@ const Meal = () => {
 
                         <div>
                             <ul style={{ fontSize: "1.5rem", marginTop: "0.5rem" }}>
-                                <li>Calories - {totalNutrition.calories} g</li>
-                                <li>Proteins - {totalNutrition.proteins} g</li>
-                                <li>Fats - {totalNutrition.fats} g</li>
-                                <li>Vitamins - {totalNutrition.vitamins} g</li>
-                                <li>Sodium - {totalNutrition.sodium} g</li>
+                            <li>Calories: {totalNutrition.calories}</li>
+                        <li>Proteins: {totalNutrition.proteins}g</li>
+                        <li>Fats: {totalNutrition.fats}g</li>
+                        <li>Vitamins: {totalNutrition.vitamins}mg</li>
+                        <li>Sodium: {totalNutrition.sodium}mg</li>
                             </ul>
                         </div>
                     </div>
-                    <Link className="link" to='/dashboard'>
-                    <button className="viewplan">View Meal Plan</button> </Link>
+                    <Link className="link" to="/dashboard" state={{ selectedItems, totalNutrition }}>
+                        <button className="viewplan">View Meal Plan</button>
+                    </Link>
 
 
                 </div>
