@@ -24,6 +24,7 @@ import newMenu from './routes/NewMenu/newMenu';
 import Meal from './routes/Meal/Meal';
 import MFAform from './routes/MFA/MFAform';
 import Dashboard from './routes/NewMenu/Dashboard';
+import UserFeedback from './routes/UI-Only-Pages/UserFeedback/index';
 function App() {
 
   useEffect(() => {
@@ -76,6 +77,7 @@ function App() {
           <Route path='dietaryRequirements' element={<DietaryRequirements />} />
           <Route path='menu' element={<Menu />} />
           <Route path='recipe' element={<Recipe />} />
+          <Route path='userfeedback' element={<UserFeedback />} />
           {/* <Route path="/components/allergy" component={Allergy} /> */}
           <Route path='Meal' element={<Meal />} />
 
