@@ -1,11 +1,12 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import "./Dashboard.css";
 
-const newMenu = () => {
+const DashboardD = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredItems, setFilteredItems] = useState([]);
+  const navigate = useNavigate();
 
-  // List of food items
   const foodItems = [
     { category: 'breakfast', name: 'Banana Spice Smoothie' },
     { category: 'breakfast', name: 'Pumpkin Oatmeal' },
@@ -22,7 +23,6 @@ const newMenu = () => {
   ];
 
   useEffect(() => {
-    // Filter the items based on the search term
     if (searchTerm) {
       const filtered = foodItems.filter(item =>
         item.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -37,108 +37,113 @@ const newMenu = () => {
     setSearchTerm(e.target.value);
   };
 
-  //html code including food items
+  const handleAppointmentClick = () => {
+    navigate('/appointment');
+  };
+
   return (
     <main>
-        <div class="mainBox">
-        
-        <div class = "Title">
-        <h2>MENU</h2>
+      <div className="mainBox">
+        <div className="Title">
+        <button onClick={handleAppointmentClick}>Book an Appointment</button>
+          <h2>MENU
+          
+          </h2>
+          
+          
         </div>
 
-        <div class="daySelctionText">
+        <div className="daySelectionText">
           <h3>Today</h3>
         </div>
 
-        <div class="breakfastBox">
-          <div class = "breakfastBoxSub1">
-          <div class="breakfastBoxSub1text1">
-          <p>Banana Spice Smoothie</p>
-        </div>
-
-        <div class="breakfastBoxTitle">
-          <p>Breakfast</p>
-        </div>
+        <div className="breakfastBox">
+          <div className="breakfastBoxSub1">
+            <div className="breakfastBoxSub1text1">
+              <p>Banana Spice Smoothie</p>
+            </div>
+            <div className="breakfastBoxTitle">
+              <p>Breakfast</p>
+            </div>
           </div>
-          <div class = "breakfastBoxSub2">
-          <div class="breakfastBoxSub1text2">
-          <p>Pumpkin Oatmeal</p>
-        </div>
-         </div>
-          <div class = "breakfastBoxSub3">
-          <div class="breakfastBoxSub1text3">
-          <p>Carrot Ginger Juice</p>
-        </div>
-        </div>
-        </div>
-
-      
-        <div class="breakfastBox2">
-          <div class = "breakfastBoxSub21">
-          <div class="breakfastBoxSub2text1">
-          <p>Creamy Vegetable Soup</p>
+          <div className="breakfastBoxSub2">
+            <div className="breakfastBoxSub1text2">
+              <p>Pumpkin Oatmeal</p>
+            </div>
           </div>
-        </div>
-          <div class = "breakfastBoxSub22">
-          <div class="breakfastBoxSub2text2">
-          <p>Harb Cauliflower Bean Dip</p>
-          </div>
-          </div>
-          <div class = "breakfastBoxSub23">
-          <div class="breakfastBoxSub2text3">
-          <p>Spanish & Mushroom Omelette</p>
-          </div>
-          </div>
-        </div>
-
-        <div class="breakfastBoxTitle2">
-          <p>Lunch</p>
-        </div>
-
-        <div class="breakfastBox3">
-          <div class = "breakfastBoxSub31">
-          <div class="breakfastBoxSub3text1">
-            <p>Stuffed green Peppers</p>
-          </div>
-          </div>
-          <div class = "breakfastBoxSub32">
-          <div class="breakfastBoxSub3text2">
-            <p>Easy Chicken Enchiladu Casserole</p>
-          </div>
-          </div>
-          <div class = "breakfastBoxSub33"></div>
-          <div class="breakfastBoxSub3text3">
-            <p>Mushroom & Leek Risotto</p>
-          </div>
-        </div>
-
-        <div class="breakfastBoxTitle3">
-          <p>Dinner</p>
-        </div>
-
-        <div class="breakfastBox4">
-          <div class = "breakfastBoxSub41">
-          <div class="breakfastBoxSub4text1">
-            <p>Mushroom & Leek Risotto</p>
-          </div>
-          </div>
-          <div class = "breakfastBoxSub42">
-          <div class="breakfastBoxSub4text2">
-          <p>Cottage cheese with pieapple chunks</p>
-          </div>
-          </div>
-          <div class = "breakfastBoxSub43">
-          <div class="breakfastBoxSub4text3">
-            <p>whole grain crackers</p>
+          <div className="breakfastBoxSub3">
+            <div className="breakfastBoxSub1text3">
+              <p>Carrot Ginger Juice</p>
             </div>
           </div>
         </div>
 
-        <div class="breakfastBoxTitle4">
-          <p>Extras</p>
+        <div className="breakfastBox2">
+          <div className="breakfastBoxSub21">
+            <div className="breakfastBoxSub2text1">
+              <p>Creamy Vegetable Soup</p>
+            </div>
           </div>
+          <div className="breakfastBoxSub22">
+            <div className="breakfastBoxSub2text2">
+              <p>Harb Cauliflower Bean Dip</p>
+            </div>
+          </div>
+          <div className="breakfastBoxSub23">
+            <div className="breakfastBoxSub2text3">
+              <p>Spanish & Mushroom Omelette</p>
+            </div>
+          </div>
+        </div>
 
-        {/* Render filtered food items */}
+        <div className="breakfastBoxTitle2">
+          <p>Lunch</p>
+        </div>
+
+        <div className="breakfastBox3">
+          <div className="breakfastBoxSub31">
+            <div className="breakfastBoxSub3text1">
+              <p>Stuffed Green Peppers</p>
+            </div>
+          </div>
+          <div className="breakfastBoxSub32">
+            <div className="breakfastBoxSub3text2">
+              <p>Easy Chicken Enchilada Casserole</p>
+            </div>
+          </div>
+          <div className="breakfastBoxSub33">
+            <div className="breakfastBoxSub3text3">
+              <p>Mushroom & Leek Risotto</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="breakfastBoxTitle3">
+          <p>Dinner</p>
+        </div>
+
+        <div className="breakfastBox4">
+          <div className="breakfastBoxSub41">
+            <div className="breakfastBoxSub4text1">
+              <p>Mushroom & Leek Risotto</p>
+            </div>
+          </div>
+          <div className="breakfastBoxSub42">
+            <div className="breakfastBoxSub4text2">
+              <p>Cottage Cheese with Pineapple Chunks</p>
+            </div>
+          </div>
+          <div className="breakfastBoxSub43">
+            <div className="breakfastBoxSub4text3">
+              <p>Whole Grain Crackers</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="breakfastBoxTitle4">
+          <p>Extras</p>
+        </div>
+
         {filteredItems.map((item, index) => (
           <div className="menuItem" key={index}>
             <p>{item.name}</p>
@@ -149,4 +154,4 @@ const newMenu = () => {
   );
 };
 
-export default newMenu;
+export default DashboardD;
