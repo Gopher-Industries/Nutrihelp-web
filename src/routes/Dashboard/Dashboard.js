@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import "./Menustyles.css";
+import "./Dashboard.css";
 
 const newMenu = () => {
   const [searchTerm, setSearchTerm] = useState('');

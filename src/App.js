@@ -17,13 +17,14 @@ import UserProfilePage from './routes/UI-Only-Pages/UserProfilePage/userprofile'
 import Home from './routes/Home/Home';
 import DietaryRequirements from './routes/UI-Only-Pages/DietaryRequirements/DietaryRequirements';
 import Appointment from './routes/UI-Only-Pages/Appointment/Appointment';
-import Menu from './routes/UI-Only-Pages/Menu/Menu';
+import Dashboard from './routes/Dashboard/Dashboard';
 import ScanProducts from './routes/UI-Only-Pages/ScanProducts/ScanProducts';
 import Recipe from './components/Recipe';
 // import Allergy from './components/Allergy';
 // import Allergy from './Allergy';
 import Meal from './routes/Meal/Meal';
 import MFAform from './routes/MFA/MFAform';
+// import Dashboard from './routes/Dashboard/DashboardD';
 function App() {
 
   useEffect(() => {
@@ -75,7 +76,7 @@ function App() {
           <Route path='signInSignUp' element={<SignInSignUp />} />
           <Route path='userProfile' element={<UserProfilePage />} />
           <Route path='dietaryRequirements' element={<DietaryRequirements />} />
-          <Route path='menu' element={<Menu />} />
+          <Route path='menu' element={<Dashboard />} />
           <Route path='recipe' element={<Recipe />} />
           {/* <Route path="/components/allergy" component={Allergy} /> */}
           <Route path='Meal' element={<Meal />} />
