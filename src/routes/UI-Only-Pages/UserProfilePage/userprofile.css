@@ -1,0 +1,44 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    /* Add background image */
+    background: linear-gradient(rgba(48, 40, 40, 0.7), rgba(255,255,255,0.7)), url('bowl.PNG') center center fixed;
+    background-size: contain;
+}
+
+.profile-container {
+    background-color:transparent;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px ;
+    padding: 20px;
+    width: 500px;
+    text-align: center;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    background-color: transparent;
+}
+
+input, select {
+    width: calc(100% - 16px);
+    padding: 8px;
+    margin-bottom: 16px;
+    box-sizing: border-box;
+}
+
+.continue-button {
+    background-color: #4CAF50;
+    color: #fff;;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
