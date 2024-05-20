@@ -115,6 +115,7 @@ const Menu = () => {
                     <li><a href="#">Menu</a></li>
                     <li><a href="#">About</a></li>
                     <li><a href="#">Profile</a></li>
+                    <li><a href="/Appointment">Book an Appointment</a></li>
                 </ul>
             </nav>
 

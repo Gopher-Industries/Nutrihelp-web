@@ -1,0 +1,152 @@
+/* .userProfile-container {
+    /*border: 5px solid rgba(18, 18, 255, 0.701);*/
+    /* padding: 10px;
+    margin: 10px; 
+    background:  #BA49E7;
+    font-family: 'Lato', sans-serif;
+} */
+
+.logo-img {
+    width: 100px;
+}
+
+nav {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 0 120px;
+}
+
+nav ul {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 100%;
+}
+
+nav ul li {
+    list-style: none;
+    font-size: 16px;
+    color: #BA49E7;
+    font-weight: 700;
+    margin-top: 15px;
+}
+
+/* content */
+.userProfile-content {
+
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+}
+
+/* user-profile photo */
+.userProfile-section {
+    padding: 40px 15px;
+    margin: 20px 40px;
+    background: #FBFAFF;
+    border-radius: 5px;
+}
+
+.user-img-container {
+    padding: 10px 40px;
+    background: #F8E7FF;
+    width: 250px;
+    height: 250px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 5px;
+
+}
+
+.choose-photo-text {
+    font-size: 16px;
+    font-weight: 700;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    color: #000;
+}
+
+.bottom-text {
+    margin-top: 170px;
+}
+
+.bottom-text p {
+    font-size: 18px;
+    color: #000000;
+    font-weight: 600;
+    text-align: center;
+    line-height: .5;
+}
+
+.bottom-text-pair {
+    margin-top: 40px;
+}
+
+/* form */
+
+.user-form-container {
+    width: 70%;
+
+
+}
+
+.form-content {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    margin-bottom: 30px;
+    margin-left: 100px;
+}
+
+label {
+    position: relative;
+    font-size: 20px;
+    font-weight: 600;
+    color: #000000;
+}
+
+input[type="email"],input[type="text"],input[type="password"],input[type="number"] {
+    outline: 0;
+    padding: 5px 12px;
+    -moz-box-shadow: 0px 10px 10px -5px rgba(0, 0, 0, 0.715) inset;
+    -webkit-box-shadow: 0px 10px 10px -5px rgba(10, 8, 8, 0.84) inset;
+    box-shadow: 0px 8px 8px -6px #0d0d0d59 inset;
+    border-radius: 50px;
+    width: 300px;
+    border: 2px solid rgba(128, 128, 128, 0.25);
+}
+
+.edit-btn {
+    padding: 5px 12px;
+    outline: none;
+    border: none;
+    background: #AAABAE;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 5px;
+    width: 60px;
+    margin-left: 50px;
+}
+
+.logout-btn-content {
+    display: flex;
+    justify-content: center;
+}
+
+.logout-btn {
+    background: #BA49E7;
+    text-transform: uppercase;
+    border: 0;
+    color: #fff;
+    font-size: 20px;
+    padding: 8px 70px;
+    border-radius: 8px;
+    margin-left: 100px;
+    margin-top: 30px;
+    margin-bottom: 20px;
+    outline: none;
+
+}
