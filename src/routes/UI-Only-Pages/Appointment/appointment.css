@@ -36,7 +36,7 @@ nav ul li {
 
     display: flex;
     justify-content: space-between;
-    align-items: start;
+    align-items: flex-start;
 }
 
 /* user-profile photo */
