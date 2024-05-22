@@ -1,13 +1,9 @@
 /* Common Properties */
 .form-div {
     display: flex;
-    margin-top: 15px;
     margin-left: 20px;
 }
 
-.form-div p {
-    width: 110px;
-}
 
 .annotated-text-div {
     margin-left: 15px;
