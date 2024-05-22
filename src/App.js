@@ -19,6 +19,7 @@ import DietaryRequirements from './routes/UI-Only-Pages/DietaryRequirements/Diet
 import ScanProducts from './routes/UI-Only-Pages/ScanProducts/ScanProducts';
 import Menu from './routes/UI-Only-Pages/Menu/Menu';
 import Recipe from './components/Recipe';
+import Appointment from './routes/UI-Only-Pages/Appointment/Appointment';
 import newMenu from './routes/NewMenu/newMenu';
 // import Allergy from './components/Allergy';
 // import Allergy from './Allergy';
@@ -74,6 +75,7 @@ function App() {
           <Route path='yourPreferences' element={<YourPreferences />} />
           <Route path='signInSignUp' element={<SignInSignUp />} />
           <Route path='userProfile' element={<UserProfilePage />} />
+          <Route path='Appointment' element={<Appointment />} />
           <Route path='dietaryRequirements' element={<DietaryRequirements />} />
           <Route path='ScanProducts' element={<ScanProducts />} />
           <Route path='menu' element={<Menu />} />

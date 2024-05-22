@@ -1,8 +1,7 @@
-import { Grid, GridColumn, GridRow } from 'semantic-ui-react';
-
-import DashboardGraph from '../../components/Dashboard-Graph';
 import React from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
+import { Grid, GridColumn, GridRow } from 'semantic-ui-react';
+import DashboardGraph from '../../components/Dashboard-Graph';
 
 const Dashboard = () => {
   const location = useLocation();
@@ -13,26 +12,25 @@ const Dashboard = () => {
     fats: 0,
     vitamins: 0,
     sodium: 0,
-};
+  };
 
   const renderMealItems = (mealType) => {
     return selectedItems
       .filter(item => item.mealType === mealType)
-      .map((item, index) => <div className="selected-recipe-box"  key={index}>{item.name}</div>);
+      .map((item, index) => <div className="selected-recipe-box" key={index}>{item.name}</div>);
   };
 
   const menuGraphComponent = () => (
     <div className="nutrition-summary">
-        <DashboardGraph
-            totalNutritionCalorie={totalNutrition.calories}
-            totalNutritionProtiens={totalNutrition.proteins}
-            totalNutritionFats={totalNutrition.fats}
-            totalNutritionVitamins={totalNutrition.vitamins}
-            totalNutritionSodium={totalNutrition.sodium}
-          />
+      <DashboardGraph
+        totalNutritionCalorie={totalNutrition.calories}
+        totalNutritionProtiens={totalNutrition.proteins}
+        totalNutritionFats={totalNutrition.fats}
+        totalNutritionVitamins={totalNutrition.vitamins}
+        totalNutritionSodium={totalNutrition.sodium}
+      />
     </div>
-);
-
+  );
 
   return (
     <main>
@@ -47,12 +45,15 @@ const Dashboard = () => {
       <div className="mainBox">
         <div className="Title">
           <h2>MENU</h2>
+          
         </div>
+        <Link to="/appointment" className="button-link">
+            <button>Book an Appointment</button>
+          </Link>
 
         <div className="daySelctionText">
           <h3>Today</h3>
         </div>
-    
 
         <div className="dashboard-grid">
           <div className="widgetBox dashboard-grid-1">
@@ -69,21 +70,19 @@ const Dashboard = () => {
                 <GridColumn>
                   <div className="menu-grid-box">
                     <h3>Breakfast</h3>
-                  
-                      {renderMealItems('breakfast')}
-              
+                    {renderMealItems('breakfast')}
                   </div>
                 </GridColumn>
                 <GridColumn>
                   <div className="menu-grid-box">
                     <h3>Lunch</h3>
-                      {renderMealItems('lunch')}
+                    {renderMealItems('lunch')}
                   </div>
                 </GridColumn>
                 <GridColumn>
                   <div className="menu-grid-box">
                     <h3>Dinner</h3>
-                      {renderMealItems('dinner')}
+                    {renderMealItems('dinner')}
                   </div>
                 </GridColumn>
               </GridRow>
@@ -101,10 +100,9 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <div className='dashboard-graph'>
+        <div className="dashboard-graph">
           {menuGraphComponent()}
         </div>
-
       </div>
     </main>
   );
