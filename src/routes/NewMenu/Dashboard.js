@@ -1,154 +1,113 @@
-import React, { useContext, useEffect, useState } from 'react';
+import { Grid, GridColumn, GridRow } from 'semantic-ui-react';
 
-export default function Dashboard() {
+import DashboardGraph from '../../components/Dashboard-Graph';
+import React from 'react';
+import { useLocation } from 'react-router-dom';
 
-   
+const Dashboard = () => {
+  const location = useLocation();
+  const selectedItems = location.state?.selectedItems || [];
+  const totalNutrition = location.state?.totalNutrition || {
+    calories: 0,
+    proteins: 0,
+    fats: 0,
+    vitamins: 0,
+    sodium: 0,
+};
 
-    const [searchTerm, setSearchTerm] = useState('');
-    const [filteredItems, setFilteredItems] = useState([]);
-  
-    // List of food items
-    const foodItems = [
-      { category: 'breakfast', name: 'Banana Spice Smoothie' },
-      { category: 'breakfast', name: 'Pumpkin Oatmeal' },
-      { category: 'breakfast', name: 'Carrot Ginger Juice' },
-      { category: 'lunch', name: 'Stuffed Green Peppers' },
-      { category: 'lunch', name: 'Easy Chicken Enchilada Casserole' },
-      { category: 'lunch', name: 'Mushroom & Leek Risotto' },
-      { category: 'dinner', name: 'Mushroom & Leek Risotto' },
-      { category: 'dinner', name: 'Cottage Cheese with Pineapple Chunks' },
-      { category: 'dinner', name: 'Whole Grain Crackers' },
-      { category: 'extras', name: 'Soup' },
-      { category: 'extras', name: 'Salad' },
-      { category: 'extras', name: 'Fruit' },
-    ];
-  
-    useEffect(() => {
-      // Filter the items based on the search term
-      if (searchTerm) {
-        const filtered = foodItems.filter(item =>
-          item.name.toLowerCase().includes(searchTerm.toLowerCase())
-        );
-        setFilteredItems(filtered);
-      } else {
-        setFilteredItems([]);
-      }
-    }, [searchTerm]);
-  
-    const handleSearchChange = (e) => {
-      setSearchTerm(e.target.value);
-    };
-  
-    //html code including food items
-    return (
-      <main>
-          <div class="mainBox">
-          
-          <div class = "Title">
+  const renderMealItems = (mealType) => {
+    return selectedItems
+      .filter(item => item.mealType === mealType)
+      .map((item, index) => <div className="selected-recipe-box"  key={index}>{item.name}</div>);
+  };
+
+  const menuGraphComponent = () => (
+    <div className="nutrition-summary">
+        <DashboardGraph
+            totalNutritionCalorie={totalNutrition.calories}
+            totalNutritionProtiens={totalNutrition.proteins}
+            totalNutritionFats={totalNutrition.fats}
+            totalNutritionVitamins={totalNutrition.vitamins}
+            totalNutritionSodium={totalNutrition.sodium}
+          />
+    </div>
+);
+
+
+  return (
+    <main>
+      <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+        integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+        crossOrigin="anonymous"
+        referrerPolicy="no-referrer"
+      />
+
+      <div className="mainBox">
+        <div className="Title">
           <h2>MENU</h2>
-          </div>
-  
-          <div class="daySelctionText">
-            <h3>Today</h3>
-          </div>
-  
-          <div class="breakfastBox">
-            <div class = "breakfastBoxSub1">
-            <div class="breakfastBoxSub1text1">
-            <p>Banana Spice Smoothie</p>
-          </div>
-  
-          <div class="breakfastBoxTitle">
-            <p>Breakfast</p>
-          </div>
-            </div>
-            <div class = "breakfastBoxSub2">
-            <div class="breakfastBoxSub1text2">
-            <p>Pumpkin Oatmeal</p>
-          </div>
-           </div>
-            <div class = "breakfastBoxSub3">
-            <div class="breakfastBoxSub1text3">
-            <p>Carrot Ginger Juice</p>
-          </div>
-          </div>
-          </div>
-  
-        
-          <div class="breakfastBox2">
-            <div class = "breakfastBoxSub21">
-            <div class="breakfastBoxSub2text1">
-            <p>Creamy Vegetable Soup</p>
-            </div>
-          </div>
-            <div class = "breakfastBoxSub22">
-            <div class="breakfastBoxSub2text2">
-            <p>Harb Cauliflower Bean Dip</p>
-            </div>
-            </div>
-            <div class = "breakfastBoxSub23">
-            <div class="breakfastBoxSub2text3">
-            <p>Spanish & Mushroom Omelette</p>
-            </div>
-            </div>
-          </div>
-  
-          <div class="breakfastBoxTitle2">
-            <p>Lunch</p>
-          </div>
-  
-          <div class="breakfastBox3">
-            <div class = "breakfastBoxSub31">
-            <div class="breakfastBoxSub3text1">
-              <p>Stuffed green Peppers</p>
-            </div>
-            </div>
-            <div class = "breakfastBoxSub32">
-            <div class="breakfastBoxSub3text2">
-              <p>Easy Chicken Enchiladu Casserole</p>
-            </div>
-            </div>
-            <div class = "breakfastBoxSub33"></div>
-            <div class="breakfastBoxSub3text3">
-              <p>Mushroom & Leek Risotto</p>
-            </div>
-          </div>
-  
-          <div class="breakfastBoxTitle3">
-            <p>Dinner</p>
-          </div>
-  
-          <div class="breakfastBox4">
-            <div class = "breakfastBoxSub41">
-            <div class="breakfastBoxSub4text1">
-              <p>Mushroom & Leek Risotto</p>
-            </div>
-            </div>
-            <div class = "breakfastBoxSub42">
-            <div class="breakfastBoxSub4text2">
-            <p>Cottage cheese with pieapple chunks</p>
-            </div>
-            </div>
-            <div class = "breakfastBoxSub43">
-            <div class="breakfastBoxSub4text3">
-              <p>whole grain crackers</p>
-              </div>
-            </div>
-          </div>
-  
-          <div class="breakfastBoxTitle4">
-            <p>Extras</p>
-            </div>
-  
-          {/* Render filtered food items */}
-          {filteredItems.map((item, index) => (
-            <div className="menuItem" key={index}>
-              <p>{item.name}</p>
-            </div>
-          ))}
         </div>
-      </main>
-    );
 
-  
-}
+        <div className="daySelctionText">
+          <h3>Today</h3>
+        </div>
+    
+
+        <div className="dashboard-grid">
+          <div className="widgetBox dashboard-grid-1">
+            <i className="fa-solid fa-palette"></i>
+            <i className="fa-solid fa-paintbrush"></i>
+            <i className="fa-solid fa-caret-down"></i>
+            <i className="fa-solid fa-sun"></i>
+            <i className="fa-solid fa-moon"></i>
+            <i className="fa-solid fa-sliders"></i>
+          </div>
+          <div className="dashboard-grid-2">
+            <Grid columns={3} divided>
+              <GridRow className="menu-grid-wrap">
+                <GridColumn>
+                  <div className="menu-grid-box">
+                    <h3>Breakfast</h3>
+                  
+                      {renderMealItems('breakfast')}
+              
+                  </div>
+                </GridColumn>
+                <GridColumn>
+                  <div className="menu-grid-box">
+                    <h3>Lunch</h3>
+                      {renderMealItems('lunch')}
+                  </div>
+                </GridColumn>
+                <GridColumn>
+                  <div className="menu-grid-box">
+                    <h3>Dinner</h3>
+                      {renderMealItems('dinner')}
+                  </div>
+                </GridColumn>
+              </GridRow>
+            </Grid>
+          </div>
+
+          <div className="widgetBox2 dashboard-grid-3">
+            <i className="fa-solid fa-circle-plus"></i>
+            <i className="fa-solid fa-caret-down"></i>
+            <i className="fa-solid fa-utensils"></i>
+            <i className="fa-solid fa-heart-pulse"></i>
+            <i className="fa-solid fa-carrot"></i>
+            <i className="fa-solid fa-calendar-check"></i>
+            <i className="fa-solid fa-bars"></i>
+          </div>
+        </div>
+
+        <div className='dashboard-graph'>
+          {menuGraphComponent()}
+        </div>
+
+      </div>
+    </main>
+  );
+};
+
+export default Dashboard;
