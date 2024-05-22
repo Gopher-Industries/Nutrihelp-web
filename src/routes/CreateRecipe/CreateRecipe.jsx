@@ -1,36 +1,43 @@
 import "./CreateRecipe.css";
 
 import React, { useEffect, useState } from "react";
+import { addDoc, collection, doc, setDoc } from "firebase/firestore";
 
+import AddAnImageSection from "./AddAnImageSection";
+import CookingDetailsSection from "./CookingDetailsSection";
 import { Image } from "semantic-ui-react";
-import IngredientsSection from "./SectionIngredients";
-import RecipeDescriptionSection from "./SectionRecipeDescription";
+import IngredientsSection from "./IngredientsSection";
+import InstructionsSection from "./InstructionsSection";
+import OtherDetailsSection from "./OtherDetailsSection";
+import RecipeDescriptionSection from "./RecipeDescriptionSection";
 import SubHeading from "../../components/general_components/headings/SubHeading";
-import { SubmitButton } from "./Inputs";
+import SubmitButton from "./SubmitButton";
 import backgroundLeft from "../../images/bg-left.png";
 import backgroundRight from "../../images/bg-right.png";
+import { firestore } from "../../utils/firebase";
 import { useNavigate } from "react-router-dom";
-import { getCuisineList, cuisineListDB, ingredientListDB, getIngredientsList } from './Config.js'
-
 
 // Create Recipe page
 function CreateRecipe() {
   const navigate = useNavigate();
 
-  //SectionRecipeDescription 
+  //Recipe Description Section
   const [recipeName, setRecipeName] = useState("");
-  const [cuisine, setCuisine] = useState("");
+  const [cuisine, setCuisine] = useState("Universal");
+
+  //Cooking Details Section
   const [preparationTime, setPreparationTime] = useState("");
   const [totalServings, setTotalServings] = useState("");
 
-  //SectionIngredients 
-  const [ingredientCategory, setIngredientCategory] = useState("");
-  const [ingredient, setIngredient] = useState("");
-  const [ingredientQuantity, setIngredientQuantity] = useState("");
-  const [instructions, setInstructions] = useState("");
-  const [tableData, setRecipeTable] = useState([])
-  const [isEditing, setIsEditing] = useState("");
+  //Other Details Section
+  const [caloriesPerServing, setCaloriesPerServing] = useState("");
+  const [recipeNotes, setRecipeNotes] = useState("");
 
+  //Ingredients Section
+  const [ingredients, setIngredients] = useState("");
+
+  //Instructions Section
+  const [instructions, setInstructions] = useState("");
 
   //==================== Handle changes to the fields ====================
 
@@ -62,39 +69,27 @@ function CreateRecipe() {
     console.log("Total Servings: " + value);
   };
 
+  //--------------- Other Details Section -----------------
+
+  //Handle changes to the Calories Per Serving field
+  const handleCaloriesPerServingChange = (value) => {
+    setCaloriesPerServing(value);
+    console.log("Calories Per Serving: " + value);
+  };
+
+  //Handle changes to the Recipe Notes field
+  const handleRecipeNotesChanges = (value) => {
+    setRecipeNotes(value);
+    console.log("Recipe Notes: " + value);
+  };
+
   //--------------- Ingredients Section -----------------
 
-
-  const handleIngredientCategoryChange = (value) => {
-    setIngredientCategory(value);
-    console.log("setIngredientCategory: " + value);
+  //Handle changes to the Ingredients field
+  const handleIngredientsChange = (value) => {
+    setIngredients(value);
+    console.log("Ingredients: " + value);
   };
-
-  const handleIngredientQuantityChange = (value) => {
-    setIngredientQuantity(value);
-    console.log("setIngredientQuantity: " + value);
-  };
-
-  const handleIngredientChange = (value) => {
-    setIngredient(value);
-    console.log("setIngredient: " + value);
-  };
-
-
-  const handleIsEditingChange = (value) => {
-    setIsEditing(value);
-    console.log("isEditing: " + value);
-  };
-
-  if (cuisineListDB.length < 2) {
-    getCuisineList()
-  }
-
-  if (ingredientListDB.ingredient.length < 2) {
-    getIngredientsList()
-  }
-
-
 
   //--------------- Instructions Section -----------------
 
@@ -104,8 +99,8 @@ function CreateRecipe() {
     console.log("Instructions: " + value);
   };
 
-  //==================== Send data to the Supabase ====================
-  const sendDataToSupabase = async () => {
+  //==================== Send data to the Firestore ====================
+  const sendDataToFirestore = async () => {
     try {
       if (!isFormValid()) {
         setAttemptedSubmit(true);
@@ -115,80 +110,49 @@ function CreateRecipe() {
 
       setAttemptedSubmit(false); // Reset the flag if the form is valid
 
-      const ingredientId = [];
-      const ingredientQuantity = [];
-      let cuisineId;
-      const userId = 15;
+      const dataCollection = collection(firestore, "recipesData");
 
-      cuisineListDB.forEach((element) => {
-        if (cuisine == element.label) {
-          cuisineId = element.id
-        }
-      })
+      // Create a specific document ID
+      const documentId = Date.now().toString();
 
-      tableData.forEach((row) => {
-        ingredientListDB.ingredient.forEach((element) => {
-          if (row.ingredient == element.label) {
+      // Create a reference to the document with the specific ID
+      const docRef = doc(dataCollection, documentId);
 
-            ingredientId.push(element.id)
-            ingredientQuantity.push(parseInt(row.ingredientQuantity))
-          }
-        })
-      })
-
-      const formData = {
-        user_id: userId,
-        recipe_name: recipeName,
-        cuisine_id: cuisineId,
-        preparation_time: preparationTime,
-        total_servings: totalServings,
-        ingredient_id: ingredientId,
-        ingredient_quantity: ingredientQuantity,
+      // Set the data at the specified location
+      await setDoc(docRef, {
+        recipeName: recipeName,
+        cuisine: cuisine,
+        preparationTime: preparationTime,
+        totalServings: totalServings,
+        caloriesPerServing: caloriesPerServing,
+        recipeNotes: recipeNotes,
+        ingredients: ingredients,
         instructions: instructions,
-      };
+      });
 
-      fetch('http://localhost:80/api/recipe/', {
-        method: 'POST',
-        body: JSON.stringify(formData),
-        headers: {
-          'Origin': 'http://localhost:3000/',
-          'Content-Type': 'application/json'
-        },
-      })
-        .then(response => response.json())
-        .then(data => {
-          if (data.statusCode == 201) {
-            console.log("Data successfully written to Supabase!");
-            alert("Recipe Creation was successful!");
-            navigate("/searchRecipes");
-          }
-          else {
-            console.log(data)
-            alert("Recipe Creation was unsuccessful! Please try Again");
-          }
-        })
-        .catch((error) => {
-          console.error('Error sending message:', error);
-        });
+      console.log("Data successfully written to Firestore with custom ID!");
+      // Show success alert
+      alert("Recipe Creation was successful!");
 
+      // Navigate to /searchRecipes route
+      navigate("/searchRecipes");
     } catch (error) {
       console.error("Error writing document: ", error);
     }
-
   };
 
   // Function to validate all fields are filled
   const isFormValid = () => {
-
-
     return (
       recipeName &&
       cuisine &&
-      totalServings &&
       preparationTime &&
-      tableData &&
-      instructions
-      // isImageAdded
+      totalServings &&
+      caloriesPerServing &&
+      recipeNotes &&
+      ingredients &&
+      instructions &&
+      isImageAdded
     );
   };
 
@@ -199,7 +163,6 @@ function CreateRecipe() {
   };
 
   const [attemptedSubmit, setAttemptedSubmit] = useState(false);
-
 
   //==================== Render the component ====================
   return (
@@ -224,30 +187,35 @@ function CreateRecipe() {
             onRecipeNameChange={handleRecipeNameChange}
             cuisine={cuisine}
             onCuisineChange={handleCuisineChange}
-            cuisineListDB={cuisineListDB}
+          />
+
+          <CookingDetailsSection
             preparationTime={preparationTime}
             onPreparationTimeChange={handlePreparationTimeChange}
             totalServings={totalServings}
             onTotalServingsChange={handleTotalServingsChanges}
           />
 
-          <IngredientsSection
-            ingredient={ingredient}
-            onIngredientChange={handleIngredientChange}
-            ingredientCategory={ingredientCategory}
-            onIngredientCategoryChange={handleIngredientCategoryChange}
-            ingredientQuantity={ingredientQuantity}
-            onIngredientQuantityChange={handleIngredientQuantityChange}
-            tableData={tableData}
-            isEditing={isEditing}
-            ingredientListDB={ingredientListDB}
-            onIsEditingChange={handleIsEditingChange}
-            instructions={instructions}
-            onInstructionsChange={handleInstructionsChange}
-            onImageAdded={handleImageAdded}
+          <OtherDetailsSection
+            caloriesPerServing={caloriesPerServing}
+            onCaloriesPerServingChange={handleCaloriesPerServingChange}
+            recipeNotes={recipeNotes}
+            onRecipeNotesChange={handleRecipeNotesChanges}
           />
 
-          <SubmitButton text="Create Recipe" onSubmit={sendDataToSupabase} />
+          <IngredientsSection
+            ingredients={ingredients}
+            onIngredientsChange={handleIngredientsChange}
+          />
+
+          <InstructionsSection
+            instructions={instructions}
+            onInstructionsChange={handleInstructionsChange}
+          />
+
+          <AddAnImageSection onImageAdded={handleImageAdded} />
+
+          <SubmitButton text="Create Recipe" onSubmit={sendDataToFirestore} />
         </div>
       </div>
     </div>

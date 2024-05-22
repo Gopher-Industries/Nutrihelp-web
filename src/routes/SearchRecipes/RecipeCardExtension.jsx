@@ -34,28 +34,23 @@ const RecipeCardExtension = (props) => {
                     fieldValue={props.caloriesPerServing}
                   />
 
-                  {Array.isArray(props.ingredients) && (
-                    <RecipeCardExtensionField
-                      fieldName="Ingredients"
-                      fieldValue={props.ingredients.map((ingredient) => (
-                        <div key={ingredient.id}>
-                          {ingredient.quantity} {ingredient.name}
-                        </div>
-                      ))}
-                    />
-                  )}
+                  <RecipeCardExtensionField
+                    fieldName="Ingredients"
+                    fieldValue={props.ingredients}
+                  />
                 </div>
               </GridColumn>
               <GridColumn className="recipe-modal-column" width={7}>
-                <RecipeCardExtensionField
-                  fieldName="Instructions"
-                  fieldValue={props.instructions}
-                />
-
-                <RecipeCardExtensionField
-                  fieldName="Recipe Notes"
-                  fieldValue={props.recipeNotes}
-                />
+                <div className="column-box">
+                  <RecipeCardExtensionField
+                    fieldName="Instructions"
+                    fieldValue={props.instructions}
+                  />
+                  <RecipeCardExtensionField
+                    fieldName="Recipe Notes"
+                    fieldValue={props.recipeNotes}
+                  />
+                </div>
               </GridColumn>
               <div className="modal-btn">
                 <button

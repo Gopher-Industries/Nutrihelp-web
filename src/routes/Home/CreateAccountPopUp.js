@@ -44,72 +44,33 @@ function CreateAccountPopUp(props) {
     }, []);
 
     // Function to handle submission of the sign-up form
-    // const handleSubmit = async (event) => {
-    //     event.preventDefault();
-    //     const { email, password, firstName, lastName, confirmPassword } = contact;
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        const { email, password, firstName, lastName, confirmPassword } = contact;
 
-    //     // Check password confirmation
-    //     if (password !== confirmPassword) {
-    //         alert('Passwords do not match!');
-    //         return;
-    //     }
+        // Check password confirmation
+        if (password !== confirmPassword) {
+            alert('Passwords do not match!');
+            return;
+        }
 
-    //     try {
-    //         // Create user, send email verification, create user doc, and set up MFA
-    //         const { user } = await createAuthUserWithEmailandPassword(email, password);
-    //         await sendEmailVerification(user);
-    //         const displayName = `${firstName} ${lastName}`;
-    //         await createUserDocFromAuth(user, { displayName, firstName, lastName, password });
-    //         await setupMultiFactorAuthentication(user);
-
-    //         // Redirect to login if user object exists
-    //         if (user) {
-    //             window.location.href = '/login';
-    //         }
-    //     } catch (error) {
-    //         // Log error if user creation or MFA setup fails
-    //         console.log('Error in user creation or MFA setup:', error.message);
-    //     }
-    // };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-      
-        // Define the form data including all user inputs
-        const formData = {
-            firstName: contact.firstName,
-            lastName: contact.lastName,
-            email: contact.email,
-            username: contact.email,
-            password: contact.password,
-            confirmPassword: contact.confirmPassword
-        };
-    
         try {
-            // Make the fetch request
-            const response = await fetch('http://localhost:80/api/signup', {
-                method: 'POST',
-                body: JSON.stringify(formData),
-                headers: {
-                    'Origin': 'http://localhost:3000/',
-                    'Content-Type': 'application/json'
-                },
-            });
-    
-            // Check the response status
-            if (response.ok) {
-                alert('Account created successfully');
-                // Redirect or perform any other action upon successful sign-up
-            } else {
-                console.error('Failed to create account');
-                // Handle error
+            // Create user, send email verification, create user doc, and set up MFA
+            const { user } = await createAuthUserWithEmailandPassword(email, password);
+            await sendEmailVerification(user);
+            const displayName = `${firstName} ${lastName}`;
+            await createUserDocFromAuth(user, { displayName, firstName, lastName, password });
+            await setupMultiFactorAuthentication(user);
+
+            // Redirect to login if user object exists
+            if (user) {
+                window.location.href = '/login';
             }
         } catch (error) {
-            console.error('Error creating account:', error.message);
-            // Handle error
+            // Log error if user creation or MFA setup fails
+            console.log('Error in user creation or MFA setup:', error.message);
         }
     };
-    
 
     // Function to handle form field changes and update state
     const handleChange = (event) => {
