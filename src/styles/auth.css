@@ -455,6 +455,7 @@ input[type=checkbox]:not(old) {
   margin: 0;
   padding: 0;
   font-size: 1em;
+  display: none;
 }
 
 input[type=checkbox]:not(old)+label {

@@ -13,8 +13,9 @@ import {
 import React, { useState } from "react";
 
 import RecipeCardExtension from "./RecipeCardExtension";
+import RecipeImage from "../../images/recipe_image.jpg"
 
-const RecipeCard = (props) => {
+function RecipeCard({ recipe }) {
   const [open, setOpen] = React.useState(false);
 
   const [isVisible, setIsVisible] = useState(true); // Introduce local state
@@ -34,42 +35,21 @@ const RecipeCard = (props) => {
     setIsExpanded(!isExpanded);
   };
 
+
   return (
     <>
       <GridColumn>
-        {/* <Card>
-          <Image src={props.imageUrl} wrapped ui={false} />
-          <CardContent>
-            <CardHeader style={{cursor: "pointer"}}  onClick={handleCardClick}>{props.recipeName}</CardHeader>
-            <CardMeta>
-              <span className="date">{props.cuisine}</span>
-            </CardMeta>
-            <CardDescription>{props.recipeNotes}</CardDescription>
-          </CardContent>
-          <CardContent extra>
-            <div className="recipe-card-btn-wrap">
-              <button className="button-primary" onClick={handleCardClick}>
-                View Recipe
-              </button>
-              <button className="button-secondary" onClick={handleDeleteClick}>
-                Remove Recipe
-              </button>
-            </div>
-          </CardContent>
-        </Card> */}
 
         <Card
           className="recipe-card-wrap"
-          style={{ backgroundImage: `url(${props.imageUrl})` }}
+          style={{ backgroundImage: `url(${RecipeImage})` }}
         >
           <span class="recipe-card-overlay"></span>
           <CardContent className="recipe-card-content">
             <CardHeader style={{ cursor: "pointer" }} onClick={handleCardClick}>
-              {props.recipeName}
+            {recipe.recipe_name}
             </CardHeader>
-            <CardMeta>
-              <span className="date">{props.cuisine}</span>
-            </CardMeta>
+           
             <button className="recipe-card-btn" onClick={handleCardClick}>
               View Recipe
             </button>
@@ -79,12 +59,12 @@ const RecipeCard = (props) => {
 
       {isExpanded == true && (
         <RecipeCardExtension
-          recipeName={props.recipeName}
-          preparationTime={props.preparationTime}
-          totalServings={props.totalServings}
-          caloriesPerServing={props.caloriesPerServing}
-          ingredients={props.ingredients}
-          instructions={props.instructions}
+          recipeName={recipe.recipe_name}
+          preparationTime={recipe.preparation_time}
+          totalServings={recipe.total_servings}
+          caloriesPerServing={recipe.calories}
+          ingredients={recipe.ingredients}
+          instructions={recipe.instructions}
           handleCardClick={handleCardClick}
           handleDeleteClick={handleDeleteClick}
         />
@@ -94,3 +74,6 @@ const RecipeCard = (props) => {
 };
 
 export default RecipeCard;
+
+
+
