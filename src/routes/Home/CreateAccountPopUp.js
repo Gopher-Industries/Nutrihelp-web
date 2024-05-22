@@ -25,7 +25,8 @@ function CreateAccountPopUp(props) {
         lastName: '',
         email: '',
         password: '',
-        confirmPassword: ''
+        confirmPassword: '',
+        contact: '123456'
     });
     const [phoneNumber, setPhoneNumber] = useState("");
     const [recaptchaVerifier, setRecaptchaVerifier] = useState(null);
@@ -77,12 +78,13 @@ function CreateAccountPopUp(props) {
       
         // Define the form data including all user inputs
         const formData = {
-            firstName: contact.firstName,
-            lastName: contact.lastName,
+            // firstName: contact.firstName,
+            // lastName: contact.lastName,
             email: contact.email,
             username: contact.email,
             password: contact.password,
-            confirmPassword: contact.confirmPassword
+            // confirmPassword: contact.confirmPassword,
+            contact_number: contact.contact
         };
     
         try {
