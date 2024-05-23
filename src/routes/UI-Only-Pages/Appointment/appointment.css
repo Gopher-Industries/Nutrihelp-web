@@ -106,7 +106,7 @@ label {
     color: #000000;
 }
 
-input[type="email"],
+/* input[type="email"],
 input[type="text"],
 input[type="password"],
 input[type="number"],
@@ -122,7 +122,7 @@ input[type="date"] {
     color: black;
     font-weight: bold;
 
-}
+} */
 
 .user-edit-btn {
     padding: 5px 12px;
