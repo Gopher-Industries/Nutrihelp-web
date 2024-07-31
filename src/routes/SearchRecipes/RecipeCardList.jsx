@@ -18,33 +18,24 @@ import { fetchRecipes } from "./fetchRecipes";
 
 function RecipeCardList(props) {
   const [recipeList, setRecipeList] = useState([]); 
-  const [filteredRecipeList, setFilteredRecipeList] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       const data = await fetchRecipes();
       setRecipeList(data);
-      setFilteredRecipeList(data);
     };
     fetchData();
   }, []);
 
-  useEffect(() => {
-    const filteredRecipes = recipeList.filter((recipe) =>
-      recipe.recipe_name
-        .toLowerCase()
-        .includes(props.recipeNameSearchTerm.toLowerCase())
-    );
-    setFilteredRecipeList(filteredRecipes);
-  }, [props.recipeNameSearchTerm, recipeList]);
+
 
 
   //Render the component
   return (
     <Grid className="recide-card-grid">
       <GridRow columns={3}>
-        {filteredRecipeList.length > 0 ? (
-          filteredRecipeList.map((item) => (
+        {recipeList.length > 0 ? (
+          recipeList.map((item) => (
             <GridColumn key={item.id}>
               <RecipeCard recipe={item} />
               {/* <Card
