@@ -1,7 +1,7 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 import 'semantic-ui-css/semantic.min.css'
 import './App.css';
-import { BrowserRouter as Router, Routes, Route, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { UserContext } from "./context/user.context";
 import Login from './routes/Login/Login';
 import SignUp from './routes/SignUp/SignUp';
@@ -11,7 +11,7 @@ import NavigationBarAndFooterSignedIn from './components/navigation_bars_and_foo
 import NavigationBarAndFooterSignedOut from './components/navigation_bars_and_footer/signed_out/NavigationBarAndFooterSignedOut';
 import CreateRecipe from './routes/CreateRecipe/CreateRecipe';
 import SearchRecipes from './routes/SearchRecipes/SearchRecipes';
-import YourPreferences from './routes/UI-Only-Pages/YourPreferences/pref-dis-health'
+import YourPreferences from './routes/UI-Only-Pages/YourPreferences/pref-dis-health';
 import SignInSignUp from './routes/UI-Only-Pages/SignInSignUp/SignInSignUp';
 import UserProfilePage from './routes/UI-Only-Pages/UserProfilePage/userprofile';
 import Home from './routes/Home/Home';
@@ -21,11 +21,11 @@ import Menu from './routes/UI-Only-Pages/Menu/Menu';
 import Recipe from './components/Recipe';
 import Appointment from './routes/UI-Only-Pages/Appointment/Appointment';
 import newMenu from './routes/NewMenu/newMenu';
-// import Allergy from './components/Allergy';
-// import Allergy from './Allergy';
 import Meal from './routes/Meal/Meal';
 import MFAform from './routes/MFA/MFAform';
 import Dashboard from './routes/NewMenu/Dashboard';
+import AuthenticateRoute from './routes/AuthenticateRoute/AuthenticateRoute';
+
 function App() {
 
   useEffect(() => {
@@ -39,20 +39,19 @@ function App() {
     })(document, window.kommunicate || {});
   }, []);  // Empty dependency array ensures this runs only once after component mount
 
-  //Obtain the current user from the UserContext (from user.context.jsx)
-  const { currentUser } = useContext(UserContext)
+  // Obtain the current user from the UserContext (from user.context.jsx)
+  const { currentUser } = useContext(UserContext);
   var isLoggedIn = false;
 
-  //If the user has logged in, set the isLoggedIn variable to true, else false
+  // If the user has logged in, set the isLoggedIn variable to true, else false
   if (currentUser) {
     isLoggedIn = true;
   }
   else {
-    isLoggedIn = false
+    isLoggedIn = false;
   }
 
   return (
-
     <Router>
       <Routes>
         <Route path='/' element={isLoggedIn ? <NavigationBarAndFooterSignedIn /> : <NavigationBarAndFooterSignedOut />}>
@@ -60,29 +59,110 @@ function App() {
           {/* Let the Login page be accessible by the path '/' alone */}
           {<Route index element={<Home />} />}
 
-          {/* All the possible routes of under the path '/', followed by the path-name: */}
+          {/* Public Routes */}
           <Route path='login' element={<Login />} />
           <Route path='signUp' element={<SignUp />} />
           <Route path='forgotPassword' element={<ForgotPassword />} />
-          <Route path='createRecipe' element={<CreateRecipe />} />
-          <Route path='searchRecipes' element={<SearchRecipes />} />
-          <Route path='MFAform' element={<MFAform/>} />
-          <Route path='dashboard' element={<Dashboard/>} />
-
-
-          {/* UI-Only-Pages (in the path: ./routes/UI-Only-Pages/) */}
           <Route path='landing' element={<Landing />} />
-          <Route path='yourPreferences' element={<YourPreferences />} />
           <Route path='signInSignUp' element={<SignInSignUp />} />
-          <Route path='userProfile' element={<UserProfilePage />} />
-          <Route path='Appointment' element={<Appointment />} />
-          <Route path='dietaryRequirements' element={<DietaryRequirements />} />
-          <Route path='ScanProducts' element={<ScanProducts />} />
-          <Route path='menu' element={<Menu />} />
-          <Route path='recipe' element={<Recipe />} />
-          {/* <Route path="/components/allergy" component={Allergy} /> */}
-          <Route path='Meal' element={<Meal />} />
 
+          {/* Private Routes */}
+          <Route
+            path='createRecipe'
+            element={
+              <AuthenticateRoute>
+                <CreateRecipe />
+              </AuthenticateRoute>
+            }
+          />
+          <Route
+            path='searchRecipes'
+            element={
+              <AuthenticateRoute>
+                <SearchRecipes />
+              </AuthenticateRoute>
+            }
+          />
+          <Route
+            path='yourPreferences'
+            element={
+              <AuthenticateRoute>
+                <YourPreferences />
+              </AuthenticateRoute>
+            }
+          />
+          <Route
+            path='userProfile'
+            element={
+              <AuthenticateRoute>
+                <UserProfilePage />
+              </AuthenticateRoute>
+            }
+          />
+          <Route
+            path='Appointment'
+            element={
+              <AuthenticateRoute>
+                <Appointment />
+              </AuthenticateRoute>
+            }
+          />
+          <Route
+            path='dietaryRequirements'
+            element={
+              <AuthenticateRoute>
+                <DietaryRequirements />
+              </AuthenticateRoute>
+            }
+          />
+          <Route
+            path='ScanProducts'
+            element={
+              <AuthenticateRoute>
+                <ScanProducts />
+              </AuthenticateRoute>
+            }
+          />
+          <Route
+            path='menu'
+            element={
+              <AuthenticateRoute>
+                <Menu />
+              </AuthenticateRoute>
+            }
+          />
+          <Route
+            path='recipe'
+            element={
+              <AuthenticateRoute>
+                <Recipe />
+              </AuthenticateRoute>
+            }
+          />
+          <Route
+            path='Meal'
+            element={
+              <AuthenticateRoute>
+                <Meal />
+              </AuthenticateRoute>
+            }
+          />
+          <Route
+            path='MFAform'
+            element={
+              <AuthenticateRoute>
+                <MFAform />
+              </AuthenticateRoute>
+            }
+          />
+          <Route
+            path='dashboard'
+            element={
+              <AuthenticateRoute>
+                <Dashboard />
+              </AuthenticateRoute>
+            }
+          />
         </Route>
       </Routes>
     </Router>
