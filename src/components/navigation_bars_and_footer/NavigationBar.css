@@ -1,133 +1,131 @@
 .navigation-bar-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .navigation-bar-container h3 {
-    margin: 0;
-    padding: 0;
+  margin: 0;
+  padding: 0;
 }
 
 .navigation-bar-div {
-    color: black;
-    background-color: #F8E7FF;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  color: black;
+  background-color: #f8e7ff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .navigation-bar-links-div {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
 }
 
 .link-style-button {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 0 10px 30px;
-    font-family: "Montserrat", sans-serif;
-    font-size: 15px;
-    font-weight: 600;
-    color: #000000;
-    white-space: nowrap;
-    transition: 0.3s;
-    text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0 10px 30px;
+  font-family: "Montserrat", sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: #000000;
+  white-space: nowrap;
+  transition: 0.3s;
+  text-transform: uppercase;
 
-
-    background: none;
-    border: none;
-    font-family: "Montserrat", sans-serif;
-    font-weight: 700;
-    cursor: pointer;
-    margin-right: 15px;
+  background: none;
+  border: none;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 700;
+  cursor: pointer;
+  margin-right: 15px;
 }
 
 .single-line {
-    white-space: nowrap;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: rgb(0, 0, 0);
+  white-space: nowrap;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: rgb(0, 0, 0);
 }
 
 .navigation-bar-container {
-    display: flex;
-    width: 100%;
-    background-color: #F8E7FF;
+  display: flex;
+  width: 100%;
+  background-color: #f8e7ff;
 }
 
 .navigation-links-container {
-    display: flex;
-    justify-content: right;
-    width: 50%;
-    margin-right: 10px;
+  display: flex;
+  justify-content: right;
+  width: 50%;
+  margin-right: 10px;
 }
 
 a {
-    font-weight: 700;
-    text-decoration: none;
-    color: darkorange;
-    padding-top: 0.5cm;
-    padding-bottom: 0.5cm;
-    padding-left: 0.5cm;
-    width: 100%;
+  font-weight: 700;
+  text-decoration: none;
+  color: darkorange;
+  padding-top: 0.5cm;
+  padding-bottom: 0.5cm;
+  padding-left: 0.5cm;
+  width: 100%;
 }
 
 .link {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 20px;
-    font-family: "Montserrat", sans-serif;
-    font-size: 15px;
-    font-weight: 600;
-    color: #000000;
-    white-space: nowrap;
-    transition: 0.3s;
-    text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  font-family: "Montserrat", sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: #000000;
+  white-space: nowrap;
+  transition: 0.3s;
+  text-transform: uppercase;
 }
-
 
 /* Dropdown button styles */
 .dropbtn {
-    background-color: #ffffff;
-    color: #000000;
-    padding: 10px;
-    font-size: 16px;
-    border: none;
-    cursor: pointer;
-    margin-right: 10px; /* Add margin to the right of the dropdown button */
-  }
-  
-  /* Dropdown content styles */
-  .dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: #ffffff;
-    min-width: auto;
-    box-shadow: 0px 12px 19px 0px rgba(0,0,0,0.2);
-    border-radius: 9px;
-    z-index: 1;
-    /* margin-top: 10px; /* Add margin to the top of the dropdown content */
-    /* margin-right: 10px; Add margin to the right of the dropdown content */ 
-  }
-  
-  /* Dropdown links styles */
-  .dropdown-content .link {
-    color: #000000;
-    padding: 12px 16px;
-    text-decoration: none;
-    display: block;
-  }
-  
-  /* Change color of dropdown links on hover */
-  .dropdown-content .link:hover {
-    background-color: #f1f1f1;
-  }
-  
-  /* Show the dropdown menu on hover */
-  .dropdown:hover .dropdown-content {
-    display: block;
-  }
+  background-color: #ffffff;
+  color: #000000;
+  padding: 10px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+  margin-right: 10px; /* Add margin to the right of the dropdown button */
+}
+
+/* Dropdown content styles */
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #ffffff;
+  min-width: auto;
+  box-shadow: 0px 12px 19px 0px rgba(0, 0, 0, 0.2);
+  border-radius: 9px;
+  z-index: 1;
+  /* margin-top: 10px; /* Add margin to the top of the dropdown content */
+  /* margin-right: 10px; Add margin to the right of the dropdown content */
+}
+
+/* Dropdown links styles */
+.dropdown-content .link {
+  color: #000000;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+/* Change color of dropdown links on hover */
+.dropdown-content .link:hover {
+  background-color: #f1f1f1;
+}
+
+/* Show the dropdown menu on hover */
+.dropdown:hover .dropdown-content {
+  display: block;
+}
