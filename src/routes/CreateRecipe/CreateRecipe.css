@@ -1,4 +1,4 @@
-.row {
+/* .row {
     margin-bottom: 20px;
 }
 
@@ -103,4 +103,98 @@
     text-align: center;
     background-color: #a82fea;
     color: white;
-  }
+  } */
+.form-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fbd9f9;
+}
+
+.form-box {
+  background-color: #fff;
+  padding: 32px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 600px;
+}
+
+.form-title {
+  text-align: center;
+  font-size: 24px;
+  font-weight: bold;
+  color: #7f00ff;
+  margin-bottom: 16px;
+}
+
+.form-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.form-group {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+}
+
+.form-label {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.form-input {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.form-textarea {
+  resize: vertical;
+}
+
+.form-row {
+  display: flex;
+  gap: 16px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.form-sublabel {
+  font-size: 12px;
+}
+
+.form-error {
+  color: red;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.form-submit-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 24px;
+}
+
+.form-submit-button {
+  background-color: #7f00ff;
+  color: #fff;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.form-submit-button:hover {
+  background-color: #5c00cc;
+}
