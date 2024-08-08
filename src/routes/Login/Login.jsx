@@ -3,124 +3,103 @@ import { Link, useNavigate } from "react-router-dom";
 import { UserContext } from "../../context/user.context";
 import Input from "../../components/general_components/Input/Input";
 import { Button, Icon } from 'semantic-ui-react';
-import { auth, signInWithGooglePopup, createUserDocFromAuth } from "../../utils/firebase";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import '../../App.css'
-import './Login.css'
+import '../../App.css';
+import './Login.css';
 
 const Login = () => {
-
     const navigate = useNavigate(); // Define navigation
     const { setCurrentUser } = useContext(UserContext); // Extract context methods
 
-    // State management for user credentials and MFA flow
-    const [contact, setContact] = useState({ email: '', password: '' });
+    // State management for user credentials and error messages
+    const [contact, setContact] = useState({ username: '', password: '' });
+    const [error, setError] = useState('');
 
-    // Define what happens when change is made into the email/username inputs
+    // Define what happens when change is made into the username/password inputs
     const handleChange = (event) => {
         const { name, value } = event.target;
-
         // Handle form input changes
         setContact(prevValue => ({ ...prevValue, [name]: value }));
     };
 
-    const { email, password } = contact;
+    const { username, password } = contact;
 
     const handleSignIn = async (e) => {
         e.preventDefault();
-
         try {
-            // Attempt email/password sign-in
-            const userCredential = await signInWithEmailAndPassword(auth, email, password);
-            const user = userCredential.user;
+            // Make the fetch request to authenticate the user
+            const response = await fetch('http://localhost:80/api/login', {
+                method: 'POST',
+                body: JSON.stringify({ username, password }),
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+            });
 
-            setCurrentUser(user);  // Update context with new user
-            console.log(user.displayName);
+            // Check the response status
+            if (response.ok) {
+                const data = await response.json();
+                // Update context with authenticated user
+                console.log(data);
+                setCurrentUser(data.user);
 
-            // Redirect to menu page
-            navigate('/menu');
-
-            alert("Successfully signed in with Email and Password. \nEmail: " + email);
-        } catch (error) {
-            console.log("Navigating to MFA page...");
-            navigate('/MFAform');
-            alert("Failed to sign in: " + error.message);
-        }
-    };
-
-    // Log in as Google user
-    const logGoogleUser = async () => {
-        try {
-            // Sign in with Google and navigate upon success
-            const { user } = await signInWithGooglePopup();
-            const userDocRef = await createUserDocFromAuth(user);
-            setCurrentUser(user);
-            if (userDocRef) {
-                alert("Successfully signed in with Google account. \nDisplay name: " + user.displayName);
-                navigate('/menu');
+                // Navigate to the MFA form, passing username and password in state
+                navigate("/MFAform", { state: { username, password } });
+                alert("Successfully signed in. Please complete MFA to continue.");
+            } else {
+                // Handle unsuccessful login
+                const data = await response.json();
+                setError(data.error || 'Failed to sign in. Please check your credentials and try again.');
             }
         } catch (error) {
-            console.error('Error signing in with Google', error.message);
+            // Handle errors
+            console.error('Error signing in:', error.message);
+            setError("Failed to sign in. An error occurred.");
         }
     };
 
+    // Function to handle Google sign-in
+    const logGoogleUser = async () => {
+        // Handle Google sign-in here
+    };
+
+    // Function to handle forgot password click
     const handleForgotPasswordClick = () => {
         navigate("/forgotPassword"); // Navigate to forgot password page
-    }
+    };
 
     return (
         <div className="login-style">
-
-            <br></br>
+            <h3 style={{ paddingTop: '20px' }}>Login</h3>
+            {error && <p className="error-message">{error}</p>} {/* Display error messages */}
+            <br />
             <Input
-                label="Email"
-                name="email"
+                label="Username"
+                name="username"
                 type='text'
-                placeholder="Email"
+                placeholder="Username"
                 onChange={handleChange}
-                value={contact.email}
+                value={username}
             />
-
-            <br></br>
-
+            <br />
             <Input
                 label="Password"
                 name='password'
                 type="password"
                 placeholder="Password"
                 onChange={handleChange}
-                value={contact.password}
+                value={password}
             />
-
-            <br></br>
-
-            <Button
-                positive onClick={handleSignIn}>
-                Sign In
-            </Button>
-
-            <br></br>
-
-            <Button
-                onClick={logGoogleUser}
-                color='blue'>
-                <Icon
-                    name='google'
-                />
+            <br />
+            <Button style={{ width: '300px' }} positive onClick={handleSignIn}>Sign In</Button>
+            <br />
+            <Button style={{ width: '300px' }} onClick={logGoogleUser} color='blue'>
+                <Icon name='google' />
                 Sign In With Google
             </Button>
-
-            <br></br>
-
-            <p className="forgot-password"
-                onClick={handleForgotPasswordClick}>
-                Forgot Password?
-            </p>
-
+            <br />
+            <p className="forgot-password" onClick={handleForgotPasswordClick}>Forgot Password?</p>
+            <br />
             <Link className="link-div" to='/signUp'>Create Account</Link>
-
-            <br></br>
-
         </div>
     );
 };
