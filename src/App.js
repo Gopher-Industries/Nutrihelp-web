@@ -48,6 +48,7 @@ function App() {
     isLoggedIn = true;
   }
   else {
+    console.log('redirecting to login. please login')
     isLoggedIn = false;
   }
 
