@@ -18,28 +18,7 @@ const Home = () => {
     const [showHeader, setShowHeader] = useState(true);
     const [prevScrollPos, setPrevScrollPos] = useState(0);
 
-    useEffect(() => {
-        const handleScroll = () => {
-            const currentScrollPos = window.scrollY;
-
-            if (currentScrollPos > prevScrollPos) {
-                // Scrolling down
-                setShowHeader(false);
-            } else {
-                // Scrolling up
-                setShowHeader(true);
-            }
-
-            setPrevScrollPos(currentScrollPos);
-        };
-
-        window.addEventListener('scroll', handleScroll);
-
-        return () => {
-
-            window.removeEventListener('scroll', handleScroll);
-        };
-    }, [prevScrollPos]);
+    
 
     const [formData, setFormData] = useState({
         name: '',
@@ -95,7 +74,8 @@ const Home = () => {
                                         Home
                                     </a>
                                 </li>
-                                <li>
+                              
+                                                              {/* <li>
                                     <a className="nav-link scrollto" href="#about">
                                         About
                                     </a>
@@ -109,8 +89,9 @@ const Home = () => {
                                     <a className="nav-link scrollto" href="#contact">
                                         Contact
                                     </a>
-                                </li>
-
+                               
+                                </li> */}
+                               //\\
                                 <li>
                                     <Link onClick={() => setLoginPopup(true) & setCreatePopup(false)} className="nav-link scrollto">
                                         Sign In
@@ -122,6 +103,8 @@ const Home = () => {
                                         Create Account
                                     </Link>
                                 </li>
+
+                                
 
                             </ul>
                         </nav>

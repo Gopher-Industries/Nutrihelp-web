@@ -1,11 +1,14 @@
 .navigation-bar-container {
+    position: fixed;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
 .navigation-bar-container h3 {
+    position: fixed;
     margin: 0;
+
     padding: 0;
 }
 
@@ -18,6 +21,7 @@
 }
 
 .navigation-bar-links-div {
+    position: fixed;
     display: flex;
     align-items: center;
 }
@@ -53,12 +57,15 @@
 }
 
 .navigation-bar-container {
+    position: fixed;
+
     display: flex;
     width: 100%;
     background-color: #F8E7FF;
 }
 
 .navigation-links-container {
+    position: fixed;
     display: flex;
     justify-content: right;
     width: 50%;
@@ -76,6 +83,7 @@ a {
 }
 
 .link {
+    position: fixed;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -92,6 +100,7 @@ a {
 
 /* Dropdown button styles */
 .dropbtn {
+    position: fixed;
     background-color: #ffffff;
     color: #000000;
     padding: 10px;
@@ -103,6 +112,7 @@ a {
   
   /* Dropdown content styles */
   .dropdown-content {
+    position: fixed;
     display: none;
     position: absolute;
     background-color: #ffffff;

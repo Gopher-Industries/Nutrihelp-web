@@ -60,6 +60,7 @@ body {
   font-family: 'Lato', sans-serif;}
 
 .container {
+  margin-top: 60px; 
   width: 900px;
   background: #ebe6fb;
   margin: 0 auto;
@@ -183,6 +184,7 @@ figure {
   }
   
   h3 {
+    margin-top: 60px; 
     margin: 10; /* Remove default margin */
     font-size: 14px; /* Adjust font size as needed */
     line-height: 25px; /* Align vertically with the toggle */

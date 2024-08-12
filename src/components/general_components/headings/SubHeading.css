@@ -1,4 +1,5 @@
 .sub-heading-div {
+    position: fixed;
     display: flex;
     justify-content: center;
     font-size: 40px;
