@@ -2,18 +2,13 @@ import './Home.css';
 
 import React, { useContext, useEffect, useState } from 'react';
 
-import CreateAccountPopUp from './CreateAccountPopUp';
 import { Link } from 'react-router-dom';
-import LoginPopUp from './LoginPopUp';
 import { UserContext } from "../../context/user.context";
 
 const Home = () => {
 
     const { currentUser } = useContext(UserContext)
-    const isLoggedIn = Boolean(currentUser);
 
-    const [createPopUp, setCreatePopup] = useState(false);
-    const [loginPopUp, setLoginPopup] = useState(false);
 
     const [showHeader, setShowHeader] = useState(true);
     const [prevScrollPos, setPrevScrollPos] = useState(0);
@@ -82,60 +77,7 @@ const Home = () => {
 
     return (
         <>
-            {!isLoggedIn && (
-                <header id="header" className={`fixed-top ${showHeader ? 'header-visible' : 'header-hidden'}`}>
-                    <div className="container d-flex align-items-center justify-content-between">
-                        <a href="index.html" className="logo">
-                            <img src="" alt="" />
-                        </a>
-                        <nav id="navbar" className="navbar">
-                            <ul>
-                                <li>
-                                    <a className="nav-link scrollto active" href="index.html">
-                                        Home
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="nav-link scrollto" href="#about">
-                                        About
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="nav-link scrollto" href="#services">
-                                        Services
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="nav-link scrollto" href="#contact">
-                                        Contact
-                                    </a>
-                                </li>
-
-                                <li>
-                                    <Link onClick={() => setLoginPopup(true) & setCreatePopup(false)} className="nav-link scrollto">
-                                        Sign In
-                                    </Link>
-                                </li>
-
-                                <li>
-                                    <Link onClick={() => setCreatePopup(true) & setLoginPopup(false)} className="nav-link scrollto">
-                                        Create Account
-                                    </Link>
-                                </li>
-
-                            </ul>
-                        </nav>
-                    </div>
-                </header>
-            )}
-
             <section id="hero" className="d-flex align-items-center">
-
-                <CreateAccountPopUp trigger={createPopUp} setTrigger={setCreatePopup}>
-                </CreateAccountPopUp>
-
-                <LoginPopUp trigger={loginPopUp} setTrigger={setLoginPopup}>
-                </LoginPopUp>
 
                 <div className="container">
                     <div className="row">
