@@ -23,20 +23,20 @@ const SignUp = (props) => {
         confirmPassword: ''
     });
     const [phoneNumber, setPhoneNumber] = useState("");
-    const [recaptchaVerifier, setRecaptchaVerifier] = useState(null);
+    // const [recaptchaVerifier, setRecaptchaVerifier] = useState(null);
 
     // Set up reCAPTCHA on component mount
-    useEffect(() => {
-        try {
-            const verifier = new RecaptchaVerifier('sign-up-button', {
-                'size': 'invisible',
-            }, auth);
-            setRecaptchaVerifier(verifier);
-        } catch (error) {
-            // Log error if reCAPTCHA initialisation fails
-            console.error('Error initializing reCAPTCHA:', error);
-        }
-    }, []);
+    // useEffect(() => {
+    //     try {
+    //         const verifier = new RecaptchaVerifier('sign-up-button', {
+    //             'size': 'invisible',
+    //         }, auth);
+    //         setRecaptchaVerifier(verifier);
+    //     } catch (error) {
+    //         // Log error if reCAPTCHA initialisation fails
+    //         console.error('Error initializing reCAPTCHA:', error);
+    //     }
+    // }, []);
 
     // Function to handle submission of the sign-up form
     const handleSubmit = async (event) => {

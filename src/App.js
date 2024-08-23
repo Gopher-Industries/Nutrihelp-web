@@ -6,8 +6,6 @@ import { UserContext } from "./context/user.context";
 import Login from './routes/Login/Login';
 import SignUp from './routes/SignUp/SignUp';
 import ForgotPassword from './routes/ForgotPassword/ForgotPassword';
-import NavigationBarAndFooterSignedIn from './components/navigation_bars_and_footer/signed_in/NavigationBarAndFooterSignedIn';
-import NavigationBarAndFooterSignedOut from './components/navigation_bars_and_footer/signed_out/NavigationBarAndFooterSignedOut';
 import CreateRecipe from './routes/CreateRecipe/CreateRecipe';
 import SearchRecipes from './routes/SearchRecipes/SearchRecipes';
 import YourPreferences from './routes/UI-Only-Pages/YourPreferences/pref-dis-health';
