@@ -9,13 +9,13 @@
   padding: 0;
 }
 
-.navigation-bar-div {
+/* .navigation-bar-div {
   color: black;
   background-color: #f8e7ff;
   display: flex;
   justify-content: space-between;
   align-items: center;
-}
+} */
 
 .navigation-bar-links-div {
   display: flex;

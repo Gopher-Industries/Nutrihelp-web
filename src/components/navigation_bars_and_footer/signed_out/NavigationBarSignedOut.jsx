@@ -6,7 +6,7 @@ import "./../NavigationBar.css";
 //Navigation bar for when the user is not logged in
 function NavigationBarSignedOut() {
   return (
-    <div>
+    <div style={{}}>
       <div className="navigation-bar-container">
         {/*NOTE: CSS for links is in "index.css"*/}
         <Link className="link" to="/">

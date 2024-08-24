@@ -1,0 +1,119 @@
+.formcontainer {
+  width: 100%;
+  margin: 0;
+  background-color: #f8e7ff;
+  padding-bottom: 20px;
+}
+
+.recipe-form-container {
+  background-color: rgba(255, 255, 255, 0.6);
+  padding: 20px;
+  max-width: 80%;
+  margin: 0 auto;
+  border-radius: 8px;
+  box-shadow: inset 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+  position: relative;
+}
+
+.recipe-form-title {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 20px;
+  font-weight: bold;
+}
+
+.recipe-form {
+  display: grid;
+  /* flex-direction: column; */
+}
+
+.form-group {
+  /* padding-bottom: 20px; */
+  display: flex;
+  width: 100%;
+}
+
+.form-group label {
+  display: block;
+  /* margin-bottom: 5px; */
+  font-weight: 600;
+  width: 40%;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 50%;
+  padding: 10px;
+  border: 1px solid #b82fff;
+  box-shadow: inset 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+  border-radius: 4px;
+  font-size: 16px;
+  background-color: #ffffff;
+}
+
+.form-group textarea {
+  height: 200px;
+}
+
+.cooking-time {
+  display: flex;
+  align-items: center;
+}
+
+.cooking-time input {
+  width: 60px;
+  margin-right: 10px;
+}
+
+.nutrition-facts {
+  display: flex;
+  justify-content: space-between;
+}
+
+.nutrition-inputs {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+  width: 100%;
+}
+
+.nutrition-group {
+  display: flex;
+  /* flex-direction: column; */
+  width: 40%;
+}
+
+.nutrition-group input {
+  width: 50%;
+  margin-left: 20px;
+  border-radius: 20px;
+  -webkit-border-radius: 20px;
+  -moz-border-radius: 20px;
+  -ms-border-radius: 20px;
+  -o-border-radius: 20px;
+}
+
+.submit-button {
+  background-color: #b82fff;
+  width: 50%;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  text-transform: uppercase;
+  margin-top: 20px;
+  align-self: center;
+  font-weight: 700;
+}
+
+.submit-button:hover {
+  background-color: #9d26cc;
+}
+
+.submit-div {
+  display: flex;
+  justify-content: center;
+}

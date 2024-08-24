@@ -1,157 +1,69 @@
 import React from "react";
-import { useForm } from "react-hook-form";
-import "./CreateRecipe.css"; // Import the CSS file
+import "./createrecipestyle.css";
 
 const CreateRecipe = () => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
-
-  const onSubmit = (data) => {
-    console.log(data);
-  };
-
   return (
-    <div className="form-container">
-      <div className="form-box">
-        <h1 className="form-title">CREATE RECIPE</h1>
-        <form onSubmit={handleSubmit(onSubmit)} className="form-content">
+    <div className="formcontainer">
+      <h1 className="recipe-form-title">CREATE RECIPE</h1>
+      <div className="recipe-form-container">
+        <form className="recipe-form">
           <div className="form-group">
-            <label className="form-label">Name of the Recipe</label>
-            <input
-              className="form-input"
-              {...register("recipeName", { required: true })}
-            />
-            {errors.recipeName && (
-              <p className="form-error">This field is required</p>
-            )}
+            <label htmlFor="recipe-name">Name of the Recipe</label>
+            <input type="text" id="recipe-name" />
           </div>
 
           <div className="form-group">
-            <label className="form-label">Brief Introduction of Recipe</label>
-            <input
-              className="form-input"
-              {...register("introduction", { required: true })}
-            />
-            {errors.introduction && (
-              <p className="form-error">This field is required</p>
-            )}
+            <label htmlFor="recipe-introduction">
+              Brief Introduction of Recipe
+            </label>
+            <input type="text" id="recipe-introduction" />
           </div>
 
           <div className="form-group">
-            <label className="form-label">Cuisine</label>
-            <input
-              className="form-input"
-              {...register("cuisine", { required: true })}
-            />
-            {errors.cuisine && (
-              <p className="form-error">This field is required</p>
-            )}
+            <label htmlFor="recipe-cuisine">Cuisine</label>
+            <input type="text" id="recipe-cuisine" />
           </div>
 
           <div className="form-group">
-            <label className="form-label">Ingredients</label>
-            <textarea
-              className="form-input form-textarea"
-              {...register("ingredients", { required: true })}
-              rows="4"
-            />
-            {errors.ingredients && (
-              <p className="form-error">This field is required</p>
-            )}
+            <label htmlFor="recipe-ingredients">Ingredients</label>
+            <textarea id="recipe-ingredients"></textarea>
           </div>
 
-          <div className="form-row">
-            <div className="form-group">
-              <label className="form-label">Cooking Time</label>
-              <input
-                type="number"
-                className="form-input"
-                {...register("cookingTime", { required: true })}
-              />
-              {errors.cookingTime && (
-                <p className="form-error">This field is required</p>
-              )}
-            </div>
-            <div className="form-group">
-              <label className="form-label">Minutes</label>
-              <input
-                type="number"
-                className="form-input"
-                {...register("minutes", { required: true })}
-              />
-              {errors.minutes && (
-                <p className="form-error">This field is required</p>
-              )}
-            </div>
+          <div className="form-group cooking-time">
+            <label htmlFor="recipe-cooking-time">Cooking Time</label>
+            <input type="number" id="recipe-cooking-time" />
+            <span>Minutes</span>
           </div>
 
           <div className="form-group">
-            <label className="form-label">Directions</label>
-            <textarea
-              className="form-input form-textarea"
-              {...register("directions", { required: true })}
-              rows="4"
-            />
-            {errors.directions && (
-              <p className="form-error">This field is required</p>
-            )}
+            <label htmlFor="recipe-directions">Directions</label>
+            <textarea id="recipe-directions"></textarea>
           </div>
 
-          <div className="form-group">
-            <label className="form-label">Nutrition Facts</label>
-            <div className="form-grid">
-              <div>
-                <label className="form-sublabel">Carbs</label>
-                <input
-                  type="number"
-                  className="form-input"
-                  {...register("carbs", { required: true })}
-                />
-                {errors.carbs && (
-                  <p className="form-error">This field is required</p>
-                )}
+          <div className="form-group nutrition-facts">
+            <label>Nutrition Facts</label>
+            <div className="nutrition-inputs">
+              <div className="nutrition-group">
+                <label htmlFor="recipe-carbs">Carbs</label>
+                <input type="number" id="recipe-carbs" />
               </div>
-              <div>
-                <label className="form-sublabel">Calories</label>
-                <input
-                  type="number"
-                  className="form-input"
-                  {...register("calories", { required: true })}
-                />
-                {errors.calories && (
-                  <p className="form-error">This field is required</p>
-                )}
+              <div className="nutrition-group">
+                <label htmlFor="recipe-calories">Calories</label>
+                <input type="number" id="recipe-calories" />
               </div>
-              <div>
-                <label className="form-sublabel">Fat</label>
-                <input
-                  type="number"
-                  className="form-input"
-                  {...register("fat", { required: true })}
-                />
-                {errors.fat && (
-                  <p className="form-error">This field is required</p>
-                )}
+              <div className="nutrition-group">
+                <label htmlFor="recipe-fat">Fat</label>
+                <input type="number" id="recipe-fat" />
               </div>
-              <div>
-                <label className="form-sublabel">Protein</label>
-                <input
-                  type="number"
-                  className="form-input"
-                  {...register("protein", { required: true })}
-                />
-                {errors.protein && (
-                  <p className="form-error">This field is required</p>
-                )}
+              <div className="nutrition-group">
+                <label htmlFor="recipe-protein">Protein</label>
+                <input type="number" id="recipe-protein" />
               </div>
             </div>
           </div>
 
-          <div className="form-submit-container">
-            <button type="submit" className="form-submit-button">
+          <div className="submit-div">
+            <button type="submit" className="submit-button">
               Submit Recipe
             </button>
           </div>
