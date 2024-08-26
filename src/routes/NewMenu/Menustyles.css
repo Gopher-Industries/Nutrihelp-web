@@ -9,7 +9,7 @@ body {
   font-family: sans-serif;
 }
 
-.nav {
+/* .nav {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -17,9 +17,9 @@ body {
   gap: 2rem;
   color: black;
   padding-top: 10px;
-}
+} */
 
-.nav ul {
+/* .nav ul {
   padding: 0;
   margin: 0;
   list-style: none;
@@ -30,7 +30,7 @@ body {
 .nav a {
   color: inherit;
   text-decoration: none;
-}
+} */
 
 .headerlogoedit {
   padding-left: 5%;
@@ -183,4 +183,88 @@ h3 {
 
 .dashboard-grid-2 {
   width: 80%;
+}
+
+/* menu style 2024/08*/
+
+nav a {
+  padding: 10px 20px;
+  text-decoration: none;  /* 移除链接下划线 */
+  color: #000;            /* 设置文字颜色 */
+
+}
+
+/* nav a.active {
+  background-color: #f0f0f0;
+} */
+
+.breakfast-btn{
+  background: #F5EEE6;
+  padding-top: 10px;
+  text-align: center;
+  color: #000000;
+  border-radius: 30px 30px 0px 0px;
+  height: 50px;
+  margin-right: 1px;
+  width: 10em;
+  display: inline-block;
+  font-size: 16px;
+}
+
+.lunch-btn{
+  background: #F3D7CA;
+  padding-top: 10px;
+  text-align: center;
+  color: #000000;
+  border-radius: 30px 30px 0px 0px;
+  height: 50px;
+  margin-right: 1px;
+  width: 10em;
+  display: inline-block;
+  font-size: 16px;
+}
+
+.dinner-btn{
+  background: #E6A4B4;
+  padding-top: 10px;
+  text-align: center;
+  color: #000000;
+  border-radius: 30px 30px 0px 0px;
+  height: 50px;
+  margin-right: 1px;
+  width: 10em;
+  display: inline-block;
+  font-size: 16px;
+}
+
+nav > a::before {
+  border: none;
+}
+
+nav a.active::before {
+  background-color: #000000;
+  margin-bottom: 0;
+
+}
+
+nav a.active {
+  color: #000000; 
+  font-family: sans-serif;
+  font-weight: bold; 
+  color: #000000; 
+  box-shadow: inset 0px 2px 4px rgba(0, 0, 0, 0.5); 
+  font-size: 18px;
+  
+}
+
+.tab-underline {
+  position: absolute;
+  bottom: 0; 
+  left: 0;
+  width: 1500px;
+  height: 10px; 
+  background: #F8E7FF; 
+  border-radius: 0 5px 5px 0; 
+  margin: 0 -.3em;
+  z-index: 1; 
 }

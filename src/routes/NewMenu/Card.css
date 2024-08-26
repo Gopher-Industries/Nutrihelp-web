@@ -1,0 +1,49 @@
+/* src/components/Card.css */
+.card {
+  max-width: 250px;
+  min-width: 250px;
+  height: 450px;
+  margin: 10px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  overflow: hidden;
+  box-shadow: 0px 0px 7px 5px rgba(232, 147, 207, 0.66);
+}
+
+.card-image {
+  margin: 15px;
+  border-radius: 34px;
+  width: calc(100% - 30px);
+  height: auto;
+  box-shadow: -1px 6px 10px -3px rgba(0, 0, 0, 0.52);
+}
+
+.card-body {
+  margin: 15px;
+  padding: 10px;
+  flex-grow: 1;
+  overflow-y: auto;
+  max-height: 150px;
+}
+
+.card-footer {
+  text-align: center;
+  margin-top: auto;
+  padding: 10px;
+}
+
+.card-footer a {
+  display: inline-block;
+  padding: 8px 16px;
+  background-color: #E893CF;
+  color: white;
+  text-decoration: none;
+  border-radius: 20px;
+}
+
+.card-footer a:hover {
+  background-color: #f7e3d9;
+  color: #000000;
+}

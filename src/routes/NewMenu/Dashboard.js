@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import { Grid, GridColumn, GridRow } from 'semantic-ui-react';
 import DashboardGraph from '../../components/Dashboard-Graph';
+import Card from './Card';
+
 
 const Dashboard = () => {
   const location = useLocation();
@@ -14,11 +16,40 @@ const Dashboard = () => {
     sodium: 0,
   };
 
+
+  const [activeTab, setActiveTab] = useState('breakfast');
+  const [groupedItems, setGroupedItems] = useState({
+    breakfast: [],
+    lunch: [],
+    dinner: []
+  });
+
+  useEffect(() => {
+    // Update groupedItems when selectedItems changes
+    const newGroupedItems = {
+      breakfast: selectedItems.filter(item => item.mealType === 'breakfast'),
+      lunch: selectedItems.filter(item => item.mealType === 'lunch'),
+      dinner: selectedItems.filter(item => item.mealType === 'dinner'),
+    };
+    setGroupedItems(newGroupedItems);
+  }, [selectedItems]);
+
+
   const renderMealItems = (mealType) => {
-    return selectedItems
-      .filter(item => item.mealType === mealType)
-      .map((item, index) => <div className="selected-recipe-box" key={index}>{item.name}</div>);
+    const items = groupedItems[mealType];
+    // console.log(`Items for ${mealType}:`, items);
+    if (!items || items.length === 0) {
+      return <div>No items available</div>;
+    }
+    return items.map((item, index) => (
+      <div className="selected-recipe-box" key={index}>
+        <img src={item.imageUrl} alt={item.name} style={{ width: '100px', height: '100px' }} />
+        <div>{item.name}</div>
+      </div>
+    ));
   };
+
+
 
   const menuGraphComponent = () => (
     <div className="nutrition-summary">
@@ -34,69 +65,55 @@ const Dashboard = () => {
 
   return (
     <main>
-      <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
-        integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
-        crossOrigin="anonymous"
-        referrerPolicy="no-referrer"
-      />
-
       <div className="mainBox">
         <div className="Title">
           <h2>MENU</h2>
-          
         </div>
         <Link to="/appointment" className="button-link">
-            <button>Book an Appointment</button>
-          </Link>
+          <button>Book an Appointment</button>
+        </Link>
 
         <div className="daySelctionText">
           <h3>Today</h3>
         </div>
 
+
+        {/* Tabs Navigation */}
+        <nav>
+          <a
+            className={`breakfast-btn ${activeTab === 'breakfast' ? 'active' : ''}`}
+            onClick={() => setActiveTab('breakfast')}
+          >
+            Breakfast
+          </a>
+          <a
+            className={`lunch-btn ${activeTab === 'lunch' ? 'active' : ''}`}
+            onClick={() => setActiveTab('lunch')}
+          >
+            Lunch
+          </a>
+          <a
+            className={`dinner-btn ${activeTab === 'dinner' ? 'active' : ''}`}
+            onClick={() => setActiveTab('dinner')}
+          >
+            Dinner
+          </a>
+          <div className="tab-underline"></div>
+        </nav>
+
+
         <div className="dashboard-grid">
-          <div className="widgetBox dashboard-grid-1">
-            <i className="fa-solid fa-palette"></i>
-            <i className="fa-solid fa-paintbrush"></i>
-            <i className="fa-solid fa-caret-down"></i>
-            <i className="fa-solid fa-sun"></i>
-            <i className="fa-solid fa-moon"></i>
-            <i className="fa-solid fa-sliders"></i>
-          </div>
           <div className="dashboard-grid-2">
             <Grid columns={3} divided>
               <GridRow className="menu-grid-wrap">
                 <GridColumn>
                   <div className="menu-grid-box">
-                    <h3>Breakfast</h3>
-                    {renderMealItems('breakfast')}
-                  </div>
-                </GridColumn>
-                <GridColumn>
-                  <div className="menu-grid-box">
-                    <h3>Lunch</h3>
-                    {renderMealItems('lunch')}
-                  </div>
-                </GridColumn>
-                <GridColumn>
-                  <div className="menu-grid-box">
-                    <h3>Dinner</h3>
-                    {renderMealItems('dinner')}
+                    <h3>{activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}</h3>
+                    {renderMealItems(activeTab)}
                   </div>
                 </GridColumn>
               </GridRow>
             </Grid>
-          </div>
-
-          <div className="widgetBox2 dashboard-grid-3">
-            <i className="fa-solid fa-circle-plus"></i>
-            <i className="fa-solid fa-caret-down"></i>
-            <i className="fa-solid fa-utensils"></i>
-            <i className="fa-solid fa-heart-pulse"></i>
-            <i className="fa-solid fa-carrot"></i>
-            <i className="fa-solid fa-calendar-check"></i>
-            <i className="fa-solid fa-bars"></i>
           </div>
         </div>
 
