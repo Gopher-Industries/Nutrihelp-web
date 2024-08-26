@@ -9,28 +9,6 @@ body {
   font-family: sans-serif;
 }
 
-/* .nav {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 2rem;
-  gap: 2rem;
-  color: black;
-  padding-top: 10px;
-} */
-
-/* .nav ul {
-  padding: 0;
-  margin: 0;
-  list-style: none;
-  display: flex;
-  gap: 1rem;
-}
-
-.nav a {
-  color: inherit;
-  text-decoration: none;
-} */
 
 .headerlogoedit {
   padding-left: 5%;
@@ -110,8 +88,8 @@ h3 {
 }
 
 .menu-grid-box {
-  width: 75%;
-  margin: auto;
+  width: 100%;
+  margin: 40px;
 }
 
 .menu-grid-wrap {
@@ -176,10 +154,6 @@ h3 {
     justify-content: space-around;
 }
 
-/* .dashboard-grid-1 ,
-.dashboard-grid-3{
-  width: 80px;
-} */
 
 .dashboard-grid-2 {
   width: 80%;
@@ -189,14 +163,11 @@ h3 {
 
 nav a {
   padding: 10px 20px;
-  text-decoration: none;  /* 移除链接下划线 */
-  color: #000;            /* 设置文字颜色 */
+  text-decoration: none;  
+  color: #000;          
 
 }
 
-/* nav a.active {
-  background-color: #f0f0f0;
-} */
 
 .breakfast-btn{
   background: #F5EEE6;

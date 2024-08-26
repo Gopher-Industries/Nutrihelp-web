@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import { Grid, GridColumn, GridRow } from 'semantic-ui-react';
 import DashboardGraph from '../../components/Dashboard-Graph';
-import Card from './Card';
+import Card from './MenuCard';
+import './MenuCard.css';
 
 
 const Dashboard = () => {
@@ -37,16 +38,18 @@ const Dashboard = () => {
 
   const renderMealItems = (mealType) => {
     const items = groupedItems[mealType];
-    // console.log(`Items for ${mealType}:`, items);
+
     if (!items || items.length === 0) {
       return <div>No items available</div>;
     }
-    return items.map((item, index) => (
-      <div className="selected-recipe-box" key={index}>
-        <img src={item.imageUrl} alt={item.name} style={{ width: '100px', height: '100px' }} />
-        <div>{item.name}</div>
+
+    return (
+      <div className="cards-container">
+        {items.map((item, index) => (
+          <Card key={index} item={item} />
+        ))}
       </div>
-    ));
+    );
   };
 
 
@@ -103,17 +106,8 @@ const Dashboard = () => {
 
 
         <div className="dashboard-grid">
-          <div className="dashboard-grid-2">
-            <Grid columns={3} divided>
-              <GridRow className="menu-grid-wrap">
-                <GridColumn>
-                  <div className="menu-grid-box">
-                    <h3>{activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}</h3>
-                    {renderMealItems(activeTab)}
-                  </div>
-                </GridColumn>
-              </GridRow>
-            </Grid>
+          <div className="menu-grid-box">
+            {renderMealItems(activeTab)}
           </div>
         </div>
 
