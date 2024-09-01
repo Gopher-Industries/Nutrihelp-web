@@ -4,6 +4,7 @@ import { Grid, GridColumn, GridRow } from 'semantic-ui-react';
 import DashboardGraph from '../../components/Dashboard-Graph';
 import Card from './MenuCard';
 import './MenuCard.css';
+import imageMapping from './importImages.js';
 
 
 const Dashboard = () => {
@@ -26,7 +27,6 @@ const Dashboard = () => {
   });
 
   useEffect(() => {
-    // Update groupedItems when selectedItems changes
     const newGroupedItems = {
       breakfast: selectedItems.filter(item => item.mealType === 'breakfast'),
       lunch: selectedItems.filter(item => item.mealType === 'lunch'),
@@ -46,7 +46,7 @@ const Dashboard = () => {
     return (
       <div className="cards-container">
         {items.map((item, index) => (
-          <Card key={index} item={item} />
+          <Card key={index} item={item} imageMapping={imageMapping}/>
         ))}
       </div>
     );
