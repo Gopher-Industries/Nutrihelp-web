@@ -1,9 +1,6 @@
 import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { UserContext } from "../../context/user.context";
-import googleLogo from '../../images/Google__G__logo.svg.png';  
-import { pink } from '@mui/material/colors';
-import Checkbox from '@mui/material/Checkbox';
 import './Login.css';
 
 const Login = () => {
