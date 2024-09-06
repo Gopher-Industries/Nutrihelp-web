@@ -1,126 +1,104 @@
 import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { UserContext } from "../../context/user.context";
-import Input from "../../components/general_components/Input/Input";
-import { Button, Icon } from 'semantic-ui-react';
-import { auth, signInWithGooglePopup, createUserDocFromAuth } from "../../utils/firebase";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import '../../App.css'
-import './Login.css'
+import './Login.css';
 
 const Login = () => {
+    const navigate = useNavigate();
+    const { setCurrentUser } = useContext(UserContext);
 
-    const navigate = useNavigate(); // Define navigation
-    const { setCurrentUser } = useContext(UserContext); // Extract context methods
+    const [contact, setContact] = useState({ username: '', password: '' });
+    const [error, setError] = useState('');
 
-    // State management for user credentials and MFA flow
-    const [contact, setContact] = useState({ email: '', password: '' });
-
-    // Define what happens when change is made into the email/username inputs
     const handleChange = (event) => {
         const { name, value } = event.target;
-
-        // Handle form input changes
         setContact(prevValue => ({ ...prevValue, [name]: value }));
     };
 
-    const { email, password } = contact;
+    const { username, password } = contact;
 
     const handleSignIn = async (e) => {
         e.preventDefault();
-
         try {
-            // Attempt email/password sign-in
-            const userCredential = await signInWithEmailAndPassword(auth, email, password);
-            const user = userCredential.user;
+            const response = await fetch('http://localhost:80/api/login', {
+                method: 'POST',
+                body: JSON.stringify({ username, password }),
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+            });
 
-            setCurrentUser(user);  // Update context with new user
-            console.log(user.displayName);
-
-            // Redirect to menu page
-            navigate('/menu');
-
-            alert("Successfully signed in with Email and Password. \nEmail: " + email);
-        } catch (error) {
-            console.log("Navigating to MFA page...");
-            navigate('/MFAform');
-            alert("Failed to sign in: " + error.message);
-        }
-    };
-
-    // Log in as Google user
-    const logGoogleUser = async () => {
-        try {
-            // Sign in with Google and navigate upon success
-            const { user } = await signInWithGooglePopup();
-            const userDocRef = await createUserDocFromAuth(user);
-            setCurrentUser(user);
-            if (userDocRef) {
-                alert("Successfully signed in with Google account. \nDisplay name: " + user.displayName);
-                navigate('/menu');
+            if (response.ok) {
+                const data = await response.json();
+                setCurrentUser(data.user);
+                navigate("/MFAform", { state: { username, password } });
+                alert("Successfully signed in. Please complete MFA to continue.");
+            } else {
+                const data = await response.json();
+                setError(data.error || 'Failed to sign in. Please check your credentials and try again.');
             }
         } catch (error) {
-            console.error('Error signing in with Google', error.message);
+            console.error('Error signing in:', error.message);
+            setError("Failed to sign in. An error occurred.");
         }
     };
 
+    // const logGoogleUser = async () => {
+    //     // Handle Google sign-in here
+    // };
+
     const handleForgotPasswordClick = () => {
-        navigate("/forgotPassword"); // Navigate to forgot password page
-    }
+        navigate("/forgotPassword");
+    };
 
     return (
-        <div className="login-style">
+        <div className="login-container">
+            <h2 className="login-title">LOG IN</h2>
+            <p className="login-subtitle">Enter your email and password to sign in!</p>
 
-            <br></br>
-            <Input
-                label="Email"
-                name="email"
-                type='text'
-                placeholder="Email"
-                onChange={handleChange}
-                value={contact.email}
+            {/* <button className="google-btn" onClick={logGoogleUser}>
+                <img src={googleLogo} alt="Google logo" />
+                Sign in with Google
+            </button> */}
+
+            <div className="divider"><span>or</span></div>
+
+            {error && <p className="error-message">{error}</p>}
+
+            <label htmlFor="username" className="input-label">Username*</label>
+            <input
+                  name="username"
+                  type='text'
+                  placeholder="Username"
+                  onChange={handleChange}
+                  value={username}
             />
 
-            <br></br>
-
-            <Input
-                label="Password"
-                name='password'
-                type="password"
-                placeholder="Password"
-                onChange={handleChange}
-                value={contact.password}
-            />
-
-            <br></br>
-
-            <Button
-                positive onClick={handleSignIn}>
-                Sign In
-            </Button>
-
-            <br></br>
-
-            <Button
-                onClick={logGoogleUser}
-                color='blue'>
-                <Icon
-                    name='google'
+            <label htmlFor="password" className="input-label">Password*</label>
+            <div className="password-field">
+                <input
+                    id="password"
+                    name="password"
+                    type="password"
+                    className="input-field"
+                    placeholder="Min. 8 characters"
+                    onChange={handleChange}
+                    value={password}
                 />
-                Sign In With Google
-            </Button>
+                <span className="eye-icon">👁️</span> 
+            </div>
 
-            <br></br>
+            <div className="options">
+                <div className="keep-logged-in">
+                    <input type="checkbox" id="keepLoggedIn" />
+                    <label htmlFor="keepLoggedIn">Keep me logged in</label>
+                </div>
+                <p className="forgot-password" onClick={handleForgotPasswordClick}>Forgot password?</p>
+            </div>
 
-            <p className="forgot-password"
-                onClick={handleForgotPasswordClick}>
-                Forgot Password?
-            </p>
+            <button className="signin-btn" onClick={handleSignIn}>Sign In</button>
 
-            <Link className="link-div" to='/signUp'>Create Account</Link>
-
-            <br></br>
-
+            <p className="signup-link">Not registered yet? <Link to='/signUp'>Create an Account</Link></p>
         </div>
     );
 };
