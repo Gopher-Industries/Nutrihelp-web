@@ -5,8 +5,7 @@ import { UserContext } from '../../context/user.context';
 
 const AuthenticateRoute = ({ children }) => {
   const { currentUser } = useContext(UserContext);
-
-  return children;
+  return currentUser ? children : <Navigate to="/login" replace />;
 };
 
 export default AuthenticateRoute;
