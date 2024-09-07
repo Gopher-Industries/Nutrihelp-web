@@ -1,8 +1,29 @@
-import './Meal.css'; // Import your CSS file here
-
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import React, { createContext, useState } from 'react';
+import { MdDynamicFeed } from "react-icons/md";
+import { FaUserCircle } from "react-icons/fa";
+import { AiFillBug } from "react-icons/ai";
+import { FaUserPen } from "react-icons/fa6";
+import oatsimg from '../../images/oats.jpg';
+import juiceimg from '../../images/juice.jpeg';
+import coffeeimg from '../../images/coffee.jpeg';
+import breadimg from '../../images/bread.jpg';
+import userimg from '../../images/user.png';
+import riceimg from '../../images/rice.jpeg';
+import chickenimg from '../../images/chicken.jpeg';
+import eggsimg from '../../images/eggs.jpeg';
+import vegimg from '../../images/vegs.jpeg';
+import editimage from '../../images/edit.jpeg';
+import helpimage from '../../images/help.png';
+import logoutimage from '../../images/logout.png';
+import chapatiimg from '../../images/chapati.jpeg';
+import fishimg from '../../images/fish.jpeg';
+import milkimg from '../../images/milk.jpeg';
+import meatimg from '../../images/meat.jpg';
 
+import leftarrow from '../../images/left.png';
+import rightarrow from '../../images/right.png';
+import './Meal.css'; // Import your CSS file here
 const Meal = () => {
     const [selectedItems, setSelectedItems] = useState([]);
     const [totalNutrition, setTotalNutrition] = useState({
@@ -29,8 +50,8 @@ const Meal = () => {
     // List of food items
     const breakfast = [
         {
-            name: 'Oatmeal',
-            imageUrl: 'https://images.immediate.co.uk/production/volatile/sites/30/2023/08/Porridge-oats-d09fae8.jpg?quality=90&resize=440,400',
+            name: 'Oats',
+            imageUrl: oatsimg,
             details: {
                 calories: 150,
                 fats: 300,
@@ -41,7 +62,7 @@ const Meal = () => {
             
         },
         {
-            name: 'Omelete',
+            name: 'Juice',
             imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQo6q5-FWYZNd5DgwNQd5_1JwN30iq7KXkEVQ&usqp=CAU',
             details: {
                 calories: 150,
@@ -52,7 +73,7 @@ const Meal = () => {
             }
         },
         {
-            name: 'Berry Smoothie',
+            name: 'Coffee',
             imageUrl: 'https://www.jessicagavin.com/wp-content/uploads/2020/07/berry-smoothie-8-1200.jpg',
             details: {
                 calories: 200,
@@ -63,7 +84,7 @@ const Meal = () => {
             }
         },
         {
-            name: 'Vegetable Stir-Fry',
+            name: 'Bread',
             imageUrl: 'https://www.dinneratthezoo.com/wp-content/uploads/2019/02/vegetable-stir-fry-3.jpg',
             details: {
                 calories: 500,
@@ -77,7 +98,7 @@ const Meal = () => {
 
     const lunch = [
         {
-            name: 'Chocolate Cake',
+            name: 'Rice',
             imageUrl: 'https://sugargeekshow.com/wp-content/uploads/2023/10/easy_chocolate_cake_slice.jpg',
             details: {
                 calories: 350,
@@ -89,7 +110,7 @@ const Meal = () => {
             
         },
         {
-            name: 'Quinoa Salad',
+            name: 'Chicken',
             imageUrl: 'https://cooktoria.com/wp-content/uploads/2018/08/Mediterranean-Quinoa-Salad-SQ-1.jpg',
              details: {
                 calories: 150,
@@ -100,7 +121,7 @@ const Meal = () => {
             }
         },
         {
-            name: 'Chicken Wings',
+            name: 'Eggs',
             imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRfd6SFL5sSIHlwcDV7db1dfWSpBCtyO6gujA&usqp=CAU',
             details: {
                 calories: 20,
@@ -111,7 +132,7 @@ const Meal = () => {
             }
         },
         {
-            name: 'Hotdog',
+            name: 'Vegetables',
             imageUrl: 'https://hips.hearstapps.com/hmg-prod/images/delish-202104-airfryerhotdogs-044-1619472270.jpg?crop=0.448xw:1.00xh;0.0657xw,0&resize=980:*',
             details: {
                 calories: 500,
@@ -125,7 +146,7 @@ const Meal = () => {
 
     const dinner = [
         {
-            name: 'Broccoli',
+            name: 'Chapati',
             imageUrl: 'https://cdn.apartmenttherapy.info/image/upload/f_jpg,q_auto:eco,c_fill,g_auto,w_1500,ar_1:1/k%2Farchive%2Fd852987f86aeae8b65926f9e7a260c28285ea744',
             details: {
                 calories: 250,
@@ -137,7 +158,7 @@ const Meal = () => {
             
         },
         {
-            name: 'Avocado',
+            name: 'Fish',
             imageUrl: 'https://domf5oio6qrcr.cloudfront.net/medialibrary/5138/h0618g16207257173805.jpg',
              details: {
                 calories: 150,
@@ -148,7 +169,7 @@ const Meal = () => {
             }
         },
         {
-            name: 'Salmon',
+            name: 'Milk',
             imageUrl: 'https://images.theconversation.com/files/249331/original/file-20181206-128208-1lepxpi.jpg?ixlib=rb-1.1.0&q=45&auto=format&w=1356&h=668&fit=crop',
             details: {
                 calories: 800,
@@ -159,7 +180,7 @@ const Meal = () => {
             }
         },
         {
-            name: 'Oatmeal2',
+            name: 'Meat',
             imageUrl: 'https://images.immediate.co.uk/production/volatile/sites/30/2023/08/Porridge-oats-d09fae8.jpg?quality=90&resize=440,400',
             details: {
                 calories: 150,
@@ -209,81 +230,157 @@ const Meal = () => {
     }, [selectedItems]);
 
     return (
-        <div>
-            <header>
-                <h1>What is Your Meal Plan Today?</h1>
-            </header>
-
-            <div className="mealcontainer">
-                <div style={{ width: "100%" }}>
-                    <h3 className='heading' style={{ marginTop: "20px" }} onClick={() => setShowBreakfast(!showBreakfast)}>Breakfast</h3>
-                    <div className="menuContainer" style={{ maxHeight: showBreakfast ? '500px' : '0', overflow: 'hidden', transition: 'max-height 0.5s ease' }}>
-                    {showBreakfast && breakfast.map(item => (
-                            <div
-                                className={`food-item ${selectedItems.some(selected => selected.name === item.name) ? 'selected' : ''}`}
-                                key={item.name}
-                                onClick={() => toggleItemSelection(item, 'breakfast')}
-                            >
-                                <img src={item.imageUrl} alt={item.name} />
-                                <div className='names'>
-                                    <b>{item.name}</b>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                    <h3 className='heading' onClick={() => setShowLunch(!showLunch)}>Lunch</h3>
-                    <div className="menuContainer" style={{ maxHeight: showLunch ? '500px' : '0', overflow: 'hidden', transition: 'max-height 0.5s ease' }}>
-                    {showLunch && lunch.map(item => (
-                            <div
-                                className={`food-item ${selectedItems.some(selected => selected.name === item.name) ? 'selected' : ''}`}
-                                key={item.name}
-                                onClick={() => toggleItemSelection(item, 'lunch')}
-                            >
-                                <img src={item.imageUrl} alt={item.name} />
-                                <div className='names'>
-                                    <b>{item.name}</b>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                    <h3 className='heading' onClick={() => setShowDinner(!showDinner)}>Dinner</h3>
-                    <div className="menuContainer" style={{ maxHeight: showDinner ? '500px' : '0', overflow: 'hidden', transition: 'max-height 0.5s ease' }}>
-                    {showDinner && dinner.map(item => (
-                            <div
-                                className={`food-item ${selectedItems.some(selected => selected.name === item.name) ? 'selected' : ''}`}
-                                key={item.name}
-                                onClick={() => toggleItemSelection(item, 'dinner')}
-                            >
-                                <img src={item.imageUrl} alt={item.name} />
-                                <div className='names'>
-                                    <b>{item.name}</b>
-                                </div>
-                            </div>
-                        ))}
+        <div className="container-fluid bg-white">
+    <h2 className="text-dark text-view">View Meal Plans</h2>
+    <div className="custom-row w-100">
+        <div className="container70 w-70">
+            <h2 className="text-dark text-view">Choose Your Meal of the Day</h2>
+            <input type="radio" class="myradio" name="meal-time" id="breakfast" />
+            <label htmlFor="breakfast">Breakfast</label>
+            <div className="row">
+                   
+                    
+                    <div className="food-selection">
+                        <h3>Select Your Food, To Eat</h3>
+                        <div className="food-items">
+    <img src={leftarrow} alt="left arrow" className="imgsign" />
+    
+    <div className="food-item">
+      <img src={oatsimg} alt="Oats" className="foodimg" />
+      <span>Oats</span>
+    </div>
+    
+    <div className="food-item">
+      <img src={juiceimg} alt="Juice" className="foodimg" />
+      <span>Juice</span>
+    </div>
+    
+    <div className="food-item">
+      <img src={coffeeimg} alt="Coffee" className="foodimg" />
+      <span>Coffee</span>
+    </div>
+    
+    <div className="food-item">
+      <img src={breadimg} alt="Bread" className="foodimg" />
+      <span>Bread</span>
+    </div>
+    
+    <img src={rightarrow} alt="right arrow" className="imgsign" />
+  </div>
                     </div>
                 </div>
-                <div className="details-container">
-                    <div className="details-box">
-                        <h3 style={{ fontSize: "2rem" }}>Nutritional Value</h3>
-
-                        <div>
-                            <ul style={{ fontSize: "1.5rem", marginTop: "0.5rem" }}>
-                            <li>Calories: {totalNutrition.calories}</li>
-                        <li>Proteins: {totalNutrition.proteins}g</li>
-                        <li>Fats: {totalNutrition.fats}g</li>
-                        <li>Vitamins: {totalNutrition.vitamins}mg</li>
-                        <li>Sodium: {totalNutrition.sodium}mg</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <Link className="link" to="/dashboard" state={{ selectedItems, totalNutrition }}>
-                        <button className="viewplan">View Meal Plan</button>
-                    </Link>
-
-
-                </div>
-            </div>
+                <input type="radio" class="myradio" name="meal-time" id="lunch" />
+            <label htmlFor="lunch">Lunch</label>
+                <div className="row">
+                   
+                    
+                   <div className="food-selection">
+                       <h3>Select Your Food, To Eat</h3>
+                       <div className="food-items">
+   <img src={leftarrow} alt="left arrow" className="imgsign" />
+   
+   <div className="food-item">
+     <img src={riceimg} alt="Oats" className="foodimg" />
+     <span>Rice</span>
+   </div>
+   
+   <div className="food-item">
+     <img src={chickenimg} alt="Juice" className="foodimg" />
+     <span>Chicken</span>
+   </div>
+   
+   <div className="food-item">
+     <img src={eggsimg} alt="Coffee" className="foodimg" />
+     <span>Eggs</span>
+   </div>
+   
+   <div className="food-item">
+     <img src={vegimg} alt="Bread" className="foodimg" />
+     <span>Vegetables</span>
+   </div>
+   
+   <img src={rightarrow} alt="right arrow" className="imgsign" />
+ </div>
+                   </div>
+               </div>
+               <input type="radio" class="myradio" name="meal-time" id="dinner" />
+            <label htmlFor="dinner">Dinner</label>
+               <div className="row">
+                   
+                    
+                   <div className="food-selection">
+                       <h3>Select Your Food, To Eat</h3>
+                       <div className="food-items">
+   <img src={leftarrow} alt="left arrow" className="imgsign" />
+   
+   <div className="food-item">
+     <img src={chapatiimg} alt="Oats" className="foodimg" />
+     <span>Chapati</span>
+   </div>
+   
+   <div className="food-item">
+     <img src={fishimg} alt="Juice" className="foodimg" />
+     <span>Fish</span>
+   </div>
+   
+   <div className="food-item">
+     <img src={milkimg} alt="Coffee" className="foodimg" />
+     <span>Milk</span>
+   </div>
+   
+   <div className="food-item">
+     <img src={meatimg} alt="Bread" className="foodimg" />
+     <span>Meat</span>
+   </div>
+   
+   <img src={rightarrow} alt="right arrow" className="imgsign" />
+ </div>
+                   </div>
+               </div>
         </div>
+        
+        <div className="container30 w-30">
+            <h3>User Dashboard</h3>
+            <div className="user-profile">
+      <div className="profile-pic">
+      <img src={userimg} alt="User Image" />
+      </div>
+      <div className="user-buttons">
+        <button className="image-text-button">
+        <img src={editimage} className="buttonimages" alt="Edit Profile" />
+            <span className="button-text">Edit Profile</span></button>
+        <button className="sign-out">
+        <img src={logoutimage} className="buttonimages" alt="Log Out" />
+        <span className="button-text"> Sign Out </span></button>
+        <button className="help">
+        <img src={helpimage} className="buttonimages" alt="Help" />
+        <span className="button-text">Need Help?</span></button>
+      </div>
+    </div>
+    <h3>Calories Associated with Food</h3>
+      <div className="food-details">
+      <h2>Juice</h2>
+      <div className="food-content">
+        <div className="food-image">
+          <img src={juiceimg} alt="Juice" />
+        </div>
+        <div className="food-info">
+          <p>Calories .......................... 100</p>
+          <p>Protein ........................... 20g</p>
+          <p>Carbs ............................. 10g</p>
+          <p>Minerals .......................... 10</p>
+          <p>Vitamins .................. A,B,C,D</p>
+          <p>Fats .............................. 10mg</p>
+          <p>Sugar ............................. 150</p>
+        </div>
+      </div>
+      <button className="confirm-meal">Confirm Meal</button>
+    </div>
+    </div>
+        </div>
+    </div>
+
+
     );
 };
 
