@@ -47,3 +47,34 @@ img {
         transform: rotate(360deg);
     }
 }
+
+body {
+    font-family: 'Poppins', sans-serif;
+  }
+  
+  h2, .name-box, .meta, .description {
+    font-family: 'Poppins', sans-serif;
+  }
+
+  body {
+    background: linear-gradient(135deg, #f3e8ff 25%, #f9f7fc 75%);
+  }
+
+  @media (max-width: 768px) {
+    .recipes-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+  
+    .recipe-card-div {
+      width: 90%;
+      margin-bottom: 20px;
+    }
+  
+    .search-input {
+      width: 90%;
+    }
+  }
+  
+  
