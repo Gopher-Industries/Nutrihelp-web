@@ -7,7 +7,7 @@ const Login = () => {
     const navigate = useNavigate();
     const { setCurrentUser } = useContext(UserContext);
 
-    const [contact, setContact] = useState({ username: '', password: '' });
+    const [contact, setContact] = useState({ email: '', password: '' });
     const [error, setError] = useState('');
 
     const handleChange = (event) => {
@@ -15,14 +15,14 @@ const Login = () => {
         setContact(prevValue => ({ ...prevValue, [name]: value }));
     };
 
-    const { username, password } = contact;
+    const { email, password } = contact;
 
     const handleSignIn = async (e) => {
         e.preventDefault();
         try {
             const response = await fetch('http://localhost:80/api/login', {
                 method: 'POST',
-                body: JSON.stringify({ username, password }),
+                body: JSON.stringify({ email, password }),
                 headers: {
                     'Content-Type': 'application/json'
                 },
@@ -31,7 +31,7 @@ const Login = () => {
             if (response.ok) {
                 const data = await response.json();
                 setCurrentUser(data.user);
-                navigate("/MFAform", { state: { username, password } });
+                navigate("/MFAform", { state: { email, password } });
                 alert("Successfully signed in. Please complete MFA to continue.");
             } else {
                 const data = await response.json();
@@ -65,13 +65,13 @@ const Login = () => {
 
             {error && <p className="error-message">{error}</p>}
 
-            <label htmlFor="username" className="input-label">Username*</label>
+            <label htmlFor="email" className="input-label">Email*</label>
             <input
-                  name="username"
+                  name="email"
                   type='text'
-                  placeholder="Username"
+                  placeholder="email"
                   onChange={handleChange}
-                  value={username}
+                  value={email}
             />
 
             <label htmlFor="password" className="input-label">Password*</label>
