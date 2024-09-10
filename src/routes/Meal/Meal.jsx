@@ -35,7 +35,7 @@ const Meal = () => {
 	// List of food items
 	const breakfast = [
 		{
-			name: 'Oatmeal',
+			name: 'Oats',
 			imageUrl:
 				'https://images.immediate.co.uk/production/volatile/sites/30/2023/08/Porridge-oats-d09fae8.jpg?quality=90&resize=440,400',
 			details: {
@@ -47,9 +47,9 @@ const Meal = () => {
 			},
 		},
 		{
-			name: 'Omelete',
+			name: 'Juice',
 			imageUrl:
-				'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQo6q5-FWYZNd5DgwNQd5_1JwN30iq7KXkEVQ&usqp=CAU',
+				'https://www.eatingwell.com/thmb/NJFf9k59wViDdqO_0kp-Mc-KNH8=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/3749033-b30c69279d9341468bb4cf5dab18c578.jpg',
 			details: {
 				calories: 150,
 				fats: 300,
@@ -59,9 +59,9 @@ const Meal = () => {
 			},
 		},
 		{
-			name: 'Berry Smoothie',
+			name: 'Coffee',
 			imageUrl:
-				'https://www.jessicagavin.com/wp-content/uploads/2020/07/berry-smoothie-8-1200.jpg',
+				'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQspESde7KZewIFjQzIIZYHXP0pwks2AhfSIw&s',
 			details: {
 				calories: 200,
 				fats: 100,
@@ -71,9 +71,9 @@ const Meal = () => {
 			},
 		},
 		{
-			name: 'Vegetable Stir-Fry',
+			name: 'Bread',
 			imageUrl:
-				'https://www.dinneratthezoo.com/wp-content/uploads/2019/02/vegetable-stir-fry-3.jpg',
+				'https://www.allrecipes.com/thmb/CjzJwg2pACUzGODdxJL1BJDRx9Y=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/6788-amish-white-bread-DDMFS-4x3-6faa1e552bdb4f6eabdd7791e59b3c84.jpg',
 			details: {
 				calories: 500,
 				fats: 700,
@@ -86,9 +86,9 @@ const Meal = () => {
 
 	const lunch = [
 		{
-			name: 'Chocolate Cake',
+			name: 'Rice',
 			imageUrl:
-				'https://sugargeekshow.com/wp-content/uploads/2023/10/easy_chocolate_cake_slice.jpg',
+				'https://www.health.com/thmb/AcaOIOijkWe2IaNA13jnRHlMPuM=/750x0/filters:no_upscale():max_bytes(150000):strip_icc():format(webp)/GettyImages-1734160670-0157c2daf8e841d6a783b38aedc51aa8.jpg',
 			details: {
 				calories: 350,
 				fats: 500,
@@ -98,9 +98,9 @@ const Meal = () => {
 			},
 		},
 		{
-			name: 'Quinoa Salad',
+			name: 'Chicken',
 			imageUrl:
-				'https://cooktoria.com/wp-content/uploads/2018/08/Mediterranean-Quinoa-Salad-SQ-1.jpg',
+				'https://www.savorynothings.com/wp-content/uploads/2022/05/bbq-chicken-recipe-image-sq.jpg',
 			details: {
 				calories: 150,
 				fats: 300,
@@ -110,9 +110,9 @@ const Meal = () => {
 			},
 		},
 		{
-			name: 'Chicken Wings',
+			name: 'Eggs',
 			imageUrl:
-				'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRfd6SFL5sSIHlwcDV7db1dfWSpBCtyO6gujA&usqp=CAU',
+				'https://img.taste.com.au/82yZmkbv/w720-h480-cfill-q80/taste/2018/02/cls0318eggss_eggs-135792-1.jpg',
 			details: {
 				calories: 20,
 				fats: 600,
@@ -122,9 +122,9 @@ const Meal = () => {
 			},
 		},
 		{
-			name: 'Hotdog',
+			name: 'Vegetables',
 			imageUrl:
-				'https://hips.hearstapps.com/hmg-prod/images/delish-202104-airfryerhotdogs-044-1619472270.jpg?crop=0.448xw:1.00xh;0.0657xw,0&resize=980:*',
+				'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSNULJ6YE0WsLqqBUs3ozHh6rkZDFAJlXzlFw&s',
 			details: {
 				calories: 500,
 				fats: 700,
@@ -137,9 +137,9 @@ const Meal = () => {
 
 	const dinner = [
 		{
-			name: 'Broccoli',
+			name: 'Chapati',
 			imageUrl:
-				'https://cdn.apartmenttherapy.info/image/upload/f_jpg,q_auto:eco,c_fill,g_auto,w_1500,ar_1:1/k%2Farchive%2Fd852987f86aeae8b65926f9e7a260c28285ea744',
+				'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRou7RdQv8MvcMRYOHpQW6bs_XY0JEcqyijYA&s',
 			details: {
 				calories: 250,
 				fats: 500,
@@ -149,9 +149,9 @@ const Meal = () => {
 			},
 		},
 		{
-			name: 'Avocado',
+			name: 'Fish',
 			imageUrl:
-				'https://domf5oio6qrcr.cloudfront.net/medialibrary/5138/h0618g16207257173805.jpg',
+				'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT3FMXHDRZBtsdJHVpdJQtnsQBcCuuJWJn4hQ&s',
 			details: {
 				calories: 150,
 				fats: 100,
@@ -161,9 +161,9 @@ const Meal = () => {
 			},
 		},
 		{
-			name: 'Salmon',
+			name: 'Milk',
 			imageUrl:
-				'https://images.theconversation.com/files/249331/original/file-20181206-128208-1lepxpi.jpg?ixlib=rb-1.1.0&q=45&auto=format&w=1356&h=668&fit=crop',
+				'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSyZvE6VXWPj1pHJ8_-osnBvnxxtfIlpwghBg&s',
 			details: {
 				calories: 800,
 				fats: 700,
@@ -173,9 +173,9 @@ const Meal = () => {
 			},
 		},
 		{
-			name: 'Oatmeal2',
+			name: 'Meat',
 			imageUrl:
-				'https://images.immediate.co.uk/production/volatile/sites/30/2023/08/Porridge-oats-d09fae8.jpg?quality=90&resize=440,400',
+				'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTW6g56cRr8GIUoVEj2sLhohIJp1NMTVulnAg&s',
 			details: {
 				calories: 150,
 				fats: 300,
