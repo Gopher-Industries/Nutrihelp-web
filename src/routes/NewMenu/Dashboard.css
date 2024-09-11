@@ -1,0 +1,206 @@
+
+.container70 {
+    width: 65%;
+    border-radius: 10px;
+    background-color: #D9D9D9; 
+    padding: 10px; 
+    margin:auto;
+    display: block;
+    border-right: 2px solid #000; 
+    justify-content: space-between;
+  }
+  .food-selection {
+    display: block;
+    border-radius: 8px;
+  
+  }
+  .container30 {
+    width: 35%;
+    background-color: #d3d3d3; 
+    margin-left:0;
+    border-left:1px solid black;
+    border-radius-left:0;
+    padding: 10px; 
+  }
+  .myradio
+  {
+  
+    background-color: white;
+    color:black;
+  }
+  .mycolor
+  {
+      color:#BA49E7;
+      text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  }
+  .text-view
+  {
+    text-align: left;
+    font-size:20px;
+    padding-left:3%;
+    display: block;
+  }
+  h3{
+    font-size: 20px;  /* Adjust the pixel value as needed */
+      font-weight: bolder;
+      display: block;
+  }
+  .row
+  {
+    display: flex;
+    margin-top: 10px;
+    background-color: #fdf2f2;
+  }
+  .buttoncolor
+  {
+    margin-left:20%;
+    background-color: #BA49E7;
+    border:1px solid black;
+    color:white;
+  }
+  
+  .food-items {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #D9D9D9;
+    padding:5px;
+    margin:0px;
+    flex-wrap: nowrap;
+    margin-bottom:1%;
+  }
+  
+  .food-item {
+    text-align: center;
+    margin: 0 5%;
+    width:auto;
+    background-color: #D9D9D9;
+  }
+  
+  .foodimg {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+  }
+  
+  .food-item span {
+    display: block;
+    margin-top: 10px; /* Space between image and text */
+    font-size: 20px; /* Adjust the font size as needed */
+  }
+  
+  .imgsign {
+    width: 40px;
+    height: 40px;
+     margin: 0 10px;
+  }
+  h3{
+    font-size: 20px;
+  }
+  .user-profile {
+    background-color: #d3d3d3;
+    padding: 20px;
+    display: flex; /* Use flexbox to align items horizontally */
+    align-items: center; /* Vertically center the image and buttons */
+  }
+  
+  .profile-pic {
+    width: 200px;
+    height: 200px;
+    background-color: #ccc;
+    border-radius: 50%;
+    margin-right: 20px; /* Add some space between the image and the buttons */
+  }
+  
+  .user-buttons {
+    display: block; 
+  }
+  
+  .user-buttons button {
+    background-color: #a079bf;
+    color: white;
+    margin-bottom: 25px; /* Add space between the buttons */
+    padding: 10px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+  .image-text-button {
+    display: flex;
+    align-items: center;
+    color: white;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  
+  .buttonimages
+  {
+    width: 20px; 
+    height: 20px;
+    margin-right:5px;
+  }
+  .button-text {
+    font-size: 16px; 
+  }
+  .user-buttons button:last-child {
+    margin-right: 0; /* Remove margin on the last button */
+  }
+  
+  .user-buttons button:hover {
+    background-color: #8e44ad;
+  }
+  
+  .food-details {
+    background-color: #FDF2F2;
+    padding: 10px;
+    border-radius: 10px;
+    margin: 2px;
+  }
+  
+  .food-content {
+    display: flex;
+    align-items: center; /* Align items vertically centered */
+  }
+  .food-details h2{
+    text-align: left;
+    font-size: x-large;
+    padding-left:5%;
+  }
+  .food-image {
+    flex: 1;
+    margin-right: 1px;
+  }
+  
+  .food-image img {
+    width: 100%;
+    height:200px;
+    max-width: 300px; /* Adjust the max-width as per your design */
+    border-radius: 10px;
+  }
+  
+  .food-info {
+    margin-left:5%;
+    flex: 2;
+    font-size: 24px;
+  }
+  .food-info p{
+    color:black;
+    line-height: 2;
+    font-size: large;
+  }
+  .confirm-meal {
+    display: block;
+    background-color: #BA49E7;
+    color: white;
+    margin: 20px auto;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+  
+  .confirm-meal:hover {
+    background-color: #8e44ad;
+  }
+  
