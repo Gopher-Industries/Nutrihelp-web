@@ -159,7 +159,6 @@ h3 {
   width: 80%;
 }
 
-/* menu style 2024/08*/
 
 nav a {
   padding: 10px 20px;
@@ -169,7 +168,7 @@ nav a {
 }
 
 
-.breakfast-btn{
+.breakfast-btn {
   background: #F5EEE6;
   padding-top: 10px;
   text-align: center;
@@ -230,12 +229,23 @@ nav a.active {
 
 .tab-underline {
   position: absolute;
-  bottom: 0; 
+  bottom: 0;
   left: 0;
   width: 1500px;
-  height: 10px; 
-  background: #F8E7FF; 
-  border-radius: 0 5px 5px 0; 
+  height: 10px;
+  background: #F8E7FF;
+  border-radius: 0 5px 5px 0;
   margin: 0 -.3em;
-  z-index: 1; 
+  z-index: 1;
+  
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+}
+
+.nav-links a {
+  font-weight: 500;
+  margin: 0 15px;
 }

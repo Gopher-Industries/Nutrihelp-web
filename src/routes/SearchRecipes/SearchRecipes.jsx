@@ -1,49 +1,50 @@
+import React, { useState, useEffect } from "react";
 import "./SearchRecipes.css";
-
-import React, { useState } from "react";
-
 import RecipeCardList from "./RecipeCardList";
 import SearchIcon from "../../images/icon-search.png";
-import SubHeading from "../../components/general_components/headings/SubHeading";
+import { fetchRecipes } from "./fetchRecipes";
 
 function SearchRecipes() {
-  //Use destructuring to set the value of "searchTerm" to ''
-  // and the function "setSearchTerm" to set/update the value of "searchTerm"
   const [recipeNameSearchTerm, setRecipeNameSearchTerm] = useState("");
+  const [recipes, setRecipes] = useState([]);
 
-  //==================== Set listener for Search Title/Position input box ====================
-  //Function to be called by listener
+  // Fetching recipes on component mount
+  useEffect(() => {
+    async function loadRecipes() {
+      const fetchedRecipes = await fetchRecipes();
+      setRecipes(fetchedRecipes.recipes || []);
+    }
+
+    loadRecipes();
+  }, []);
+
+  // Handle search input change
   const onSearchRecipeNameChange = (e) => {
-    setRecipeNameSearchTerm(e.target.value); //Assign the value of "searchTerm" to the value
-    //                              typed into the input box
+    setRecipeNameSearchTerm(e.target.value);
   };
 
+  // Filter recipes based on search term, check if recipes is not undefined
+  const filteredRecipes = recipes.length > 0 ? recipes.filter((recipe) =>
+    recipe.recipe_name.toLowerCase().includes(recipeNameSearchTerm.toLowerCase())
+  ) : [];
 
-
-  //==================== Render the component ====================
   return (
     <div className="container mt-5">
-      <SubHeading text="Search Recipes" />
-
-      <br></br>
+      <h2>Recipes</h2>
 
       <div className="search-input">
         <input
           className="search-box recipe-search-box"
           type="text"
-          placeholder={"Search Recipe Name"}
+          placeholder={"Search Recipes"}
           onChange={onSearchRecipeNameChange}
           value={recipeNameSearchTerm}
         />
-        {/* Adding Resuable Search Icon on input */}
-        <img src={SearchIcon} alt="search-img" />
+        <img src={SearchIcon} alt="search-icon" />
       </div>
 
-      <br></br>
-
-      <RecipeCardList
-        recipeNameSearchTerm={recipeNameSearchTerm}
-      />
+      <h2 className="popular-title">Popular Recipes</h2>
+      <RecipeCardList recipes={filteredRecipes} />
     </div>
   );
 }
