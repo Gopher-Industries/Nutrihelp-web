@@ -184,3 +184,13 @@ h3 {
 .dashboard-grid-2 {
   width: 80%;
 }
+
+.nav-links {
+  display: flex;
+  align-items: center;
+}
+
+.nav-links a {
+  font-weight: 500;
+  margin: 0 15px;
+}
