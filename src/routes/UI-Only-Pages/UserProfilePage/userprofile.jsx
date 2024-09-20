@@ -120,7 +120,7 @@ const UserProfilePage = () => {
         </div>
         </div>
         <div className="container310 w-30">
-          <img src='./images/main.png' className="img"/>
+          <img src='./images/avatar.png' className="img"/>
           <input type="file" className="form-control" name="image"/>
         <div className="mt-4 pt-4">
     <label for="Writetous" className="form-label"> Write to Us </label>
