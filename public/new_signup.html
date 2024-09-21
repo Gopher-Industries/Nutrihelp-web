@@ -1,1 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NutriHelp - Register</title>
+  <link rel="stylesheet" href="new_signup.css">
+  <script src="new_signup.js"></script>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+
+</head>
+.
+<body>
+  <div class="container">
+   
+    <main>
+      <div class="register-container">
+        <div class="logo-container">
+            <h2 class="logo-text">NutriHelp</h2>
+            <img src="logos_black_icon.png" alt="NutriHelp Logo" class="logo-large">
+            
+          </div>
+          
+        <h1>REGISTER AN ACCOUNT</h1>
+        <!-- Google Sign-In Button -->
+<div id="googleSignInBtn"></div>
+
+
+        
+        <p class="or">or</p>
+
+        <form action="#" class="signup-form" onsubmit="return validateForm()">
+  <div class="form-row">
+    <div class="form-group">
+      <label for="name">Name*</label>
+      <input type="text" id="name" placeholder="Enter your name" required>
+    </div>
+    <div class="form-group">
+      <label for="address">Address*</label>
+      <input type="text" id="address" placeholder="Enter address" required>
+    </div>
+  </div>
+  <div class="form-row">
+    <div class="form-group">
+      <label for="email">Email*</label>
+      <input type="email" id="email" placeholder="Enter your email" required>
+    </div>
+    <div class="form-group">
+      <label for="password">Password*</label>
+      <input type="password" id="password" placeholder="Create Password" required>
+    </div>
+  </div>
+  <div class="form-row">
+    <div class="form-group">
+      <label for="mobile">Mobile Number*</label>
+      <input type="tel" id="mobile" placeholder="Enter your phone number" required>
+    </div>
+    <div class="form-group">
+      <label for="repassword">Re-Enter Password*</label>
+      <input type="password" id="repassword" placeholder="Confirm Password" required>
+    </div>
+  </div>
+  <button type="submit" class="btn signup-submit">Sign up</button>
+</form>
+
+        <p class="login-link">Already have an account? <a href="#">Log in</a></p>
+      </div>
+    </main>
+  </div>
+</body>
+</html>
 
