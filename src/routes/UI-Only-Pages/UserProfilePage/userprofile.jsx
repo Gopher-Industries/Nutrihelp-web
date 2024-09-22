@@ -41,7 +41,6 @@ const UserProfilePage = () => {
 
   return (
     <div className="container-fluid bg-white">
-      <h2 className="text-center mycolor"> Register with us</h2>
       <div className="container m-1">
     <div className="custom-row w-100">
         <div className="container70 w-70">
@@ -123,11 +122,8 @@ const UserProfilePage = () => {
           <img src='./images/avatar.png' className="img"/>
           <input type="file" className="form-control" name="image"/>
         <div className="mt-4 pt-4">
-    <label for="Writetous" className="form-label"> Write to Us </label>
-    <textarea className="form-control"  id="comment" rows="4" cols="30"> </textarea>
   </div>
-          <button className="signup-facebook mt-4 p-4"> Leave Us a Comment.</button>
-          <button className="signup-help mt-5 p-2"><img src="/images/help.png" class="signupimg me-2"/> Need Help? Talk to Us.</button>
+       
           </div>
         </div>
     </div>
