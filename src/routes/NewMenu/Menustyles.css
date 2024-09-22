@@ -157,7 +157,7 @@ h3 {
 
 .dashboard-grid-2 {
   width: 80%;
-
+}
 /* menu style 2024/08*/
 
 nav a {
@@ -237,6 +237,7 @@ nav a.active {
   border-radius: 0 5px 5px 0; 
   margin: 0 -.3em;
   z-index: 1; 
+}
 
 .nav-links {
   display: flex;
