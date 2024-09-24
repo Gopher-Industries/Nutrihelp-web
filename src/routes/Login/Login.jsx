@@ -1,6 +1,10 @@
 import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { UserContext } from "../../context/user.context";
+
+import Nutrihelp_Logo from "../Login/Nutrihelp_Logo.PNG"
+import Nutrihelp_Logo2 from "../Login/Nutrihelp_Logo2.PNG";
+
 import './Login.css';
 
 const Login = () => {
@@ -51,32 +55,27 @@ const Login = () => {
         navigate("/forgotPassword");
     };
 
+
+    
+
     return (
-        <div className="login-container">
-            <h2 className="login-title">LOG IN</h2>
-            <p className="login-subtitle">Enter your email and password to sign in!</p>
-
-            {/* <button className="google-btn" onClick={logGoogleUser}>
-                <img src={googleLogo} alt="Google logo" />
-                Sign in with Google
-            </button> */}
-
-            <div className="divider"><span>or</span></div>
-
-            {error && <p className="error-message">{error}</p>}
-
-            <label htmlFor="email" className="input-label">Email*</label>
-            <input
+            <>
+              <div className="login-container">
+                <img src={Nutrihelp_Logo} alt="Nutrihelp Logo" className="nutrihelp-logo" />
+                <h2 className="login-title">LOG IN</h2>
+                <p className="login-subtitle">Enter your email and password to sign in!</p>
+                {error && <p className="error-message">{error}</p>}
+                <label htmlFor="email" className="input-label">Email*</label>
+                <input
                   name="email"
                   type='text'
                   placeholder="email"
                   onChange={handleChange}
                   value={email}
-            />
-
-            <label htmlFor="password" className="input-label">Password*</label>
-            <div className="password-field">
-                <input
+                />
+                <label htmlFor="password" className="input-label">Password*</label>
+                <div className="password-field">
+                  <input
                     id="password"
                     name="password"
                     type="password"
@@ -84,23 +83,23 @@ const Login = () => {
                     placeholder="Min. 8 characters"
                     onChange={handleChange}
                     value={password}
-                />
-                <span className="eye-icon">👁️</span> 
-            </div>
-
-            <div className="options">
-                <div className="keep-logged-in">
+                  />
+                  <span className="eye-icon">👁️</span>
+                </div>
+                <div className="options">
+                  <div className="keep-logged-in">
                     <input type="checkbox" id="keepLoggedIn" />
                     <label htmlFor="keepLoggedIn">Keep me logged in</label>
+                  </div>
+                  <p className="forgot-password" onClick={handleForgotPasswordClick}>Forgot password?</p>
                 </div>
-                <p className="forgot-password" onClick={handleForgotPasswordClick}>Forgot password?</p>
-            </div>
-
-            <button className="signin-btn" onClick={handleSignIn}>Sign In</button>
-
-            <p className="signup-link">Not registered yet? <Link to='/signUp'>Create an Account</Link></p>
-        </div>
-    );
+                <button className="signin-btn" onClick={handleSignIn}>Sign In</button>
+                <p className="signup-link">Not registered yet? <Link to='/signUp'>Create an Account</Link></p>
+              </div>
+              <img src={Nutrihelp_Logo2} alt="Nutrihelp Logo 2" className="nutrihelp-logo2" />
+            </>
+          );
+          
 };
 
 export default Login;

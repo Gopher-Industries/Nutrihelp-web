@@ -1,10 +1,12 @@
 .login-container {
+    margin-left: 110px;
+    margin-top: 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     max-width: 400px;
-    margin: 0 auto;
+    
     padding: 20px;
     background-color: #ffffff;
     border-radius: 8px;
@@ -16,6 +18,8 @@
     font-weight: bold;
     margin-bottom: 10px;
     text-align: center;
+    margin-right: 270px;
+    font-weight: bold;
 }
 
 .login-subtitle {
@@ -23,6 +27,7 @@
     color: #666;
     text-align: center;
     margin-bottom: 20px;
+    margin-right: 107px;
 }
 
 .google-btn {
@@ -66,7 +71,7 @@
 
 .divider::before,
 .divider::after {
-    content: "";
+   
     flex: 1;
     height: 1px;
     background: #eee;
@@ -87,15 +92,6 @@
     margin-bottom: 5px;
 }
 
-.input-field {
-    width: 100%;
-    padding: 12px;
-    margin-bottom: 15px;
-    border-radius: 14px;
-    border: 1px solid #ddd;
-    font-size: 14px;
-    
-}
 
 .password-field {
     position: relative;
@@ -165,4 +161,12 @@
 .signup-link a {
     color: #a020f0;
     font-weight: bold;
+}
+
+.nutrihelp-logo2{
+    display: flex;
+    justify-content: center;
+    margin-left: 70%;
+    width: 400px;
+    margin-top: -355px;
 }
