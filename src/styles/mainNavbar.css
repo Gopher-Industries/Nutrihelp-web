@@ -1,0 +1,109 @@
+/* General header styling */
+.main-header {
+  background-color: white; /* Set the background color to white */
+  padding: 1rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional shadow for aesthetics */
+}
+
+/* Nav bar styling */
+.main-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+/* Container to hold the logo and links */
+.nav-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+/* Ensure logo moves to extreme left */
+.logo-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.logo-container img {
+  height: 50px;
+  margin-left: 0; /* Ensure no margin on left */
+  padding-left: 0; /* Ensure no padding on left */
+}
+
+/* Links styling */
+.nav-links {
+  display: flex;
+  gap: 1rem;
+  margin-left: auto;
+  justify-content: flex-end;
+}
+
+/* Individual link styles */
+.nav-link {
+  text-decoration: none;
+  color: black; /* Set text color to black */
+  font-weight: bold; /* Make text bold */
+  padding: 0.5rem;
+  transition: color 0.3s ease;
+}
+
+/* Hover effect for links */
+.nav-link:hover {
+  color: #FF1493; /* Set hover color to pink */
+}
+
+/* Dropdown container styling */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+/* Dropdown content styling */
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: white; /* Set background color to white */
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
+  z-index: 1;
+  min-width: 160px;
+  padding: 1rem;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+/* Dropdown link styling */
+.dropdown-link {
+  display: block;
+  text-decoration: none;
+  color: black; /* Set text color to black */
+  padding: 0.5rem;
+  font-weight: bold; /* Make text bold */
+  transition: background-color 0.3s ease;
+}
+
+/* Hover effect for dropdown links */
+.dropdown-link:hover {
+  background-color: #f8f8f8;
+}
+
+/* Log out button styling */
+.logout-button {
+  border: none;
+  background: none;
+  color: black; /* Set text color to black */
+  font-weight: bold; /* Make text bold */
+  cursor: pointer;
+  padding: 0.5rem;
+}
+
+.logout-button:hover {
+  color: red;
+}
