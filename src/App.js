@@ -32,12 +32,11 @@ function App() {
   const { currentUser } = useContext(UserContext);
 
   return (
+    
     <Router>
-      <Routes>
-        {/* <Route
-          path="/"
-          element={currentUser ? <Navigate to="/" /> : <Navigate to="/login" />}
-        /> */}
+      <MainNavbar />
+        <Routes>
+          <Route path="/" element={currentUser ? <Navigate to="/home" /> : <Navigate to="/login" />} />
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<Home />} />
         <Route path="/signUp" element={<SignUp />} />
