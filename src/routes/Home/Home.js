@@ -4,7 +4,6 @@ import React, { useContext, useEffect, useState } from "react";
 
 import { Link } from "react-router-dom";
 import { UserContext } from "../../context/user.context";
-import MainNavbar from "../../components/MainNavbar";
 
 const Home = () => {
   const { currentUser } = useContext(UserContext);
@@ -74,7 +73,6 @@ const Home = () => {
 
   return (
     <>
-      <MainNavbar />
       <section id="hero" className="d-flex align-items-center">
         <div className="container">
           <div className="row">
