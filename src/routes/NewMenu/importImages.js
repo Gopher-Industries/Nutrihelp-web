@@ -1,15 +1,15 @@
-import oatmealImage from '../../images/menupage_img/menup_oatmeal.jpg';
-import omeleteImage from '../../images/menupage_img/menup_omelete.jpg';
-import berrySmoothieImage from '../../images/menupage_img/menup_berrySmoothie.jpg';
-import vegetableStirFryImage from '../../images/menupage_img/menup_vegetable.jpg';
-import chocolateCakeImage from '../../images/menupage_img/menup_chocolateCake.jpg';
-import quinoaSaladImage from '../../images/menupage_img/menup_quinoaSalad.jpg';
-import chickenWingsImage from '../../images/menupage_img/menup_chickenWings.jpg';
-import hotdogImage from '../../images/menupage_img/menup_hotdog.jpg';
-import broccoliImage from '../../images/menupage_img/menup_broccoli.jpg';
-import avocadoImage from '../../images/menupage_img/menup_avocado.jpg';
-import salmonImage from '../../images/menupage_img/menup_salmon.jpg';
-import oatmeal2Image from '../../images/menupage_img/menup_oatmeal2.jpg';
+import oatmealImage from '../../menupage_img/menup_oatmeal.jpg';
+import omeleteImage from '../../menupage_img/menup_omelete.jpg';
+import berrySmoothieImage from '../../menupage_img/menup_berrySmoothie.jpg';
+import vegetableStirFryImage from '../../menupage_img/menup_vegetable.jpg';
+import chocolateCakeImage from '../../menupage_img/menup_chocolateCake.jpg';
+import quinoaSaladImage from '../../menupage_img/menup_quinoaSalad.jpg';
+import chickenWingsImage from '../../menupage_img/menup_chickenWings.jpg';
+import hotdogImage from '../../menupage_img/menup_hotdog.jpg';
+import broccoliImage from '../../menupage_img/menup_broccoli.jpg';
+import avocadoImage from '../../menupage_img/menup_avocado.jpg';
+import salmonImage from '../../menupage_img/menup_salmon.jpg';
+import oatmeal2Image from '../../menupage_img/menup_oatmeal2.jpg';
 
 const imageMapping = {
   Oatmeal: {

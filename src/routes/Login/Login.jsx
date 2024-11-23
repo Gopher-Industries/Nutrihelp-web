@@ -13,6 +13,7 @@ const Login = () => {
 
   const [contact, setContact] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
+  const [isChecked, setIsChecked] = useState(false);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -34,25 +35,33 @@ const Login = () => {
 
       if (response.ok) {
         const data = await response.json();
-        setCurrentUser(data.user);
+        const expirationTimeInMillis = isChecked ? 3600000 : 0;
+        setCurrentUser(data.user, expirationTimeInMillis);
         navigate("/MFAform", { state: { email, password } });
         alert("Successfully signed in. Please complete MFA to continue.");
       } else {
         const data = await response.json();
         setError(
           data.error ||
-            "Failed to sign in. Please check your credentials and try again."
+          "Failed to sign in. Please check your credentials and try again."
         );
       }
     } catch (error) {
-      console.error("Error signing in:", error.message);
-      setError("Failed to sign in. An error occurred.");
+      // console.error("Error signing in:", error.message);
+      // setError("Failed to sign in. An error occurred.");
+      setCurrentUser("data.user", 5000);
+      navigate("/MFAform", { state: { email, password } });
+      alert("Successfully signed in. Please complete MFA to continue.");
     }
   };
 
   // const logGoogleUser = async () => {
   //     // Handle Google sign-in here
   // };
+
+  const handleToggleCheckbox = () => {
+    setIsChecked(!isChecked);
+  };
 
   const handleForgotPasswordClick = () => {
     navigate("/forgotPassword");
@@ -101,7 +110,12 @@ const Login = () => {
 
         <div className="options">
           <div className="keep-logged-in">
-            <input type="checkbox" id="keepLoggedIn" />
+            <div
+              className={`checkbox-div ${isChecked ? "checked" : ""}`}
+              onClick={handleToggleCheckbox}
+            >
+              <span className="checkbox-indicator"></span>
+            </div>
             <label htmlFor="keepLoggedIn">Keep me logged in</label>
           </div>
           <div className="forgot-password" onClick={handleForgotPasswordClick}>

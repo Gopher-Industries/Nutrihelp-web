@@ -64,6 +64,7 @@ body {
 }
 
   .mealcontainer {
+    min-height: calc(100vh - 56px - 78px);
     display: flex;
     justify-content: space-around; /* To space the two main sections evenly */
 }
@@ -91,13 +92,19 @@ body {
     padding: 10px;
     margin-top: 20px;
     border: none;
-    background-color: #007bff;
-    color: white;
+    background-color: #caa3e1;
+    color: #444444;
     font-size: 16px;
     border-radius: 5px;
     cursor: pointer;
-    
+    transition: all ease-in-out 0.3s;
 }
+
+.viewplan:hover{
+  color: white;
+  background: #8531ce;
+}
+
 h3{
   margin-left: 30px; font-size: 20px;
 }

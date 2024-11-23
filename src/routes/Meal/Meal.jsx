@@ -2,7 +2,6 @@ import './Meal.css'; // Import your CSS file here
 
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import React, { createContext, useState } from 'react';
-import MotivationalPopup from './MotivationalPopup';
 
 const Meal = () => {
     const [selectedItems, setSelectedItems] = useState([]);
@@ -16,8 +15,6 @@ const Meal = () => {
     const [showBreakfast, setShowBreakfast] = useState(true);
     const [showLunch, setShowLunch] = useState(false);
     const [showDinner, setShowDinner] = useState(false);
-    const [showPopup, setShowPopup] = useState(true);
-
 
     const toggleItemSelection = (item, mealType) => {
         setSelectedItems(prevSelectedItems => {
@@ -29,12 +26,6 @@ const Meal = () => {
             }
         });
     };
-
-    const handleClosePopup = () => {
-        setShowPopup(false);
-    };
-
-
     // List of food items
     const breakfast = [
         {
@@ -219,7 +210,6 @@ const Meal = () => {
 
     return (
         <div>
-            {showPopup && <MotivationalPopup onClose={handleClosePopup} />}
             <header>
                 <h1>What is Your Meal Plan Today?</h1>
             </header>
@@ -287,7 +277,7 @@ const Meal = () => {
                         </div>
                     </div>
                     <Link className="link" to="/dashboard" state={{ selectedItems, totalNutrition }}>
-                        <button className="viewplan">View Meal Plan</button>
+                        <button className="viewplan"><h3>View Meal Plan</h3></button>
                     </Link>
 
 

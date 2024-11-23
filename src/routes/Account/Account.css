@@ -1,0 +1,78 @@
+body {
+    font-family: "Montserrat", sans-serif;
+    color: #444444;
+}
+
+a {
+    text-decoration: none;
+    color: #49b5e7;
+}
+
+a:hover {
+    color: #76c7ed;
+    text-decoration: none;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: "Montserrat", sans-serif;
+}
+
+.account {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background: white;
+    border-radius: 20px;
+    padding: 20px;
+}
+
+.account>.title {
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    transition: all 0.3s ease-in-out;
+}
+
+.account>.title:hover{
+    color: #bd49e7;
+}
+
+.account .message {
+    display: flex;
+}
+
+.account .message .left,
+.account .message .right {
+    width: 30%;
+    cursor: default;
+    transition: all 0.3s ease-in-out;
+}
+
+.account .message .left{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 20px;
+}
+
+.account .message .right {
+    overflow: hidden;
+    max-height: 25px;
+}
+
+.account .message:hover>.left{
+    background: #bd49e7;
+    color: #ebf7fc;
+}
+
+.account:hover .message>.right {
+    width: 70%;
+    max-height: 1000px;
+}
+
+.section-bg{
+    background-color: #f4fbfe;
+}
