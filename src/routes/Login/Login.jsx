@@ -47,11 +47,11 @@ const Login = () => {
         );
       }
     } catch (error) {
-      // console.error("Error signing in:", error.message);
-      // setError("Failed to sign in. An error occurred.");
-      setCurrentUser("data.user", 5000);
-      navigate("/MFAform", { state: { email, password } });
-      alert("Successfully signed in. Please complete MFA to continue.");
+      console.error("Error signing in:", error.message);
+      setError("Failed to sign in. An error occurred.");
+      // setCurrentUser("data.user", 5000);
+      // navigate("/MFAform", { state: { email, password } });
+      // alert("Successfully signed in. Please complete MFA to continue.");
     }
   };
 
