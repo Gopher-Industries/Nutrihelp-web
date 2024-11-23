@@ -287,7 +287,7 @@ const Meal = () => {
                         </div>
                     </div>
                     <Link className="link" to="/dashboard" state={{ selectedItems, totalNutrition }}>
-                        <button className="viewplan">View Meal Plan</button>
+                        <button className="viewplan"><h3>View Meal Plan</h3></button>
                     </Link>
 
 
