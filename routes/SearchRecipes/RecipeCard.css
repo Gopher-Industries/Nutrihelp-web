@@ -1,0 +1,92 @@
+/* RecipeCard.css */
+
+/* Ensure all recipe cards have the same size */
+.recipe-card-div {
+  width: 260px;
+  height: 420px;
+  margin: 15px;
+  border-radius: 12px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  opacity: 0;
+  animation: fadeIn 1s ease forwards;
+}
+
+/* Image stays at the top */
+.image img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 12px 12px 0 0;
+}
+
+/* Remove the fixed width for the name box and use inline-block */
+.name-box {
+  background-color: #6f42c1;  /* Purple background */
+  color: #fff;
+  font-weight: bold;
+  font-size: 16px;
+  text-align: center;
+  padding: 10px 20px;  /* Adjust padding to give it a little space around the text */
+  display: inline-block;  /* Use inline-block so it only takes the width of the text */
+  margin: 10px auto 5px auto;  /* Ensure it's centered and spaced properly */
+  border-radius: 12px;
+}
+
+/* Meta for cuisine name */
+.meta {
+  font-size: 14px;
+  color: #333;
+  text-align: center;
+  margin: 5px 0;
+}
+
+/* Bold description */
+.description {
+  font-size: 14px;
+  color: #0f0202;
+  font-weight: bold;  /* Make the description bold */
+  padding: 10px;
+  text-align: center;
+}
+
+/* Subtle shadow increase on hover for recipe cards */
+.recipe-card-div:hover {
+  transform: scale(1.02);
+  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Hover effect for name boxes */
+.name-box:hover {
+  background-color: #5c3a99;  /* Darker shade of purple on hover */
+  transition: background-color 0.3s ease;
+}
+
+/* Update for Recipe Name Box */
+.name-box {
+  background-color: #6f42c1;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 20px;
+  display: inline-block;
+  transition: all 0.3s ease;
+}
+
+.name-box:hover {
+  background-color: #5c3a99;
+  transform: scale(1.05);
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}

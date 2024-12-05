@@ -1,11 +1,14 @@
 import { Grid, GridColumn, GridRow, Icon, Image } from "semantic-ui-react";
-
 import React from "react";
 import RecipeCardExtensionField from "./RecipeCardExtensionField";
 import backgroundLeft from "../../images/bg-left.png";
 import backgroundRight from "../../images/bg-right.png";
 
 const RecipeCardExtension = (props) => {
+  if (!props.recipeName) {
+    return null; // If recipeName doesn't exist, don't render the modal
+  }
+
   return (
     <div className="recipe-card-modal">
       <div className="recipe-modal-content">
@@ -13,7 +16,7 @@ const RecipeCardExtension = (props) => {
         <Image className="vector-bg-left" src={backgroundLeft} />
         <Image className="vector-bg-right" src={backgroundRight} />
         <div className="recipe-modal-box">
-          <h2>{props.recipeName}</h2>
+          <h2>{props.recipeName || "Recipe Name Missing"}</h2>
           <br />
           <Grid divided="vertically">
             <GridRow>
@@ -21,17 +24,12 @@ const RecipeCardExtension = (props) => {
                 <div className="column-box">
                   <RecipeCardExtensionField
                     fieldName="Preparation Time"
-                    fieldValue={props.preparationTime}
+                    fieldValue={props.preparationTime || "N/A"}
                   />
 
                   <RecipeCardExtensionField
                     fieldName="Total Servings"
-                    fieldValue={props.totalServings}
-                  />
-
-                  <RecipeCardExtensionField
-                    fieldName="Calories Per Serving"
-                    fieldValue={props.caloriesPerServing}
+                    fieldValue={props.totalServings || "N/A"}
                   />
 
                   {Array.isArray(props.ingredients) && (
@@ -39,7 +37,7 @@ const RecipeCardExtension = (props) => {
                       fieldName="Ingredients"
                       fieldValue={props.ingredients.map((ingredient) => (
                         <div key={ingredient.id}>
-                          {ingredient.quantity} {ingredient.name}
+                          {ingredient.quantity || "N/A"} {ingredient.name || "N/A"}
                         </div>
                       ))}
                     />
@@ -49,22 +47,9 @@ const RecipeCardExtension = (props) => {
               <GridColumn className="recipe-modal-column" width={7}>
                 <RecipeCardExtensionField
                   fieldName="Instructions"
-                  fieldValue={props.instructions}
-                />
-
-                <RecipeCardExtensionField
-                  fieldName="Recipe Notes"
-                  fieldValue={props.recipeNotes}
+                  fieldValue={props.instructions || "No Instructions Provided"}
                 />
               </GridColumn>
-              <div className="modal-btn">
-                <button
-                  className="button-secondary"
-                  onClick={props.handleDeleteClick}
-                >
-                  Remove Recipe
-                </button>
-              </div>
             </GridRow>
           </Grid>
         </div>
