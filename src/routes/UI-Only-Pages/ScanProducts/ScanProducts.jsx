@@ -1,12 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom'; // Use useNavigate instead of useHistory
 import './ScanProducts.css';
 import SubHeading from '../../../components/general_components/headings/SubHeading';
 
 function ScanProducts() {
   const [uploadedImage, setUploadedImage] = useState(null);
-  const [predictionResult, setPredictionResult] = useState(null);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+  const [history, setHistory] = useState([]);
+
+  const navigate = useNavigate(); // Initialize useNavigate hook
+
+  useEffect(() => {
+    const storedHistory = localStorage.getItem('uploadHistory');
+    if (storedHistory) {
+      setHistory(JSON.parse(storedHistory));
+    }
+  }, []);
 
   const handleFileUploadChange = (e) => {
     const file = e.target.files[0];
@@ -18,7 +28,7 @@ function ScanProducts() {
       // Create FormData object to send image file
       const formData = new FormData();
       formData.append('image', uploadedImage);
-      
+
       // Make POST request to backend API
       const response = await fetch('http://localhost:80/api/imageClassification', {
         method: 'POST',
@@ -28,7 +38,20 @@ function ScanProducts() {
       // Check the response status
       if (response.ok) {
         const data = await response.json();
-        setPredictionResult(data.prediction);
+        const prediction = data.prediction;
+
+        // Update history in localStorage with recognized food
+        const newEntry = {
+          time: new Date().toLocaleString(),
+          imageName: uploadedImage.name,
+          prediction: prediction,
+        };
+        const updatedHistory = [...history, newEntry];
+        setHistory(updatedHistory);
+        localStorage.setItem('uploadHistory', JSON.stringify(updatedHistory));
+
+        // Redirect to the food details page with the recognized food name
+        navigate(`/food-details/${prediction}`);
       } else {
         alert('Failed to classify image. Please try again.');
       }
@@ -39,10 +62,14 @@ function ScanProducts() {
     }
   };
 
+  const handleViewHistory = () => {
+    navigate('/upload-history'); // Use navigate to go to history page
+  };
+
   return (
     <div className="scan-products-container">
       <SubHeading text="Scan Products" />
-      {/*Input Title*/}
+      {/* Input Title */}
       <div className="scan-products-segment">
         <div className="scan-products-form">
           <label className="scan-products-label">Title</label>
@@ -54,7 +81,7 @@ function ScanProducts() {
           />
         </div>
 
-        {/*Input Description*/}
+        {/* Input Description */}
         <div className="scan-products-form">
           <label className="scan-products-label">Description</label>
           <input
@@ -65,7 +92,7 @@ function ScanProducts() {
           />
         </div>
 
-        {/*Select image*/}
+        {/* Select image */}
         <div className="scan-products-form">
           <label className="scan-products-label">Image</label>
           <div className="upload-section">
@@ -75,25 +102,23 @@ function ScanProducts() {
             <input id="file-upload" type="file" onChange={handleFileUploadChange} />
             {uploadedImage && (
               <p className="file-name">
-                {/*Displays if there is an image selected (displays the image name)*/}
+                {/* Displays if there is an image selected (displays the image name) */}
                 Image added: {uploadedImage.name}
               </p>
             )}
           </div>
         </div>
 
-        {/*Upload button*/}
+        {/* Upload button */}
         <button className="upload-button" onClick={handleImageUpload}>
           Upload Image
         </button>
       </div>
 
-      {/*Display Result*/}
-      {predictionResult && (
-        <div className="prediction-section">
-          <h3 className="prediction-text">It is: {predictionResult}</h3>
-        </div>
-      )}
+      {/* View History Button */}
+      <button className="view-history-button" onClick={handleViewHistory}>
+        View Upload History
+      </button>
     </div>
   );
 }
