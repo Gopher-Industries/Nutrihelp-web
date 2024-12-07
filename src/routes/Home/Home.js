@@ -4,12 +4,17 @@ import React, { useContext, useEffect, useState } from "react";
 
 import { Link } from "react-router-dom";
 import { UserContext } from "../../context/user.context";
+import { FaRobot } from "react-icons/fa"; 
+import { useNavigate } from "react-router-dom";
+import translations from "./translations.json"; 
+
 
 const Home = () => {
   const { currentUser } = useContext(UserContext);
-
+  const navigate = useNavigate();
   const [showHeader, setShowHeader] = useState(true);
   const [prevScrollPos, setPrevScrollPos] = useState(0);
+  const [language, setLanguage] = useState("en"); // 添加语言状态
 
   useEffect(() => {
     const handleScroll = () => {
@@ -71,8 +76,24 @@ const Home = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // Function to handle language change
+  const handleLanguageChange = (e) => {
+    setLanguage(e.target.value);
+  };
+
   return (
     <>
+      {/* Language Selector */}
+      <div className="language-selector">
+        <label htmlFor="language">Language: </label>
+        <select id="language" value={language} onChange={handleLanguageChange}>
+          <option value="en">English</option>
+          <option value="zh">中文</option>
+          <option value="fr">Français</option>
+          <option value="es">Español</option>
+        </select>
+      </div>
+
       <section id="hero" className="d-flex align-items-center">
         <div className="container">
           <div className="row">
@@ -82,14 +103,10 @@ const Home = () => {
                 alt="NutriHelp Logo"
                 style={{ width: "850px", height: "280px" }}
               />
-              <h2>
-                NutriHelp supports you in managing your general wellbeing,
-                nutrient-related diseases and deficiencies through personalised
-                nutrition advice
-              </h2>
+              <h2>{translations[language].heroText}</h2>
               <div>
                 <a href="#" className="btn-get-started scrollto">
-                  Get Started
+                  {translations[language].getStarted}
                 </a>
               </div>
             </div>
@@ -106,27 +123,18 @@ const Home = () => {
             <div className="row">
               <div className="col-xl-5 col-lg-6 d-flex justify-content-center img-box align-items-stretch position-relative"></div>
               <div className="col-xl-7 col-lg-6 icon-boxes d-flex flex-column align-items-stretch justify-content-center py-5 px-lg-5">
-                <h3>NutriHelp</h3>
-                <p>
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  Voluptas accusamus eum architecto laboriosam autem quasi
-                  consectetur quia tempora, voluptatibus nemo asperiores
-                  similique exercitationem et quam cum dignissimos eveniet magni
-                  ipsam!
-                </p>
+                <h3>{translations[language].aboutTitle}</h3>
+                <p>{translations[language].aboutDescription}</p>
 
                 <div className="icon-box">
                   <div className="icon">
                     <i className="bx bx-heart"></i>
                   </div>
                   <h4 className="title">
-                    <a href="">Diagnosis</a>
+                    <a href="">{translations[language].dietaryNeeds}</a>
                   </h4>
                   <p className="description">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Delectus iste totam corporis, autem laborum quas dolorem ab
-                    quae debitis aliquid eveniet, cum provident non, corrupti
-                    sequi praesentium voluptate atque! Porro!
+                    {translations[language].dietaryNeedsDescription}
                   </p>
                 </div>
 
@@ -135,14 +143,10 @@ const Home = () => {
                     <i className="bx bx-plus-medical"></i>
                   </div>
                   <h4 className="title">
-                    <a href="">Personalized plan</a>
+                    <a href="">{translations[language].createRecipes}</a>
                   </h4>
                   <p className="description">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Modi cupiditate, cum aut expedita porro architecto
-                    doloremque labore sed, beatae facere officia veniam
-                    doloribus dolore veritatis ab voluptates recusandae nulla?
-                    Ipsam.
+                    {translations[language].createRecipesDescription}
                   </p>
                 </div>
 
@@ -151,13 +155,10 @@ const Home = () => {
                     <i className="bx bx-pulse"></i>
                   </div>
                   <h4 className="title">
-                    <a href="">Dine Pad</a>
+                    <a href="">{translations[language].productScanning}</a>
                   </h4>
                   <p className="description">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Eum
-                    laudantium itaque consequatur autem ad beatae veritatis
-                    totam quaerat voluptate distinctio quam accusamus, enim
-                    voluptatum soluta commodi, nihil qui deleniti ipsum.
+                    {translations[language].productScanningDescription}
                   </p>
                 </div>
               </div>
@@ -168,14 +169,8 @@ const Home = () => {
         <section id="services" className="services section-bg">
           <div className="container">
             <div className="section-title">
-              <h2>Services</h2>
-              <p>
-                At NutriHelp, we offer a range of services designed to support
-                your overall well-being and nutritional needs. Our dedicated
-                team is committed to providing personalized solutions to help
-                you achieve your health goals and improve your quality of life.
-                Explore our key services below:
-              </p>
+              <h2>{translations[language].servicesTitle}</h2>
+              <p>{translations[language].servicesDescription}</p>
             </div>
 
             <div className="row">
@@ -185,12 +180,10 @@ const Home = () => {
                     <img src="images/4.jpg" alt="" />
                   </div>
                   <h4 className="title">
-                    <a href="#">Meal Planning</a>
+                    <a href="#">{translations[language].mealPlanning}</a>
                   </h4>
                   <p className="description">
-                    Access a variety of nutritious meal plans and recipes
-                    designed to meet your everyday nutritional needs and
-                    preferences.
+                    {translations[language].mealPlanningDescription}
                   </p>
                 </div>
               </div>
@@ -200,12 +193,10 @@ const Home = () => {
                     <img src="images/5.jpg" alt="" />
                   </div>
                   <h4 className="title">
-                    <a href="#">Dietary Needs</a>
+                    <a href="#">{translations[language].dietaryNeeds}</a>
                   </h4>
                   <p className="description">
-                    Our meal planning services cater to specific dietary
-                    requirements, allowing you to customize meal plans based on
-                    your needs.
+                    {translations[language].dietaryNeedsDescription}
                   </p>
                 </div>
               </div>
@@ -215,12 +206,10 @@ const Home = () => {
                     <img src="images/6.jpg" alt="" />
                   </div>
                   <h4 className="title">
-                    <a href="#">Create Recipes</a>
+                    <a href="#">{translations[language].createRecipes}</a>
                   </h4>
                   <p className="description">
-                    Create your own personalized recipes tailored to your taste
-                    preferences and dietary requirements that suit your
-                    lifestyle.
+                    {translations[language].createRecipesDescription}
                   </p>
                 </div>
               </div>
@@ -230,12 +219,10 @@ const Home = () => {
                     <img src="images/7.jpg" alt="" />
                   </div>
                   <h4 className="title">
-                    <a href="#">Product Scanning</a>
+                    <a href="#">{translations[language].productScanning}</a>
                   </h4>
                   <p className="description">
-                    Upload an image of a product to analyze its nutritional
-                    content and receive a detailed breakdown of its nutrients
-                    through a visual pie chart.
+                    {translations[language].productScanningDescription}
                   </p>
                 </div>
               </div>
@@ -246,11 +233,8 @@ const Home = () => {
         <section id="contact" className="contact">
           <div className="container">
             <div className="section-title">
-              <h2>Contact</h2>
-              <p>
-                Have questions or need assistance? Reach out to us! We are here
-                to help you with any inquiries you may have.
-              </p>
+              <h2>{translations[language].contactTitle}</h2>
+              <p>{translations[language].contactDescription}</p>
             </div>
 
             <div className="row mt-5">
@@ -331,7 +315,7 @@ const Home = () => {
                     </div>
                   </div>
                   <button type="submit" className="submit-btn">
-                    Submit
+                    {translations[language].submit}
                   </button>
                 </form>
               </div>
@@ -345,8 +329,8 @@ const Home = () => {
           <div className="container">
             <div className="row justify-content-center">
               <div className="col-lg-6">
-                <h4>Subscribe to our Newsletter</h4>
-                <p>Lorem ipsum dolor sit amet consecte.</p>
+                <h4>{translations[language].subscribe}</h4>
+                <p>{translations[language].subscribeDescription}</p>
                 <form action="" method="post">
                   <input type="email" name="email" />
                   <input type="submit" value="Subscribe" />
@@ -391,6 +375,12 @@ const Home = () => {
           </div>
         </div>
       </footer>
+      <button
+        className="chatgpt-button"
+        onClick={() => navigate("/chat")}
+      >
+        <FaRobot size={28} />
+      </button>
     </>
   );
 };
