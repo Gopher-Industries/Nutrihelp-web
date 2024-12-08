@@ -26,17 +26,20 @@ import Meal from "./routes/Meal/Meal";
 import MFAform from "./routes/MFA/MFAform";
 import Dashboard from "./routes/NewMenu/Dashboard";
 import AuthenticateRoute from "./routes/AuthenticateRoute/AuthenticateRoute";
+import Account from './routes/Account/Account';
 import MainNavbar from "./components/MainNavbar";
 
 function App() {
   const { currentUser } = useContext(UserContext);
 
   return (
-    
+
     <Router>
-      <MainNavbar />
-        <Routes>
-          <Route path="/" element={currentUser ? <Navigate to="/home" /> : <Navigate to="/login" />} />
+      <div style={{ height: '78px' }}>
+        <MainNavbar />
+      </div>
+      <Routes>
+        <Route path="/" element={currentUser ? <Navigate to="/home" /> : <Navigate to="/login" />} />
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<Home />} />
         <Route path="/home" element={<Home />} />
@@ -130,6 +133,14 @@ function App() {
           element={
             <AuthenticateRoute>
               <Dashboard />
+            </AuthenticateRoute>
+          }
+        />
+        <Route
+          path="account"
+          element={
+            <AuthenticateRoute>
+              <Account />
             </AuthenticateRoute>
           }
         />

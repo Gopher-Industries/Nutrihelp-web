@@ -167,3 +167,32 @@
     gap: 10px;
   }
 }
+
+/* Style for the div checkbox */
+.checkbox-div {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #aaa;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.checkbox-div.checked {
+  background-color: #333;
+  border-color: #333;
+}
+
+.checkbox-indicator {
+  width: 10px;
+  height: 10px;
+  background-color: white;
+  border-radius: 2px;
+  transition: background-color 0.3s ease;
+}
+
+.checkbox-div.checked .checkbox-indicator {
+  background-color: #fff;
+}

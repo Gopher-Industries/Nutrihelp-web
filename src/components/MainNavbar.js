@@ -21,6 +21,7 @@ const MainNavbar = () => {
             <>
               <Link className="link nav-link" to='/dashboard'>Menu</Link>
               <Link className="link nav-link" to='/Meal'>Meal Planning</Link>
+              <Link className="link nav-link" to='/account'>Account</Link>
 
               <div className="dropdown">
                 <Link className="link nav-link">Recipes</Link>
