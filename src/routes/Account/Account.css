@@ -22,7 +22,16 @@ h6 {
     font-family: "Montserrat", sans-serif;
 }
 
-.account {
+#account {
+    width: 100%;
+    height: calc(100vh - 78px);
+    overflow-y: scroll;
+    scrollbar-width: thin;
+    scrollbar-color: #bd49e7 #fff;
+}
+
+.account,
+.titleInput {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     background: white;
     border-radius: 20px;
@@ -36,7 +45,7 @@ h6 {
     transition: all 0.3s ease-in-out;
 }
 
-.account>.title:hover{
+.account>.title:hover {
     color: #bd49e7;
 }
 
@@ -51,7 +60,7 @@ h6 {
     transition: all 0.3s ease-in-out;
 }
 
-.account .message .left{
+.account .message .left {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -63,7 +72,7 @@ h6 {
     max-height: 25px;
 }
 
-.account .message:hover>.left{
+.account .message:hover>.left {
     background: #bd49e7;
     color: #ebf7fc;
 }
@@ -73,6 +82,6 @@ h6 {
     max-height: 1000px;
 }
 
-.section-bg{
+.section-bg {
     background-color: #f4fbfe;
 }
