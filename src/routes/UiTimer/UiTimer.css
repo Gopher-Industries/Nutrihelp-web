@@ -1,0 +1,25 @@
+#UiTimer {
+    width: 100%;
+    height: calc(100vh - 78px);
+
+    .UiTimer {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .UiTimer input {
+        flex: none !important;
+        width: 100px !important;
+        margin: 0 10px !important;
+        border-radius: 0 !important;
+    }
+
+    .UiTimer button {
+        box-sizing: border-box !important;
+        padding: 15px 20px !important;
+        margin: 0 10px !important;
+    }
+}
