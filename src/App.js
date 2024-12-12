@@ -27,6 +27,7 @@ import MFAform from "./routes/MFA/MFAform";
 import Dashboard from "./routes/NewMenu/Dashboard";
 import AuthenticateRoute from "./routes/AuthenticateRoute/AuthenticateRoute";
 import Account from './routes/Account/Account';
+import UiTimer from "./routes/UiTimer/UiTimer";
 import MainNavbar from "./components/MainNavbar";
 
 function App() {
@@ -141,6 +142,14 @@ function App() {
           element={
             <AuthenticateRoute>
               <Account />
+            </AuthenticateRoute>
+          }
+        />
+        <Route
+          path="uitimer"
+          element={
+            <AuthenticateRoute>
+              <UiTimer />
             </AuthenticateRoute>
           }
         />
