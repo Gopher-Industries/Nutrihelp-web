@@ -19,6 +19,8 @@ const MainNavbar = () => {
         <div className="nav-links">
           {currentUser ? (
             <>
+              <Link className="link nav-link" to='/uitimer'>Ui Timer</Link>
+              {/* Test */}
               <Link className="link nav-link" to='/dashboard'>Menu</Link>
               <Link className="link nav-link" to='/Meal'>Meal Planning</Link>
               <Link className="link nav-link" to='/account'>Account</Link>

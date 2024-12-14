@@ -29,6 +29,7 @@ import MFAform from "./routes/MFA/MFAform";
 import Dashboard from "./routes/NewMenu/Dashboard";
 import AuthenticateRoute from "./routes/AuthenticateRoute/AuthenticateRoute";
 import Account from './routes/Account/Account';
+import UiTimer from "./routes/UiTimer/UiTimer";
 import MainNavbar from "./components/MainNavbar";
 import ChatPage from "./routes/chat/ChatPage";
 
@@ -145,6 +146,15 @@ function App() {
           element={
             <AuthenticateRoute>
               <Account />
+            </AuthenticateRoute>
+          }
+        />
+        {/* Test */}
+        <Route
+          path="uitimer"
+          element={
+            <AuthenticateRoute>
+              <UiTimer />
             </AuthenticateRoute>
           }
         />
