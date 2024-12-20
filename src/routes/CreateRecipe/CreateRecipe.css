@@ -72,6 +72,7 @@
 .button-primary {
     background-color: #a82fea !important;
     color: #fff !important;
+    border-radius: 50px; /* Curvy corners */
 }
 
 .button-primary:hover {
