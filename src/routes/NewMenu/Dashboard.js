@@ -73,7 +73,7 @@ const Dashboard = () => {
           <h2>MENU</h2>
         </div>
         <Link to="/appointment" className="button-link">
-          <button>Book an Appointment</button>
+          <button className="appointment-btn">Book an Appointment</button>
         </Link>
 
         <div className="daySelctionText">
