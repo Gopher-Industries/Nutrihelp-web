@@ -123,6 +123,9 @@ h3 {
 .mainBox {
   display: flex;
   flex-direction: column;
+  overflow-x: auto; /* Allow horizontal scrolling */
+  white-space: nowrap; /* Prevent child elements from wrapping */
+  padding: 20px; /* Add some spacing */
 }
 
 /* .Title {
@@ -132,9 +135,9 @@ h3 {
   width: 100%;
 } */
 
-.mainBox button {
+/*.mainBox button {
   padding: 15px 30px; /* Increased size */
-  background-color: #ba49e7;
+  /*background-color: #ba49e7;
   color: white;
   border: none;
   border-radius: 50px;
@@ -145,8 +148,35 @@ h3 {
 
 .mainBox button:hover {
   background-color: #8b06c0;
+}*/
+
+/* Adding this block for Book an Appointment button */
+.appointment-btn {
+  position: absolute; 
+  right: 20px; 
+  top: 90px; 
+  background-color: #ba49e7; 
+  color: white; 
+  border: none; 
+  border-radius: 50px; 
+  padding: 15px 30px; 
+  font-size: 16px; 
+  cursor: pointer; 
+  z-index: 100; /* Ensure it appears above other elements */
+  white-space: nowrap; /* Prevent text wrapping */
 }
 
+.appointment-btn:hover {
+  background-color: #8b06c0; 
+}
+
+@media (max-width: 768px) { /* For smaller screens */
+  .appointment-btn {
+    position: fixed; /* Keep the button visible in the viewport */
+    bottom: 20px; 
+    right: 20px; 
+  }
+}
 
 .dashboard-grid {
   display: flex;
