@@ -508,7 +508,7 @@ section {
     color: white;
     border: none;
     padding: 10px 20px;
-    border-radius: 50px;
+    border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
@@ -517,35 +517,125 @@ section {
     background-color: green; 
 }
 
-.chatgpt-button {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background-color: #6dc4ec;
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 60px;
-    height: 60px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    cursor: pointer;
-    z-index: 1000;
-    transition: background-color 0.3s ease;
+/* About Section */
+.about {
+  padding: 60px 0;
+  background-color: #f9f9f9;
 }
 
-.chatgpt-button:hover {
-    background-color: #49b5e7;
+.section-title h2 {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+  text-align: center;
 }
-.language-selector {
-    position: fixed;
-    top: 10px;
-    left: 10px;
-    background-color: #fff;
-    padding: 10px;
-    border-radius: 5px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+
+.section-title p {
+  font-size: 1.2rem;
+  text-align: center;
+  margin-bottom: 40px;
+  color: #6c757d;
+}
+
+.tab-container {
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background: #ffffff;
+  padding: 20px;
+}
+
+.tab-header {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 20px;
+}
+
+.tab-button {
+  flex: 1;
+  background: none;
+  border: none;
+  font-size: 1rem;
+  padding: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.tab-button.active {
+  background-color: #327da8;
+  color: white;
+  border-radius: 5px;
+}
+
+.tab-pane {
+  display: none;
+}
+
+.tab-pane.active {
+  display: block;
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Reviews Section */
+.reviews {
+    padding: 60px 0;
+    background-color: #f9f9f9;
+  }
+  
+  .reviews .section-title h2 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  .reviews .section-title p {
+    font-size: 1.2rem;
+    text-align: center;
+    margin-bottom: 40px;
+    color: #6c757d;
+  }
+  
+  .review-card {
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    text-align: center;
+  }
+  
+  .review-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    margin-bottom: 15px;
+    object-fit: cover;
+  }
+  
+  .review-name {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+  }
+  
+  .review-rating {
+    font-size: 1.2rem;
+    color: #ffc107;
+    margin-bottom: 15px;
+  }
+  
+  .review-text {
+    font-size: 1rem;
+    color: #555;
+    line-height: 1.6;
   }
   
