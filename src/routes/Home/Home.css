@@ -22,6 +22,30 @@ h6 {
     font-family: "Montserrat", sans-serif;
 }
 
+.about {
+    background-color: var(--background-color);
+}
+
+#services {
+    background-color: var(--hero1-background-color);
+}
+
+p {
+    color: var(--text-color)
+}
+
+p.description {
+    color: var(--text-color);
+}
+
+div {
+    background-color: var(--background2-color);
+}
+
+h3 {
+    color: var(--h3-color);
+}
+
 .back-to-top {
     position: fixed;
     visibility: hidden;
@@ -293,7 +317,7 @@ section {
     overflow: hidden;
     border-radius: 10px;
     margin: 0 10px 40px 10px;
-    background: #fff;
+    background: var(--card-background-color);
     box-shadow: 0 10px 29px 0 rgba(68, 88, 144, 0.1);
     transition: all 0.3s ease-in-out;
 }
@@ -326,7 +350,7 @@ section {
 }
 
 .services .title a {
-    color: #111;
+    color: var(--text-color);
 }
 
 .services .icon-box:hover .title a {
@@ -394,16 +418,15 @@ section {
 }
 
 #footer {
-    background: #fff;
+    background: var(--footer1-background-color);
     padding: 0 0 30px 0;
     color: #444444;
     font-size: 14px;
-    background: #ebf7fc;
 }
 
 #footer .footer-newsletter {
     padding: 50px 0;
-    background: #f0f9fd;
+    background: var(--footer1-background-color);
     text-align: center;
     font-size: 15px;
 }
@@ -419,7 +442,7 @@ section {
 
 #footer .footer-newsletter form {
     margin-top: 30px;
-    background: #fff;
+    background: var(--background2-color);
     padding: 6px 10px;
     position: relative;
     border-radius: 4px;
@@ -455,7 +478,7 @@ section {
 
 #footer .footer-top {
     padding: 60px 0 30px 0;
-    background: #fff;
+    background: var(--background-color);
 }
 
 #footer .footer-top .footer-contact {
@@ -543,9 +566,14 @@ section {
     position: fixed;
     top: 10px;
     left: 10px;
-    background-color: #fff;
+    background-color: var(--background-color);
     padding: 10px;
     border-radius: 5px;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    margin-top: 70px;
+  }
+
+  label {
+    color: var(--text-color);
   }
   
