@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import { UserContext } from "../../context/user.context";
 import { FaRobot } from "react-icons/fa"; 
 import { useNavigate } from "react-router-dom";
-import translations from "./translations.json"; 
+import translations from "./translations.json";
 
 
 const Home = () => {

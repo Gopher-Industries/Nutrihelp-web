@@ -11,6 +11,16 @@ img {
   width: 950px;
 }
 
+:root {
+  --background-color: white;
+  --text-color: black;
+}
+
+.dark-mode {
+  --background-color: rgb(85, 85, 85);
+  --text-color: white;
+}
+
 .App-logo {
   height: 40vmin;
   pointer-events: none;

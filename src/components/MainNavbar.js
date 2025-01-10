@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import { UserContext } from "../context/user.context";
 import '../styles/mainNavbar.css'; 
+import DarkModeToggle from "../routes/DarkModeToggle/DarkModeToggle";
 
 const MainNavbar = () => {
   const { currentUser, logOut } = useContext(UserContext);
@@ -50,6 +51,7 @@ const MainNavbar = () => {
               <Link className="link dropdown-link" to='/home'>Home</Link>
               <Link className="link dropdown-link" to='/login'>Sign In</Link>
               <Link className="link dropdown-link" to='/signUp'>Create Account</Link>
+              <DarkModeToggle />
             </>
           )}
         </div>

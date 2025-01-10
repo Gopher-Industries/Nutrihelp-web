@@ -9,12 +9,12 @@
   border-radius: 20px;
   overflow: hidden;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  background: white;
+  background: var(--background2-color);
   padding: 20px;
 }
 .login-container {
   width: 100%;
-  background-color: #ffffff;
+  background-color: var(--background2-color);
 }
 
 .login-title {
@@ -23,11 +23,12 @@
   margin-bottom: 10px;
   text-align: center;
   font-weight: bold;
+  color: var(--text-color);
 }
 
 .login-subtitle {
   font-size: 14px;
-  color: #666;
+  color: var(--text-color2);
   text-align: center;
   margin-bottom: 20px;
 }
@@ -69,7 +70,7 @@
 
 .input-label {
   font-size: 14px;
-  color: #333;
+  color: var(--text-color);
   padding: 0 15px;
 }
 
@@ -104,7 +105,7 @@
 
 .keep-logged-in label {
   font-size: 14px;
-  color: #666;
+  color: var(--text-color2);
 }
 
 .forgot-password {
@@ -128,7 +129,7 @@
 
 .signup-link {
   font-size: 14px;
-  color: #666;
+  color: var(--text-color2);
   text-align: center;
 }
 
