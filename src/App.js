@@ -18,8 +18,6 @@ import UserProfilePage from "./routes/UI-Only-Pages/UserProfilePage/userprofile"
 import Home from "./routes/Home/Home";
 import DietaryRequirements from "./routes/UI-Only-Pages/DietaryRequirements/DietaryRequirements";
 import ScanProducts from "./routes/UI-Only-Pages/ScanProducts/ScanProducts";
-import UploadHistory from './routes/UI-Only-Pages/ScanProducts/UploadHistory';
-import FoodDetails from './routes/UI-Only-Pages/ScanProducts/FoodDetails';
 import Menu from "./routes/UI-Only-Pages/Menu/Menu";
 import Recipe from "./components/Recipe";
 import Appointment from "./routes/UI-Only-Pages/Appointment/Appointment";
@@ -28,28 +26,25 @@ import Meal from "./routes/Meal/Meal";
 import MFAform from "./routes/MFA/MFAform";
 import Dashboard from "./routes/NewMenu/Dashboard";
 import AuthenticateRoute from "./routes/AuthenticateRoute/AuthenticateRoute";
-import Account from './routes/Account/Account';
-import UiTimer from "./routes/UiTimer/UiTimer";
 import MainNavbar from "./components/MainNavbar";
-import ChatPage from "./routes/chat/ChatPage";
-
+import FAQ from "./routes/FAQ/faq";
 
 function App() {
   const { currentUser } = useContext(UserContext);
 
   return (
-
+    
     <Router>
-      <div style={{ height: '78px' }}>
-        <MainNavbar />
-      </div>
-      <Routes>
-        <Route path="/" element={currentUser ? <Navigate to="/home" /> : <Navigate to="/login" />} />
+      <MainNavbar />
+        <Routes>
+          <Route path="/" element={currentUser ? <Navigate to="/home" /> : <Navigate to="/login" />} />
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<Home />} />
         <Route path="/home" element={<Home />} />
         <Route path="/signUp" element={<SignUp />} />
         <Route path="/forgotPassword" element={<ForgotPassword />} />
+        <Route path="/faq" element={<FAQ />} />
+
 
         {/* Private Routes */}
         <Route
@@ -141,36 +136,6 @@ function App() {
             </AuthenticateRoute>
           }
         />
-        <Route
-          path="account"
-          element={
-            <AuthenticateRoute>
-              <Account />
-            </AuthenticateRoute>
-          }
-        />
-        {/* Test */}
-        <Route
-          path="uitimer"
-          element={
-            <AuthenticateRoute>
-              <UiTimer />
-            </AuthenticateRoute>
-          }
-        />
-      </Routes>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/chat" element={<ChatPage />} />
-      </Routes>
-      <Routes>
-        <Route exact path="/" element={<ScanProducts />} />
-        <Route path="/upload-history" element={<UploadHistory />} />
-      </Routes>
-      <Routes>
-        <Route exact path="/" element={<ScanProducts />} />
-        <Route path="/upload-history" element={<UploadHistory />} />
-        <Route path="/food-details/:foodName" element={<FoodDetails />} />
       </Routes>
     </Router>
   );

@@ -82,13 +82,12 @@ h3 {
     z-index: 997;
     padding: 10px 0;
     box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.05);
-
     transition: transform 1s ease; /* Add transition for smooth appearance/disappearance */
 }
 
 #header.header-hidden {
     transform: translateY(-100%);
-  }
+}
 
 .navbar {
     padding: 0x;
@@ -205,8 +204,6 @@ h3 {
         font-size: 18px;
         line-height: 24px;
     }
-
-
 }
 
 section {
@@ -234,6 +231,10 @@ section {
 
 .section-title p {
     margin-bottom: 0;
+    font-size: 1.2rem;
+    text-align: center;
+    margin-bottom: 40px;
+    color: #6c757d;
 }
 
 .about .icon-boxes h3 {
@@ -333,7 +334,6 @@ section {
     top: calc(50% - 30px);
 }
 
-
 .services .icon img {
     border-radius: 20px;
     height: 150px;
@@ -363,8 +363,6 @@ section {
     line-height: 24px;
     margin-bottom: 0;
 }
-
-
 
 .contact .info i {
     font-size: 20px;
@@ -524,44 +522,36 @@ section {
 
 .submit-btn {
     display: block;
-    margin: 0 auto; 
+    margin: 0 auto;
     margin-left: 340px;
-    width: 100px; 
-    background-color: #b21de0; 
+    width: 100px;
+    background-color: #b21de0;
     color: white;
     border: none;
     padding: 10px 20px;
-    border-radius: 50px;
+    border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
 
 .submit-btn:hover {
-    background-color: green; 
+    background-color: green;
 }
 
-.chatgpt-button {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background-color: #6dc4ec;
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 60px;
-    height: 60px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    cursor: pointer;
-    z-index: 1000;
-    transition: background-color 0.3s ease;
+/* About Section */
+.about {
+  padding: 60px 0;
+  background-color: #f9f9f9;
 }
 
-.chatgpt-button:hover {
-    background-color: #49b5e7;
+.section-title h2 {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+  text-align: center;
 }
+
+/* Language Selector and New Feature */
 .language-selector {
     position: fixed;
     top: 10px;
@@ -571,9 +561,110 @@ section {
     border-radius: 5px;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
     margin-top: 70px;
-  }
+}
 
-  label {
+label {
     color: var(--text-color);
+}
+
+.tab-container {
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background: #ffffff;
+  padding: 20px;
+}
+
+.tab-header {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 20px;
+}
+
+.tab-button {
+  flex: 1;
+  background: none;
+  border: none;
+  font-size: 1rem;
+  padding: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.tab-button.active {
+  background-color: #327da8;
+  color: white;
+  border-radius: 5px;
+}
+
+.tab-pane {
+  display: none;
+}
+
+.tab-pane.active {
+  display: block;
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
   }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Reviews Section */
+.reviews {
+    padding: 60px 0;
+    background-color: #f9f9f9;
+}
   
+.reviews .section-title h2 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center;
+}
+  
+.reviews .section-title p {
+    font-size: 1.2rem;
+    text-align: center;
+    margin-bottom: 40px;
+    color: #6c757d;
+}
+  
+.review-card {
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    text-align: center;
+}
+  
+.review-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    margin-bottom: 15px;
+    object-fit: cover;
+}
+  
+.review-name {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+}
+  
+.review-rating {
+    font-size: 1.2rem;
+    color: #ffc107;
+    margin-bottom: 15px;
+}
+  
+.review-text {
+    font-size: 1rem;
+    color: #555;
+    line-height: 1.6;
+}
