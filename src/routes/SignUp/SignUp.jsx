@@ -193,7 +193,7 @@ const SignUp = (props) => {
           Sign Up
         </button>
         <div className="link-div">
-          Already have and account?
+          Already have an account?
           <span>
             {" "}
             <Link to="/login">Login</Link>

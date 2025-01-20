@@ -22,6 +22,30 @@ h6 {
     font-family: "Montserrat", sans-serif;
 }
 
+.about {
+    background-color: var(--background-color);
+}
+
+#services {
+    background-color: var(--hero1-background-color);
+}
+
+p {
+    color: var(--text-color)
+}
+
+p.description {
+    color: var(--text-color);
+}
+
+div {
+    background-color: var(--background2-color);
+}
+
+h3 {
+    color: var(--h3-color);
+}
+
 .back-to-top {
     position: fixed;
     visibility: hidden;
@@ -58,13 +82,12 @@ h6 {
     z-index: 997;
     padding: 10px 0;
     box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.05);
-
     transition: transform 1s ease; /* Add transition for smooth appearance/disappearance */
 }
 
 #header.header-hidden {
     transform: translateY(-100%);
-  }
+}
 
 .navbar {
     padding: 0x;
@@ -181,8 +204,6 @@ h6 {
         font-size: 18px;
         line-height: 24px;
     }
-
-
 }
 
 section {
@@ -210,6 +231,10 @@ section {
 
 .section-title p {
     margin-bottom: 0;
+    font-size: 1.2rem;
+    text-align: center;
+    margin-bottom: 40px;
+    color: #6c757d;
 }
 
 .about .icon-boxes h3 {
@@ -293,7 +318,7 @@ section {
     overflow: hidden;
     border-radius: 10px;
     margin: 0 10px 40px 10px;
-    background: #fff;
+    background: var(--card-background-color);
     box-shadow: 0 10px 29px 0 rgba(68, 88, 144, 0.1);
     transition: all 0.3s ease-in-out;
 }
@@ -308,7 +333,6 @@ section {
     margin-bottom: 10px;
     top: calc(50% - 30px);
 }
-
 
 .services .icon img {
     border-radius: 20px;
@@ -326,7 +350,7 @@ section {
 }
 
 .services .title a {
-    color: #111;
+    color: var(--text-color);
 }
 
 .services .icon-box:hover .title a {
@@ -339,8 +363,6 @@ section {
     line-height: 24px;
     margin-bottom: 0;
 }
-
-
 
 .contact .info i {
     font-size: 20px;
@@ -394,16 +416,15 @@ section {
 }
 
 #footer {
-    background: #fff;
+    background: var(--footer1-background-color);
     padding: 0 0 30px 0;
     color: #444444;
     font-size: 14px;
-    background: #ebf7fc;
 }
 
 #footer .footer-newsletter {
     padding: 50px 0;
-    background: #f0f9fd;
+    background: var(--footer1-background-color);
     text-align: center;
     font-size: 15px;
 }
@@ -419,7 +440,7 @@ section {
 
 #footer .footer-newsletter form {
     margin-top: 30px;
-    background: #fff;
+    background: var(--background2-color);
     padding: 6px 10px;
     position: relative;
     border-radius: 4px;
@@ -455,7 +476,7 @@ section {
 
 #footer .footer-top {
     padding: 60px 0 30px 0;
-    background: #fff;
+    background: var(--background-color);
 }
 
 #footer .footer-top .footer-contact {
@@ -501,10 +522,10 @@ section {
 
 .submit-btn {
     display: block;
-    margin: 0 auto; 
+    margin: 0 auto;
     margin-left: 340px;
-    width: 100px; 
-    background-color: #b21de0; 
+    width: 100px;
+    background-color: #b21de0;
     color: white;
     border: none;
     padding: 10px 20px;
@@ -514,7 +535,7 @@ section {
 }
 
 .submit-btn:hover {
-    background-color: green; 
+    background-color: green;
 }
 
 /* About Section */
@@ -530,11 +551,20 @@ section {
   text-align: center;
 }
 
-.section-title p {
-  font-size: 1.2rem;
-  text-align: center;
-  margin-bottom: 40px;
-  color: #6c757d;
+/* Language Selector and New Feature */
+.language-selector {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    background-color: var(--background-color);
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    margin-top: 70px;
+}
+
+label {
+    color: var(--text-color);
 }
 
 .tab-container {
@@ -588,54 +618,53 @@ section {
 .reviews {
     padding: 60px 0;
     background-color: #f9f9f9;
-  }
+}
   
-  .reviews .section-title h2 {
+.reviews .section-title h2 {
     font-size: 2.5rem;
     font-weight: bold;
     margin-bottom: 20px;
     text-align: center;
-  }
+}
   
-  .reviews .section-title p {
+.reviews .section-title p {
     font-size: 1.2rem;
     text-align: center;
     margin-bottom: 40px;
     color: #6c757d;
-  }
+}
   
-  .review-card {
+.review-card {
     background: #ffffff;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     padding: 20px;
     text-align: center;
-  }
+}
   
-  .review-avatar {
+.review-avatar {
     width: 80px;
     height: 80px;
     border-radius: 50%;
     margin-bottom: 15px;
     object-fit: cover;
-  }
+}
   
-  .review-name {
+.review-name {
     font-size: 1.2rem;
     font-weight: bold;
     color: #333;
     margin-bottom: 10px;
-  }
+}
   
-  .review-rating {
+.review-rating {
     font-size: 1.2rem;
     color: #ffc107;
     margin-bottom: 15px;
-  }
+}
   
-  .review-text {
+.review-text {
     font-size: 1rem;
     color: #555;
     line-height: 1.6;
-  }
-  
+}

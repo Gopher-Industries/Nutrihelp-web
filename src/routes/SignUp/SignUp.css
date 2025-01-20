@@ -9,7 +9,7 @@
   border-radius: 20px;
   overflow: hidden;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  background: white;
+  background: var(--background2-color);
   padding: 20px;
 }
 
@@ -39,7 +39,7 @@ a {
   text-align: center;
   margin-top: 10px;
   font-size: 14px;
-  color: #666;
+  color: var(--text-color2);
   text-align: center;
 }
 

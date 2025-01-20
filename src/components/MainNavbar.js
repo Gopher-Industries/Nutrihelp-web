@@ -2,6 +2,7 @@ import React, { useContext, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { UserContext } from "../context/user.context";
 import "../styles/mainNavbar.css";
+import DarkModeToggle from "../routes/DarkModeToggle/DarkModeToggle"; // Included from master branch
 
 const MainNavbar = () => {
   const { currentUser, logOut } = useContext(UserContext);
@@ -58,16 +59,10 @@ const MainNavbar = () => {
               </>
             ) : (
               <>
-                <div className="dropdown">
-                  <Link className="link nav-link" to="/home">Home</Link>
-                  <div className="dropdown-content">
-                    <a className="link dropdown-link" href="#services">Services</a>
-                    <a className="link dropdown-link" href="#contact">Contact</a>
-                  </div>
-                </div>
-                <Link className="link nav-link" to="/faq">FAQ</Link>
-                <Link className="link dropdown-link" to="/login">Sign In</Link>
-                <Link className="link dropdown-link" to="/signUp">Create Account</Link>
+                <Link className="link dropdown-link" to='/home'>Home</Link>
+                <Link className="link dropdown-link" to='/login'>Sign In</Link>
+                <Link className="link dropdown-link" to='/signUp'>Create Account</Link>
+                <DarkModeToggle /> {/* Included from master branch */}
               </>
             )}
           </div>
