@@ -1,0 +1,21 @@
+.light-mode {
+  --background-color: var(--background-color);
+  --color: var(--text-color);
+  --hero1-background-color: #f4fbfe;
+  --card-background-color: #fff;
+  --background2-color: rgb(172, 172, 172);
+  --footer1-background-color: #f0f9fd;
+  --h3-color: #4444;
+  --text-color2: #777;
+}
+
+.dark-mode {
+  --background-color: rgb(85, 85, 85);
+  --color: var(--text-color);
+  --hero1-background-color: #2a2a2b;
+  --card-background-color: #7a7a7a;
+  --background2-color: rgb(85, 85, 85);
+  --footer1-background-color: #2a2a2b;
+  --h3-color: #0f394c;
+  --text-color2:#c2c2c2;
+}
