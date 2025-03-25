@@ -1,0 +1,116 @@
+/* General header styling */
+.main-header {
+  position: fixed; /* 固定在页面顶部 */
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000; /* 确保导航栏在其他内容上方 */
+  background-color: rgba(169, 231, 252, 0.575); /* 半透明背景 */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* 添加阴影效果 */
+  padding: 1rem;
+  transition: background-color 0.3s ease-in-out; /* 平滑背景色过渡 */
+}
+
+/* When scrolled, add solid background */
+.main-header.scrolled {
+  background-color: rgba(255, 255, 255, 1); /* 滚动后变为不透明背景 */
+}
+
+/* Header background and text color */
+.header {
+  background-color: var(--background-color); /* Set the background color */
+  color: var(--text-color); /* Set the text color */
+}
+
+/* Nav bar styling */
+.main-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+/* Navbar container styling */
+.nav-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+/* Ensure logo moves to extreme left */
+.logo-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  background-color: var(--background-color);
+}
+
+/* Logo container */
+.logo-container img {
+  height: 50px;
+}
+
+/* Navbar links */
+.nav-links {
+  display: flex;
+  gap: 1rem;
+}
+
+.nav-link {
+  color: #333;
+  text-decoration: none;
+  font-weight: bold;
+  padding: 0.5rem 1rem;
+  transition: color 0.3s ease;
+}
+
+.nav-link:hover {
+  color: #007BFF; /* 鼠标悬停时变色 */
+}
+
+/* Dropdown menu */
+.dropdown {
+  position: relative;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: white;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  z-index: 1;
+  min-width: 160px;
+  border-radius: 4px;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.dropdown-link {
+  display: block;
+  padding: 10px;
+  text-decoration: none;
+  color: #333;
+  transition: background-color 0.2s ease;
+}
+
+.dropdown-link:hover {
+  background-color: #f1f1f1;
+}
+
+/* Responsive styling for mobile */
+@media screen and (max-width: 768px) {
+  .nav-links {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .dropdown-content {
+    position: static;
+    box-shadow: none;
+  }
+}

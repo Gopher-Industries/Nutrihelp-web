@@ -10,7 +10,7 @@ const MFAform = () => {
   const { setCurrentUser } = useContext(UserContext); // Extract context methods
 
   const location = useLocation();
-  const { username, password } = location.state || {}; // Retrieve username and password from state
+  const { email, password } = location.state || {}; // Retrieve email and password from state
 
   const handleChange = (index, value) => {
     const newCode = [...code];
@@ -37,7 +37,7 @@ const MFAform = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ username, password, mfa_token }), // Send username, password, and MFA token
+        body: JSON.stringify({ email, password, mfa_token }), // Send email, password, and MFA token
       });
 
       if (response.ok) {
