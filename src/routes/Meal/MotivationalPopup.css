@@ -1,0 +1,56 @@
+@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.popup-container {
+  display: flex;
+  flex-direction: column;
+  width: 500px;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  text-align: center;
+  position: relative; 
+}
+
+.popup-image {
+  padding: 0;  
+  height: 300px;
+  width: 100%;
+  background-size: cover;
+  background-position: center;
+  border-radius: 12px;
+  position: relative; 
+}
+
+.popup-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 25px;
+  color: white;
+  font-family: 'Kanit', 'Arial', sans-serif;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+  overflow: hidden;
+  text-align: center; 
+  background: rgba(0, 0, 0, 0.3); 
+  border-radius: 8px;
+  width: 80%;
+  max-width: 400px;
+  padding: 20px; 
+  height: auto; 
+}
