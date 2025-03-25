@@ -1,5 +1,4 @@
 import './Meal.css'; // Import your CSS file here
-
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 import React, { createContext, useCallback, useState } from 'react';
 import { Grid, GridColumn, GridRow, Segment } from 'semantic-ui-react';

@@ -15,6 +15,7 @@ body {
     align-items: center;
     
     height: 100vh;
+    position: relative; /* Added for button positioning */
   }
   
   .mfa-input-container {
@@ -32,14 +33,15 @@ body {
   }
   
   .mfa-submit-button {
-    margin-top: 20px;
+    position: absolute; /* Position button relative to parent container */
+    top: 421px; /* Y position */
+    left: 664px; /* X position */
     padding: 10px 20px;
     background-color: #ae00ff;
     color: #fff;
     border: none;
-    border-radius: 5px;
+    border-radius: 50px;  /* Curved corners for better look */
     cursor: pointer;
-    margin-left: 80px;
   }
   
   .mfa-submit-button:hover {
