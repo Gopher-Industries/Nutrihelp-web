@@ -1,11 +1,10 @@
-import React, { useState, useContext } from "react";
+import { UserIcon } from "lucide-react";
+import React, { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { UserContext } from "../../context/user.context";
-
-import Nutrihelp_Logo from "../Login/Nutrihelp_Logo.PNG";
-import Nutrihelp_Logo2 from "../Login/Nutrihelp_Logo2.PNG";
-
+import { useDarkMode } from "../DarkModeToggle/DarkModeContext";
 import "./Login.css";
+import FramerClient from "../../components/framer-client";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -14,6 +13,7 @@ const Login = () => {
   const [contact, setContact] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
   const [isChecked, setIsChecked] = useState(false);
+  const { darkMode } = useDarkMode();
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -43,7 +43,7 @@ const Login = () => {
         const data = await response.json();
         setError(
           data.error ||
-          "Failed to sign in. Please check your credentials and try again."
+            "Failed to sign in. Please check your credentials and try again."
         );
       }
     } catch (error) {
@@ -68,75 +68,136 @@ const Login = () => {
   };
 
   return (
-    <div className="full-container">
-      <div className="login-container">
-        <img
-          src={Nutrihelp_Logo}
-          alt="Nutrihelp Logo"
-          className="nutrihelp-logo"
-        />
-        <h2 className="login-title">LOG IN</h2>
-        <p className="login-subtitle">
-          Enter your email and password to sign in!
-        </p>
-        {error && <p className="error-message">{error}</p>}
-        <label htmlFor="email" className="input-label">
-          Email*
-        </label>
-        <input
-          name="email"
-          type="text"
-          placeholder="email"
-          onChange={handleChange}
-          value={email}
-        />
-        <div>
-          <label htmlFor="password" className="input-label">
-            Password*
-          </label>
-          <div className="password-field">
-            <input
-              id="password"
-              name="password"
-              type="password"
-              className="input-field"
-              placeholder="Min. 8 characters"
-              onChange={handleChange}
-              value={password}
+    <FramerClient>
+      <div className={`w-screen h-screen ${darkMode && "bg-[#555555]"}`}>
+        <div className="h-auto w-[70%] flex flex-col md:flex-row justify-center items-center mt-24 ml-auto mr-auto shadow-2xl border-none rounded-2xl overflow-hidden p-[20px]">
+          <div className="w-[100%]">
+            <img
+              src={
+                darkMode
+                  ? "https://github.com/user-attachments/assets/f2404ca6-b7f2-4724-92d6-afeba9e18508"
+                  : "https://github.com/user-attachments/assets/0d41cade-7b0c-4785-98d0-8c15d230fe47"
+              }
+              alt="Nutrihelp Logo"
+              className="rounded-xl w-[500px] items-center ml-auto mr-auto"
             />
-            <span className="eye-icon">👁️</span>
-          </div>
-        </div>
-
-        <div className="options">
-          <div className="keep-logged-in">
-            <div
-              className={`checkbox-div ${isChecked ? "checked" : ""}`}
-              onClick={handleToggleCheckbox}
+            <h2
+              className={`font-bold text-4xl mt-4 ${darkMode && "text-white"}`}
             >
-              <span className="checkbox-indicator"></span>
+              LOG IN
+            </h2>
+            <p className="text-lg text-center text-gray-500">
+              Enter your email and password to sign in!
+            </p>
+            {error && <p className="error-message">{error}</p>}
+            <label htmlFor="email" className="input-label">
+              Email*
+            </label>
+            <input
+              className={`border-1 ${
+                darkMode && "bg-gray-700 text-white font-semibold"
+              }`}
+              name="email"
+              type="text"
+              placeholder="Enter Your Email"
+              onChange={handleChange}
+              value={email}
+            />
+            <div>
+              <label htmlFor="password" className="input-label">
+                Password*
+              </label>
+              <div className="password-field">
+                <input
+                  className={`border-1 ${
+                    darkMode && "bg-gray-700 text-white font-semibold"
+                  }`}
+                  id="password"
+                  name="password"
+                  type="password"
+                  placeholder="Min. 8 characters"
+                  onChange={handleChange}
+                  value={password}
+                />
+                <span className="eye-icon">👁️</span>
+              </div>
             </div>
-            <label htmlFor="keepLoggedIn">Keep me logged in</label>
+
+            <div className="options">
+              <div className="keep-logged-in ">
+                <div
+                  className={`checkbox-div ${isChecked ? "checked" : ""}`}
+                  onClick={handleToggleCheckbox}
+                >
+                  <span
+                    className="checkbox-indica
+              tor"
+                  ></span>
+                </div>
+                <label htmlFor="keepLoggedIn" className="ml-2">
+                  Keep me logged in
+                </label>
+              </div>
+              <div
+                className={`forgot-password ${
+                  darkMode ? "text-purple-300" : "text-purple-800"
+                }`}
+                onClick={handleForgotPasswordClick}
+              >
+                Forgot password?
+              </div>
+            </div>
+            <button
+              className={`w-full rounded-full mb-6 text-2xl font-bold flex justify-center gap-3 items-center ${
+                darkMode
+                  ? "bg-purple-700 hover:bg-purple-500"
+                  : "bg-purple-400 text-gray-800 hover:bg-purple-700 hover:text-white"
+              }`}
+              onClick={handleSignIn}
+            >
+              <UserIcon size={24} />
+              Sign In
+            </button>
+
+            <p className="text-2xl font-semibold text-center mt-4 mb-4">Or</p>
+
+            <button
+              className={`w-full rounded-full mb-6 text-2xl font-bold flex justify-center gap-3 items-center ${
+                darkMode
+                  ? "bg-green-700 hover:bg-green-500"
+                  : "bg-green-500 text-gray-800 hover:bg-green-700 hover:text-white"
+              }`}
+              onClick={handleSignIn}
+            >
+              <img
+                src="https://static.vecteezy.com/system/resources/previews/022/613/027/non_2x/google-icon-logo-symbol-free-png.png"
+                className="w-[25px]"
+              />
+              Sign In With Google
+            </button>
+
+            <p className={`signup-link mb-5`}>
+              Not registered yet?{" "}
+              <Link
+                to="/signUp"
+                className={`${
+                  darkMode ? "text-purple-300" : "text-purple-800"
+                }`}
+              >
+                Create an Account
+              </Link>
+            </p>
           </div>
-          <div className="forgot-password" onClick={handleForgotPasswordClick}>
-            Forgot password?
+          <div className="flex flex-col justify-center items-center m-auto">
+            <img
+              src="https://cdni.iconscout.com/illustration/premium/thumb/woman-watching-food-menu-while-checkout-order-using-application-illustration-download-in-svg-png-gif-file-formats--online-service-mobile-app-pack-e-commerce-shopping-illustrations-10107922.png"
+              alt="Nutrihelp Logo 2"
+              className=""
+            />
           </div>
         </div>
-        <button className="signin-btn" onClick={handleSignIn}>
-          Sign In
-        </button>
-        <p className="signup-link">
-          Not registered yet? <Link to="/signUp">Create an Account</Link>
-        </p>
       </div>
-      <div className="banner-img">
-        <img
-          src={Nutrihelp_Logo2}
-          alt="Nutrihelp Logo 2"
-          className="nutrihelp-logo2"
-        />
-      </div>
-    </div>
+    </FramerClient>
   );
 };
 

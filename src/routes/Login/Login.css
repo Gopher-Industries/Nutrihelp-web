@@ -18,7 +18,6 @@
 }
 
 .login-title {
-  font-size: 24px;
   font-weight: bold;
   margin-bottom: 10px;
   text-align: center;
@@ -27,7 +26,6 @@
 }
 
 .login-subtitle {
-  font-size: 14px;
   color: var(--text-color2);
   text-align: center;
   margin-bottom: 20px;
@@ -111,17 +109,15 @@
 .forgot-password {
   font-size: 14px;
   font-weight: 600;
-  color: #a020f0;
+  /*   color: #a020f0; */
   cursor: pointer;
 }
 
 .signin-btn {
   width: 100%;
-  background-color: #a020f0;
   color: #fff;
   padding: 12px;
   border-radius: 4px;
-  font-size: 16px;
   cursor: pointer;
   margin-bottom: 20px;
   border-radius: 25px;
@@ -134,12 +130,12 @@
 }
 
 .signup-link a {
-  color: #a020f0;
+  /*   color: #a020f0; */
   font-weight: bold;
 }
 
 .banner-img {
-  background: #fff;
+  /*   background: #fff; */
   display: flex;
   align-items: center;
   justify-content: center;
