@@ -33,18 +33,21 @@ function App() {
   const { currentUser } = useContext(UserContext);
 
   return (
-    
     <Router>
       <MainNavbar />
-        <Routes>
-          <Route path="/" element={currentUser ? <Navigate to="/home" /> : <Navigate to="/login" />} />
+      <Routes>
+        <Route
+          path="/"
+          element={
+            currentUser ? <Navigate to="/home" /> : <Navigate to="/login" />
+          }
+        />
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<Home />} />
         <Route path="/home" element={<Home />} />
         <Route path="/signUp" element={<SignUp />} />
         <Route path="/forgotPassword" element={<ForgotPassword />} />
         <Route path="/faq" element={<FAQ />} />
-
 
         {/* Private Routes */}
         <Route
