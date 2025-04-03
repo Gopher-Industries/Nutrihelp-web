@@ -1,0 +1,60 @@
+.meal-plan-b {
+    text-align: center;
+    margin: 20px;
+    margin-top: 100px;
+}
+
+.meal-time-buttons button {
+    background-color: #4A90E2;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.meals-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* Three columns in larger screens */
+    gap: 20px;
+    padding: 20px;
+}
+
+.meal-item {
+    border: 1px solid #ccc;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center content for consistency */
+}
+
+.meal-item img {
+    width: 100%; /* Full width of the container */
+    height: 200px; /* Fixed height for all images */
+    object-fit: cover; /* Cover ensures the image covers the defined area without distortion */
+    border-radius: 8px; /* Optional: adds rounded corners to images */
+}
+
+.meal-item h3, .meal-item p {
+    margin-top: 10px;
+    text-align: center; /* Ensures text is centered */
+}
+
+@media (max-width: 768px) {
+    .meals-container {
+        grid-template-columns: repeat(2, 1fr); /* Two columns on medium screens */
+    }
+}
+
+@media (max-width: 480px) {
+    .meals-container {
+        grid-template-columns: 1fr; /* One column on small screens */
+    }
+    .meal-item img {
+        height: 150px; /* Adjust height on smaller screens */
+    }
+}

@@ -1,0 +1,56 @@
+.meal-plan {
+    text-align: center;
+    margin: 20px;
+    margin-top: 100px;
+}
+
+.foods-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* creates 4 columns */
+    gap: 20px; /* space between items */
+    padding: 20px;
+}
+
+.food-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 1px solid #ccc;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    background: #fff; /* Light background for better readability */
+}
+
+.food-item img {
+    width: 150px; /* set a fixed width */
+    height: 150px; /* set a fixed height to maintain aspect ratio */
+    object-fit: cover; /* ensures the image covers the area without distorting */
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.food-item button {
+    background-color: #4A90E2;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 5px; /* Space between button and description */
+}
+
+.food-item p {
+    color: #666; /* Soft color for easy reading */
+    font-size: 0.95rem; /* Adequate size for readability */
+    text-align: center; /* Ensures text is centered under the button */
+    padding: 0 10px; /* Padding on the sides for narrower text blocks */
+    line-height: 1.4; /* Improves the readability of paragraphs */
+}
+
+
+@media (max-width: 768px) {
+    .foods-container {
+        grid-template-columns: repeat(2, 1fr); /* Switch to 2 columns on smaller screens */
+    }
+}
