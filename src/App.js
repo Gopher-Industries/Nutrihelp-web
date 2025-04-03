@@ -28,6 +28,12 @@ import Dashboard from "./routes/NewMenu/Dashboard";
 import AuthenticateRoute from "./routes/AuthenticateRoute/AuthenticateRoute";
 import MainNavbar from "./components/MainNavbar";
 import FAQ from "./routes/FAQ/faq";
+import MealPlanningPage from "./routes/MealPlanning/MealPlanningPage";
+import DietaryNeeds from "./routes/DietaryNeeds/DietaryNeeds";
+import MealPlanA from "./routes/MealPlanning/MealPlanA";
+
+import MealPlanB from "./routes/MealPlanning/MealPlanB";
+import MealPlanC from "./routes/MealPlanning/MealPlanC";
 
 function App() {
   const { currentUser } = useContext(UserContext);
@@ -45,6 +51,13 @@ function App() {
         <Route path="/forgotPassword" element={<ForgotPassword />} />
         <Route path="/faq" element={<FAQ />} />
 
+        <Route path="/MealPlanningPage" element={<MealPlanningPage/>} />
+        <Route path="/DietaryNeeds" element={<DietaryNeeds/>} />
+        <Route path="/MealPlanA" element={<MealPlanA/>} />
+        <Route path="/MealPlanB" element={<MealPlanB/>} />
+        <Route path="/MealPlanC" element={<MealPlanC/>} />
+        
+
 
         {/* Private Routes */}
         <Route
@@ -58,9 +71,7 @@ function App() {
         <Route
           path="searchRecipes"
           element={
-            <AuthenticateRoute>
               <SearchRecipes />
-            </AuthenticateRoute>
           }
         />
         <Route

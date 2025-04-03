@@ -126,12 +126,8 @@ const Home = () => {
               <div className="col-xl-7 col-lg-6 icon-boxes d-flex flex-column align-items-stretch justify-content-center py-5 px-lg-5">
                 <h3>NutriHelp</h3>
                 <p>
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  Voluptas accusamus eum architecto laboriosam autem quasi
-                  consectetur quia tempora, voluptatibus nemo asperiores
-                  similique exercitationem et quam cum dignissimos eveniet magni
-                  ipsam!
-                </p>
+                Welcome to NutriHelp! Your go-to resource for enhancing your general well-being. At NutriHelp, we believe that a balanced diet is the cornerstone of a healthy lifestyle. Our platform offers personalized nutritional guidance, expert advice, and practical tips to help you achieve your health goals. 
+                Explore our tools and resources designed to support your journey towards a healthier, happier you. Start optimizing your wellness with NutriHelp today!</p>
 
                 <div className="icon-box">
                   <div className="icon">
@@ -141,10 +137,8 @@ const Home = () => {
                     <a href="">Diagnosis</a>
                   </h4>
                   <p className="description">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Delectus iste totam corporis, autem laborum quas dolorem ab
-                    quae debitis aliquid eveniet, cum provident non, corrupti
-                    sequi praesentium voluptate atque! Porro!
+                  Unlock the first step of your wellness journey with our comprehensive diagnostic tools. At NutriHelp, we use advanced assessments to understand your nutritional needs and health challenges. 
+                  Our expert analysis helps pinpoint areas for improvement, setting the stage for tailored nutritional strategies that resonate with your unique body requirements.
                   </p>
                 </div>
 
@@ -156,11 +150,8 @@ const Home = () => {
                     <a href="">Personalized plan</a>
                   </h4>
                   <p className="description">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Modi cupiditate, cum aut expedita porro architecto
-                    doloremque labore sed, beatae facere officia veniam
-                    doloribus dolore veritatis ab voluptates recusandae nulla?
-                    Ipsam.
+                  Every individual is unique, and so should be their path to wellness. Our Personalized Plan offers a custom-tailored approach to nutrition and health, crafted based on your diagnostic results.
+                   From meal suggestions to lifestyle adjustments, our plans are designed to fit seamlessly into your daily routine, empowering you to achieve your health goals effectively.
                   </p>
                 </div>
 
@@ -172,10 +163,8 @@ const Home = () => {
                     <a href="">Dine Pad</a>
                   </h4>
                   <p className="description">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Eum
-                    laudantium itaque consequatur autem ad beatae veritatis
-                    totam quaerat voluptate distinctio quam accusamus, enim
-                    voluptatum soluta commodi, nihil qui deleniti ipsum.
+                  Enhance your dining experience with our Dine Pad feature, a dynamic tool designed to help you make healthier food choices, whether at home or dining out. 
+                  Dine Pad provides nutritional insights and healthy eating tips directly at your fingertips, making it easier than ever to stay on track with your dietary goals, no matter where you are.
                   </p>
                 </div>
               </div>
@@ -203,7 +192,7 @@ const Home = () => {
                     <img src="images/4.jpg" alt="" />
                   </div>
                   <h4 className="title">
-                    <a href="#">Meal Planning</a>
+                    <a href="MealPlanningPage">Meal Planning</a>
                   </h4>
                   <p className="description">
                     Access a variety of nutritious meal plans and recipes
@@ -218,7 +207,7 @@ const Home = () => {
                     <img src="images/5.jpg" alt="" />
                   </div>
                   <h4 className="title">
-                    <a href="#">Dietary Needs</a>
+                    <a href="Dietaryneeds">Dietary Needs</a>
                   </h4>
                   <p className="description">
                     Our meal planning services cater to specific dietary
@@ -233,7 +222,7 @@ const Home = () => {
                     <img src="images/6.jpg" alt="" />
                   </div>
                   <h4 className="title">
-                    <a href="#">Create Recipes</a>
+                    <a href="Recipe.js">Create Recipes</a>
                   </h4>
                   <p className="description">
                     Create your own personalized recipes tailored to your taste

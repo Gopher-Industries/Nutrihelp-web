@@ -11,6 +11,12 @@
   transition: background-color 0.3s ease-in-out; /* 平滑背景色过渡 */
 }
 
+.nav-logo{
+  max-width: 150px;
+  height: auto;
+  margin-left: 0px;
+}
+
 /* When scrolled, add solid background */
 .main-header.scrolled {
   background-color: rgba(255, 255, 255, 1); /* 滚动后变为不透明背景 */
@@ -96,6 +102,7 @@
   text-decoration: none;
   color: #333;
   transition: background-color 0.2s ease;
+  border-radius: 10px;
 }
 
 .dropdown-link:hover {

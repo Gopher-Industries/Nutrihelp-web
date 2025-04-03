@@ -19,3 +19,8 @@
   --h3-color: #0f394c;
   --text-color2:#c2c2c2;
 }
+
+.button{
+  border-radius: 10px;
+
+}

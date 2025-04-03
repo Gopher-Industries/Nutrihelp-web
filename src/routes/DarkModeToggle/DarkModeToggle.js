@@ -10,10 +10,13 @@ const DarkModeToggle = () => {
     };
 
     return (
-            <button onClick={handleClick}>
+            <button onClick={handleClick} className='button'>
                 {darkMode ? 'Dark Mode' : 'Light Mode'}
+                
             </button>
+            
     );
+    
 };
 
 export default DarkModeToggle;
