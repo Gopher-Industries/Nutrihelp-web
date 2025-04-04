@@ -75,8 +75,8 @@ const Login = () => {
             <img
               src={
                 darkMode
-                  ? "https://github.com/user-attachments/assets/f2404ca6-b7f2-4724-92d6-afeba9e18508"
-                  : "https://github.com/user-attachments/assets/0d41cade-7b0c-4785-98d0-8c15d230fe47"
+                  ? "/images/nutrihelp_logo_dark.png"
+                  : "/images/nutrihelp_logo_light.png"
               }
               alt="Nutrihelp Logo"
               className="rounded-xl w-[500px] items-center ml-auto mr-auto"
