@@ -4,16 +4,19 @@ import './DarkModeToggle.css';
 const DarkModeToggle = () => {
     const [darkMode, setDarkMode] = useState(false);
 
-    const handleClick = () => {
+    const handleToggle = () => {
         setDarkMode(!darkMode);
         document.documentElement.classList.toggle('dark-mode', !darkMode);
     };
 
     return (
-            <button onClick={handleClick}>
-                {darkMode ? 'Dark Mode' : 'Light Mode'}
-            </button>
+        <label className="toggle-switch">
+            <input type="checkbox" checked={darkMode} onChange={handleToggle} />
+            <span className="slider"></span>
+        </label>
     );
 };
 
 export default DarkModeToggle;
+
+

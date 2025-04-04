@@ -19,3 +19,58 @@
   --h3-color: #0f394c;
   --text-color2:#c2c2c2;
 }
+
+
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 24px;
+  top: 3px;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #cccccc;
+  transition: 0.4s;
+  border-radius: 34px;
+  height: 22px;
+}
+
+.slider:before {
+  content: "";
+  position: absolute;
+  height: 19px;
+  width: 18px;
+  left: 2px;
+  bottom: 3px;
+  background-color: none;
+  background: url('./sun.png') no-repeat center/contain; /* Sun icon */
+  transition: 0.4s;
+}
+
+input:checked + .slider {
+  background-color: #b656e0;
+}
+
+
+input:checked + .slider:before {
+  transform: translateX(26px);
+}
+
+input:checked + .slider:before {
+  transform: translateX(26px);
+  background: url('./moon.png') no-repeat center/cover; /* Sun icon */
+
+}

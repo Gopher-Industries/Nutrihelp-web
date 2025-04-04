@@ -1,116 +1,155 @@
 /* General header styling */
 .main-header {
-  position: fixed; /* 固定在页面顶部 */
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  z-index: 1000; /* 确保导航栏在其他内容上方 */
-  background-color: rgba(169, 231, 252, 0.575); /* 半透明背景 */
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* 添加阴影效果 */
+  z-index: 1000;
+  background-color: #BA49E792;
+  
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   padding: 1rem;
-  transition: background-color 0.3s ease-in-out; /* 平滑背景色过渡 */
+  transition: background-color 0.3s ease-in-out;
 }
 
 /* When scrolled, add solid background */
 .main-header.scrolled {
-  background-color: rgba(255, 255, 255, 1); /* 滚动后变为不透明背景 */
+  /* background-color: rgba(255, 255, 255, 1); */
+  background-color: #F8E7FF;
 }
 
-/* Header background and text color */
-.header {
-  background-color: var(--background-color); /* Set the background color */
-  color: var(--text-color); /* Set the text color */
-}
-
-/* Nav bar styling */
-.main-nav {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  padding: 0;
-  margin: 0;
-}
-
-/* Navbar container styling */
+/* Navbar container */
 .nav-container {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   width: 100%;
 }
 
-/* Ensure logo moves to extreme left */
-.logo-container {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  background-color: var(--background-color);
-}
-
-/* Logo container */
+/* Logo */
 .logo-container img {
   height: 50px;
 }
 
-/* Navbar links */
-.nav-links {
-  display: flex;
-  gap: 1rem;
+.logo{
+  margin-left: 0;
 }
 
-.nav-link {
+.user-profile{
+  position: relative;
+  left: 40%;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+}
+
+.profile-link {
+  display: flex;
+  flex-direction: column;  /* Stack image and text vertically */
+  align-items: center;     /* Center the items horizontally */
+  text-decoration: none;   /* Remove underline */
+}
+
+.profile-image{
+  width: 30px;
+}
+
+
+
+/* HAMBURGER MENU BUTTON */
+.hamburger {
+  font-size: 28px;
+  background: none;
+  border: none;
+  cursor: pointer;
   color: #333;
+  display: block; /* Always show */
+  position: relative;
+  right: 55%;
+}
+
+.hamburger:hover{
+  background-color: #BA49E792;
+  color: white;
+  border-radius: 5px;
+}
+
+/* NAV MENU - Initially Hidden */
+.nav-links {
+  position: absolute;
+  top: 80px;
+  left: -600px;
+  width: 290px;
+  height: fit-content;
+  background: #BA49E792;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: left 0.3s ease-in-out;
+  opacity: 1;
+  border-radius: 15px;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+  padding-top: 22px;
+  padding-bottom: 22px;
+}
+
+/* Show Menu when Open */
+.nav-links.open {
+  left: -50px;
+}
+
+/* Links inside menu */
+.nav-link {
+  color: white;
   text-decoration: none;
-  font-weight: bold;
-  padding: 0.5rem 1rem;
+  font-size: 18px;
+  padding: 12px;
   transition: color 0.3s ease;
 }
 
 .nav-link:hover {
-  color: #007BFF; /* 鼠标悬停时变色 */
+  color: #0b1d51;
 }
 
-/* Dropdown menu */
-.dropdown {
-  position: relative;
-}
-
+/* DROPDOWN MENU */
 .dropdown-content {
   display: none;
-  position: absolute;
-  background-color: white;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-  z-index: 1;
-  min-width: 160px;
+  background-color: rgba(255, 255, 255, 0.9);
   border-radius: 4px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  position: absolute;
+  height: fit-content;
+  width: fit-content;
+  left: 90px;
+  top: 0px;
+  white-space: nowrap;
+  padding-left: 0px;
+  
 }
+
+.dropdown-content ul{
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+
 
 .dropdown:hover .dropdown-content {
-  display: block;
+  display: flex;
+  flex-direction: row; 
+
 }
 
-.dropdown-link {
-  display: block;
-  padding: 10px;
-  text-decoration: none;
-  color: #333;
-  transition: background-color 0.2s ease;
+.dropdown-link:hover{
+  color: #0b1d51;
+  text-decoration: underline;
 }
 
-.dropdown-link:hover {
-  background-color: #f1f1f1;
-}
-
-/* Responsive styling for mobile */
+/* Responsive: Keep hamburger visible on all screens */
 @media screen and (max-width: 768px) {
   .nav-links {
-    flex-direction: column;
-    gap: 0;
-  }
-
-  .dropdown-content {
-    position: static;
-    box-shadow: none;
+    width: 100%;
   }
 }
