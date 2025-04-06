@@ -37,7 +37,8 @@ const UserDashboard = () => {
 
         {/* Three information cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-          <div className="flex items-center p-4 rounded-xl shadow" style={{ backgroundColor: "#FFFDC9" }}>
+          <div className="relative flex items-center p-4 rounded-xl shadow" style={{ backgroundColor: "#FFFDC9" }}>
+            <button className="absolute top-2 right-2 text-xl font-bold text-gray-600 hover:text-black bg-transparent">+</button>
             <img src={goalIcon} alt="Goal" className="h-20 w-20 mr-4" />
             <div>
               <p className="font-bold">Base Goal</p>
@@ -46,7 +47,8 @@ const UserDashboard = () => {
             </div>
           </div>
 
-          <div className="flex items-center p-4 rounded-xl shadow" style={{ backgroundColor: "#B3FFB1" }}>
+          <div className="relative flex items-center p-4 rounded-xl shadow" style={{ backgroundColor: "#B3FFB1" }}>
+            <button className="absolute top-2 right-2 text-xl font-bold text-gray-600 hover:text-black bg-transparent">+</button>
             <img src={foodIcon} alt="Food" className="h-20 w-20 mr-4" />
             <div>
               <p className="font-bold">Food</p>
@@ -55,7 +57,8 @@ const UserDashboard = () => {
             </div>
           </div>
 
-          <div className="flex items-center p-4 rounded-xl shadow" style={{ backgroundColor: "#CBE5FF" }}>
+          <div className="relative flex items-center p-4 rounded-xl shadow" style={{ backgroundColor: "#CBE5FF" }}>
+            <button className="absolute top-2 right-2 text-xl font-bold text-gray-600 hover:text-black bg-transparent">+</button>
             <img src={exerciseIcon} alt="Exercise" className="h-20 w-20 mr-4" />
             <div>
               <p className="font-bold">Exercise</p>
