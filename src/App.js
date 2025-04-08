@@ -28,6 +28,10 @@ import Dashboard from "./routes/NewMenu/Dashboard";
 import AuthenticateRoute from "./routes/AuthenticateRoute/AuthenticateRoute";
 import MainNavbar from "./components/MainNavbar";
 import FAQ from "./routes/FAQ/faq";
+import HealthGoal from './routes/HealthGoal/HealthGoal';
+import HabitsActivity from './routes/HabitsActivity/HabitsActivity';
+import UserDashboard from "./routes/UserDashboard/UserDashboard";
+
 
 function App() {
   const { currentUser } = useContext(UserContext);
@@ -139,6 +143,10 @@ function App() {
             </AuthenticateRoute>
           }
         />
+        <Route path="/health-goal" element={<HealthGoal />} />
+        <Route path="/habits-activity" element={<HabitsActivity />} />
+        <Route path="/user-dashboard" element={<UserDashboard />} />
+
       </Routes>
     </Router>
   );
