@@ -286,6 +286,10 @@ const Meal = () => {
                             </ul>
                         </div>
                     </div>
+                    {/* Nutrition Calculator Button */}
+                    <Link className="link" to="/nutrition-calculator">
+                        <button className="viewplan"><h3>Go to Nutrition Calculator</h3></button>
+                    </Link>
                     <Link className="link" to="/dashboard" state={{ selectedItems, totalNutrition }}>
                         <button className="viewplan"><h3>View Meal Plan</h3></button>
                     </Link>
