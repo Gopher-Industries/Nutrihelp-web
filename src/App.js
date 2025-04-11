@@ -28,6 +28,7 @@ import Dashboard from "./routes/NewMenu/Dashboard";
 import AuthenticateRoute from "./routes/AuthenticateRoute/AuthenticateRoute";
 import MainNavbar from "./components/MainNavbar";
 import FAQ from "./routes/FAQ/faq";
+import NutritionCalculator from "./routes/UI-Only-Pages/NutritionCalculator/NutritionCalculator";
 
 function App() {
   const { currentUser } = useContext(UserContext);
@@ -127,6 +128,14 @@ function App() {
           element={
             <AuthenticateRoute>
               <Meal />
+            </AuthenticateRoute>
+          }
+        />
+        <Route
+          path="nutrition-calculator"
+          element={
+            <AuthenticateRoute>
+              <NutritionCalculator />
             </AuthenticateRoute>
           }
         />
