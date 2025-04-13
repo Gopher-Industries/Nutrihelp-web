@@ -31,6 +31,10 @@ const Home = () => {
   const [prevScrollPos, setPrevScrollPos] = useState(0);
   const { darkMode } = useDarkMode();
 
+  const logoSrc = darkMode
+    ? "/images/logos_dark.png"
+    : "/images/logos_white.png";
+
   /*   useEffect(() => {
     const handleScroll = () => {
       const currentScrollPos = window.scrollY;
@@ -133,19 +137,24 @@ const Home = () => {
   return (
     <FramerClient>
       <section
-        className={`relative ${
+        className={`relative min-h-screen flex items-center justify-center ${
           darkMode
-            ? "bg-gradient-to-b from-slate-900 via-blue-900 to-bg"
+            ? "bg-gradient-to-b from-black via-gray-900 to-blue-900" 
             : "bg-gradient-to-b from-violet-500 via-fuchsia-500 to-bg"
         }`}
       >
         <div className="bg-transparent" id="no-bg">
           <div
-            className={`w-screen flex flex-col md:flex-row justify-between items-center p-10 bg-transparent`}
+            className={`w-screen flex flex-col md:flex-row justify-between items-center p-10 bg-transparent backdrop-blur-sm bg-opacity-30`}
             id="no-bg"
           >
             <div className={`shadow-none bg-transparent`} id="no-bg">
-              <img src="/images/logos_white.png" alt="" className="w-[600px]" />
+              <img src={logoSrc} alt="NutriHelp Logo" className={`w-[300px] mix-blend-screen brightness-100 drop-shadow-x1" ${
+              darkMode
+              ? "mix-blend-lighten brightness-110 drop-shadow-2xl"
+              : "mix-blend-normal"
+              }`}
+              />
               <h2
                 className={`text-4xl text-start leading-relaxed ${
                   darkMode ? "text-blue-300" : "text-black"
