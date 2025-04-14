@@ -31,6 +31,7 @@ import FAQ from "./routes/FAQ/faq";
 import HealthGoal from './routes/HealthGoal/HealthGoal';
 import HabitsActivity from './routes/HabitsActivity/HabitsActivity';
 import UserDashboard from "./routes/UserDashboard/UserDashboard";
+import NutritionCalculator from "./routes/UI-Only-Pages/NutritionCalculator/NutritionCalculator";
 
 
 function App() {
@@ -131,6 +132,14 @@ function App() {
           element={
             <AuthenticateRoute>
               <Meal />
+            </AuthenticateRoute>
+          }
+        />
+        <Route
+          path="nutrition-calculator"
+          element={
+            <AuthenticateRoute>
+              <NutritionCalculator />
             </AuthenticateRoute>
           }
         />
