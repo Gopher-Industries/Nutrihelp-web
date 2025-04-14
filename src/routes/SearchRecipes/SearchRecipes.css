@@ -1,118 +1,124 @@
 /* SearchRecipes.css */
-body {
-    background-color: #f5eafa;  /* Light purple background */
-    font-family: 'Sans-serif';  /* Adjust the font as per the design */
-  }
-  
-  .container {
-    text-align: center;
-    padding-top: 40px;
-  }
-  
-  h2 {
-    font-size: 32px;
-    font-weight: bold;
-    color: #000;  /* Title color */
-  }
-  
-  .search-input {
-    position: relative;
-    width: 60%;
-    margin: 20px auto;
-    text-align: left;
-  }
-  
-  .recipe-search-box {
-    padding: 15px 25px;
-    padding-left: 50px;  /* Space for the left gear */
-    padding-right: 50px;  /* Space for the right gear */
-    border-radius: 25px;  /* Rounded edges */
-    border: 1px solid rgba(0, 0, 0, 0.2);
-    width: 100%;
-    background-color: #f3e8ff;  /* Light purple background */
-    position: relative;
-    text-align: center;
-  }
-  
-  .search-input img {
-    width: 20px;  /* Set a smaller width for the icon */
-    height: 16px; /* Ensure height matches width for proportion */
-    position: absolute;
-    top: 50%;
-    left: 15px;
-    transform: translateY(-50%);  /* Center the icon vertically */
-  }
-  
-  .recipes-container {
-    display: flex;
-    justify-content: space-evenly;
-    flex-wrap: wrap;
-    margin-top: 40px;
-  }
-  
-  .popular-title {
-    font-size: 28px;
-    font-weight: bold;
-    margin-top: 20px;
-    color: #000;
-  }
 
-  /* Adjust the card size */
-.recipe-card-div {
-    width: 260px;  /* Adjust the width to match design */
-    margin: 15px;
-    border-radius: 12px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-    background-color: #fff;
-  }
-  
-  .image img {
-    width: 100%;
-    height: auto;  /* Make sure the image fits properly */
-    border-radius: 12px 12px 0 0;
-  }
-  
-  .header {
-    font-size: 16px;
-    font-weight: bold;
-    text-align: center;
-    padding: 10px;
-    color: #fff;
-    background-color: #6f42c1;  /* Purple label background */
-    margin: 0;
-  }
-  
-  .meta, .description {
-    font-size: 14px;
-    text-align: center;
-    margin: 5px 0;
-  }
+/* Overall page styling */
+.search-recipes-page {
+  min-height: 100vh;
+  font-family: 'Sans-serif', Arial, Helvetica, sans-serif;
+  background-color: #f5eafa; /* Light purple background */
+  padding: 40px 20px;
+  text-align: center;
+}
 
-  .navbar {
-    background-color: #e6d5f6;  /* Light purple for navbar */
-    padding: 15px;
-  }
-  
-  .navbar a {
-    color: #000;  /* Black text color */
-    margin: 0 15px;
-    text-decoration: none;
-    font-weight: bold;
-  }
+/* Main title (Recipes) */
+.main-title {
+  font-size: 36px;
+  margin-bottom: 20px;
+  color: #000;
+}
 
-  /* Style for Search Bar (Button-Like Appearance) */
-.recipe-search-box {
-    border: 1px solid #ddd;
-    background-color: #f3e8ff;
-    border-radius: 30px;
-    padding: 12px 25px;
-    transition: box-shadow 0.3s ease;
-  }
-  
-  .recipe-search-box:focus {
-    box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  
-  
+/* Search bar styling */
+.search-bar {
+  margin: 20px auto;
+  width: 60%;
+  position: relative;
+}
+
+.search-input {
+  width: 100%;
+  padding: 15px 25px;
+  border-radius: 30px;
+  border: 1px solid #ccc;
+  background-color: #f3e8ff; /* Light purple background */
+  text-align: center;
+  font-size: 16px;
+  outline: none;
+}
+
+/* Section titles (Popular Recipes, Top Categories) */
+.section-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-top: 40px;
+  color: #000;
+}
+
+/* Popular Recipes Chips */
+.popular-chips {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.popular-chips button {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.popular-chips button:hover {
+  background-color: #e6d5f6;
+}
+
+/* Top Categories Grid */
+.categories-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 30px;
+  justify-items: center;
+  margin-top: 20px;
+  padding: 0 50px;
+}
+
+/* Single Category Card */
+.category-card {
+  width: 220px;
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: #fff;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  transition: transform 0.3s ease;
+}
+
+.category-card:hover {
+  transform: scale(1.03);
+}
+
+.category-card img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+}
+
+.category-card h3 {
+  margin: 10px 0;
+  font-size: 16px;
+  color: #000;
+}
+
+/* Big Search Button */
+.search-button {
+  margin-top: 40px;
+  padding: 15px 50px;
+  border: none;
+  border-radius: 25px;
+  background-color: #d42b91; /* Pink/purple color */
+  color: #fff;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.search-button:hover {
+  background-color: #b52478;
+}
+
+/* Where the recipe cards appear */
+.recipes-list {
+  margin-top: 50px;
+}
