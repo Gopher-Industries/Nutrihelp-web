@@ -119,7 +119,7 @@ const Login = () => {
                   onChange={handleChange}
                   value={password}
                 />
-                <span className="eye-icon">👁️</span>
+                <span className="eye-icon tts-ignore">👁️</span>
               </div>
             </div>
 
