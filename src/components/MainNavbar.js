@@ -46,6 +46,9 @@ const MainNavbar = () => {
                 <Link className="link nav-link" to="/Meal">
                   Meal Planning
                 </Link>
+                <Link className="link nav-link" to="/healthnews">
+                  Health News
+                </Link>
 
                 <div className="dropdown">
                   <Link className="link nav-link">Recipes</Link>
