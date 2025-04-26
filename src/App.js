@@ -28,23 +28,27 @@ import Dashboard from "./routes/NewMenu/Dashboard";
 import AuthenticateRoute from "./routes/AuthenticateRoute/AuthenticateRoute";
 import MainNavbar from "./components/MainNavbar";
 import FAQ from "./routes/FAQ/faq";
+import NutritionCalculator from "./routes/UI-Only-Pages/NutritionCalculator/NutritionCalculator";
 
 function App() {
   const { currentUser } = useContext(UserContext);
 
   return (
-    
     <Router>
       <MainNavbar />
-        <Routes>
-          <Route path="/" element={currentUser ? <Navigate to="/home" /> : <Navigate to="/login" />} />
+      <Routes>
+        <Route
+          path="/"
+          element={
+            currentUser ? <Navigate to="/home" /> : <Navigate to="/login" />
+          }
+        />
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<Home />} />
         <Route path="/home" element={<Home />} />
         <Route path="/signUp" element={<SignUp />} />
         <Route path="/forgotPassword" element={<ForgotPassword />} />
         <Route path="/faq" element={<FAQ />} />
-
 
         {/* Private Routes */}
         <Route
@@ -124,6 +128,14 @@ function App() {
           element={
             <AuthenticateRoute>
               <Meal />
+            </AuthenticateRoute>
+          }
+        />
+        <Route
+          path="nutrition-calculator"
+          element={
+            <AuthenticateRoute>
+              <NutritionCalculator />
             </AuthenticateRoute>
           }
         />

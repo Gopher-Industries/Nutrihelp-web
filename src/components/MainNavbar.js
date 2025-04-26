@@ -1,12 +1,15 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { UserContext } from "../context/user.context";
+import { useDarkMode } from "../routes/DarkModeToggle/DarkModeContext";  // Import useDarkMode from context
+import DarkModeToggle from "../routes/DarkModeToggle/DarkModeToggle";  // Toggle button for dark mode
 import "../styles/mainNavbar.css";
-import DarkModeToggle from "../routes/DarkModeToggle/DarkModeToggle";
-import profileImage from '../images/profile.png';
+import TextToSpeech from "./TextToSpeech/TextToSpeech";  // Include TextToSpeech component
+import profileImage from '../images/profile.png'; // Profile image for logged-in users
 
 const MainNavbar = () => {
   const { currentUser, logOut } = useContext(UserContext);
+  const { darkMode } = useDarkMode();  // Dark mode from context
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -22,11 +25,10 @@ const MainNavbar = () => {
   }, []);
 
   return (
-    <header className={`header main-header ${isScrolled ? "scrolled" : ""}`}>
-      <nav className="nav main-nav">
-        <div className="nav-container">
-          {/* Logo */}
-          <div className="logo-container">
+    <header className={`header main-header ${isScrolled ? "scrolled" : ""} ${darkMode ? "bg-[#555555]" : "bg-white"}`}>
+      <nav>
+        <div className="flex justify-between items-center pr-8">
+          <div className="">
             <img src="/images/logo.png" alt="Website Logo" className="logo" />
           </div>
 
@@ -34,62 +36,39 @@ const MainNavbar = () => {
             {currentUser ? (
               <>
                 <Link to="/userProfile" className="link profile-link" onClick={() => setIsMenuOpen(false)}>
-                <img src={profileImage} alt="profile" className="profile-image" />
-                <span className="profile-text">Profile</span>
+                  <img src={profileImage} alt="profile" className="profile-image" />
+                  <span className="profile-text">Profile</span>
                 </Link>
-                
-              </>
-            ) : (
-              <span className="nav-placeholder"></span> // Keeps a permanent element
-            )}
-          </div>
 
-          {/* Hamburger Button */}
-          <button className="hamburger" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-            ☰
-          </button>
-
-          {/* Fullscreen Menu */}
-          <div className={`nav-links ${isMenuOpen ? "open" : ""}`}>
-            {currentUser ? (
-              <>
-
-                <DarkModeToggle />
-                <Link className="link nav-link" to='/home' onClick={() => setIsMenuOpen(false)}>Home</Link>
-                <Link className="link nav-link" to="/dashboard" onClick={() => setIsMenuOpen(false)}>Menu</Link>
-                <Link className="link nav-link" to="/Meal" onClick={() => setIsMenuOpen(false)}>Meal Planning</Link>
+                <Link className="link nav-link" to="/dashboard">Menu</Link>
+                <Link className="link nav-link" to="/Meal">Meal Planning</Link>
 
                 <div className="dropdown">
                   <Link className="link nav-link">Recipes</Link>
                   <div className="dropdown-content">
-                    <ul>
-                      <li><Link className="link dropdown-link" to="/CreateRecipe" onClick={() => setIsMenuOpen(false)}>Create Recipe</Link></li>
-                      <li><Link className="link dropdown-link" to="/SearchRecipes" onClick={() => setIsMenuOpen(false)}>Search Recipes</Link></li>
-                    </ul>
+                    <Link className="link dropdown-link" to="/CreateRecipe">Create Recipe</Link>
+                    <Link className="link dropdown-link" to="/SearchRecipes">Search Recipes</Link>
                   </div>
                 </div>
 
                 <div className="dropdown">
                   <Link className="link nav-link">User</Link>
                   <div className="dropdown-content">
-                    <ul>
-                      <li><Link className="link dropdown-link" to="/DietaryRequirements" onClick={() => setIsMenuOpen(false)}>Dietary Preference</Link></li>
-                    </ul>
+                    <Link className="link dropdown-link" to="/DietaryRequirements">Dietary Preference</Link>
+                    <Link className="link dropdown-link" to="/userProfile">Profile</Link>
                   </div>
                 </div>
 
-                <Link className="link nav-link" to="/ScanProducts" onClick={() => setIsMenuOpen(false)}>Scan Products</Link>
-
-                
-
+                <Link className="link nav-link" to="/ScanProducts">Scan Products</Link>
                 <button className="link nav-link logout-button" onClick={() => { logOut(); setIsMenuOpen(false); }}>Log Out</button>
               </>
             ) : (
               <>
+                <Link className="link nav-link" to="/home">Home</Link>
+                <Link className="link nav-link" to="/login">Sign In</Link>
+                <Link className="link nav-link" to="/signUp">Create Account</Link>
                 <DarkModeToggle />
-                <Link className="link nav-link" to='/home' onClick={() => setIsMenuOpen(false)}>Home</Link>
-                <Link className="link nav-link" to='/login' onClick={() => setIsMenuOpen(false)}>Sign In</Link>
-                <Link className="link nav-link" to='/signUp' onClick={() => setIsMenuOpen(false)}>Create Account</Link>
+                <TextToSpeech />
               </>
             )}
           </div>

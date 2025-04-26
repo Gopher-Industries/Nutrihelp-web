@@ -6,7 +6,6 @@
   width: 100%;
   z-index: 1000;
   background-color: #BA49E792;
-  
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   padding: 1rem;
   transition: background-color 0.3s ease-in-out;
@@ -14,7 +13,6 @@
 
 /* When scrolled, add solid background */
 .main-header.scrolled {
-  /* background-color: rgba(255, 255, 255, 1); */
   background-color: #F8E7FF;
 }
 
@@ -31,11 +29,11 @@
   height: 50px;
 }
 
-.logo{
+.logo {
   margin-left: 0;
 }
 
-.user-profile{
+.user-profile {
   position: relative;
   left: 40%;
   display: flex;
@@ -50,11 +48,9 @@
   text-decoration: none;   /* Remove underline */
 }
 
-.profile-image{
+.profile-image {
   width: 30px;
 }
-
-
 
 /* HAMBURGER MENU BUTTON */
 .hamburger {
@@ -68,7 +64,7 @@
   right: 55%;
 }
 
-.hamburger:hover{
+.hamburger:hover {
   background-color: #BA49E792;
   color: white;
   border-radius: 5px;
@@ -108,8 +104,14 @@
   transition: color 0.3s ease;
 }
 
+/* Merged hover color */
 .nav-link:hover {
-  color: #0b1d51;
+  color: #007bff; /* Updated hover color */
+}
+
+/* Dropdown menu */
+.dropdown {
+  position: relative;
 }
 
 /* DROPDOWN MENU */
@@ -126,30 +128,41 @@
   top: 0px;
   white-space: nowrap;
   padding-left: 0px;
-  
 }
 
-.dropdown-content ul{
+.dropdown-content ul {
   list-style: none;
   padding-left: 0;
   margin: 0;
 }
 
-
+/* Dropdown hover show */
 .dropdown:hover .dropdown-content {
   display: flex;
   flex-direction: row; 
-
 }
 
-.dropdown-link:hover{
+.dropdown-link:hover {
   color: #0b1d51;
   text-decoration: underline;
 }
 
-/* Responsive: Keep hamburger visible on all screens */
+/* Dropdown link styling */
+.dropdown-link {
+  display: block;
+  padding: 10px;
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+}
+
+/* Responsive styling for mobile */
 @media screen and (max-width: 768px) {
   .nav-links {
     width: 100%;
+  }
+
+  .dropdown-content {
+    position: static;
+    box-shadow: none;
   }
 }

@@ -17,9 +17,8 @@
   --background2-color: rgb(85, 85, 85);
   --footer1-background-color: #2a2a2b;
   --h3-color: #0f394c;
-  --text-color2:#c2c2c2;
+  --text-color2: #c2c2c2; /* This is the final version of --text-color2 */
 }
-
 
 .toggle-switch {
   position: relative;
@@ -64,13 +63,11 @@ input:checked + .slider {
   background-color: #b656e0;
 }
 
-
 input:checked + .slider:before {
   transform: translateX(26px);
 }
 
 input:checked + .slider:before {
   transform: translateX(26px);
-  background: url('./moon.png') no-repeat center/cover; /* Sun icon */
-
+  background: url('./moon.png') no-repeat center/cover; /* Moon icon */
 }
