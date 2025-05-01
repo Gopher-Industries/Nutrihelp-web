@@ -7,9 +7,9 @@ const DarkModeToggle = () => {
   const { darkMode, setDarkMode } = useDarkMode();
   console.log("🚀 ~ DarkModeToggle ~ darkMode:", darkMode);
 
-  const handleClick = () => {
-    document.documentElement.classList.toggle("dark-mode", !darkMode);
+  const handleToggle = () => {
     setDarkMode(!darkMode);
+    document.documentElement.classList.toggle('dark-mode', !darkMode);
   };
 
   useEffect(() => {
@@ -18,18 +18,20 @@ const DarkModeToggle = () => {
     if (isDarkMode !== darkMode) {
       setDarkMode(isDarkMode);
     }
-  }, []);
+  }, [darkMode, setDarkMode]);
 
   return (
-    <button
-      onClick={handleClick}
-      style={{
-        borderRadius: "50%",
-      }}
-      aria-label={`Switch to ${darkMode ? "light" : "dark"} mode`}
-    >
-      {darkMode ? <SunIcon size={24} /> : <MoonIcon size={24} />}
-    </button>
+    <label className="toggle-switch">
+      <input
+        type="checkbox"
+        checked={darkMode}
+        onChange={handleToggle}
+        aria-label={`Switch to ${darkMode ? "light" : "dark"} mode`}
+      />
+      <span className="slider">
+        {darkMode ? <SunIcon size={24} /> : <MoonIcon size={24} />}
+      </span>
+    </label>
   );
 };
 
