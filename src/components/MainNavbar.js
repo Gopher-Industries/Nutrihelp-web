@@ -4,6 +4,7 @@ import { UserContext } from "../context/user.context";
 import { useDarkMode } from "../routes/DarkModeToggle/DarkModeContext";
 import DarkModeToggle from "../routes/DarkModeToggle/DarkModeToggle"; // Included from master branch
 import "../styles/mainNavbar.css";
+import TextToSpeech from "./TextToSpeech/TextToSpeech";
 
 const MainNavbar = () => {
   const { currentUser, logOut } = useContext(UserContext);
@@ -32,7 +33,7 @@ const MainNavbar = () => {
       }`}
     >
       <nav>
-        <div className="flex justify-between items-center pr-8">
+        <div className="flex justify-between items-center pr-8 tts-ignore">
           <div className="">
             <img src="/images/logo.png" alt="Website Logo" className="logo" />
           </div>
@@ -45,6 +46,9 @@ const MainNavbar = () => {
                 </Link>
                 <Link className="link nav-link" to="/Meal">
                   Meal Planning
+                </Link>
+                <Link className="link nav-link" to="/healthnews">
+                  Health News
                 </Link>
 
                 <div className="dropdown">
@@ -87,6 +91,7 @@ const MainNavbar = () => {
                 >
                   Log Out
                 </button>
+                <TextToSpeech />
               </>
             ) : (
               <>
@@ -123,7 +128,9 @@ const MainNavbar = () => {
                 <Link>
                   <DarkModeToggle />
                 </Link>
+                <TextToSpeech />
                 {/* Included from master branch */}
+
               </>
             )}
           </div>

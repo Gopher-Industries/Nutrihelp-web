@@ -8,11 +8,13 @@ import {
   Navigate,
 } from "react-router-dom";
 import { UserContext } from "./context/user.context";
+
 import Login from "./routes/Login/Login";
 import SignUp from "./routes/SignUp/SignUp";
 import ForgotPassword from "./routes/ForgotPassword/ForgotPassword";
 import CreateRecipe from "./routes/CreateRecipe/CreateRecipe";
 import SearchRecipes from "./routes/SearchRecipes/SearchRecipes";
+import CategoryResults from "./routes/SearchRecipes/CategoryResults";  // 🆕
 import YourPreferences from "./routes/UI-Only-Pages/YourPreferences/pref-dis-health";
 import UserProfilePage from "./routes/UI-Only-Pages/UserProfilePage/userprofile";
 import Home from "./routes/Home/Home";
@@ -28,10 +30,15 @@ import Dashboard from "./routes/NewMenu/Dashboard";
 import AuthenticateRoute from "./routes/AuthenticateRoute/AuthenticateRoute";
 import MainNavbar from "./components/MainNavbar";
 import FAQ from "./routes/FAQ/faq";
+<<<<<<< HEAD
 import HealthGoal from './routes/HealthGoal/HealthGoal';
 import HabitsActivity from './routes/HabitsActivity/HabitsActivity';
 import UserDashboard from "./routes/UserDashboard/UserDashboard";
 
+=======
+import NutritionCalculator from "./routes/UI-Only-Pages/NutritionCalculator/NutritionCalculator";
+import HealthNews from "./routes/HealthNews/HealthNews";
+>>>>>>> 04b3593739fd02d8f2da806e297e4796e3de2c15
 
 function App() {
   const { currentUser } = useContext(UserContext);
@@ -67,6 +74,15 @@ function App() {
           element={
             <AuthenticateRoute>
               <SearchRecipes />
+            </AuthenticateRoute>
+          }
+        />
+        {/* New route for category-specific results */}
+        <Route
+          path="searchRecipes/:category"
+          element={
+            <AuthenticateRoute>
+              <CategoryResults />
             </AuthenticateRoute>
           }
         />
@@ -131,6 +147,22 @@ function App() {
           element={
             <AuthenticateRoute>
               <Meal />
+            </AuthenticateRoute>
+          }
+        />
+        <Route
+          path="nutrition-calculator"
+          element={
+            <AuthenticateRoute>
+              <NutritionCalculator />
+            </AuthenticateRoute>
+          }
+        />
+        <Route
+          path="healthnews"
+          element={
+            <AuthenticateRoute>
+              <HealthNews />
             </AuthenticateRoute>
           }
         />

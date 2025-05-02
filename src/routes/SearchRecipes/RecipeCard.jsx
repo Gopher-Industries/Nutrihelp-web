@@ -1,18 +1,24 @@
 import React from "react";
 import "./RecipeCard.css";
 
-const defaultImageUrl = "https://img.freepik.com/premium-vector/cooking-logo-design_636083-140.jpg"; // Use a default image URL
-
+const defaultImageUrl =
+  "https://img.freepik.com/premium-vector/cooking-logo-design_636083-140.jpg";
 
 function RecipeCard({ recipe, onClick }) {
   return (
     <div className="recipe-card-div" onClick={onClick}>
       <div className="image">
-      <img src={recipe.recipe_image || defaultImageUrl} alt={recipe.recipe_name} /> {/* Fallback to default image */}
+        <img
+          src={recipe.recipe_image || defaultImageUrl}
+          alt={recipe.recipe_name}
+        />
       </div>
+
+      {/* Recipe name in bright pink */}
       <div className="name-box">{recipe.recipe_name}</div>
+
+      {/* Cuisine label */}
       <p className="meta">{recipe.cuisine_name}</p>
-      <p className="description">{recipe.instructions}</p>
     </div>
   );
 }

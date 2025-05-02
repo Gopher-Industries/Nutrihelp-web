@@ -5,6 +5,7 @@ import { UserContext } from "../../context/user.context";
 import { useDarkMode } from "../DarkModeToggle/DarkModeContext";
 import "./Login.css";
 import FramerClient from "../../components/framer-client";
+import NutrihelpLogo from "./Nutrihelp_Logo.PNG";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -73,13 +74,9 @@ const Login = () => {
         <div className="h-auto w-[70%] flex flex-col md:flex-row justify-center items-center mt-24 ml-auto mr-auto shadow-2xl border-none rounded-2xl overflow-hidden p-[20px]">
           <div className="w-[100%]">
             <img
-              src={
-                darkMode
-                  ? "https://github.com/user-attachments/assets/f2404ca6-b7f2-4724-92d6-afeba9e18508"
-                  : "https://github.com/user-attachments/assets/0d41cade-7b0c-4785-98d0-8c15d230fe47"
-              }
+              src={NutrihelpLogo}
               alt="Nutrihelp Logo"
-              className="rounded-xl w-[500px] items-center ml-auto mr-auto"
+              className="rounded-xl w-[500px] mx-auto"
             />
             <h2
               className={`font-bold text-4xl mt-4 ${darkMode && "text-white"}`}
@@ -119,7 +116,7 @@ const Login = () => {
                   onChange={handleChange}
                   value={password}
                 />
-                <span className="eye-icon">👁️</span>
+                <span className="eye-icon tts-ignore">👁️</span>
               </div>
             </div>
 

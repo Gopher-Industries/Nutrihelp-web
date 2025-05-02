@@ -1,6 +1,7 @@
 import { Grid, GridColumn, GridRow, Icon, Image } from "semantic-ui-react";
 import React from "react";
 import RecipeCardExtensionField from "./RecipeCardExtensionField";
+import "./RecipeCardExtension.css";    // ← new import
 import backgroundLeft from "../../images/bg-left.png";
 import backgroundRight from "../../images/bg-right.png";
 
