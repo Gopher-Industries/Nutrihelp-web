@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './HealthNews.css';
 import newsBg1 from '../../images/HealthNews_background_image/news_background_image_1.png';
 import newsBg2 from '../../images/HealthNews_background_image/news_background_image_2.png';
@@ -18,6 +18,8 @@ const HealthNews = () => {
   const [currentPage, setCurrentPage] = useState(1);
   // Set the maximum news number
   const itemsPerPage = 6;
+  // Current slider news index
+  const [currentSliderIndex, setCurrentSliderIndex] = useState(0);
 
   const sampleNews = [
     {
@@ -85,6 +87,20 @@ const HealthNews = () => {
     }
   ];
 
+  // Select random news items for slider
+  const sliderNews = [sampleNews[1], sampleNews[4], sampleNews[7], sampleNews[2], sampleNews[8]];
+
+  // Auto-rotate slider news
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSliderIndex(prevIndex => 
+        prevIndex === sliderNews.length - 1 ? 0 : prevIndex + 1
+      );
+    }, 5000);
+    
+    return () => clearInterval(interval);
+  }, []);
+
   const filteredNews = activeCategory === 'all' 
     ? sampleNews 
     : sampleNews.filter(news => news.category === activeCategory);
@@ -112,67 +128,102 @@ const HealthNews = () => {
     window.open(url, '_blank');
   };
 
-  {/* News filter and Search News */}
+  // Handle slider navigation
+  const goToSlide = (index) => {
+    setCurrentSliderIndex(index);
+  };
+
   return (
     <div className="health-news-container">
+      {/* Smaller header */}
       <div className="news-header">
-        <h1>Health News</h1>
-        <div className="search-container">
-          <input
-            type="text"
-            placeholder="Enter to search news"
-            value={searchQuery}
-            onChange={handleSearch}
-            className="search-input"
-          />
+        <h1 className="news-title">Health News</h1>
+      </div>
+
+      {/* Full-width News Slider */}
+      <div className="news-slider-wrapper">
+        <div className="news-slider">
+          {sliderNews.map((news, index) => (
+            <div 
+              key={news.id}
+              className={`slider-item ${index === currentSliderIndex ? 'active' : ''}`}
+              onClick={() => handleReadMore(news.url)}
+            >
+              <img src={news.backgroundImage} alt={news.title} />
+              <div className="slider-content">
+                <h3>{news.title}</h3>
+                <span className="slider-category">{news.category}</span>
+              </div>
+            </div>
+          ))}
         </div>
-        <div className="news-categories">
-          <button 
-            className={activeCategory === 'all' ? 'active' : ''}
-            onClick={() => setActiveCategory('all')}
-          >
-            All Articles
-          </button>
-          <button 
-            className={activeCategory === 'tips' ? 'active' : ''}
-            onClick={() => setActiveCategory('tips')}
-          >
-            Daily Tips
-          </button>
-          <button 
-            className={activeCategory === 'diet' ? 'active' : ''}
-            onClick={() => setActiveCategory('diet')}
-          >
-            Diet Advice
-          </button>
-          <button 
-            className={activeCategory === 'research' ? 'active' : ''}
-            onClick={() => setActiveCategory('research')}
-          >
-            Latest Research
-          </button>
+        
+        {/* Slider navigation dots */}
+        <div className="slider-dots">
+          {sliderNews.map((_, index) => (
+            <span 
+              key={index} 
+              className={`dot ${index === currentSliderIndex ? 'active' : ''}`}
+              onClick={() => goToSlide(index)}
+            />
+          ))}
         </div>
+      </div>
+
+      <div className="search-container">
+        <input
+          type="text"
+          placeholder="Enter to search news"
+          value={searchQuery}
+          onChange={handleSearch}
+          className="search-input"
+        />
+      </div>
+      <div className="news-categories">
+        <button 
+          className={activeCategory === 'all' ? 'active' : ''}
+          onClick={() => setActiveCategory('all')}
+        >
+          All Articles
+        </button>
+        <button 
+          className={activeCategory === 'tips' ? 'active' : ''}
+          onClick={() => setActiveCategory('tips')}
+        >
+          Daily Tips
+        </button>
+        <button 
+          className={activeCategory === 'diet' ? 'active' : ''}
+          onClick={() => setActiveCategory('diet')}
+        >
+          Diet Advice
+        </button>
+        <button 
+          className={activeCategory === 'research' ? 'active' : ''}
+          onClick={() => setActiveCategory('research')}
+        >
+          Latest Research
+        </button>
       </div>
 
       {/* Show news cards */}
       <div className="news-list">
         {currentItems.map(news => (
-          <div 
-            key={news.id} 
-            className="news-card"
-            style={{
-              backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.4)), url(${news.backgroundImage})`,
+          <div key={news.id} className="news-card">
+            <div className="news-card-image" style={{
+              backgroundImage: `url(${news.backgroundImage})`,
               backgroundSize: 'cover',
               backgroundPosition: 'center'
-            }}
-          >
-            <h3>{news.title}</h3>
-            <button 
-              className="read-more"
-              onClick={() => handleReadMore(news.url)}
-            >
-              Read More
-            </button>
+            }} />
+            <div className="news-card-content">
+              <h3>{news.title}</h3>
+              <button 
+                className="read-more"
+                onClick={() => handleReadMore(news.url)}
+              >
+                Read More
+              </button>
+            </div>
           </div>
         ))}
       </div>
