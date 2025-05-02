@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import "./SearchRecipes.css";
 
 import RecipeCardList from "./RecipeCardList";
@@ -84,17 +85,21 @@ function SearchRecipes() {
       <div className="categories-grid">
         {filteredCategories.length > 0 ? (
           filteredCategories.map(cat => (
-            <div className="category-card" key={cat.name}>
+            <Link
+              to={`/searchRecipes/${cat.name}`}
+              key={cat.name}
+              className="category-card"
+            >
               <img src={cat.img} alt={cat.name} />
               <h3>{cat.name}</h3>
-            </div>
+            </Link>
           ))
         ) : (
           <p className="no-results">No categories found.</p>
         )}
       </div>
 
-      <button className="search-button" onClick={() => {/* optional extra logic */}}>
+      <button className="search-button" onClick={() => { /* optional extra logic */ }}>
         Search
       </button>
 

@@ -113,3 +113,11 @@
 .recipes-list {
   margin-top: 50px;
 }
+
+/* Add at bottom */
+.recipes-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 30px;
+}

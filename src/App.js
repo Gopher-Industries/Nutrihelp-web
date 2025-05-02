@@ -8,11 +8,13 @@ import {
   Navigate,
 } from "react-router-dom";
 import { UserContext } from "./context/user.context";
+
 import Login from "./routes/Login/Login";
 import SignUp from "./routes/SignUp/SignUp";
 import ForgotPassword from "./routes/ForgotPassword/ForgotPassword";
 import CreateRecipe from "./routes/CreateRecipe/CreateRecipe";
 import SearchRecipes from "./routes/SearchRecipes/SearchRecipes";
+import CategoryResults from "./routes/SearchRecipes/CategoryResults";  // 🆕
 import YourPreferences from "./routes/UI-Only-Pages/YourPreferences/pref-dis-health";
 import UserProfilePage from "./routes/UI-Only-Pages/UserProfilePage/userprofile";
 import Home from "./routes/Home/Home";
@@ -65,6 +67,15 @@ function App() {
           element={
             <AuthenticateRoute>
               <SearchRecipes />
+            </AuthenticateRoute>
+          }
+        />
+        {/* New route for category-specific results */}
+        <Route
+          path="searchRecipes/:category"
+          element={
+            <AuthenticateRoute>
+              <CategoryResults />
             </AuthenticateRoute>
           }
         />
