@@ -7,7 +7,7 @@
   margin-top: 0 !important;
   width: 20%;
   margin-left: 10% !important;
-  border-radius:50px;
+  border-radius: 50px;
 }
 
 .buttoncolor {
@@ -16,16 +16,17 @@
   border: 0.06em solid black;
   color: white;
 }
+
 .container70 {
-  width: 67%;  /* Slightly reduce width to accommodate margin and avoid wrapping */
+  width: 67%;
   border-radius: 0.625em;
   background-color: #F8E7FF;
   padding: 1.25em;
 }
 
 .container310 {
-  width: 30%;  /* Adjust to fit alongside the left container */
-  margin-left: 1%;  /* Reduced margin */
+  width: 30%;
+  margin-left: 1%;
   border-radius: 0.625em;
   background-color: #F8E7FF;
   padding: 1.25em;
@@ -34,14 +35,14 @@
 .custom-row {
   display: flex;
   justify-content: space-between;
-  flex-wrap: nowrap;  /* Prevent containers from wrapping onto a new line */
-  align-items: flex-start;  /* Ensure both containers align at the top */
-  gap: 1%;  /* Ensure spacing between containers */
+  flex-wrap: nowrap;
+  align-items: flex-start;
+  gap: 1%;
 }
 
 .form-group {
   margin-bottom: 1.25em;
-  max-width: 100%; /* Use full width for smaller screens */
+  max-width: 100%;
   padding: 0.625em;
 }
 
@@ -163,7 +164,7 @@ input {
 
 .img {
   height: auto;
-  max-width: 100%; /* Makes the image responsive */
+  max-width: 100%;
 }
 
 .foodimg {
@@ -197,7 +198,25 @@ input {
   font-size: 0.75em;
 }
 
-.form-group {
-  padding: 0 !important;
-  padding-top: 0.9375em !important;
+/*ADDED: RADIO BUTTON styling for Fitness Goals */
+.gender-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+  margin-top: 0.5em;
 }
+
+.gender-options label {
+  font-weight: bold;
+  font-size: 1em;
+  color: #000;
+  display: flex;
+  align-items: center;
+}
+
+.gender-options input[type="radio"] {
+  margin-right: 0.5em;
+  transform: scale(1.2);
+  accent-color: #ba49e7;
+}
+ 
