@@ -67,6 +67,9 @@ const MainNavbar = () => {
                 <div className="dropdown">
                   <Link className="link nav-link">User</Link>
                   <div className="dropdown-content">
+                    <Link className="link dropdown-link" to="/user-dashboard">
+                      Dashboard
+                    </Link>
                     <Link
                       className="link dropdown-link"
                       to="/DietaryRequirements"
@@ -75,6 +78,9 @@ const MainNavbar = () => {
                     </Link>
                     <Link className="link dropdown-link" to="/userProfile">
                       Profile
+                    </Link>
+                    <Link className="link dropdown-link" to="/daily-plan-edit">
+                      Daily Plan Edit
                     </Link>
                   </div>
                 </div>
