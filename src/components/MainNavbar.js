@@ -78,6 +78,9 @@ const MainNavbar = () => {
                     <Link className="link dropdown-link" to="/userProfile">
                       Profile
                     </Link>
+                    <Link className="link dropdown-link" to="/daily-plan-edit">
+                      Daily Plan Edit
+                    </Link>
                   </div>
                 </div>
 
