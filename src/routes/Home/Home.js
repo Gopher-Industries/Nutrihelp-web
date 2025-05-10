@@ -222,7 +222,7 @@ const Home = () => {
                     <img src="images/6.jpg" alt="" />
                   </div>
                   <h4 className="title">
-                    <a href="Recipe.js">Create Recipes</a>
+                    <a href="Createrecipe">Create Recipes</a>
                   </h4>
                   <p className="description">
                     Create your own personalized recipes tailored to your taste
@@ -234,10 +234,10 @@ const Home = () => {
               <div className="col-lg-3 col-md-6">
                 <div className="icon-box">
                   <div className="icon">
-                    <img src="images/7.jpg" alt="" />
+                    <img src="images/7.png" alt="" />
                   </div>
                   <h4 className="title">
-                    <a href="#">Product Scanning</a>
+                    <a href="GroceryServicesPage">Grocery Services</a>
                   </h4>
                   <p className="description">
                     Upload an image of a product to analyze its nutritional

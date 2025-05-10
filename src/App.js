@@ -34,6 +34,7 @@ import MealPlanA from "./routes/MealPlanning/MealPlanA";
 
 import MealPlanB from "./routes/MealPlanning/MealPlanB";
 import MealPlanC from "./routes/MealPlanning/MealPlanC";
+import GroceryServicesPage from "./routes/GroceryServices/GroceryServicesPage";
 
 function App() {
   const { currentUser } = useContext(UserContext);
@@ -56,18 +57,14 @@ function App() {
         <Route path="/MealPlanA" element={<MealPlanA/>} />
         <Route path="/MealPlanB" element={<MealPlanB/>} />
         <Route path="/MealPlanC" element={<MealPlanC/>} />
+        <Route path="/CreateRecipe" element={<CreateRecipe/>} />
+        <Route path="/GroceryServicesPage" element={<GroceryServicesPage/>} />
         
 
 
         {/* Private Routes */}
-        <Route
-          path="createRecipe"
-          element={
-            <AuthenticateRoute>
-              <CreateRecipe />
-            </AuthenticateRoute>
-          }
-        />
+        
+        
         <Route
           path="searchRecipes"
           element={

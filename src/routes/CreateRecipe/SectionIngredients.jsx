@@ -1,133 +1,101 @@
-import './CreateRecipe.css'
+// File: SectionIngredients.jsx
+import React, { useState } from "react";
+import { Form, Input, Dropdown, Button, Table, TextArea } from "semantic-ui-react";
 
-import {
-    IngredientField, IngredientCategoryField,
-    InstructionsField, AddAnImageField, IngredientTableField,
-    IngredientQuanityField
-} from './Fields'
-import React, { useState } from 'react'
-import SectionHeader from './SectionHeader'
-import { Button } from 'semantic-ui-react'
+function IngredientsSection({
+  ingredient,
+  onIngredientChange,
+  ingredientCategory,
+  onIngredientCategoryChange,
+  ingredientQuantity,
+  onIngredientQuantityChange,
+  tableData,
+  isEditing,
+  ingredientListDB,
+  onIsEditingChange,
+  instructions,
+  onInstructionsChange,
+  onImageAdded
+}) {
+  const [table, setTable] = useState(tableData);
 
+  const handleAddIngredient = () => {
+    if (ingredient && ingredientQuantity) {
+      const newRow = { ingredient, ingredientQuantity };
+      const updatedTable = [...table, newRow];
+      setTable(updatedTable);
+      onIsEditingChange(updatedTable);
+    }
+  };
 
+  return (
+    <div className="ingredients-section">
+      <Form>
+        <Form.Group widths="equal">
+          <Form.Field>
+            <label>Ingredient</label>
+            <Dropdown
+              placeholder="Select Ingredient"
+              fluid
+              search
+              selection
+              options={ingredientListDB.ingredient}
+              value={ingredient}
+              onChange={(e, { value }) => onIngredientChange(value)}
+            />
+          </Form.Field>
 
-// Define a component for the "Ingredients" section of a form
-const IngredientsSection = (props) => {
+          <Form.Field>
+            <label>Quantity</label>
+            <Input
+              placeholder="e.g., 100"
+              value={ingredientQuantity}
+              onChange={(e) => onIngredientQuantityChange(e.target.value)}
+            />
+          </Form.Field>
+        </Form.Group>
 
+        <Button type="button" onClick={handleAddIngredient} primary>
+          Add Ingredient
+        </Button>
 
-    function changeEditState(record) {
-        let counter = 0;
-        props.tableData.forEach(element => {
-          if (record.ingredient === element.ingredient) {
-            counter++
-          }
-        });
-    
-        if (counter > 0 && !props.isEditing) {
-            props.onIsEditingChange(true)
-        }
-        else if (counter > 0 && props.isEditing)  {
-            props.onIsEditingChange(true)
-        }
-        else if (counter == 0 && !props.isEditing)  {
-            props.onIsEditingChange(true)
-        }
-        else if (counter == 0 && props.isEditing)  {
-            props.onIsEditingChange(false)
-        }
-      }
-    
-      function addIngedient() {
-    
-        if (props.ingredientCategory && props.ingredient && props.ingredientQuantity) {
-          let record = {
-            'ingredientCategory': props.ingredientCategory,
-            'ingredient': props.ingredient,
-            'ingredientQuantity': props.ingredientQuantity
-          }
-          changeEditState(record)
-          if (!props.isEditing) {
-            props.tableData.push(record) 
-          }
-          changeEditState(record)
-        }
-      }
+        <Table celled compact>
+          <Table.Header>
+            <Table.Row>
+              <Table.HeaderCell>Ingredient</Table.HeaderCell>
+              <Table.HeaderCell>Quantity</Table.HeaderCell>
+            </Table.Row>
+          </Table.Header>
+          <Table.Body>
+            {table.map((row, index) => (
+              <Table.Row key={index}>
+                <Table.Cell>{row.ingredient}</Table.Cell>
+                <Table.Cell>{row.ingredientQuantity}</Table.Cell>
+              </Table.Row>
+            ))}
+          </Table.Body>
+        </Table>
 
-    return (
-        <div className='form-section'>
-            <SectionHeader text='Ingredients' />
-            <div class="row">
-                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                    <IngredientCategoryField
-                        ingredientCategory={props.ingredientCategory}
-                        onIngredientCategoryChange={props.onIngredientCategoryChange}
-                        ingredientListDB={props.ingredientListDB}
-                    />
-                </div>
-                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                    <IngredientField
-                        ingredient={props.ingredient}
-                        onIngredientChange={props.onIngredientChange}
-                        ingredientCategory={props.ingredientCategory}
-                        ingredientListDB={props.ingredientListDB}
-                    />
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                    <IngredientQuanityField
-                        ingredientQuantity={props.ingredientQuantity}
-                        onIngredientQuantityChange={props.onIngredientQuantityChange}
-                    />
-                </div>
-                <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12"></div>
-                <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
-                    <div className='browse-and-upload-buttons-div'>
-                        <Button className='button-primary' style={{ width: 'auto', overflow: 'visible' }}
-                            onClick={addIngedient}>Add Ingredient</Button>
-                    </div>
-                </div>
-            </div>
-            <div class="row recipe-table">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Category</th>
-                            <th>Ingredient</th>
-                            <th>Quantity</th>
-                            <th>Delete Ingredient</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {props.tableData.map(record =>
-                            <IngredientTableField
-                                key={record.ingredient}
-                                record={record}
-                            />)}
-                    </tbody>
-                </table>
-            </div>
-            <div class="row">
-                <div>
-                    <InstructionsField
-                        instructions={props.instructions}
-                        onInstructionsChange={props.onInstructionsChange}
-                    />
-                </div>
-            </div>
-            <div class="row">
-                <div className='form-section'>
-                    <SectionHeader text='Add An Image' />
-                    <div class="row">
-                        <AddAnImageField onImageAdded={props.onImageAdded} />
-                    </div>
-                </div>
-            </div>
-        </div>
-    )
+        <Form.Field>
+          <label>Instructions</label>
+          <TextArea
+            placeholder="Describe the steps to prepare the recipe..."
+            value={instructions}
+            onChange={(e) => onInstructionsChange(e.target.value)}
+          />
+        </Form.Field>
+
+        <Form.Field>
+          <label>Recipe Image</label>
+          <Input
+            type="file"
+            accept="image/*"
+            onChange={(e) => onImageAdded(e.target.files[0])}
+          />
+        </Form.Field>
+      </Form>
+    </div>
+  );
 }
 
-
-
-
-export default IngredientsSection
+export default IngredientsSection;

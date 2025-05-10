@@ -1,49 +1,66 @@
-import './CreateRecipe.css'
+import React from "react";
+import { Form, Input, Dropdown } from "semantic-ui-react";
 
-import { CuisineField, TotalServingsField, PreparationTimeField, RecipeNameField } from './Fields'
-import React from 'react'
-import SectionHeader from './SectionHeader'
+const mealOptions = [
+  { key: 'breakfast', value: 'Breakfast', text: 'Breakfast' },
+  { key: 'lunch', value: 'Lunch', text: 'Lunch' },
+  { key: 'dinner', value: 'Dinner', text: 'Dinner' },
+  { key: 'snack', value: 'Snack', text: 'Snack' },
+];
 
-// Define a component for the "Recipe Description" section of a form
-const RecipeDescriptionSection = (props) => {
+function SectionRecipeDescription({
+  dayOfWeek,
+  onDayOfWeekChange,
+  mealType,
+  onMealTypeChange,
+  recipeName,
+  onRecipeNameChange,
+  calories,
+  onCaloriesChange,
+}) {
+  return (
+    <Form>
+      <Form.Field>
+        <label>Day of the Week</label>
+        <Input
+          placeholder="e.g., Monday"
+          value={dayOfWeek}
+          onChange={(e) => onDayOfWeekChange(e.target.value)}
+        />
+      </Form.Field>
 
-    return (
-        <div className='form-section'>
-            <SectionHeader text='Recipe Description' />
-            <div class="row">
-                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                    <RecipeNameField
-                        recipeName={props.recipeName}
-                        onRecipeNameChange={props.onRecipeNameChange}
-                    />
-                </div>
-                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                    <CuisineField
-                        cuisine={props.cuisine}
-                        onCuisineChange={props.onCuisineChange}
-                        cuisineListDB={props.cuisineListDB}
-                    />
-                </div>
-            </div>
-            <SectionHeader text='Cooking Details' />
-            <div class="row">
-                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                    <PreparationTimeField
-                        preparationTime={props.preparationTime}
-                        onPreparationTimeChange={props.onPreparationTimeChange}
-                    />
-                </div>
-                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                    <TotalServingsField
-                        totalServings={props.totalServings}
-                        onTotalServingsChange={props.onTotalServingsChange}
-                    />
-                </div>
-            </div>
-        </div>
-    )
+      <Form.Field>
+        <label>Meal Type</label>
+        <Dropdown
+          placeholder="Select Meal Type"
+          fluid
+          selection
+          options={mealOptions}
+          value={mealType}
+          onChange={(e, { value }) => onMealTypeChange(value)}
+        />
+      </Form.Field>
+
+      <Form.Field>
+        <label>Recipe Name</label>
+        <Input
+          placeholder="Enter recipe name"
+          value={recipeName}
+          onChange={(e) => onRecipeNameChange(e.target.value)}
+        />
+      </Form.Field>
+
+      <Form.Field>
+        <label>Calorie Intake (kcal)</label>
+        <Input
+          type="number"
+          placeholder="e.g., 350"
+          value={calories}
+          onChange={(e) => onCaloriesChange(e.target.value)}
+        />
+      </Form.Field>
+    </Form>
+  );
 }
 
-
-
-export default RecipeDescriptionSection
+export default SectionRecipeDescription;
