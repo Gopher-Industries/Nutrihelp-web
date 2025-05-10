@@ -1,6 +1,8 @@
 import { UserIcon } from "lucide-react";
 import React, { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify"; // Toast import
+import "react-toastify/dist/ReactToastify.css"; // Toast CSS
 import { UserContext } from "../../context/user.context";
 import { useDarkMode } from "../DarkModeToggle/DarkModeContext";
 import "./Login.css";
@@ -37,8 +39,33 @@ const Login = () => {
         const data = await response.json();
         const expirationTimeInMillis = isChecked ? 3600000 : 0;
         setCurrentUser(data.user, expirationTimeInMillis);
-        navigate("/MFAform", { state: { email, password } });
-        alert("Successfully signed in. Please complete MFA to continue.");
+
+        // Toast message
+        toast.success("💧 Welcome back! Don’t forget to check your meal plan & track your water intake!", {
+          position: "top-right",
+          autoClose: false, // stays until dismissed
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          hideProgressBar: false,
+          theme: "colored", // makes it vibrant
+          style: {
+            fontSize: "1.1rem",
+            fontWeight: "bold",
+            padding: "1.2rem",
+            borderRadius: "10px",
+            boxShadow: "0px 4px 12px rgba(0,0,0,0.1)",
+            backgroundColor: "#d1f0ff", // optional custom color
+            color: "#0d47a1",
+          },
+        });
+        
+        
+
+        // Delay navigation so toast shows first
+        setTimeout(() => {
+          navigate("/MFAform", { state: { email, password } });
+        }, 300);
       } else {
         const data = await response.json();
         setError(
@@ -49,15 +76,8 @@ const Login = () => {
     } catch (error) {
       console.error("Error signing in:", error.message);
       setError("Failed to sign in. An error occurred.");
-      // setCurrentUser("data.user", 5000);
-      // navigate("/MFAform", { state: { email, password } });
-      // alert("Successfully signed in. Please complete MFA to continue.");
     }
   };
-
-  // const logGoogleUser = async () => {
-  //     // Handle Google sign-in here
-  // };
 
   const handleToggleCheckbox = () => {
     setIsChecked(!isChecked);
@@ -81,9 +101,7 @@ const Login = () => {
               alt="Nutrihelp Logo"
               className="rounded-xl w-[500px] items-center ml-auto mr-auto"
             />
-            <h2
-              className={`font-bold text-4xl mt-4 ${darkMode && "text-white"}`}
-            >
+            <h2 className={`font-bold text-4xl mt-4 ${darkMode && "text-white"}`}>
               LOG IN
             </h2>
             <p className="text-lg text-center text-gray-500">
@@ -129,10 +147,7 @@ const Login = () => {
                   className={`checkbox-div ${isChecked ? "checked" : ""}`}
                   onClick={handleToggleCheckbox}
                 >
-                  <span
-                    className="checkbox-indica
-              tor"
-                  ></span>
+                  <span className="checkbox-indicator"></span>
                 </div>
                 <label htmlFor="keepLoggedIn" className="ml-2">
                   Keep me logged in

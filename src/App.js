@@ -7,6 +7,9 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 import { UserContext } from "./context/user.context";
 import Login from "./routes/Login/Login";
 import SignUp from "./routes/SignUp/SignUp";
@@ -36,6 +39,7 @@ function App() {
   return (
     <Router>
       <MainNavbar />
+      <ToastContainer />
       <Routes>
         <Route
           path="/"
