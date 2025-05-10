@@ -5,6 +5,7 @@ import DashboardGraph from '../../components/Dashboard-Graph';
 import Card from './MenuCard';
 import './MenuCard.css';
 import imageMapping from './importImages.js';
+import WaterTracker from '../../components/WaterTracker';
 
 
 const Dashboard = () => {
@@ -113,6 +114,9 @@ const Dashboard = () => {
 
         <div className="dashboard-graph">
           {menuGraphComponent()}
+        </div>
+        <div className="dashboard-water-tracker">
+          <WaterTracker />
         </div>
       </div>
     </main>
