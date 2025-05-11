@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../context/user.context";
 import "./Home.css";
 import { faker } from "@faker-js/faker";
+import { Link } from "react-router-dom";
 import { useDarkMode } from "../DarkModeToggle/DarkModeContext";
 import { motion } from "framer-motion";
 import FramerClient from "../../components/framer-client";
@@ -159,6 +160,7 @@ const Home = () => {
                 className={`flex justify-start items-center mt-6 shadow-none bg-transparent`}
                 id="no-bg"
               >
+                <Link to="/Meal">
                 <button
                   type="button"
                   className={`h-16 w-64 font-medium rounded-lg text-2xl px-5 py-2.5 text-center me-2 mb-2 shadow-md ${
@@ -167,8 +169,9 @@ const Home = () => {
                       : "text-gray-700 bg-gradient-to-r from-purple-500 to-pink-500 hover:bg-gradient-to-l focus:ring-4 focus:outline-none focus:ring-purple-200 dark:focus:ring-purple-800"
                   }`}
                 >
-                  Get Start
+                  Get Started
                 </button>
+                </Link>
               </div>
             </div>
             <div className={`shadow-none bg-transparent`}>

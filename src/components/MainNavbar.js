@@ -36,7 +36,10 @@ const MainNavbar = () => {
       <nav>
         <div className="flex justify-between items-center pr-8 tts-ignore">
           <div className="">
+            <Link to="/home">
+            
             <img src="/images/logo.png" alt="Website Logo" className="logo" />
+            </Link>
           </div>
 
           <div className="nav-links">
@@ -60,6 +63,9 @@ const MainNavbar = () => {
                     </Link>
                     <Link className="link dropdown-link" to="/SearchRecipes">
                       Search Recipes
+                    </Link>
+                    <Link className="link dropdown-link" to="/SearchByItem">
+                    Search by Item
                     </Link>
                   </div>
                 </div>
