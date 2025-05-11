@@ -1,8 +1,8 @@
 import { UserIcon } from "lucide-react";
 import React, { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify"; // Toast import
-import "react-toastify/dist/ReactToastify.css"; // Toast CSS
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { UserContext } from "../../context/user.context";
 import { useDarkMode } from "../DarkModeToggle/DarkModeContext";
 import "./Login.css";
@@ -16,6 +16,7 @@ const Login = () => {
   const [contact, setContact] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
   const [isChecked, setIsChecked] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const { darkMode } = useDarkMode();
 
   const handleChange = (event) => {
@@ -41,29 +42,25 @@ const Login = () => {
         const expirationTimeInMillis = isChecked ? 3600000 : 0;
         setCurrentUser(data.user, expirationTimeInMillis);
 
-        // Toast message
-        toast.success("💧 Welcome back! Don’t forget to check your meal plan & track your water intake!", {
+        toast.success("\uD83D\uDCA7 Welcome back! Don’t forget to check your meal plan & track your water intake!", {
           position: "top-right",
-          autoClose: false, // stays until dismissed
+          autoClose: false,
           closeOnClick: true,
           pauseOnHover: true,
           draggable: true,
           hideProgressBar: false,
-          theme: "colored", // makes it vibrant
+          theme: "colored",
           style: {
             fontSize: "1.1rem",
             fontWeight: "bold",
             padding: "1.2rem",
             borderRadius: "10px",
             boxShadow: "0px 4px 12px rgba(0,0,0,0.1)",
-            backgroundColor: "#d1f0ff", // optional custom color
+            backgroundColor: "#d1f0ff",
             color: "#0d47a1",
           },
         });
-        
-        
 
-        // Delay navigation so toast shows first
         setTimeout(() => {
           navigate("/MFAform", { state: { email, password } });
         }, 300);
@@ -109,9 +106,7 @@ const Login = () => {
               Email*
             </label>
             <input
-              className={`border-1 ${
-                darkMode && "bg-gray-700 text-white font-semibold"
-              }`}
+              className={`border-1 ${darkMode && "bg-gray-700 text-white font-semibold"}`}
               name="email"
               type="text"
               placeholder="Enter Your Email"
@@ -124,17 +119,20 @@ const Login = () => {
               </label>
               <div className="password-field">
                 <input
-                  className={`border-1 ${
-                    darkMode && "bg-gray-700 text-white font-semibold"
-                  }`}
+                  className={`border-1 ${darkMode && "bg-gray-700 text-white font-semibold"}`}
                   id="password"
                   name="password"
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   placeholder="Min. 8 characters"
                   onChange={handleChange}
                   value={password}
                 />
-                <span className="eye-icon tts-ignore">👁️</span>
+                <span
+                  className="eye-icon tts-ignore cursor-pointer"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? "🙈" : "👁️"}
+                </span>
               </div>
             </div>
 
@@ -151,20 +149,14 @@ const Login = () => {
                 </label>
               </div>
               <div
-                className={`forgot-password ${
-                  darkMode ? "text-purple-300" : "text-purple-800"
-                }`}
+                className={`forgot-password ${darkMode ? "text-purple-300" : "text-purple-800"}`}
                 onClick={handleForgotPasswordClick}
               >
                 Forgot password?
               </div>
             </div>
             <button
-              className={`w-full rounded-full mb-6 text-2xl font-bold flex justify-center gap-3 items-center ${
-                darkMode
-                  ? "bg-purple-700 hover:bg-purple-500"
-                  : "bg-purple-400 text-gray-800 hover:bg-purple-700 hover:text-white"
-              }`}
+              className={`w-full rounded-full mb-6 text-2xl font-bold flex justify-center gap-3 items-center ${darkMode ? "bg-purple-700 hover:bg-purple-500" : "bg-purple-400 text-gray-800 hover:bg-purple-700 hover:text-white"}`}
               onClick={handleSignIn}
             >
               <UserIcon size={24} />
@@ -174,11 +166,7 @@ const Login = () => {
             <p className="text-2xl font-semibold text-center mt-4 mb-4">Or</p>
 
             <button
-              className={`w-full rounded-full mb-6 text-2xl font-bold flex justify-center gap-3 items-center ${
-                darkMode
-                  ? "bg-green-700 hover:bg-green-500"
-                  : "bg-green-500 text-gray-800 hover:bg-green-700 hover:text-white"
-              }`}
+              className={`w-full rounded-full mb-6 text-2xl font-bold flex justify-center gap-3 items-center ${darkMode ? "bg-green-700 hover:bg-green-500" : "bg-green-500 text-gray-800 hover:bg-green-700 hover:text-white"}`}
               onClick={handleSignIn}
             >
               <img
@@ -189,12 +177,10 @@ const Login = () => {
             </button>
 
             <p className={`signup-link mb-5`}>
-              Not registered yet?{" "}
+              Not registered yet? {" "}
               <Link
                 to="/signUp"
-                className={`${
-                  darkMode ? "text-purple-300" : "text-purple-800"
-                }`}
+                className={`${darkMode ? "text-purple-300" : "text-purple-800"}`}
               >
                 Create an Account
               </Link>

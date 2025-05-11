@@ -52,12 +52,17 @@ const MFAform = () => {
  
       });
  
-      if (response.ok) {
- 
-        const data = await response.json();
-        setCurrentUser(data.user);
-        navigate("/"); 
-        alert("MFA verification successful!");
+       if (response.ok) {
+      const data = await response.json();
+
+      // Set expiration (e.g., 1 hour = 3600000 ms)
+      const expirationTime = 3600000;
+
+      // ✅ This will store user and expiration in localStorage
+      setCurrentUser(data.user, expirationTime);
+
+      alert("MFA verification successful!");
+      navigate("/");
  
       } else {
  

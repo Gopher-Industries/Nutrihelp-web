@@ -79,15 +79,12 @@ export const UserContext = createContext({
 
 export const UserProvider = ({ children }) => {
     const [currentUser, setCurrentUser] = useState(() => {
-        // get value of current user from localstorage
         const storedUser = localStorage.getItem('user');
         const storedExpirationTime = localStorage.getItem('expirationTime');
-        
+
         if (storedUser && storedExpirationTime) {
-            // Check if the expiration time is still valid
             const expirationTime = JSON.parse(storedExpirationTime);
             if (Date.now() > expirationTime) {
-                // If expired, clear the user data
                 localStorage.removeItem('user');
                 localStorage.removeItem('expirationTime');
                 return null;
@@ -97,15 +94,25 @@ export const UserProvider = ({ children }) => {
         return null;
     });
 
+    // Automatically log out when the token expires
+    useEffect(() => {
+        if (currentUser) {
+            const storedExpirationTime = localStorage.getItem('expirationTime');
+            if (storedExpirationTime) {
+                const timeout = JSON.parse(storedExpirationTime) - Date.now();
+                const logoutTimer = setTimeout(() => logOut(), timeout);
+                return () => clearTimeout(logoutTimer);
+            }
+        }
+    }, [currentUser]);
+
     const setUser = (user, expirationTimeInMillis) => {
         if (user) {
-            // Set expiration time if the user is logged in
             setCurrentUser(user);
             const expirationTime = Date.now() + expirationTimeInMillis;
             localStorage.setItem('user', JSON.stringify(user));
             localStorage.setItem('expirationTime', JSON.stringify(expirationTime));
         } else {
-            // Clear user and expiration time if logged out
             localStorage.removeItem('user');
             localStorage.removeItem('expirationTime');
         }
@@ -113,7 +120,7 @@ export const UserProvider = ({ children }) => {
 
     const logOut = () => {
         localStorage.removeItem('user');
-        localStorage.removeItem('userExpireTime');
+        localStorage.removeItem('expirationTime'); // <-- Fixed here
         setCurrentUser(null);
     };
 

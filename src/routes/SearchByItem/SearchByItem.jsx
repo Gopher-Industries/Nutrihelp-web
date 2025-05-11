@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import "./SearchByItem.css";
+const [selectedRecipe, setSelectedRecipe] = useState(null);
+const [showPopup, setShowPopup] = useState(false);
+
 
 const SearchByItem = () => {
   const [ingredients, setIngredients] = useState("");
@@ -52,5 +55,7 @@ const SearchByItem = () => {
     </div>
   );
 };
+
+
 
 export default SearchByItem;
