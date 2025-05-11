@@ -4,7 +4,7 @@ import foodIcon from "../../images/food.png";
 import exerciseIcon from "../../images/exercise.png";
 
 const UserDashboard = () => {
-  // 状态管理
+  // State Management
   const [showEditModal, setShowEditModal] = useState(false);
   const [showNutrientModal, setShowNutrientModal] = useState(false);
   const [baseGoal, setBaseGoal] = useState(5565);
@@ -12,13 +12,13 @@ const UserDashboard = () => {
   const [exercise, setExercise] = useState(0);
   const [exerciseHours, setExerciseHours] = useState(0);
 
-  // 临时输入状态（用于弹窗编辑）
+  // Temporary input state (for popup editing)
   const [tempBaseGoal, setTempBaseGoal] = useState(baseGoal);
   const [tempFood, setTempFood] = useState(food);
   const [tempExercise, setTempExercise] = useState(exercise);
   const [tempExerciseHours, setTempExerciseHours] = useState(exerciseHours);
 
-  // 营养素数据状态
+  // Nutrient data status
   const [nutrients, setNutrients] = useState([
     { label: "Carbohydrates", color: "#22c55e", current: 130, total: 166, unit: "g" },
     { label: "Fat", color: "#60a5fa", current: 20, total: 44, unit: "g" },
@@ -29,19 +29,19 @@ const UserDashboard = () => {
     { label: "Cholesterol", color: "#ef4444", current: 50, total: 300, unit: "mg" },
   ]);
 
-  // 临时营养素数据
+  // Provisional nutrient data
   const [tempNutrients, setTempNutrients] = useState(nutrients);
 
-  // 计算剩余能量值（按照公式 Remaining = Goal - Food + Exercise）
+  // Calculate the remaining energy value (according to the formula Remaining = Goal - Food + Exercise)
   const remaining = baseGoal - food + exercise;
 
-  // 计算进度百分比（基于食用的食物与目标的比例）
+  // Calculates progress percentage (based on ratio of food consumed to goal)
   const progressPercentage = Math.min(((food - exercise) / baseGoal) * 100, 100);
   
-  // 判断是否为负数
+  // Determine whether it is a negative number
   const isNegative = remaining < 0;
 
-  // 处理保存编辑
+  // Processing Save Edit
   const handleSaveEdit = () => {
     setBaseGoal(tempBaseGoal);
     setFood(tempFood);
@@ -50,9 +50,9 @@ const UserDashboard = () => {
     setShowEditModal(false);
   };
 
-  // 处理关闭弹窗
+  // Handle closing pop-up window
   const handleCloseModal = () => {
-    // 重置临时值为当前值
+    // Reset temporary value to current value
     setTempBaseGoal(baseGoal);
     setTempFood(food);
     setTempExercise(exercise);
@@ -60,19 +60,19 @@ const UserDashboard = () => {
     setShowEditModal(false);
   };
 
-  // 处理营养素编辑
+  // Processing nutrients
   const handleSaveNutrients = () => {
     setNutrients(tempNutrients);
     setShowNutrientModal(false);
   };
 
-  // 处理关闭营养素弹窗
+  // Handle closing of nutrients pop-up window
   const handleCloseNutrientModal = () => {
     setTempNutrients(JSON.parse(JSON.stringify(nutrients)));
     setShowNutrientModal(false);
   };
 
-  // 计算圆环的路径
+  // Calculate the path of a ring
   const radius = 120;
   const strokeWidth = 16;
   const normalizedRadius = radius - strokeWidth / 2;
@@ -82,7 +82,7 @@ const UserDashboard = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
-      {/* 能量编辑弹窗 */}
+      {/* Energy Edit Popup */}
       {showEditModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-xl p-6 w-full max-w-md">
@@ -157,7 +157,7 @@ const UserDashboard = () => {
         </div>
       )}
 
-      {/* 营养素编辑弹窗 */}
+      {/* Nutrient edit popup */}
       {showNutrientModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-xl p-6 w-full max-w-md">
@@ -219,19 +219,19 @@ const UserDashboard = () => {
         </div>
       )}
 
-      {/* 主内容区域 - 横向布局 */}
+      {/* Main content area - horizontal layout */}
       <div className="flex flex-col lg:flex-row gap-6">
-        {/* 左侧：卡路里跟踪器卡片 */}
+        {/* Left: Calorie tracker card */}
         <div className="flex-1 bg-white p-6 rounded-xl shadow-md">
-          {/* 标题和编辑按钮 - 相对定位 */}
+          {/* Title and Edit Button - Relative Positioning */}
           <div className="relative mb-6">
-            {/* 左侧标题 */}
+            {/* Left title */}
             <h2 className="text-2xl font-bold mb-1">Kilojoules</h2>
-            {/* 居中的公式 */}
+            {/* Centering formula */}
             <div className="text-center">
               <p className="text-gray-500 text-sm">Remaining = Goal - Food + Exercise</p>
             </div>
-            {/* 右上角的编辑按钮 */}
+            {/* The edit button in the upper right corner */}
             <button
               onClick={() => setShowEditModal(true)}
               className="absolute top-0 right-0 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
@@ -240,18 +240,18 @@ const UserDashboard = () => {
             </button>
           </div>
           
-          {/* 环形进度圈和数据显示 - 居中布局 */}
+          {/* Circular progress circle and data display - centered layout */}
           <div className="flex flex-col items-center justify-center space-y-6">
-            {/* 环形进度圈区域 */}
+            {/* Circular progress circle area */}
             <div className="flex items-center justify-center space-x-12">
-              {/* 环形进度圈 */}
+              {/* Circular progress circle */}
               <div className="relative flex items-center justify-center">
                 <svg
                   height={radius * 2}
                   width={radius * 2}
                   className="transform -rotate-90"
                 >
-                  {/* 背景圆环 */}
+                  {/* Background ring */}
                   <circle
                     stroke="#E5E7EB"
                     fill="transparent"
@@ -260,7 +260,7 @@ const UserDashboard = () => {
                     cx={radius}
                     cy={radius}
                   />
-                  {/* 进度圆环 */}
+                  {/* Progress Ring */}
                   <circle
                     stroke={isNegative ? "#EF4444" : "#3B82F6"}
                     fill="transparent"
@@ -274,7 +274,7 @@ const UserDashboard = () => {
                   />
                 </svg>
                 
-                {/* 中心显示剩余值 */}
+                {/* Center shows the remaining value */}
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
                   <p className={`text-3xl font-bold ${isNegative ? 'text-red-500' : ''}`}>
                     {remaining.toLocaleString()}
@@ -283,7 +283,7 @@ const UserDashboard = () => {
                 </div>
               </div>
               
-              {/* 右侧数据显示 */}
+              {/* The data on the right shows */}
               <div className="space-y-4">
                 {/* Base Goal */}
                 <div className="flex items-center">
@@ -314,7 +314,7 @@ const UserDashboard = () => {
               </div>
             </div>
             
-            {/* 底部说明文字 */}
+            {/* Bottom description text */}
             <div className="text-center text-sm text-gray-600 max-w-md">
               <p>
                 {isNegative ? (
@@ -331,7 +331,7 @@ const UserDashboard = () => {
           </div>
         </div>
         
-        {/* 右侧：营养素进度条卡片 */}
+        {/* Right: Nutrient progress bar card */}
         <div className="flex-1 bg-white p-6 rounded-xl shadow-md">
           <div className="flex justify-between items-start mb-4">
             <h3 className="text-xl font-bold">Nutrients</h3>
