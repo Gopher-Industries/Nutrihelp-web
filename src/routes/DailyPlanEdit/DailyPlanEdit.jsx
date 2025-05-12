@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect  } from "react";
 import { FaChevronLeft, FaChevronRight, FaRegCalendarAlt } from "react-icons/fa";
 
 import oatmealImg from "../../images/daily_plan_edit_img/oatmeal.png";
@@ -38,6 +38,20 @@ const DailyPlanEdit = () => {
     const [waterIntake, setWaterIntake] = useState("");
     const [showExerciseInfo, setShowExerciseInfo] = useState(false);
 
+    useEffect(() => {
+        const dateKey = selectedDate.toISOString().split('T')[0];
+        if (!dailyMealPlans[dateKey]) {
+            setDailyMealPlans(prev => ({
+                ...prev,
+                [dateKey]: {
+                    meals: [],
+                    water: 0,
+                    exercises: []
+                }
+            }));
+        }
+    }, [selectedDate]);
+    
     // Recipe Description Data
     const recipeDescriptions = {
         "Oatmeal": "A healthy breakfast made with rolled oats cooked in milk or water. Rich in fiber and can be topped with fruits, nuts, and honey.",
@@ -102,9 +116,9 @@ const DailyPlanEdit = () => {
         setShowRecipeDetails(true);
     };
 
-    // 添加这个函数来关闭日期选择器
+    // Add this function to close the date picker
     const closeDatePicker = (input) => {
-        // 这对 Safari 有效
+        // This works for Safari
         if (input && typeof input.blur === 'function') {
             input.blur();
         }
@@ -126,6 +140,23 @@ const DailyPlanEdit = () => {
 
     // Processing recipe additions
     const handleRecipeAdd = (recipeName) => {
+        const dateKey = selectedDate.toISOString().split('T')[0];
+        const newMeal = {
+            id: Date.now(),
+            name: recipeName,
+            type: selectedMealType,
+            calories: 350, // 模拟数据
+            isCustom: false
+        };
+        
+        setDailyMealPlans(prev => ({
+            ...prev,
+            [dateKey]: {
+                ...prev[dateKey],
+                meals: [...(prev[dateKey]?.meals || []), newMeal]
+            }
+        }));
+        
         alert(`You have added ${recipeName} to your ${selectedMealType} plan for ${selectedDate.toLocaleDateString('en-CA')}.`);
     };
 
@@ -148,15 +179,14 @@ const DailyPlanEdit = () => {
 
     const [selectedCopyMeals, setSelectedCopyMeals] = useState([]);
     const [copyMealDate, setCopyMealDate] = useState(new Date());
-    // 在组件中添加这个函数
     const getMealsForDate = (date) => {
-        // 这里应该从后端或本地存储中获取指定日期的 Meal 数据
-        // 目前使用模拟数据，实际开发中应该替换为 API 调用
+        // Here you should get the Meal data for the specified date from the backend or local storage
+        // Currently using simulated data, it should be replaced by API calls in actual development
         
-        // 模拟不同日期的不同 Meal 数据
+        // Simulate different Meal data on different dates
         const dateString = date.toISOString().split('T')[0];
         
-        // 模拟数据 - 实际应该从后端获取
+        // Mock data - should actually be obtained from the backend
         const mockMealData = {
             '2025-05-11': [
                 { id: 1, name: 'Breakfast', type: 'Morning Meal', calories: 320, isCustom: false },
@@ -177,16 +207,27 @@ const DailyPlanEdit = () => {
             ]
         };
         
-        // 返回指定日期的 Meal 数据，如果没有则返回默认数据
+        // Returns the Meal data for the specified date, or default data if none is available
         return mockMealData[dateString] || mockMealData['default'];
         
-        // 实际实现应该如下：
-        // return await fetchMealsForDate(date); // 从后端获取数据
+        // The actual implementation should be as follows:
+        // return await fetchMealsForDate(date); // Get data from the backend
     };
 
     const handleWaterAdd = () => {
-        alert(`You have added ${waterIntake} ml of water for ${selectedDate}.`);
+        const dateKey = selectedDate.toISOString().split('T')[0];
+        setDailyMealPlans(prev => ({
+            ...prev,
+            [dateKey]: {
+                ...prev[dateKey],
+                water: (prev[dateKey]?.water || 0) + parseInt(waterIntake || 0)
+            }
+        }));
+        alert(`You have added ${waterIntake} ml of water for ${selectedDate.toLocaleDateString('en-CA')}.`);
+        setWaterIntake("");
     };
+
+    const [dailyMealPlans, setDailyMealPlans] = useState({});
 
     return (
         <div className="min-h-screen bg-gray-100 p-6">
@@ -253,6 +294,21 @@ const DailyPlanEdit = () => {
                 {/* Recommended recipe area */}
                 <div className="bg-white border border-blue-100 rounded-xl p-6 mb-8 ">
                     <h3 className="text-2xl text-purple-900 font-bold mb-6 text-center">Recommend Recipe for {selectedMealType}</h3>
+                    {/* Add here to show added meals */}
+                    {(() => {
+                        const currentMeals = dailyMealPlans[selectedDate.toISOString().split('T')[0]]?.meals?.filter(meal => meal.type === selectedMealType) || [];
+                        return (
+                            currentMeals.length > 0 && (
+                                <div className="mb-4 p-3 bg-green-50 rounded">
+                                    <h4 className="text-sm font-semibold text-green-800 mb-2">Added to {selectedMealType}:</h4>
+                                    {currentMeals.map(meal => (
+                                        <div key={meal.id} className="text-sm text-green-700">• {meal.name}</div>
+                                    ))}
+                                </div>
+                            )
+                        );
+                    })()}
+                    
                     <div className="flex gap-4 justify-start items-start">
                         <div className="flex gap-4 justify-start items-start">
                             {getRecipesForMealType().map((recipe, index) => (
@@ -371,15 +427,15 @@ const DailyPlanEdit = () => {
                         <ul className="list-none space-y-3 mb-6">
                             <li className="text-gray-700 relative pl-8">
                                 <span className="absolute left-2">•</span>
-                                Meals added: (simulate data or connect real data)
+                                Meals added: {dailyMealPlans[selectedDate.toISOString().split('T')[0]]?.meals?.length || 0}
                             </li>
                             <li className="text-gray-700 relative pl-8">
                                 <span className="absolute left-2">•</span>
-                                Water intake: {waterIntake ? `${waterIntake} ml` : 'Not added yet'}
+                                Water intake: {dailyMealPlans[selectedDate.toISOString().split('T')[0]]?.water || 0} ml
                             </li>
                             <li className="text-gray-700 relative pl-8">
                                 <span className="absolute left-2">•</span>
-                                Exercises planned: (simulate data or connect real data)
+                                Exercises planned: {dailyMealPlans[selectedDate.toISOString().split('T')[0]]?.exercises?.length || 0}
                             </li>
                         </ul>
                         <button 
@@ -487,9 +543,31 @@ const DailyPlanEdit = () => {
                     <div className="bg-white rounded-xl p-8 w-full max-w-5xl shadow-lg">
                         <h3 className="text-2xl font-bold text-purple-900 mb-4 text-center">Create a Meal</h3>
                         <p className="text-gray-700 text-center mb-6">Combine recipes from our library to create your perfect meal.</p>
-                        
                         <form className="space-y-6" onSubmit={(e) => {
                             e.preventDefault();
+                            const formData = new FormData(e.target);
+                            const mealName = formData.get('mealName');
+                            const mealTime = formData.get('mealTime');
+                            const plannedDate = formData.get('plannedDate');
+                            
+                            const dateKey = plannedDate;
+                            const newMeal = {
+                                id: Date.now(),
+                                name: mealName,
+                                type: mealTime,
+                                calories: selectedRecipes.reduce((sum, recipe) => sum + recipe.calories, 0),
+                                isCustom: true,
+                                recipes: selectedRecipes
+                            };
+                            
+                            setDailyMealPlans(prev => ({
+                                ...prev,
+                                [dateKey]: {
+                                    ...prev[dateKey],
+                                    meals: [...(prev[dateKey]?.meals || []), newMeal]
+                                }
+                            }));
+                            
                             alert('Meal created successfully! Your meal has been added to the meal plan.');
                             setSelectedRecipes([]);
                             setShowCreateMeal(false);
@@ -499,6 +577,7 @@ const DailyPlanEdit = () => {
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Meal Name</label>
                                     <input
+                                        name="mealName" 
                                         type="text"
                                         placeholder="e.g., Healthy Power Lunch"
                                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
@@ -508,7 +587,7 @@ const DailyPlanEdit = () => {
                                 
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Meal Time</label>
-                                    <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500" required>
+                                    <select name="mealTime" className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500" required>
                                         <option value="">Select Meal Time</option>
                                         <option value="breakfast">Breakfast</option>
                                         <option value="lunch">Lunch</option>
@@ -521,6 +600,7 @@ const DailyPlanEdit = () => {
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Planned Date</label>
                                     <div className="relative">
                                         <input
+                                            name="plannedDate" 
                                             type="date"
                                             id="mealPlannedDate"
                                             defaultValue={new Date().toISOString().split('T')[0]}
@@ -531,7 +611,7 @@ const DailyPlanEdit = () => {
                                                 display: none;
                                             }
                                         `}</style>
-                                        {/* 自定义的日历图标 */}
+                                        {/* Customizable calendar icons */}
                                         <button
                                             type="button"
                                             onClick={() => {
@@ -751,17 +831,28 @@ const DailyPlanEdit = () => {
                                             display: none;
                                         }
                                     `}</style>
-                                    {/* 自定义的日历图标 */}
-                                    <button
-                                        type="button"
+                                    {/* Customizable calendar icons */}
+                                    <button 
+                                        className="flex-1 py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-green-600 transition-colors disabled:opacity-50"
+                                        disabled={selectedCopyMeals.length === 0}
                                         onClick={() => {
-                                            const input = document.getElementById('copyMealDate');
-                                            if (input) {
-                                                input.focus();
-                                                input.showPicker();
+                                            if (selectedCopyMeals.length > 0) {
+                                                const dateKey = selectedDate.toISOString().split('T')[0];
+                                                setDailyMealPlans(prev => ({
+                                                    ...prev,
+                                                    [dateKey]: {
+                                                        ...prev[dateKey],
+                                                        meals: [...(prev[dateKey]?.meals || []), ...selectedCopyMeals.map(meal => ({
+                                                            ...meal,
+                                                            id: Date.now() + Math.random()
+                                                        }))]
+                                                    }
+                                                }));
+                                                alert('Meals copied successfully! The selected meals have been added to today\'s meal plan.');
+                                                setSelectedCopyMeals([]);
+                                                setShowCopyMeal(false);
                                             }
                                         }}
-                                        className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-auto z-10"
                                     >
                                         <FaRegCalendarAlt className="text-gray-400 h-5 w-5" />
                                     </button>
@@ -774,8 +865,8 @@ const DailyPlanEdit = () => {
                             <div className="flex-1 border rounded-lg p-4">
                                 <h4 className="font-semibold text-purple-900 mb-3">Meals from {copyMealDate.toLocaleDateString()}</h4>
                                 <div className="h-80 overflow-y-auto space-y-2">
-                                    {/* 根据日期获取对应的 Meal 计划 */}
-                                    {/* 这里需要根据 copyMealDate 从后端或本地存储中获取该日期的 Meal 数据 */}
+                                    {/* Get the corresponding Meal plan according to the date */}
+                                    {/* Here you need to get the Meal data of that date from the backend or local storage according to copyMealDate */}
                                     {getMealsForDate(copyMealDate).map((meal) => (
                                         <div key={meal.id} className="flex items-center justify-between p-2 hover:bg-gray-50 rounded">
                                             <div>
@@ -799,7 +890,7 @@ const DailyPlanEdit = () => {
                                         </div>
                                     ))}
                                     
-                                    {/* 如果没有找到任何 Meal 数据 */}
+                                    {/* If no Meal data is found */}
                                     {getMealsForDate(copyMealDate).length === 0 && (
                                         <div className="text-center text-gray-400 py-8">
                                             <p>No meals found for this date</p>
