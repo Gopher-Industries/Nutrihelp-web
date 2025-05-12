@@ -1,0 +1,324 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap');
+
+.health-news-container {
+  padding: 40px;
+  max-width: 1200px;
+  margin: 80px auto 60px;
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 4px 20px rgba(35, 21, 91, 0.1);
+}
+
+.news-header {
+  text-align: center;
+  margin-bottom: 20px;
+  padding-top: 10px;
+}
+
+/* Smaller header title as requested */
+.news-header .news-title {
+  color: #23155B;
+  font-family: 'Playfair Display', serif;
+  font-weight: 600;
+  font-style: italic;
+  font-size: 2.4rem;
+  margin-bottom: 15px;
+  letter-spacing: 1px;
+  text-transform: none;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+  display: inline-block;
+  padding: 0 20px;
+}
+
+/* News slider styles */
+.news-slider-wrapper {
+  margin: 0 -40px 30px;
+  position: relative;
+  overflow: hidden;
+  width: calc(100% + 80px);
+  height: 280px;
+  box-shadow: 0 4px 12px rgba(35, 21, 91, 0.2);
+}
+
+.news-slider {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.slider-item {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 1s ease;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.slider-item.active {
+  opacity: 1;
+  z-index: 2;
+}
+
+.slider-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 8s ease;
+}
+
+.slider-item:hover img {
+  transform: scale(1.05);
+}
+
+.slider-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 20px;
+  background: linear-gradient(transparent, rgba(35, 21, 91, 0.8));
+  color: white;
+  z-index: 3;
+}
+
+.slider-content h3 {
+  margin: 0 0 10px 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.slider-category {
+  display: inline-block;
+  padding: 5px 10px;
+  background-color: #ba49e7;
+  color: white;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  text-transform: capitalize;
+}
+
+.slider-dots {
+  position: absolute;
+  bottom: 15px;
+  right: 15px;
+  display: flex;
+  gap: 8px;
+  z-index: 4;
+}
+
+.dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.dot.active {
+  background-color: #ba49e7;
+  transform: scale(1.2);
+}
+
+.search-container {
+  margin: 20px auto;
+  max-width: 600px;
+  width: 100%;
+}
+
+.search-input {
+  width: 100%;
+  padding: 12px 20px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  font-size: 16px;
+  font-family: "Montserrat", sans-serif;
+  color: #23155B;
+  background-color: white;
+  transition: all 0.3s ease;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: white;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
+}
+
+.search-input::placeholder {
+  color: #9c9c9c;
+}
+
+.news-categories {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.news-categories button {
+  padding: 12px 25px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  background-color: rgba(157, 78, 221, 0.15);
+  color: #23155B;
+  transition: all 0.3s ease;
+  font-family: "Montserrat", sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.news-categories button:hover {
+  background-color: #ba49e7;
+  color: white;
+  transform: translateY(-2px);
+}
+
+.news-categories button.active {
+  background-color: #ba49e7;
+  color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.news-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 25px;
+  margin-top: 40px;
+  padding: 10px;
+}
+
+.news-card {
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  background-color: white;
+  transition: all 0.3s ease;
+  border: none;
+  height: 240px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.news-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.news-card-image {
+  height: 60%;
+  width: 100%;
+}
+
+.news-card-content {
+  padding: 15px;
+  height: 40%;
+  position: relative;
+  background-color: white;
+}
+
+.news-card h3 {
+  margin: 0 0 12px 0;
+  font-size: 1rem;
+  color: #23155B;
+  font-family: "Montserrat", sans-serif;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-right: 30px; /* Space for button */
+}
+
+.read-more {
+  padding: 6px 12px;
+  background-color: #9d4edd;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 500;
+  font-size: 0.85rem;
+  position: absolute;
+  bottom: 15px;
+  right: 15px;
+}
+
+.read-more:hover {
+  background-color: #ba49e7;
+  transform: translateY(-2px);
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 40px;
+  padding: 20px 0;
+}
+
+.page-button {
+  padding: 10px 15px;
+  border: none;
+  background-color: rgba(157, 78, 221, 0.15);
+  color: #23155B;
+  cursor: pointer;
+  border-radius: 6px;
+  font-family: "Montserrat", sans-serif;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  min-width: 40px;
+}
+
+.page-button:hover {
+  background-color: #ba49e7;
+  color: white;
+  transform: translateY(-2px);
+}
+
+.page-button.active {
+  background-color: #ba49e7;
+  color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 768px) {
+  .health-news-container {
+    margin: 70px 15px 30px;
+    padding: 20px;
+  }
+
+  .news-header .news-title {
+    font-size: 1.8rem;
+  }
+  
+  .news-slider-wrapper {
+    margin: 0 -20px 20px;
+    width: calc(100% + 40px);
+    height: 220px;
+  }
+  
+  .slider-content h3 {
+    font-size: 1.2rem;
+  }
+
+  .news-categories button {
+    padding: 10px 15px;
+    font-size: 14px;
+  }
+
+  .news-list {
+    grid-template-columns: 1fr;
+  }
+}

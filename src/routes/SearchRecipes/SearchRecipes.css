@@ -1,0 +1,123 @@
+/* Container & Typography */
+.search-recipes-page {
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+  background-color: #f5e8fa;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.main-title {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+/* Search Bar */
+.search-bar {
+  margin: 0 auto 30px;
+  width: 50%;
+}
+.search-input {
+  width: 100%;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 30px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  font-size: 1rem;
+  outline: none;
+}
+
+/* Section Titles */
+.section-title {
+  font-size: 1.5rem;
+  margin: 40px 0 20px;
+  color: #333;
+}
+
+/* Popular Recipe “Chips” */
+.popular-chips {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+.popular-chips button {
+  background-color: #d42b91;
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s, transform 0.2s;
+}
+.popular-chips button:hover {
+  background-color: #b52478;
+  transform: scale(1.05);
+}
+
+/* Categories Grid */
+.categories-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 30px;
+  margin: 20px auto;
+  max-width: 1000px;
+}
+.category-card {
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
+  cursor: pointer;
+}
+.category-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+.category-card img {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+}
+.category-card h3 {
+  margin: 12px 0;
+  font-size: 1rem;
+  color: #333;
+}
+
+/* No-results text */
+.no-results {
+  color: #777;
+  font-style: italic;
+}
+
+/* Big Search Button */
+.search-button {
+  margin-top: 30px;
+  padding: 12px 48px;
+  background-color: #d42b91;
+  color: #fff;
+  font-size: 1.1rem;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+.search-button:hover {
+  background-color: #b52478;
+}
+
+/* Recipe List (unchanged) */
+.recipes-list {
+  margin-top: 50px;
+}
+
+/* Add at bottom */
+.recipes-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 30px;
+}

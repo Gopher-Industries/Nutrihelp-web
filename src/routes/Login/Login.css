@@ -1,0 +1,195 @@
+.full-container {
+  width: 70%;
+  margin: 30px auto;
+  display: flex;
+  align-items: start;
+  justify-content: center;
+  gap: 20px;
+  height: 100vh;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  background: var(--background2-color);
+  padding: 20px;
+}
+.login-container {
+  width: 100%;
+  background-color: var(--background2-color);
+}
+
+.login-title {
+  font-weight: bold;
+  margin-bottom: 10px;
+  text-align: center;
+  font-weight: bold;
+  color: var(--text-color);
+}
+
+.login-subtitle {
+  color: var(--text-color2);
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.google-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 12px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 25px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+  color: #444;
+  text-decoration: none;
+  transition: background-color 0.3s;
+  cursor: pointer;
+}
+
+.google-btn img {
+  width: 20px;
+  height: 20px;
+  margin-right: 10px;
+}
+
+.google-btn:hover {
+  background-color: #f7f7f7;
+}
+
+.error-message {
+  color: red;
+  font-size: 14px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.input-label {
+  font-size: 14px;
+  color: var(--text-color);
+  padding: 0 15px;
+}
+
+.password-field {
+  position: relative;
+  width: 100%;
+}
+
+.password-field .input-field {
+  /* padding-right: 40px; */
+}
+
+.eye-icon {
+  position: absolute;
+  right: 15px;
+  top: 43%;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+
+.options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.keep-logged-in {
+  display: flex;
+  align-items: center;
+}
+
+.keep-logged-in label {
+  font-size: 14px;
+  color: var(--text-color2);
+}
+
+.forgot-password {
+  font-size: 14px;
+  font-weight: 600;
+  /*   color: #a020f0; */
+  cursor: pointer;
+}
+
+.signin-btn {
+  width: 100%;
+  color: #fff;
+  padding: 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-bottom: 20px;
+  border-radius: 25px;
+}
+
+.signup-link {
+  font-size: 14px;
+  color: var(--text-color2);
+  text-align: center;
+}
+
+.signup-link a {
+  /*   color: #a020f0; */
+  font-weight: bold;
+}
+
+.banner-img {
+  /*   background: #fff; */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+}
+
+.nutrihelp-logo2 {
+  width: auto;
+}
+
+@media (max-width: 1024px) {
+  .full-container {
+    width: 90%;
+    height: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .full-container {
+    flex-direction: column;
+  }
+  .user {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
+/* Style for the div checkbox */
+.checkbox-div {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #aaa;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.checkbox-div.checked {
+  background-color: #333;
+  border-color: #333;
+}
+
+.checkbox-indicator {
+  width: 10px;
+  height: 10px;
+  background-color: white;
+  border-radius: 2px;
+  transition: background-color 0.3s ease;
+}
+
+.checkbox-div.checked .checkbox-indicator {
+  background-color: #fff;
+}

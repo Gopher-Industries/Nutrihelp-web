@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "name": "nutrihelp-api",
   "version": "1.0.0",
   "description": "nutrihelp-api",
@@ -36,3 +37,54 @@
     "concurrently": "^8.2.2"
   }
 }
+=======
+  "name": "nutrihelp",
+  "version": "1.0.0",
+  "description": "These instructions will get you a copy of the web frontend up and running on your local machine for development and \r testing purposes.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "react-scripts start",
+    "build": "react-scripts build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@faker-js/faker": "^9.3.0",
+    "@supabase/supabase-js": "^2.43.2",
+    "antd": "^5.22.3",
+    "axios": "^1.7.9",
+    "firebase": "^10.6.0",
+    "framer-motion": "^12.5.0",
+    "lucide-react": "^0.483.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-icons": "^5.2.1",
+    "react-router-dom": "^6.23.1",
+    "react-scripts": "^5.0.1",
+    "react-tabs": "^6.0.2",
+    "recharts": "^2.12.7",
+    "semantic-ui-css": "^2.5.0",
+    "semantic-ui-react": "^2.1.4",
+    "supports-color": "^9.4.0",
+    "swiper": "^11.2.6",
+    "to-regex-range": "^5.0.1"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "tailwindcss": "3"
+  }
+}
+>>>>>>> 0cd0ad5460447614a076b5a249bd6795fd62931f

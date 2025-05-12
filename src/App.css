@@ -1,0 +1,95 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.App {
+  text-align: center;
+  width: 100vw;
+  height: auto;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+img {
+  width: 950px;
+}
+
+:root {
+  --background-color: white;
+  --text-color: black;
+}
+
+.dark-mode {
+  --background-color: rgb(85, 85, 85);
+  --text-color: white;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+  justify-content: center;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+body {
+  font-family: "Poppins", sans-serif;
+}
+
+h2,
+.name-box,
+.meta,
+.description {
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  background: linear-gradient(135deg, #f3e8ff 25%, #f9f7fc 75%);
+}
+
+@media (max-width: 768px) {
+  .recipes-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .recipe-card-div {
+    width: 90%;
+    margin-bottom: 20px;
+  }
+
+  .search-input {
+    width: 90%;
+  }
+}

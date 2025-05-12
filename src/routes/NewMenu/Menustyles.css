@@ -1,0 +1,404 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #f8e7ff;
+  margin-top: 90px;
+  padding: 0;
+  font-family: sans-serif;
+}
+
+
+.headerlogoedit {
+  padding-left: 5%;
+}
+
+.main {
+  padding: 2rem;
+}
+
+.hero {
+  text-align: center;
+}
+
+.hero h1 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.hero button {
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  font-size: 1.5rem;
+}
+
+.meal-plan {
+  border: 1px solid #ddd;
+  padding: 1rem;
+  border-radius: 5px;
+  margin-bottom: 2rem;
+}
+
+.meal-plan h2 {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.meal-group {
+  margin-bottom: 1rem;
+}
+
+.meal-group h3 {
+  margin-bottom: 0.5rem;
+}
+
+.meal-group ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.meal-group li {
+  margin-bottom: 0.5rem;
+}
+
+.mainBox {
+  background-color: #f2f2f2;
+  margin-bottom: 50px;
+}
+
+.Title {
+  font-family: "Bangers", system-ui;
+  font-weight: 800;
+  font-style: normal;
+  font-size: 22px;
+  /* margin-left: -1%; */
+  margin-top: 10px;
+}
+
+.daySelctionText {
+  margin-top: 20px;
+  text-align: center;
+}
+
+h3 {
+  margin-left: 0 !important;
+}
+
+.menu-grid-box {
+  width: 100%;
+  margin: 40px;
+}
+
+.menu-grid-wrap {
+  margin-top: 50px;
+  text-align: center;
+}
+
+.selected-recipe-box {
+  border-radius: 10px;
+  border: 1px solid #c282de;
+  padding: 20px 25px; 
+  margin-bottom: 15px;
+}
+
+.widgetBox,
+.widgetBox2 {
+  padding: 15px 25px;
+  background-color: #f2f2f2;
+  border: 1px solid #a6a4a4;
+  border-radius: 15px;
+  text-align: center;
+}
+
+.widgetBox i,
+.widgetBox2 i {
+  display: block;
+  font-size: 35px;
+  width: 35px;
+  margin-bottom: 20px;
+}
+.mainBox {
+  display: flex;
+  flex-direction: column;
+  overflow-x: auto; /* Allow horizontal scrolling */
+  white-space: nowrap; /* Prevent child elements from wrapping */
+  padding: 20px; /* Add some spacing */
+}
+
+/* .Title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+} */
+
+/*.mainBox button {
+  padding: 15px 30px; /* Increased size */
+  /*background-color: #ba49e7;
+  color: white;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  margin-left: 1500px;
+  margin-bottom: -400px;
+}
+
+.mainBox button:hover {
+  background-color: #8b06c0;
+}*/
+
+/* Adding this block for Book an Appointment button */
+.appointment-btn {
+  position: absolute; 
+  right: 20px; 
+  top: 90px; 
+  background-color: #ba49e7; 
+  color: white; 
+  border: none; 
+  border-radius: 50px; 
+  padding: 15px 30px; 
+  font-size: 16px; 
+  cursor: pointer; 
+  z-index: 100; /* Ensure it appears above other elements */
+  white-space: nowrap; /* Prevent text wrapping */
+}
+
+.appointment-btn:hover {
+  background-color: #8b06c0; 
+}
+
+@media (max-width: 768px) { /* For smaller screens */
+  .appointment-btn {
+    position: fixed; /* Keep the button visible in the viewport */
+    bottom: 20px; 
+    right: 20px; 
+  }
+}
+
+.dashboard-grid {
+  display: flex;
+    width: 100%;
+    justify-content: space-around;
+}
+
+
+.dashboard-grid-2 {
+  width: 80%;
+}
+/* menu style 2024/08*/
+
+nav a {
+  padding: 10px 20px;
+  text-decoration: none;  
+  color: #000;          
+
+}
+
+
+.breakfast-btn{
+  background: #F5EEE6;
+  padding-top: 10px;
+  text-align: center;
+  color: #000000;
+  border-radius: 30px 30px 0px 0px;
+  height: 50px;
+  margin-right: 1px;
+  width: 10em;
+  display: inline-block;
+  font-size: 16px;
+}
+
+.lunch-btn{
+  background: #F3D7CA;
+  padding-top: 10px;
+  text-align: center;
+  color: #000000;
+  border-radius: 30px 30px 0px 0px;
+  height: 50px;
+  margin-right: 1px;
+  width: 10em;
+  display: inline-block;
+  font-size: 16px;
+}
+
+.dinner-btn{
+  background: #E6A4B4;
+  padding-top: 10px;
+  text-align: center;
+  color: #000000;
+  border-radius: 30px 30px 0px 0px;
+  height: 50px;
+  margin-right: 1px;
+  width: 10em;
+  display: inline-block;
+  font-size: 16px;
+}
+
+nav > a::before {
+  border: none;
+}
+
+nav a.active::before {
+  background-color: #000000;
+  margin-bottom: 0;
+
+}
+
+nav a.active {
+  color: #000000; 
+  font-family: sans-serif;
+  font-weight: bold; 
+  color: #000000; 
+  box-shadow: inset 0px 2px 4px rgba(0, 0, 0, 0.5); 
+  font-size: 18px;
+  
+}
+
+.tab-underline {
+  position: absolute;
+  bottom: 0; 
+  left: 0;
+  width: 1500px;
+  height: 10px; 
+  background: #F8E7FF; 
+  border-radius: 0 5px 5px 0; 
+  margin: 0 -.3em;
+  z-index: 1; 
+}
+
+
+nav a {
+  padding: 10px 20px;
+  text-decoration: none;  
+  color: #000;          
+
+}
+
+
+.breakfast-btn {
+  background: #F5EEE6;
+  padding-top: 10px;
+  text-align: center;
+  color: #000000;
+  border-radius: 30px 30px 0px 0px;
+  height: 50px;
+  margin-right: 1px;
+  width: 10em;
+  display: inline-block;
+  font-size: 16px;
+}
+
+.lunch-btn{
+  background: #F3D7CA;
+  padding-top: 10px;
+  text-align: center;
+  color: #000000;
+  border-radius: 30px 30px 0px 0px;
+  height: 50px;
+  margin-right: 1px;
+  width: 10em;
+  display: inline-block;
+  font-size: 16px;
+}
+
+.dinner-btn{
+  background: #E6A4B4;
+  padding-top: 10px;
+  text-align: center;
+  color: #000000;
+  border-radius: 30px 30px 0px 0px;
+  height: 50px;
+  margin-right: 1px;
+  width: 10em;
+  display: inline-block;
+  font-size: 16px;
+}
+
+nav > a::before {
+  border: none;
+}
+
+nav a.active::before {
+  background-color: #000000;
+  margin-bottom: 0;
+
+}
+
+nav a.active {
+  color: #000000; 
+  font-family: sans-serif;
+  font-weight: bold; 
+  color: #000000; 
+  box-shadow: inset 0px 2px 4px rgba(0, 0, 0, 0.5); 
+  font-size: 18px;
+  
+}
+
+.tab-underline {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 1500px;
+  height: 10px;
+  background: #F8E7FF;
+  border-radius: 0 5px 5px 0;
+  margin: 0 -.3em;
+  z-index: 1;
+  
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+}
+
+.nav-links a {
+  font-weight: 500;
+  margin: 0 15px;
+}
+
+/*  Water Tracker Styling */
+
+.water-tracker {
+  margin-top: 2rem;
+  padding: 1rem;
+  border: 2px solid #ba49e7;
+  border-radius: 12px;
+  background-color: #fdf1ff;
+  text-align: center;
+}
+
+.water-tracker h3 {
+  margin-bottom: 1rem;
+  color: #ba49e7;
+  font-size: 1.5rem;
+}
+
+.water-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.water-button {
+  padding: 0.5rem 1rem;
+  background-color: #ba49e7;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.water-button:hover {
+  background-color: #8e24aa;
+}
+
+.water-status {
+  margin-top: 1rem;
+  font-weight: bold;
+}
