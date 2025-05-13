@@ -7,17 +7,12 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-
 import { UserContext } from "./context/user.context";
-
 import Login from "./routes/Login/Login";
 import SignUp from "./routes/SignUp/SignUp";
 import ForgotPassword from "./routes/ForgotPassword/ForgotPassword";
 import CreateRecipe from "./routes/CreateRecipe/CreateRecipe";
 import SearchRecipes from "./routes/SearchRecipes/SearchRecipes";
-import CategoryResults from "./routes/SearchRecipes/CategoryResults";  // 🆕
 import YourPreferences from "./routes/UI-Only-Pages/YourPreferences/pref-dis-health";
 import UserProfilePage from "./routes/UI-Only-Pages/UserProfilePage/userprofile";
 import Home from "./routes/Home/Home";
@@ -33,29 +28,27 @@ import Dashboard from "./routes/NewMenu/Dashboard";
 import AuthenticateRoute from "./routes/AuthenticateRoute/AuthenticateRoute";
 import MainNavbar from "./components/MainNavbar";
 import FAQ from "./routes/FAQ/faq";
-import NutritionCalculator from "./routes/UI-Only-Pages/NutritionCalculator/NutritionCalculator";
-import HealthNews from "./routes/HealthNews/HealthNews";
+import Leaderboard from "./routes/LeaderBoard/leaderBoard";
+
 
 function App() {
   const { currentUser } = useContext(UserContext);
 
   return (
+    
     <Router>
       <MainNavbar />
-      <ToastContainer />
-      <Routes>
-        <Route
-          path="/"
-          element={
-            currentUser ? <Navigate to="/home" /> : <Navigate to="/login" />
-          }
-        />
+        <Routes>
+          <Route path="/" element={currentUser ? <Navigate to="/home" /> : <Navigate to="/login" />} />
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<Home />} />
         <Route path="/home" element={<Home />} />
         <Route path="/signUp" element={<SignUp />} />
         <Route path="/forgotPassword" element={<ForgotPassword />} />
         <Route path="/faq" element={<FAQ />} />
+        <Route path="/leaderboard" element={<Leaderboard />} />
+
+
 
         {/* Private Routes */}
         <Route
@@ -71,15 +64,6 @@ function App() {
           element={
             <AuthenticateRoute>
               <SearchRecipes />
-            </AuthenticateRoute>
-          }
-        />
-        {/* New route for category-specific results */}
-        <Route
-          path="searchRecipes/:category"
-          element={
-            <AuthenticateRoute>
-              <CategoryResults />
             </AuthenticateRoute>
           }
         />
@@ -147,22 +131,6 @@ function App() {
             </AuthenticateRoute>
           }
         />
-        <Route
-          path="nutrition-calculator"
-          element={
-            <AuthenticateRoute>
-              <NutritionCalculator />
-            </AuthenticateRoute>
-          }
-        />
-        <Route
-          path="healthnews"
-          element={
-            <AuthenticateRoute>
-              <HealthNews />
-            </AuthenticateRoute>
-          }
-        />
         <Route path="MFAform" element={<MFAform />} />
         <Route
           path="dashboard"
@@ -172,6 +140,14 @@ function App() {
             </AuthenticateRoute>
           }
         />
+        {/* <Route
+          path="/leaderboard"
+          element={
+            <AuthenticateRoute>
+              <Leaderboard />
+            </AuthenticateRoute>
+          }
+        /> */}
       </Routes>
     </Router>
   );
