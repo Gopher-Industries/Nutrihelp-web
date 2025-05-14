@@ -144,11 +144,13 @@ const HabitsActivity = () => {
 
         <button
           onClick={handleSubmit}
-          disabled={isSubmitting} // Add disabled state
+          disabled={isSubmitting} // Add disabled state 
           className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded-full text-xl"
         >
-          {isSubmitting ? 'Saving...' : 'Submit'} // Update button text based on loading state
+          {/* Update button text based on loading state */}
+          {isSubmitting ? 'Saving...' : 'Submit'}  
         </button>
+        
 
         {/* skip */}
         <p
