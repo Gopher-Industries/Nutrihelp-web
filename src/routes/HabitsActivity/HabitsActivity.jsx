@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+// import axios from 'axios'; // Will be needed when implementing direct API calls
 
 const HabitsActivity = () => {
   const navigate = useNavigate();
@@ -31,6 +32,7 @@ const HabitsActivity = () => {
 
   const [selectedHabits, setSelectedHabits] = useState([]);
   const [selectedActivity, setSelectedActivity] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const toggleHabit = (habit) => {
     setSelectedHabits((prev) =>
@@ -40,13 +42,43 @@ const HabitsActivity = () => {
     );
   };
 
-  const handleSubmit = () => {
-    console.log("Selected Habits:", selectedHabits);
-    console.log("Selected Activity:", selectedActivity);
-    navigate('/login');
+  // Update the handleSubmit function to use async/await and call the API
+  const handleSubmit = async () => {
+    setIsSubmitting(true); // Start loading state
+    
+    try {
+      // Get the goal from localStorage
+      const healthGoal = localStorage.getItem('healthGoal');
+      
+      // Prepare data payload
+      const userPreferences = {
+        goal: healthGoal || null,
+        habits: selectedHabits,
+        activityLevel: selectedActivity
+      };
+      
+      // Call API to save user preferences
+      await axios.post('/api/user-preferences', userPreferences);
+      
+      // Clear localStorage after successful save
+      localStorage.removeItem('healthGoal');
+      
+      // Original console.log statements - you can keep or remove them
+      console.log("Selected Habits:", selectedHabits);
+      console.log("Selected Activity:", selectedActivity);
+      
+      navigate('/login');
+    } catch (error) {
+      console.error('Error saving preferences:', error);
+      alert('Failed to save your preferences. Please try again.');
+    } finally {
+      setIsSubmitting(false); // End loading state
+    }
   };
 
   const handleSkip = () => {
+    // Remove any stored goal when skipping
+    localStorage.removeItem('healthGoal');
     navigate('/login');
   };
 
@@ -112,9 +144,10 @@ const HabitsActivity = () => {
 
         <button
           onClick={handleSubmit}
+          disabled={isSubmitting} // Add disabled state
           className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded-full text-xl"
         >
-          Submit
+          {isSubmitting ? 'Saving...' : 'Submit'} // Update button text based on loading state
         </button>
 
         {/* skip */}

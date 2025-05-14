@@ -1,17 +1,35 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+// import axios from 'axios'; // Will be needed when implementing direct API calls
 import goalImage from '../../images/HealthGoal.png';
 import logo from '../../images/logo.png'; 
 
 const HealthGoal = () => {
   const navigate = useNavigate();
   const [selectedGoal, setSelectedGoal] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false); // Add loading state
 
-  const handleNext = () => {
-    navigate('/habits-activity');
+  // Store goal in localStorage for later use
+  const handleNext = async () => {
+    if (selectedGoal) {
+      setIsSubmitting(true);
+      try {
+        // Store in localStorage for now (will be sent to API with habits in next step)
+        localStorage.setItem('healthGoal', selectedGoal);
+        navigate('/habits-activity');
+      } catch (error) {
+        console.error('Error saving goal:', error);
+        alert('Failed to save your goal. Please try again.');
+      } finally {
+        setIsSubmitting(false);
+      }
+    } else {
+      navigate('/habits-activity'); // Continue even if no goal selected
+    }
   };
 
   const handleSkip = () => {
+    localStorage.removeItem('healthGoal'); // Clear any stored goal
     navigate('/habits-activity');
   };
 
