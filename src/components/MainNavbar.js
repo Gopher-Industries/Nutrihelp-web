@@ -83,6 +83,10 @@ const MainNavbar = () => {
                   Scan Products
                 </Link>
 
+                <Link className="link nav-link" to="/preferences">
+                  Allergies & Intolerances
+                </Link>
+                
                 <button
                   className="link nav-link logout-button"
                   onClick={logOut}
