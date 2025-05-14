@@ -5,6 +5,7 @@ import { useDarkMode } from "../routes/DarkModeToggle/DarkModeContext";
 import DarkModeToggle from "../routes/DarkModeToggle/DarkModeToggle"; // Included from master branch
 import "../styles/mainNavbar.css";
 import TextToSpeech from "./TextToSpeech/TextToSpeech";
+import VoiceNavigation from "./VoiceControl/VoiceNavigation";
 
 const MainNavbar = () => {
   const { currentUser, logOut } = useContext(UserContext);
@@ -88,6 +89,10 @@ const MainNavbar = () => {
                   Scan Products
                 </Link>
 
+                <Link className="link nav-link" to="/preferences">
+                  Allergies & Intolerances
+                </Link>
+                
                 <button
                   className="link nav-link logout-button"
                   onClick={logOut}
@@ -95,6 +100,7 @@ const MainNavbar = () => {
                   Log Out
                 </button>
                 <TextToSpeech />
+                <VoiceNavigation />
               </>
             ) : (
               <>
@@ -132,6 +138,7 @@ const MainNavbar = () => {
                   <DarkModeToggle />
                 </Link>
                 <TextToSpeech />
+                <VoiceNavigation />
                 {/* Included from master branch */}
 
               </>

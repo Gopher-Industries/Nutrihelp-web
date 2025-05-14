@@ -7,6 +7,9 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 import { UserContext } from "./context/user.context";
 
 import Login from "./routes/Login/Login";
@@ -35,6 +38,7 @@ import HabitsActivity from './routes/HabitsActivity/HabitsActivity';
 import UserDashboard from "./routes/UserDashboard/UserDashboard";
 import NutritionCalculator from "./routes/UI-Only-Pages/NutritionCalculator/NutritionCalculator";
 import HealthNews from "./routes/HealthNews/HealthNews";
+import FoodPreferences from "./routes/FoodPreferences/FoodPreferences";
 import DailyPlanEdit from "./routes/DailyPlanEdit/DailyPlanEdit";
 
 function App() {
@@ -43,6 +47,7 @@ function App() {
   return (
     <Router>
       <MainNavbar />
+      <ToastContainer />
       <Routes>
         <Route
           path="/"
@@ -155,6 +160,7 @@ function App() {
             </AuthenticateRoute>
           }
         />
+        <Route path="/preferences" element={<FoodPreferences />} />
         <Route
           path="healthnews"
           element={
