@@ -39,6 +39,7 @@ import UserDashboard from "./routes/UserDashboard/UserDashboard";
 import NutritionCalculator from "./routes/UI-Only-Pages/NutritionCalculator/NutritionCalculator";
 import HealthNews from "./routes/HealthNews/HealthNews";
 import FoodPreferences from "./routes/FoodPreferences/FoodPreferences";
+import HealthTools from "./routes/HealthTools/HealthTools";
 import DailyPlanEdit from "./routes/DailyPlanEdit/DailyPlanEdit";
 
 function App() {
@@ -177,6 +178,14 @@ function App() {
               <Dashboard />
             </AuthenticateRoute>
           }
+        />
+        <Route
+          path="HealthTools"
+          element={
+            <AuthenticateRoute>
+              <HealthTools />
+            </AuthenticateRoute>
+          } 
         />
         <Route path="/health-goal" element={<HealthGoal />} />
         <Route path="/habits-activity" element={<HabitsActivity />} />
