@@ -1,43 +1,4 @@
 {
-<<<<<<< HEAD
-  "name": "nutrihelp-api",
-  "version": "1.0.0",
-  "description": "nutrihelp-api",
-  "main": "server.js",
-  "scripts": {
-    "test": "concurrently -k \"node server.js\" \"mocha --timeout 10000 --exit\""
-  },
-  "keywords": [
-    "NutriHelp",
-    "health",
-    "elderly",
-    "senior"
-  ],
-  "author": "Gopher Industries",
-  "license": "ISC",
-  "dependencies": {
-    "@sendgrid/mail": "^8.1.3",
-    "@supabase/supabase-js": "^2.40.0",
-    "base64-arraybuffer": "^1.0.2",
-    "bcryptjs": "^2.4.3",
-    "chai": "^4.5.0",
-    "chai-http": "^4.4.0",
-    "cors": "^2.8.5",
-    "dotenv": "^16.4.5",
-    "express": "^4.19.1",
-    "jsonwebtoken": "^9.0.2",
-    "mocha": "^10.7.0",
-    "multer": "^1.4.5-lts.1",
-    "mysql2": "^3.9.2",
-    "sinon": "^18.0.0",
-    "swagger-ui-express": "^5.0.0",
-    "yamljs": "^0.3.0"
-  },
-  "devDependencies": {
-    "concurrently": "^8.2.2"
-  }
-}
-=======
   "name": "nutrihelp",
   "version": "1.0.0",
   "description": "These instructions will get you a copy of the web frontend up and running on your local machine for development and \r testing purposes.",
@@ -60,9 +21,10 @@
     "lucide-react": "^0.483.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-icons": "^5.2.1",
+    "react-icons": "^5.5.0",
     "react-router-dom": "^6.23.1",
     "react-scripts": "^5.0.1",
+    "react-toastify": "^11.0.5",
     "react-tabs": "^6.0.2",
     "recharts": "^2.12.7",
     "semantic-ui-css": "^2.5.0",
@@ -87,4 +49,3 @@
     "tailwindcss": "3"
   }
 }
->>>>>>> 0cd0ad5460447614a076b5a249bd6795fd62931f
