@@ -26,14 +26,34 @@ const UserDashboard = () => {
   // Provisional nutrient data
   const [tempNutrients, setTempNutrients] = useState([]);
 
-  // API base URL
-  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "https://api.nutrihelp.com";
+  // API base URL 
+  // const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "https://api.nutrihelp.com";
 
-  // Fetch user energy data
+  // Mock data for testing
+  const mockEnergyData = {
+    baseGoal: 8700,
+    food: 5500,
+    exercise: 600,
+    exerciseHours: 1.5
+  };
+
+  const mockNutrientsData = [
+    { label: "Protein", color: "#4F46E5", current: 65, total: 100, unit: "g" },
+    { label: "Carbs", color: "#10B981", current: 180, total: 300, unit: "g" },
+    { label: "Fat", color: "#F59E0B", current: 40, total: 70, unit: "g" },
+    { label: "Sugar", color: "#EF4444", current: 25, total: 50, unit: "g" },
+    { label: "Fibre", color: "#6366F1", current: 15, total: 30, unit: "g" },
+    { label: "Sodium", color: "#EC4899", current: 1200, total: 2300, unit: "mg" }
+  ];
+
+  // Fetch user energy data - 使用模拟数据，保留API结构在注释中
   useEffect(() => {
     const fetchEnergyData = async () => {
       try {
         setIsLoading(true);
+        
+        // API call is commented out but structure is preserved for future integration
+        /*
         const token = localStorage.getItem("authToken");
         
         const response = await fetch(`${API_BASE_URL}/api/energy-tracking`, {
@@ -49,6 +69,12 @@ const UserDashboard = () => {
         }
         
         const data = await response.json();
+        */
+        
+        // Using mock data instead
+        const data = mockEnergyData;
+        
+        // Directly set data without delay
         setBaseGoal(data.baseGoal);
         setFood(data.food);
         setExercise(data.exercise);
@@ -68,10 +94,12 @@ const UserDashboard = () => {
     fetchEnergyData();
   }, []);
 
-  // Fetch nutrients data
+  // Fetch nutrients data - 使用模拟数据，保留API结构在注释中
   useEffect(() => {
     const fetchNutrientsData = async () => {
       try {
+        // API call is commented out but structure is preserved for future integration
+        /*
         const token = localStorage.getItem("authToken");
         
         const response = await fetch(`${API_BASE_URL}/api/nutrients-tracking`, {
@@ -87,6 +115,12 @@ const UserDashboard = () => {
         }
         
         const data = await response.json();
+        */
+        
+        // Using mock data instead
+        const data = mockNutrientsData;
+        
+        // Directly set data without delay
         setNutrients(data);
         setTempNutrients(JSON.parse(JSON.stringify(data)));
       } catch (err) {
@@ -110,6 +144,9 @@ const UserDashboard = () => {
   const handleSaveEdit = async () => {
     try {
       setIsLoading(true);
+      
+      // API call is commented out but structure is preserved for future integration
+      /*
       const token = localStorage.getItem("authToken");
       
       const energyData = {
@@ -131,8 +168,9 @@ const UserDashboard = () => {
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
+      */
       
-      // Update local state
+      // Directly update state without delay
       setBaseGoal(tempBaseGoal);
       setFood(tempFood);
       setExercise(tempExercise);
@@ -161,6 +199,9 @@ const UserDashboard = () => {
   const handleSaveNutrients = async () => {
     try {
       setIsLoading(true);
+      
+      // API call is commented out but structure is preserved for future integration
+      /*
       const token = localStorage.getItem("authToken");
       
       const response = await fetch(`${API_BASE_URL}/api/nutrients-tracking`, {
@@ -175,8 +216,9 @@ const UserDashboard = () => {
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
+      */
       
-      // Update local state
+      // Directly update state without delay
       setNutrients(tempNutrients);
       
       setShowNutrientModal(false);
