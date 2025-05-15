@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import goalIcon from "../../images/goal.png";
 import foodIcon from "../../images/food.png";
 import exerciseIcon from "../../images/exercise.png";
@@ -7,10 +7,12 @@ const UserDashboard = () => {
   // State Management
   const [showEditModal, setShowEditModal] = useState(false);
   const [showNutrientModal, setShowNutrientModal] = useState(false);
-  const [baseGoal, setBaseGoal] = useState(5565);
+  const [baseGoal, setBaseGoal] = useState(0);
   const [food, setFood] = useState(0);
   const [exercise, setExercise] = useState(0);
   const [exerciseHours, setExerciseHours] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   // Temporary input state (for popup editing)
   const [tempBaseGoal, setTempBaseGoal] = useState(baseGoal);
@@ -19,18 +21,81 @@ const UserDashboard = () => {
   const [tempExerciseHours, setTempExerciseHours] = useState(exerciseHours);
 
   // Nutrient data status
-  const [nutrients, setNutrients] = useState([
-    { label: "Carbohydrates", color: "#22c55e", current: 130, total: 166, unit: "g" },
-    { label: "Fat", color: "#60a5fa", current: 20, total: 44, unit: "g" },
-    { label: "Protein", color: "#facc15", current: 50, total: 67, unit: "g" },
-    { label: "Sugar", color: "#fb923c", current: 30, total: 50, unit: "g" },
-    { label: "Fiber", color: "#06b6d4", current: 16, total: 25, unit: "g" },
-    { label: "Sodium", color: "#f9a8d4", current: 100, total: 2300, unit: "mg" },
-    { label: "Cholesterol", color: "#ef4444", current: 50, total: 300, unit: "mg" },
-  ]);
+  const [nutrients, setNutrients] = useState([]);
 
   // Provisional nutrient data
-  const [tempNutrients, setTempNutrients] = useState(nutrients);
+  const [tempNutrients, setTempNutrients] = useState([]);
+
+  // API base URL
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "https://api.nutrihelp.com";
+
+  // Fetch user energy data
+  useEffect(() => {
+    const fetchEnergyData = async () => {
+      try {
+        setIsLoading(true);
+        const token = localStorage.getItem("authToken");
+        
+        const response = await fetch(`${API_BASE_URL}/api/energy-tracking`, {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        setBaseGoal(data.baseGoal);
+        setFood(data.food);
+        setExercise(data.exercise);
+        setExerciseHours(data.exerciseHours);
+        setTempBaseGoal(data.baseGoal);
+        setTempFood(data.food);
+        setTempExercise(data.exercise);
+        setTempExerciseHours(data.exerciseHours);
+        setIsLoading(false);
+      } catch (err) {
+        setError("Failed to load energy data");
+        setIsLoading(false);
+        console.error("Error fetching energy data:", err);
+      }
+    };
+
+    fetchEnergyData();
+  }, []);
+
+  // Fetch nutrients data
+  useEffect(() => {
+    const fetchNutrientsData = async () => {
+      try {
+        const token = localStorage.getItem("authToken");
+        
+        const response = await fetch(`${API_BASE_URL}/api/nutrients-tracking`, {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        setNutrients(data);
+        setTempNutrients(JSON.parse(JSON.stringify(data)));
+      } catch (err) {
+        console.error("Error fetching nutrients data:", err);
+      }
+    };
+
+    fetchNutrientsData();
+  }, []);
 
   // Calculate the remaining energy value (according to the formula Remaining = Goal - Food + Exercise)
   const remaining = baseGoal - food + exercise;
@@ -41,13 +106,45 @@ const UserDashboard = () => {
   // Determine whether it is a negative number
   const isNegative = remaining < 0;
 
-  // Processing Save Edit
-  const handleSaveEdit = () => {
-    setBaseGoal(tempBaseGoal);
-    setFood(tempFood);
-    setExercise(tempExercise);
-    setExerciseHours(tempExerciseHours);
-    setShowEditModal(false);
+  // Processing Save Edit for energy data
+  const handleSaveEdit = async () => {
+    try {
+      setIsLoading(true);
+      const token = localStorage.getItem("authToken");
+      
+      const energyData = {
+        baseGoal: tempBaseGoal,
+        food: tempFood,
+        exercise: tempExercise,
+        exerciseHours: tempExerciseHours
+      };
+      
+      const response = await fetch(`${API_BASE_URL}/api/energy-tracking`, {
+        method: 'PUT',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(energyData)
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      
+      // Update local state
+      setBaseGoal(tempBaseGoal);
+      setFood(tempFood);
+      setExercise(tempExercise);
+      setExerciseHours(tempExerciseHours);
+      
+      setShowEditModal(false);
+      setIsLoading(false);
+    } catch (err) {
+      setError("Failed to update energy data");
+      setIsLoading(false);
+      console.error("Error updating energy data:", err);
+    }
   };
 
   // Handle closing pop-up window
@@ -60,10 +157,35 @@ const UserDashboard = () => {
     setShowEditModal(false);
   };
 
-  // Processing nutrients
-  const handleSaveNutrients = () => {
-    setNutrients(tempNutrients);
-    setShowNutrientModal(false);
+  // Processing nutrients data update
+  const handleSaveNutrients = async () => {
+    try {
+      setIsLoading(true);
+      const token = localStorage.getItem("authToken");
+      
+      const response = await fetch(`${API_BASE_URL}/api/nutrients-tracking`, {
+        method: 'PUT',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(tempNutrients)
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      
+      // Update local state
+      setNutrients(tempNutrients);
+      
+      setShowNutrientModal(false);
+      setIsLoading(false);
+    } catch (err) {
+      setError("Failed to update nutrients data");
+      setIsLoading(false);
+      console.error("Error updating nutrients data:", err);
+    }
   };
 
   // Handle closing of nutrients pop-up window
@@ -79,6 +201,14 @@ const UserDashboard = () => {
   const circumference = normalizedRadius * 2 * Math.PI;
   const absoluteProgressPercentage = Math.abs(progressPercentage);
   const strokeDashoffset = circumference - (Math.min(absoluteProgressPercentage, 100) / 100) * circumference;
+
+  if (isLoading) {
+    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+  }
+
+  if (error) {
+    return <div className="min-h-screen flex items-center justify-center text-red-500">{error}</div>;
+  }
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
@@ -143,14 +273,16 @@ const UserDashboard = () => {
               <button
                 onClick={handleCloseModal}
                 className="px-4 py-2 text-gray-700 bg-white border rounded hover:bg-purple-100"
+                disabled={isLoading}
               >
                 Cancel
               </button>
               <button
                 onClick={handleSaveEdit}
                 className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                disabled={isLoading}
               >
-                Save
+                {isLoading ? 'Saving...' : 'Save'}
               </button>
             </div>
           </div>
@@ -205,14 +337,16 @@ const UserDashboard = () => {
               <button
                 onClick={handleCloseNutrientModal}
                 className="px-4 py-2 text-gray-700 bg-white border rounded hover:bg-purple-100"
+                disabled={isLoading}
               >
                 Cancel
               </button>
               <button
                 onClick={handleSaveNutrients}
                 className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                disabled={isLoading}
               >
-                Save
+                {isLoading ? 'Saving...' : 'Save'}
               </button>
             </div>
           </div>

@@ -1,21 +1,39 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-// import axios from 'axios'; // Will be needed when implementing direct API calls
 import goalImage from '../../images/HealthGoal.png';
 import logo from '../../images/logo.png'; 
 
 const HealthGoal = () => {
   const navigate = useNavigate();
   const [selectedGoal, setSelectedGoal] = useState(null);
-  const [isSubmitting, setIsSubmitting] = useState(false); // Add loading state
+  const [isSubmitting, setIsSubmitting] = useState(false); 
 
-  // Store goal in localStorage for later use
+  // Store the target in localStorage for later use
   const handleNext = async () => {
     if (selectedGoal) {
       setIsSubmitting(true);
       try {
-        // Store in localStorage for now (will be sent to API with habits in next step)
+        // Currently only stored in localStorage (will be sent to the API with the habit in the next step)
         localStorage.setItem('healthGoal', selectedGoal);
+        
+        // If you need to use the fetch API to send data in the future, you can replace the localStorage logic above with the following code:
+        /*
+        const response = await fetch('/api/health-goal', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ goal: selectedGoal })
+        });
+        
+        if (!response.ok) {
+          throw new Error('Server responded with an error: ' + response.status);
+        }
+        
+        const data = await response.json();
+        console.log('Goal saved successfully:', data);
+        */
+        
         navigate('/habits-activity');
       } catch (error) {
         console.error('Error saving goal:', error);
@@ -24,12 +42,12 @@ const HealthGoal = () => {
         setIsSubmitting(false);
       }
     } else {
-      navigate('/habits-activity'); // Continue even if no goal selected
+      navigate('/habits-activity'); // Continue even if no target is selected
     }
   };
 
   const handleSkip = () => {
-    localStorage.removeItem('healthGoal'); // Clear any stored goal
+    localStorage.removeItem('healthGoal'); // Clear any stored targets
     navigate('/habits-activity');
   };
 
@@ -64,12 +82,13 @@ const HealthGoal = () => {
           <div className="mt-8 flex flex-col items-center">
             <button
               onClick={handleNext}
+              disabled={isSubmitting}
               className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-10 rounded-full shadow-md"
             >
-              Next
+              {isSubmitting ? 'Saving...' : 'Next'}
             </button>
 
-            {/* skip */}
+            {/* Skip */}
             <p
               onClick={handleSkip}
               className="text-gray-500 underline hover:text-purple-600 cursor-pointer mt-2"

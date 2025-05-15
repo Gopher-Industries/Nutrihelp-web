@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-// import axios from 'axios'; // Will be needed when implementing direct API calls
 
 const HabitsActivity = () => {
   const navigate = useNavigate();
@@ -42,28 +41,40 @@ const HabitsActivity = () => {
     );
   };
 
-  // Update the handleSubmit function to use async/await and call the API
   const handleSubmit = async () => {
     setIsSubmitting(true); // Start loading state
     
     try {
-      // Get the goal from localStorage
+      // Get the target from localStorage
       const healthGoal = localStorage.getItem('healthGoal');
       
-      // Prepare data payload
+      // Prepare the data
       const userPreferences = {
         goal: healthGoal || null,
         habits: selectedHabits,
         activityLevel: selectedActivity
       };
       
-      // Call API to save user preferences
-      await axios.post('/api/user-preferences', userPreferences);
+      // Use the fetch API to save user preferences
+      const response = await fetch('/api/user-preferences', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userPreferences)
+      });
       
-      // Clear localStorage after successful save
+      // Checking the response status
+      if (!response.ok) {
+        throw new Error('Server responded with an error: ' + response.status);
+      }
+      
+      // Parsing the response data
+      const data = await response.json();
+      
+      // Clear localStorage on success
       localStorage.removeItem('healthGoal');
       
-      // Original console.log statements - you can keep or remove them
       console.log("Selected Habits:", selectedHabits);
       console.log("Selected Activity:", selectedActivity);
       
@@ -77,7 +88,7 @@ const HabitsActivity = () => {
   };
 
   const handleSkip = () => {
-    // Remove any stored goal when skipping
+    // Remove stored targets when skipping
     localStorage.removeItem('healthGoal');
     navigate('/login');
   };
@@ -92,8 +103,8 @@ const HabitsActivity = () => {
         {/* Healthy Habit Choices */}
         <div className="bg-gray-100 p-6 rounded-xl mb-8">
           <h2 className="font-bold text-lg mb-1">Which health habits are most important to you?</h2>
-          <p className="text-sm text-gray-500 mb-4">Recommended for you</p>
-          <div className="flex flex-wrap gap-3">
+          <p className="text-sm text-gray-500 mb-4 text-center">Recommended for you</p>
+          <div className="flex flex-wrap gap-3 ">
             {healthHabits.map((habit, idx) => (
               <button
                 key={idx}
@@ -113,8 +124,13 @@ const HabitsActivity = () => {
         {/* Activity level selection */}
         <div className="bg-gray-100 p-6 rounded-xl mb-6">
           <h2 className="font-bold text-lg mb-1">What is your baseline activity level?</h2>
-          <p className="text-sm text-gray-500 mb-4">Not including workouts – we count that separately.</p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <p className="text-sm text-gray-500 mb-4 text-center">Not including workouts – we count that separately.</p>
+          <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: 'repeat(2, 1fr)', 
+            gridTemplateRows: 'repeat(2, auto)',
+            gap: '1rem'
+          }}>
             {activityLevels.map((level, idx) => (
               <button
                 key={idx}
@@ -124,6 +140,10 @@ const HabitsActivity = () => {
                     ? 'border-purple-600 bg-purple-100'
                     : 'border-gray-300 bg-white'
                 }`}
+                style={{ 
+                  minHeight: '100px',
+                  height: '100%'
+                }}
               >
                 <div>
                   <p className="font-bold">{level.label}</p>
@@ -138,20 +158,19 @@ const HabitsActivity = () => {
         </div>
 
         {/* Bottom button */}
-        <p className="text-xs text-gray-400 mb-2 italic">
-          P.S. You’ve already done the hardest part: getting started.
+        <p className="text-xs text-gray-400 mb-2 italic text-center">
+          P.S. You've already done the hardest part: getting started.
         </p>
 
         <button
           onClick={handleSubmit}
-          disabled={isSubmitting} // Add disabled state 
-          className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded-full text-xl"
+          disabled={isSubmitting} // Adding a disabled state
+          className="w-1/3 mx-auto block bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded-full text-xl"
         >
-          {/* Update button text based on loading state */}
+          {/* Update button text based on loading status */}
           {isSubmitting ? 'Saving...' : 'Submit'}  
         </button>
         
-
         {/* skip */}
         <p
           onClick={handleSkip}
