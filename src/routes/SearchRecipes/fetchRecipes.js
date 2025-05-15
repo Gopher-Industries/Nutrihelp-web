@@ -12,3 +12,12 @@ export async function fetchRecipes(user_id) {
   const data = await response.json();
   return data;
 }
+
+export async function fetchCuisines() {
+  const resp = await fetch("http://localhost/api/fooddata/cuisines");
+  if (!resp.ok) {
+    throw new Error("Failed to load cuisines");
+  }
+  const raw = await resp.json();
+  return raw.map(c => c.name);
+}

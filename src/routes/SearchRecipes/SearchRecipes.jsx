@@ -4,7 +4,7 @@ import "./SearchRecipes.css";
 
 import RecipeCardList from "./RecipeCardList";
 import RecipeCardExtension from "./RecipeCardExtension";
-import { fetchRecipes } from "./fetchRecipes";
+import { fetchRecipes, fetchCuisines } from "./fetchRecipes";
 
 // Category images
 import chineseImg from "../../images/chinese.jpg";
@@ -22,23 +22,36 @@ function SearchRecipes() {
   const [selectedRecipe, setSelectedRecipe] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  // State hooks for Cuisines
+  const [cuisines, setCuisines] = useState([]);
+  const [loadingCuisines, setLoading] = useState(true);
+  const [cuisineError, setError] = useState(null);
+
   // Hard-coded category list
-  const categories = [
-    { name: "Chinese",        img: chineseImg },
-    { name: "Indian",         img: indianImg },
-    { name: "Mexican",        img: mexicanImg },
-    { name: "Salads",         img: saladsImg },
-    { name: "Thai",           img: thaiImg },
-    { name: "Italian",        img: italianImg },
-    { name: "Middle Eastern", img: middleEasternImg },
-    { name: "Desserts",       img: dessertsImg },
-  ];
+  // const categories = [
+  //   { name: "Chinese",        img: chineseImg },
+  //   { name: "Indian",         img: indianImg },
+  //   { name: "Mexican",        img: mexicanImg },
+  //   { name: "Salads",         img: saladsImg },
+  //   { name: "Thai",           img: thaiImg },
+  //   { name: "Italian",        img: italianImg },
+  //   { name: "Middle Eastern", img: middleEasternImg },
+  //   { name: "Desserts",       img: dessertsImg },
+  // ];
 
   // Load recipes once
   useEffect(() => {
     fetchRecipes("defaultUser")
       .then(data => setRecipes(data.recipes || []))
       .catch(err => console.error(err));
+  }, []);
+
+  // Mount for cuisines
+  useEffect(() => {
+    fetchCuisines()
+      .then(setCuisines)
+      .catch(err => setError(err.message))
+      .finally(() => setLoading(false));
   }, []);
 
   // Filter both categories *and* fetched recipes by the same searchTerm
