@@ -1,61 +1,80 @@
+// SearchByItem.jsx
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import "./SearchByItem.css";
-const [selectedRecipe, setSelectedRecipe] = useState(null);
-const [showPopup, setShowPopup] = useState(false);
-
 
 const SearchByItem = () => {
-  const [ingredients, setIngredients] = useState("");
+  const [ingredientsList, setIngredientsList] = useState([]);
+  const [inputValue, setInputValue] = useState("");
   const [recipes, setRecipes] = useState([]);
+  const [showIngredients, setShowIngredients] = useState(false);
+  const navigate = useNavigate(); // Initialize useNavigate
 
-  const handleSearch = async () => {
-    // Placeholder fetch logic (to be connected with backend API)
-    try {
-      const response = await fetch("http://localhost/api/searchbyitems", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ ingredients: ingredients.split(",") }),
+  const addIngredient = () => {
+    if (inputValue.trim()) {
+      setIngredientsList([...ingredientsList, inputValue.trim()]);
+      setInputValue("");
+      setShowIngredients(true);
+    }
+  };
+
+  const handleFindRecipes = async () => {
+    if (ingredientsList.length > 0) {
+      // Redirect to SearchByItemRecipes page with ingredients
+      navigate("/SearchByItemRecipe", {
+        state: { ingredients: ingredientsList }
       });
-      const data = await response.json();
-      setRecipes(data.recipes || []);
-    } catch (err) {
-      console.error("Error fetching recipes:", err);
+    } else {
+      alert("Please add at least one ingredient.");
+    }
+  };
+
+  const removeIngredient = (index) => {
+    const newIngredients = ingredientsList.filter((_, i) => i !== index);
+    setIngredientsList(newIngredients);
+    if (newIngredients.length === 0) {
+      setShowIngredients(false);
     }
   };
 
   return (
-    <div className="search-by-item-container">
-      <h1>Search Recipes by Ingredients</h1>
+    <div className="kitchen-container">
+      <h1 className="kitchen-title">What's in Your Kitchen?</h1>
+      
+      <div className="input-group">
+        <input
+          type="text"
+          className="ingredient-input"
+          placeholder="e.g., tomato, onion, pasta"
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+          onKeyPress={(e) => e.key === "Enter" && addIngredient()}
+        />
+        <button className="add-btn" onClick={addIngredient}>
+          Add
+        </button>
+      </div>
 
-      <input
-        type="text"
-        className="ingredient-input"
-        placeholder="Enter ingredients, separated by commas (e.g. tomato, rice)"
-        value={ingredients}
-        onChange={(e) => setIngredients(e.target.value)}
-      />
+      {showIngredients && (
+        <div className="ingredients-container">
+          <div className="ingredients-list">
+            {ingredientsList.map((ingredient, index) => (
+              <div className="ingredient-item" key={index}>
+                <span>{ingredient}</span>
+                <button className="remove-btn" onClick={() => removeIngredient(index)}>
+                  ×
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
-      <button className="search-button" onClick={handleSearch}>
+      <button className="find-recipes-btn" onClick={handleFindRecipes}>
         Find Recipes
       </button>
-
-      <div className="recipe-results">
-        {recipes.length > 0 ? (
-          <ul>
-            {recipes.map((recipe, idx) => (
-              <li key={idx}>{recipe.recipe_name}</li>
-            ))}
-          </ul>
-        ) : (
-          <p>No recipes found. Try different ingredients.</p>
-        )}
-      </div>
     </div>
   );
 };
-
-
 
 export default SearchByItem;

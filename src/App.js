@@ -35,6 +35,9 @@ import MainNavbar from "./components/MainNavbar";
 import FAQ from "./routes/FAQ/faq";
 import NutritionCalculator from "./routes/UI-Only-Pages/NutritionCalculator/NutritionCalculator";
 import HealthNews from "./routes/HealthNews/HealthNews";
+import SearchByItem from "./routes/SearchByItem/SearchByItem";
+import SearchByIteamRecipe from "./routes/SearchByItem/SearchByIteamRecipe";
+
 
 function App() {
   const { currentUser } = useContext(UserContext);
@@ -160,6 +163,22 @@ function App() {
           element={
             <AuthenticateRoute>
               <HealthNews />
+            </AuthenticateRoute>
+          }
+        />
+        <Route
+          path="searchbyitem"
+          element={
+            <AuthenticateRoute>
+              <SearchByItem/>
+            </AuthenticateRoute>
+          }
+        />
+        <Route
+          path="searchbyitemrecipe"
+          element={
+            <AuthenticateRoute>
+              <SearchByIteamRecipe/>
             </AuthenticateRoute>
           }
         />
