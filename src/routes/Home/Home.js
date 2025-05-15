@@ -303,10 +303,16 @@ const Home = () => {
                     />
                   </div>
 
-                  <h4 className="font-bold text-2xl mt-5 text-gray-900 dark:text-gray-200">
+                  <h4
+                    id="no-bg"
+                    className="font-bold text-2xl mt-5 text-gray-900 dark:text-gray-200"
+                  >
                     {service.title}
                   </h4>
-                  <p className="mt-3 text-gray-600 dark:text-gray-400">
+                  <p
+                    id="no-bg"
+                    className="mt-3 text-gray-600 dark:text-gray-400"
+                  >
                     {service.description}
                   </p>
                 </div>
