@@ -10,7 +10,7 @@
 .main-title {
   font-size: 2.5rem;
   margin-bottom: 20px;
-  color: #333;
+  color: var(--recipe-search-header-color);
 }
 
 /* Search Bar */
@@ -42,7 +42,7 @@
   gap: 15px;
 }
 .popular-chips button {
-  background-color: #d42b91;
+  background-color: var(--search-recipe-button-background-color);
   color: #fff;
   border: none;
   border-radius: 20px;
@@ -97,7 +97,7 @@
 .search-button {
   margin-top: 30px;
   padding: 12px 48px;
-  background-color: #d42b91;
+  background-color: var(--search-recipe-button-background-color);
   color: #fff;
   font-size: 1.1rem;
   border: none;
