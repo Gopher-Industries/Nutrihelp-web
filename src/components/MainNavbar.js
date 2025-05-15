@@ -76,12 +76,28 @@ const MainNavbar = () => {
                     <Link className="link dropdown-link" to="/userProfile">
                       Profile
                     </Link>
+                      <Link className="link dropdown-link" to="/HealthCheckin">
+                      HealthCheckin
+                    </Link>
                   </div>
                 </div>
 
-                <Link className="link nav-link" to="/ScanProducts">
+                                <div className="dropdown">
+                  <Link className="link nav-link">AI</Link>
+                  <div className="dropdown-content">
+                    <Link className="link nav-link" to="/ScanProducts">
                   Scan Products
                 </Link>
+                    <Link className="link dropdown-link" to="/Nutribot">
+                      Nutribot
+                    </Link>
+                      <Link className="link dropdown-link" to="/ObesityPredict">
+                      ObesityPredict
+                    </Link>
+                  </div>
+                </div>
+
+                
 
                 <Link className="link nav-link" to="/preferences">
                   Allergies & Intolerances
