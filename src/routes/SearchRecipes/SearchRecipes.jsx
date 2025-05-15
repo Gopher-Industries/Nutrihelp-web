@@ -4,7 +4,7 @@ import "./SearchRecipes.css";
 
 import RecipeCardList from "./RecipeCardList";
 import RecipeCardExtension from "./RecipeCardExtension";
-import { fetchRecipes, fetchCuisines } from "./fetchRecipes";
+import { fetchRecipes, fetchCuisines, fetchIngredients, fetchAllergies } from "./fetchRecipes";
 
 // Category images
 import chineseImg from "../../images/chinese.jpg";
@@ -26,6 +26,16 @@ function SearchRecipes() {
   const [cuisines, setCuisines] = useState([]);
   const [loadingCuisines, setLoading] = useState(true);
   const [cuisineError, setError] = useState(null);
+
+  //State hooks for Ingredients
+  const [ingredients, setIngredients] = useState([]);
+  const [loadingIngredients, setLoadingIngredients] = useState(true);
+  const [ingredientsError, setIngredientsError] = useState(null);
+
+  //State hooks for Allergies
+  const [allergies, setAllergies] = useState([]);
+  const [loadingAllergies, setLoadingAllergies] = useState(true);
+  const [allergiesError, setAllergiesError] = useState(null);
 
   // Hard-coded category list
   // const categories = [
@@ -53,6 +63,23 @@ function SearchRecipes() {
       .catch(err => setError(err.message))
       .finally(() => setLoading(false));
   }, []);
+
+  // Mount for ingredients
+  useEffect(() => {
+    fetchIngredients()
+      .then(setIngredients)
+      .catch(err => setIngredientsError(err.message))
+      .finally(() => setLoadingIngredients(false));
+  }, []);
+
+  // Mount for allergies
+  useEffect(() => {
+    fetchAllergies()
+      .then(setAllergies)
+      .catch(err => setAllergiesError(err.message))
+      .finally(() => setLoadingAllergies(false));
+  }, []);
+
 
   // Filter both categories *and* fetched recipes by the same searchTerm
   const filteredCategories = categories.filter(c =>
