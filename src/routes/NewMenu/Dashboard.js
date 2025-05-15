@@ -5,6 +5,7 @@ import DashboardGraph from '../../components/Dashboard-Graph';
 import Card from './MenuCard';
 import './MenuCard.css';
 import imageMapping from './importImages.js';
+import WaterTracker from '../../components/WaterTracker';
 
 
 const Dashboard = () => {
@@ -73,7 +74,7 @@ const Dashboard = () => {
           <h2>MENU</h2>
         </div>
         <Link to="/appointment" className="button-link">
-          <button>Book an Appointment</button>
+          <button className="appointment-btn">Book an Appointment</button>
         </Link>
 
         <div className="daySelctionText">
@@ -113,6 +114,9 @@ const Dashboard = () => {
 
         <div className="dashboard-graph">
           {menuGraphComponent()}
+        </div>
+        <div className="dashboard-water-tracker">
+          <WaterTracker />
         </div>
       </div>
     </main>

@@ -1,16 +1,24 @@
 import React from "react";
 import "./RecipeCard.css";
 
-function RecipeCard({ recipe_name, cuisine_name, description, imageUrl }) {
+const defaultImageUrl =
+  "https://img.freepik.com/premium-vector/cooking-logo-design_636083-140.jpg";
+
+function RecipeCard({ recipe, onClick }) {
   return (
-    <div className="recipe-card-div">
+    <div className="recipe-card-div" onClick={onClick}>
       <div className="image">
-        <img src={imageUrl} alt={recipe_name} />
+        <img
+          src={recipe.recipe_image || defaultImageUrl}
+          alt={recipe.recipe_name}
+        />
       </div>
-      {/* Recipe name in a separate box with spacing */}
-      <div className="name-box">{recipe_name}</div>
-      <p className="meta">{cuisine_name}</p>
-      <p className="description">{description}</p>  {/* Description will now be bold */}
+
+      {/* Recipe name in bright pink */}
+      <div className="name-box">{recipe.recipe_name}</div>
+
+      {/* Cuisine label */}
+      <p className="meta">{recipe.cuisine_name}</p>
     </div>
   );
 }

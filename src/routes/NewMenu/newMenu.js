@@ -1,5 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import "./Menustyles.css";
+import WaterTracker from '../../components/WaterTracker';
+
+
+
 
 const newMenu = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -144,6 +148,7 @@ const newMenu = () => {
             <p>{item.name}</p>
           </div>
         ))}
+        <WaterTracker />
       </div>
     </main>
   );

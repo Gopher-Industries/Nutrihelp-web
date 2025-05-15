@@ -23,7 +23,7 @@ select {
   -ms-appearance: unset !important;
 }
 
-input[type=checkbox] {
+input[type="checkbox"] {
   appearance: checkbox !important;
   -moz-appearance: checkbox !important;
   -webkit-appearance: checkbox !important;
@@ -32,7 +32,7 @@ input[type=checkbox] {
 }
 
 body {
-  font-family: 'Lato', sans-serif;
+  font-family: "Lato", sans-serif;
 }
 
 img {
@@ -56,7 +56,7 @@ h2 {
   padding: 0;
   font-weight: bold;
   color: #222;
-  font-family: 'Lato', sans-serif;
+  font-family: "Lato", sans-serif;
   font-size: 36px;
 }
 
@@ -75,7 +75,7 @@ body {
   color: #222;
   background: #f8f8f8;
   font-weight: 400;
-  font-family: 'Lato', sans-serif;
+  font-family: "Lato", sans-serif;
 }
 
 .container {
@@ -84,9 +84,9 @@ body {
   margin: 0 auto;
   box-shadow: 0px 15px 16.83px 0.17px rgba(0, 0, 0, 0.05);
   -moz-box-shadow: 0px 15px 16.83px 0.17px rgba(0, 0, 0, 0.05);
-  -webkit-box-shadow: 0px 15px 16.83px 0.17px rgba(0, 0, 0, 0.00);
-  -o-box-shadow: 0px 15px 16.83px 0.17px rgba(0, 0, 0, 0.00);
-  -ms-box-shadow: 0px 15px 16.83px 0.17px rgba(0, 0, 0, 0.0);
+  -webkit-box-shadow: 0px 15px 16.83px 0.17px rgba(0, 0, 0, 0);
+  -o-box-shadow: 0px 15px 16.83px 0.17px rgba(0, 0, 0, 0);
+  -ms-box-shadow: 0px 15px 16.83px 0.17px rgba(0, 0, 0, 0);
   border-radius: 20px;
   -moz-border-radius: 20px;
   -webkit-border-radius: 20px;
@@ -165,7 +165,6 @@ figure {
 }
 
 .sel {
-
   display: inline-block;
   background: #ac82be;
   color: #fff;
@@ -193,7 +192,6 @@ figure {
 }
 
 .optbuttons {
-
   display: inline-block;
   background: #ac82be;
   color: #fff;
@@ -235,7 +233,7 @@ figure {
   right: 0;
   bottom: 0px;
   background: #fff;
-  transition: .4s;
+  transition: 0.4s;
   border-radius: 30px;
   border: 1px solid #ccc;
 }
@@ -251,15 +249,15 @@ figure {
   bottom: 0;
   background-color: white;
   box-shadow: 0 2px 5px #999999;
-  transition: .4s;
+  transition: 0.4s;
 }
 
-input:checked+.slider {
+input:checked + .slider {
   background-color: #a654dd;
   border: 1px solid transparent;
 }
 
-input:checked+.slider:before {
+input:checked + .slider:before {
   transform: translateX(1.8em);
 }
 
@@ -295,11 +293,9 @@ input:checked+.slider:before {
   cursor: pointer;
 }
 
-
 .form-submit:hover {
   background: rgb(140, 53, 227);
 }
-
 
 .btn:hover {
   background: rgb(140, 53, 227);
@@ -318,14 +314,12 @@ input:checked+.slider:before {
 
 .searchable-dropdown #dropdown-list li:hover {
   background-color: #d6ccf8;
-
 }
 
 #dropdown-list {
   background-color: #ebe6fb;
   height: 70px;
   overflow-y: auto;
-
 }
 
 /* width */
@@ -366,7 +360,6 @@ input:checked+.slider:before {
 }
 
 #signin {
-
   margin-top: 16px;
 }
 
@@ -406,10 +399,13 @@ select {
   width: 100%;
   display: block;
   border: none;
-  border-bottom: 1px solid #999;
-  padding: 6px 30px;
-  font-family: 'Lato', sans-serif;
+  border: 0.5px solid #999 !important;
+  padding: 15px 20px !important;
+  border-radius: 50px !important;
+  font-family: "Lato", sans-serif;
   box-sizing: border-box;
+  font-size: 14px !important;
+  font-weight: normal !important;
 }
 
 input::-webkit-input-placeholder {
@@ -448,9 +444,7 @@ input:focus:-moz-placeholder {
   color: #222;
 }
 
-
-
-input[type=checkbox]:not(old) {
+input[type="checkbox"]:not(old) {
   width: 2em;
   margin: 0;
   padding: 0;
@@ -458,13 +452,13 @@ input[type=checkbox]:not(old) {
   display: none;
 }
 
-input[type=checkbox]:not(old)+label {
+input[type="checkbox"]:not(old) + label {
   display: inline-block;
   line-height: 1.5em;
   margin-top: 6px;
 }
 
-input[type=checkbox]:not(old)+label>span {
+input[type="checkbox"]:not(old) + label > span {
   display: inline-block;
   width: 13px;
   height: 13px;
@@ -485,7 +479,7 @@ input[type=checkbox]:not(old)+label>span {
   vertical-align: bottom;
 }
 
-input[type=checkbox]:not(old):checked+label>span {
+input[type="checkbox"]:not(old):checked + label > span {
   background-image: -moz-linear-gradient(white, white);
   background-image: -ms-linear-gradient(white, white);
   background-image: -o-linear-gradient(white, white);
@@ -493,14 +487,14 @@ input[type=checkbox]:not(old):checked+label>span {
   background-image: linear-gradient(white, white);
 }
 
-input[type=checkbox]:not(old):checked+label>span:before {
-  content: '\f26b';
+input[type="checkbox"]:not(old):checked + label > span:before {
+  content: "\f26b";
   display: block;
   color: #222;
   font-size: 11px;
   line-height: 1.2;
   text-align: center;
-  font-family: 'Lato', sans-serif;
+  font-family: "Lato", sans-serif;
   font-weight: bold;
 }
 
@@ -509,7 +503,7 @@ input[type=checkbox]:not(old):checked+label>span:before {
   width: auto;
 }
 
-label {
+/* label {
   position: absolute;
   left: 0;
   top: 50%;
@@ -519,7 +513,7 @@ label {
   -o-transform: translateY(-50%);
   -ms-transform: translateY(-50%);
   color: #222;
-}
+} */
 
 .material-icons-name {
   font-size: 18px;
@@ -584,11 +578,7 @@ label {
 }
 
 .material-symbols-outlined {
-  font-variation-settings:
-    'FILL' 0,
-    'wght' 400,
-    'GRAD' 0,
-    'opsz' 24
+  font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
 }
 
 .zmdi-twitter {
@@ -624,7 +614,6 @@ label {
 }
 
 @media screen and (max-width: 768px) {
-
   .signup-content,
   .signin-content {
     flex-direction: column;
@@ -731,7 +720,6 @@ label {
 }
 
 .selpre {
-
   display: inline-block;
   background: #dbd2ec;
   color: #0a0a0a;
@@ -750,14 +738,14 @@ label {
 h3 {
   font-size: 17px;
   font-weight: bold;
-  font-family: 'Lato', sans-serif;
+  font-family: "Lato", sans-serif;
   margin: 10px 0;
   margin-left: 15px;
 }
 
 h4 {
   font-size: 18px;
-  font-family: 'Lato', sans-serif;
+  font-family: "Lato", sans-serif;
   font-weight: initial;
 }
 
@@ -778,7 +766,7 @@ h4 {
   cursor: pointer;
   margin: 5px 10px 0;
   font-size: 18px;
-  font-family: 'Lato', sans-serif;
+  font-family: "Lato", sans-serif;
 }
 
 .btn-pre:hover {
@@ -801,7 +789,7 @@ h4 {
   cursor: pointer;
   margin: 5px 10px 0;
   font-size: 18px;
-  font-family: 'Lato', sans-serif;
+  font-family: "Lato", sans-serif;
 }
 
 .btn-redo:hover {
@@ -829,7 +817,6 @@ h4 {
   height: auto;
 }
 
-
 .left-side {
   flex: 1;
   background-color: rgb(119, 104, 159);
@@ -837,7 +824,6 @@ h4 {
   border-radius: 20px 0 0 20px;
   text-align: center;
   color: white;
-
 }
 
 .right-side {
@@ -853,7 +839,7 @@ h1 {
   margin-top: 40%;
 }
 
-h2{
+h2 {
   font-family: "Montserrat", "sans-serif";
   font-size: 40px;
   text-align: center;
@@ -863,10 +849,11 @@ h3 {
   font-family: "Montserrat", "sans-serif";
   font-size: medium;
 }
-.text{
+.text {
   margin-left: 10%;
 }
-.signIN, .signUP {
+.signIN,
+.signUP {
   padding: 10px 20px;
   font-size: 16px;
   background-color: rgb(119, 104, 159);
@@ -879,16 +866,19 @@ h3 {
   font-family: "Montserrat", "sans-serif";
 }
 
-.signUP{
+.signUP {
   margin-left: 35%;
   margin-top: -2px;
 }
 
-.signIN:hover, .signUP:hover {
+.signIN:hover,
+.signUP:hover {
   background-color: #2980b9;
 }
 
-.fb, .ggle, .li {
+.fb,
+.ggle,
+.li {
   border: 0.5px solid black;
   border-radius: 20px;
   width: 8%;
