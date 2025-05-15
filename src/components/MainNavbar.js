@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { UserContext } from "../context/user.context";
 import { useDarkMode } from "../routes/DarkModeToggle/DarkModeContext";
@@ -34,7 +34,7 @@ const MainNavbar = () => {
       }`}
     >
       <nav>
-        <div className="flex justify-between items-center pr-8 tts-ignore">
+        <div className="flex justify-between items-center m-auto gap-x-6 pr-8 tts-ignore w-full">
           <div className="">
             <img src="/images/logo.png" alt="Website Logo" className="logo" />
           </div>
@@ -86,7 +86,7 @@ const MainNavbar = () => {
                 <Link className="link nav-link" to="/preferences">
                   Allergies & Intolerances
                 </Link>
-                
+
                 <button
                   className="link nav-link logout-button"
                   onClick={logOut}
@@ -134,7 +134,6 @@ const MainNavbar = () => {
                 <TextToSpeech />
                 <VoiceNavigation />
                 {/* Included from master branch */}
-
               </>
             )}
           </div>
