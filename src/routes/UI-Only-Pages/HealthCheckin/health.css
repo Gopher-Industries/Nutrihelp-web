@@ -1,0 +1,186 @@
+
+body {
+  font-family: "Segoe UI", sans-serif;
+  background: linear-gradient(to bottom right, #d0eaff, #f7f0ff);
+  padding: 20px;
+  margin: 0;
+}
+
+.container {
+  background: #fff;
+  max-width: 900px;
+  margin: auto;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+h1, h2 {
+  color: #2c3e50;
+  margin-bottom: 20px;
+}
+
+
+form label {
+  display: block;
+  margin-top: 15px;
+  font-weight: bold;
+}
+
+input, select, textarea, button {
+  margin-top: 5px;
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+textarea {
+  resize: vertical;
+}
+
+button {
+  background-color: #4e8cff;
+  color: white;
+  font-size: 16px;
+  margin-top: 20px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  border: none;
+}
+
+button:hover {
+  background-color: #3a6edc;
+}
+
+
+.form-step {
+  margin-bottom: 20px;
+}
+
+.hidden {
+  display: none;
+}
+
+
+.achievement-card {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #e0f8e9;
+  border: 2px solid #27ae60;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #2e7d32;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+
+#record-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+#record-table thead {
+  background-color: #4e8cff;
+  color: white;
+}
+
+#record-table th, #record-table td {
+  padding: 10px;
+  border: 1px solid #ccc;
+  text-align: center;
+}
+
+#record-table tbody tr:nth-child(even) {
+  background-color: #f7f9fc;
+}
+
+#record-table tbody tr:hover {
+  background-color: #e6f0ff;
+}
+
+
+@media (max-width: 600px) {
+  table, thead, tbody, th, td, tr {
+    display: block;
+  }
+
+  #record-table thead {
+    display: none;
+  }
+
+  #record-table tbody tr {
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 10px;
+  }
+
+  #record-table td {
+    text-align: left;
+    padding-left: 30%;
+    position: relative;
+  }
+
+  #record-table td::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 10px;
+    font-weight: bold;
+  }
+}
+
+
+.share-buttons {
+  margin-top: 30px;
+  text-align: center;
+}
+
+.share-buttons p {
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.share-icon {
+  display: inline-block;
+  margin-right: 15px;
+}
+
+.share-icon img {
+  width: 40px;
+  height: 40px;
+  transition: transform 0.2s ease;
+}
+
+.share-icon img:hover {
+  transform: scale(1.1);
+}
+
+
+.link-button {
+  display: inline-block;
+  background: linear-gradient(to right, #4e8cff, #7c68ff);
+  color: white;
+  padding: 10px 18px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 600;
+  transition: background 0.3s ease, transform 0.2s ease;
+  margin-top: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.link-button:hover {
+  background: linear-gradient(to right, #3a6edc, #6a54ff);
+  transform: translateY(-2px);
+}
