@@ -41,6 +41,8 @@ import ObesityPredict from "./routes/UI-Only-Pages/ObesityPredict/ObesityPredict
 import ObesityResult from "./routes/UI-Only-Pages/ObesityPredict/ObesityResult"
 import HealthCheckin from "./routes/UI-Only-Pages/HealthCheckin/HealthCheckin"
 import HealthResults from "./routes/UI-Only-Pages/HealthCheckin/HealthResults"
+import HealthTools from "./routes/HealthTools/HealthTools";
+
 
 function App() {
   const { currentUser } = useContext(UserContext);
@@ -180,44 +182,55 @@ function App() {
           }
         />
         <Route
-          path="Nutribot"
-          element={
-            <AuthenticateRoute>
-              <Nutribot />
-            </AuthenticateRoute>
-          }
-        />
-        <Route
-          path="HealthCheckin"
-          element={
-            <AuthenticateRoute>
-              <HealthCheckin />
-            </AuthenticateRoute>
-          }
-        />
-        <Route
-          path="/results"
-          element={
-            <AuthenticateRoute>
-              <HealthResults />
-            </AuthenticateRoute>
-          }
-        />
-        <Route
-          path="ObesityPredict"
-          element={
-            <AuthenticateRoute>
-              <ObesityPredict />
-            </AuthenticateRoute>
-          }
-        />
-        <Route
-          path="/predict/result"
-          element={
-            <AuthenticateRoute>
-              <ObesityResult />
-            </AuthenticateRoute>
-          }
+<Route
+  path="Nutribot"
+  element={
+    <AuthenticateRoute>
+      <Nutribot />
+    </AuthenticateRoute>
+  }
+/>
+<Route
+  path="HealthCheckin"
+  element={
+    <AuthenticateRoute>
+      <HealthCheckin />
+    </AuthenticateRoute>
+  }
+/>
+<Route
+  path="/results"
+  element={
+    <AuthenticateRoute>
+      <HealthResults />
+    </AuthenticateRoute>
+  }
+/>
+<Route
+  path="ObesityPredict"
+  element={
+    <AuthenticateRoute>
+      <ObesityPredict />
+    </AuthenticateRoute>
+  }
+/>
+<Route
+  path="/predict/result"
+  element={
+    <AuthenticateRoute>
+      <ObesityResult />
+    </AuthenticateRoute>
+  }
+/>
+<Route
+  path="HealthTools"
+  element={
+    <AuthenticateRoute>
+      <HealthTools />
+    </AuthenticateRoute>
+  }
+/>
+
         />
       </Routes>
     </Router>

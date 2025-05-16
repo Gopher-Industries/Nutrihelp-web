@@ -102,6 +102,10 @@ const MainNavbar = () => {
                 <Link className="link nav-link" to="/preferences">
                   Allergies & Intolerances
                 </Link>
+
+                <Link className="link nav-link" to="/healthtools">
+                  Health Tools
+                </Link>
                 
                 <button
                   className="link nav-link logout-button"
@@ -111,6 +115,9 @@ const MainNavbar = () => {
                 </button>
                 <TextToSpeech />
                 <VoiceNavigation />
+                <Link>
+                  <DarkModeToggle />
+                </Link>
               </>
             ) : (
               <>
