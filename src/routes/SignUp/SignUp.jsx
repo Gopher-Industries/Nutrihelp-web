@@ -74,7 +74,7 @@ const SignUp = (props) => {
 
       // Redirect to login if user object exists
       if (user) {
-        window.location.href = "/login";
+        window.location.href = "/health-goal";
       }
     } catch (error) {
       // Log error if user creation or MFA setup fails
