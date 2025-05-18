@@ -1,13 +1,13 @@
 body {
     font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
+    background-color: var(--background-color);
     margin: 0;
   }
   
 
   header {
-    background-color: #caa3e1;
-    color: #ffffff;
+    background-color: var(--button-background-color);
+    color: var(--text-color);
     padding: 10px;
     text-align: center;
   }
@@ -91,7 +91,7 @@ body {
   padding: 10px;
   margin-top: 20px;
   border: none;
-  background-color: #caa3e1;
+  background-color: var(--button-background-color);
   color: #3E3E3E;
   font-size: 16px;
   border-radius: 50px;
@@ -113,7 +113,7 @@ h3{
 }
 .heading{
   cursor: pointer;
-  background-color: #caa3e1;
+  background-color: var(--button-background-color);
   width:10%;
   text-align: center;
   border-radius: 20px;

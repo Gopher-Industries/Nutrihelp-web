@@ -107,14 +107,14 @@
 .upload-section {
   flex: 2;
   padding: 10px;
-  border: 2px dashed #690f87;
+  border: 2px dashed var(--border-color);
   border-radius: 5px;
   text-align: center;
   background-color: #f7ebfb;
 }
 
 .upload-section p {
-  color: #690f87;
+  color: var(--placeholder-color);
   font-size: 1rem;
   font-weight: bold;
 }
@@ -124,7 +124,7 @@
 }
 
 .upload-button {
-  background-color: #690f87;
+  background-color: var(--button-background-color);
   color: #fff;
   padding: 10px 20px;
   border: none;
@@ -162,7 +162,7 @@
   position: fixed;
   bottom: 20px;
   right: 20px;
-  background-color: #690f87;
+  background-color: var(--button-background-color);
   color: #fff;
   padding: 10px 20px;
   border: none;
@@ -176,3 +176,4 @@
 .view-history-button:hover {
   background-color: #4a0b5e;
 }
+
