@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { UserContext } from "../context/user.context";
 import "../styles/mainNavbar.css";
 import DarkModeToggle from "../routes/DarkModeToggle/DarkModeToggle";
-import profileImage from '../images/profile.png';
+// import profileImage from '../images/profile.png';
 
 const MainNavbar = () => {
   const { currentUser, logOut } = useContext(UserContext);
@@ -34,7 +34,7 @@ const MainNavbar = () => {
             {currentUser ? (
               <>
                 <Link to="/userProfile" className="link profile-link" onClick={() => setIsMenuOpen(false)}>
-                <img src={profileImage} alt="profile" className="profile-image" />
+                {/* <img src={profileImage} alt="profile" className="profile-image" /> */}
                 <span className="profile-text">Profile</span>
                 </Link>
                 

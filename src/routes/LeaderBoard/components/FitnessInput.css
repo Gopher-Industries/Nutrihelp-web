@@ -54,7 +54,7 @@
   }
   
   /* Buttons */
-  button {
+  .fitness-form-container button {
     background-color:#292929; /* Complementary teal for buttons */
     color: white;
     padding: 10px 16px;
@@ -66,7 +66,7 @@
     transition: background-color 0.3s ease;
   }
   
-  button:hover {
+  .fitness-form-container button:hover {
     background-color: #BA49E7; /* Darker teal for hover */
   }
   
