@@ -29,6 +29,10 @@ import AuthenticateRoute from "./routes/AuthenticateRoute/AuthenticateRoute";
 import MainNavbar from "./components/MainNavbar";
 import FAQ from "./routes/FAQ/faq";
 import Leaderboard from "./routes/LeaderBoard/leaderBoard";
+import NutritionCalculator from "./routes/UI-Only-Pages/NutritionCalculator/NutritionCalculator";
+import HealthNews from "./routes/HealthNews/HealthNews";
+import FoodPreferences from "./routes/FoodPreferences/FoodPreferences";
+import HealthTools from "./routes/HealthTools/HealthTools";
 
 
 function App() {
@@ -133,7 +137,16 @@ function App() {
         />
         <Route path="MFAform" element={<MFAform />} />
         <Route
-          path="dashboard"
+          path="nutrition-calculator"
+          element={
+            <AuthenticateRoute>
+              <NutritionCalculator />
+            </AuthenticateRoute>
+          }
+        />
+        <Route path="/preferences" element={<FoodPreferences />} />
+        <Route
+          path="healthnews"
           element={
             <AuthenticateRoute>
               <Dashboard />
@@ -148,6 +161,15 @@ function App() {
             </AuthenticateRoute>
           }
         /> */}
+        />
+        <Route
+          path="HealthTools"
+          element={
+            <AuthenticateRoute>
+              <HealthTools />
+            </AuthenticateRoute>
+          } 
+        />
       </Routes>
     </Router>
   );

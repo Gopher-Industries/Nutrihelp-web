@@ -101,7 +101,7 @@
 
 /* Links inside menu */
 .nav-link {
-  color: white;
+  color: var(--navtext-color); /* Set the text color */
   text-decoration: none;
   font-size: 18px;
   padding: 12px;

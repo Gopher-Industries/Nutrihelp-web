@@ -80,9 +80,25 @@ const MainNavbar = () => {
 
                 <Link className="link nav-link" to="/ScanProducts" onClick={() => setIsMenuOpen(false)}>Scan Products</Link>
 
-                
+                <Link className="link nav-link" to="/preferences">
+                  Allergies & Intolerances
+                </Link>
 
-                <button className="link nav-link logout-button" onClick={() => { logOut(); setIsMenuOpen(false); }}>Log Out</button>
+                <Link className="link nav-link" to="/healthtools">
+                  Health Tools
+                </Link>
+                
+                <button
+                  className="link nav-link logout-button"
+                  onClick={logOut}
+                >
+                  Log Out
+                </button>
+                <TextToSpeech />
+                <VoiceNavigation />
+                <Link>
+                  <DarkModeToggle />
+                </Link>
               </>
             ) : (
               <>
