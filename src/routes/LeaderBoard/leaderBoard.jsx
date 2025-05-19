@@ -13,11 +13,7 @@ const Leaderboard = () => {
         {!hasProfile ? (
           <FitnessInput onProfileSaved={() => setHasProfile(true)} />
         ) : (
-          <FitnessJourney 
-          currentWeight={65} // Example weight
-          targetWeight={55}  // Example target weight
-          goalType="Lose weight" // Example goal type
-        />
+          <FitnessJourney/>
         )}
         {/* <FitnessJourney 
           currentWeight={65} // Example weight

@@ -58,6 +58,7 @@ const MainNavbar = () => {
                 <Link className="link nav-link" to='/home' onClick={() => setIsMenuOpen(false)}>Home</Link>
                 <Link className="link nav-link" to="/dashboard" onClick={() => setIsMenuOpen(false)}>Menu</Link>
                 <Link className="link nav-link" to="/Meal" onClick={() => setIsMenuOpen(false)}>Meal Planning</Link>
+                <Link className="link nav-link" to="/leaderboard" onClick={() => setIsMenuOpen(false)}>LeaderBoard</Link>
 
                 <div className="dropdown">
                   <Link className="link nav-link">Recipes</Link>
@@ -80,25 +81,9 @@ const MainNavbar = () => {
 
                 <Link className="link nav-link" to="/ScanProducts" onClick={() => setIsMenuOpen(false)}>Scan Products</Link>
 
-                <Link className="link nav-link" to="/preferences">
-                  Allergies & Intolerances
-                </Link>
-
-                <Link className="link nav-link" to="/healthtools">
-                  Health Tools
-                </Link>
                 
-                <button
-                  className="link nav-link logout-button"
-                  onClick={logOut}
-                >
-                  Log Out
-                </button>
-                <TextToSpeech />
-                <VoiceNavigation />
-                <Link>
-                  <DarkModeToggle />
-                </Link>
+
+                <button className="link nav-link logout-button" onClick={() => { logOut(); setIsMenuOpen(false); }}>Log Out</button>
               </>
             ) : (
               <>

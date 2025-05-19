@@ -50,7 +50,7 @@ function App() {
         <Route path="/signUp" element={<SignUp />} />
         <Route path="/forgotPassword" element={<ForgotPassword />} />
         <Route path="/faq" element={<FAQ />} />
-        <Route path="/leaderboard" element={<Leaderboard />} />
+        <Route path="/leaderboard" element={<Leaderboard />} />  
 
 
 
@@ -152,15 +152,6 @@ function App() {
               <Dashboard />
             </AuthenticateRoute>
           }
-        />
-        {/* <Route
-          path="/leaderboard"
-          element={
-            <AuthenticateRoute>
-              <Leaderboard />
-            </AuthenticateRoute>
-          }
-        /> */}
         />
         <Route
           path="HealthTools"
