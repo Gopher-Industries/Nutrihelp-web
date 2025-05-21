@@ -33,10 +33,14 @@ import Dashboard from "./routes/NewMenu/Dashboard";
 import AuthenticateRoute from "./routes/AuthenticateRoute/AuthenticateRoute";
 import MainNavbar from "./components/MainNavbar";
 import FAQ from "./routes/FAQ/faq";
+import HealthGoal from './routes/HealthGoal/HealthGoal';
+import HabitsActivity from './routes/HabitsActivity/HabitsActivity';
+import UserDashboard from "./routes/UserDashboard/UserDashboard";
 import NutritionCalculator from "./routes/UI-Only-Pages/NutritionCalculator/NutritionCalculator";
 import HealthNews from "./routes/HealthNews/HealthNews";
 import FoodPreferences from "./routes/FoodPreferences/FoodPreferences";
 import HealthTools from "./routes/HealthTools/HealthTools";
+import DailyPlanEdit from "./routes/DailyPlanEdit/DailyPlanEdit";
 
 function App() {
   const { currentUser } = useContext(UserContext);
@@ -183,6 +187,25 @@ function App() {
             </AuthenticateRoute>
           } 
         />
+        <Route path="/health-goal" element={<HealthGoal />} />
+        <Route path="/habits-activity" element={<HabitsActivity />} />
+        <Route
+          path="/user-dashboard"
+          element={
+            <AuthenticateRoute>
+              <UserDashboard />
+            </AuthenticateRoute>
+          }
+        />
+        <Route
+          path="/daily-plan-edit"
+          element={
+            <AuthenticateRoute>
+              <DailyPlanEdit />
+            </AuthenticateRoute>
+          }
+        />
+      
       </Routes>
     </Router>
   );
