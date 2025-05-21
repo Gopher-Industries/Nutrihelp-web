@@ -320,7 +320,12 @@ const DailyPlanEdit = () => {
                             type="date"
                             value={selectedDate.toISOString().split('T')[0]}
                             onChange={(e) => {
-                                setSelectedDate(new Date(e.target.value));
+                                const value = e.target.value;
+                                if (value){
+                                    setSelectedDate(new Date(e.target.value));
+                                }else{
+                                    setSelectedDate(new Date());
+                                }
                                 closeDatePicker(e.target);
                             }}
                             ref={(input) => (window.hiddenDateInput = input)}
