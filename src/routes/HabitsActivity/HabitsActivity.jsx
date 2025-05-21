@@ -135,7 +135,7 @@ const HabitsActivity = () => {
               <button
                 key={idx}
                 onClick={() => setSelectedActivity(level.label)}
-                className={`text-left border rounded-xl p-4 flex justify-between items-center ${
+                className={`text-left border rounded-xl p-4 flex justify-between items-center text-black ${
                   selectedActivity === level.label
                     ? 'border-purple-600 bg-purple-100'
                     : 'border-gray-300 bg-white'
