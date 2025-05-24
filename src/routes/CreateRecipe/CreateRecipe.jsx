@@ -1,3 +1,4 @@
+import { motion } from "framer-motion";
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import FramerClient from "../../components/framer-client.jsx";
@@ -25,6 +26,7 @@ function CreateRecipe() {
   const [ingredient, setIngredient] = useState("");
   const [ingredientQuantity, setIngredientQuantity] = useState("");
   const [instructions, setInstructions] = useState("");
+  const [instruction, setInstruction] = useState([]);
   const [tableData, setRecipeTable] = useState([]);
   //const [isEditing, setIsEditing] = useState("");
 
@@ -117,11 +119,13 @@ function CreateRecipe() {
   //Handle changes to the Instructions field
   const handleInstructionsChange = (value) => {
     setInstructions(value);
-    console.log("Instructions: " + value);
+    //console.log("Instructions: " + value);
   };
 
   //==================== Send data to the Supabase ====================
-  const sendDataToSupabase = async () => {
+  const sendDataToSupabase = async (event) => {
+    event.preventDefault();
+
     try {
       const file = fileInputRef.current.files[0];
 
@@ -166,7 +170,7 @@ function CreateRecipe() {
             total_servings: totalServings,
             ingredient_id: ingredientId,
             ingredient_quantity: ingredientQuantity,
-            instructions: instructions,
+            instructions: instructions || "empty",
             image: base64Image,
           };
 
@@ -216,19 +220,15 @@ function CreateRecipe() {
     } catch (error) {
       console.error("Error writing document:", error);
     }
-
+    setInstructions("");
     navigate("/recipe");
   };
 
   // Function to validate all fields are filled
   const isFormValid = () => {
     return (
-      recipeName &&
-      cuisine &&
-      totalServings &&
-      preparationTime &&
-      tableData &&
-      instructions
+      recipeName && cuisine && totalServings && preparationTime && tableData
+      //instructions
       // isImageAdded
     );
   };
@@ -320,7 +320,8 @@ function CreateRecipe() {
         id="no-bg"
         className="w-full flex justify-center items-center bg-purple-100"
       >
-        <div
+        <form
+          onSubmit={sendDataToSupabase}
           id="no-bg"
           className="w-full min-h-screen flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-6 md:gap-8 lg:gap-10 xl:gap-12 p-4 sm:p-6 md:p-8 lg:p-10 xl:p-12"
         >
@@ -598,6 +599,7 @@ function CreateRecipe() {
                     className="flex items-center justify-end sm:justify-end sm:w-1/2"
                   >
                     <button
+                      type="button"
                       id="no-bg"
                       className="bg-[#BA49E7] text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-semibold text-sm sm:text-base"
                       onClick={() => handelIngredientsInTable()}
@@ -642,7 +644,15 @@ function CreateRecipe() {
                     </thead>
                     <tbody>
                       {ingredients.map((item, index) => (
-                        <tr id="no-bg" className="bg-[#F4F4F4]" key={index}>
+                        <motion.tr
+                          id="no-bg"
+                          className="bg-[#F4F4F4]"
+                          key={index}
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: 10 }}
+                          transition={{ duration: 0.3 }}
+                        >
                           <td
                             id="no-bg"
                             className="border border-gray-300 px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base"
@@ -701,7 +711,7 @@ function CreateRecipe() {
                                 </div>
                               )}
                           </td>
-                        </tr>
+                        </motion.tr>
                       ))}
                     </tbody>
                   </table>
@@ -726,10 +736,11 @@ function CreateRecipe() {
                 >
                   <div id="no-bg" className="w-full sm:w-1/4">
                     <button
+                      type="button"
                       id="no-bg"
                       className="w-full bg-[#6F42C1] text-white py-2 sm:py-3 px-4 rounded-l-lg font-semibold text-sm sm:text-base"
                     >
-                      Step 1:
+                      Step {instruction.length + 1}:
                     </button>
                   </div>
                   <input
@@ -744,75 +755,86 @@ function CreateRecipe() {
                 <div id="no-bg" className="flex justify-end">
                   <button
                     id="no-bg"
+                    type="button"
                     className="bg-[#BA49E7] text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-semibold text-sm sm:text-base"
                     onClick={() => {
-                      console.log(instructions);
-                      // setInstructions((prev) => [...prev, step]);
-                      //setStep("");
+                      //console.log(instruction);
+                      setInstruction((prev) => [...prev, instructions]);
+                      setInstructions("");
                     }}
                   >
                     Add Step +
                   </button>
                 </div>
-                {/*               {instructions.length > 0 && (
-                <div id="no-bg" className="overflow-x-auto mt-4">
-                  <table
-                    id="no-bg"
-                    className="min-w-full border border-gray-300"
-                  >
-                    <thead id="no-bg" className="bg-[#6F42C1] text-white">
-                      <tr>
-                        <th
-                          id="no-bg"
-                          className="border border-gray-300 px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base"
-                        >
-                          Step
-                        </th>
-                        <th
-                          id="no-bg"
-                          className="border border-gray-300 px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base"
-                        >
-                          Actions
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {instructions.map((item, index) => (
-                        <tr id="no-bg" className="bg-[#F4F4F4]" key={index}>
-                          <td
+                {instruction.length > 0 && (
+                  <div id="no-bg" className="overflow-x-auto mt-4">
+                    <table
+                      id="no-bg"
+                      className="min-w-full border border-gray-300"
+                    >
+                      <thead id="no-bg" className="bg-[#6F42C1] text-white">
+                        <tr>
+                          <th
                             id="no-bg"
                             className="border border-gray-300 px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base"
                           >
-                            {item}
-                          </td>
-                          <td
+                            Step
+                          </th>
+                          <th
                             id="no-bg"
                             className="border border-gray-300 px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base"
                           >
-                            <button
-                              id="no-bg"
-                              className="text-red-500"
-                              onClick={() => {
-                                setInstructions((prev) =>
-                                  prev.filter((_, i) => i !== index)
-                                );
-                              }}
-                            >
-                              Delete
-                            </button>
-                          </td>
+                            Actions
+                          </th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )} */}
+                      </thead>
+                      <tbody>
+                        {instruction.map((item, index) => (
+                          <motion.tr
+                            id="no-bg"
+                            className="bg-[#F4F4F4]"
+                            initial={{ opacity: 0, y: -10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: 10 }}
+                            transition={{ duration: 0.3 }}
+                          >
+                            <td
+                              id="no-bg"
+                              className="border border-gray-300 px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base"
+                            >
+                              {item}
+                            </td>
+                            <td
+                              id="no-bg"
+                              className="border border-gray-300 px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base"
+                            >
+                              <button
+                                id="no-bg"
+                                className="text-red-500 !bg-transparent"
+                                type="button"
+                                onClick={() => {
+                                  setInstruction((prev) =>
+                                    prev.filter((_, i) => i !== index)
+                                  );
+                                }}
+                              >
+                                Delete
+                              </button>
+                            </td>
+                          </motion.tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
               </div>
 
               {/* Submit Button */}
               <div id="no-bg" className="flex justify-center">
                 <button
+                  type="submit"
                   id="no-bg"
+                  // disabled={!instructions.trim()}
                   className="bg-[#4CAF50] text-white px-8 sm:px-12 py-3 sm:py-4 rounded-full font-semibold text-lg sm:text-xl md:text-2xl w-full sm:w-auto"
                   onClick={sendDataToSupabase}
                 >
@@ -821,7 +843,7 @@ function CreateRecipe() {
               </div>
             </div>
           </div>
-        </div>
+        </form>
       </div>
     </FramerClient>
   );

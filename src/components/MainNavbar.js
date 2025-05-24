@@ -1,8 +1,8 @@
-import { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { UserContext } from "../context/user.context";
 import { useDarkMode } from "../routes/DarkModeToggle/DarkModeContext";
-import DarkModeToggle from "../routes/DarkModeToggle/DarkModeToggle";
+import DarkModeToggle from "../routes/DarkModeToggle/DarkModeToggle"; // Included from master branch
 import "../styles/mainNavbar.css";
 import TextToSpeech from "./TextToSpeech/TextToSpeech";
 import VoiceNavigation from "./VoiceControl/VoiceNavigation";
@@ -14,11 +14,17 @@ const MainNavbar = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
+      if (window.scrollY > 50) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
     };
 
     window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
   }, []);
 
   return (
@@ -28,11 +34,12 @@ const MainNavbar = () => {
       }`}
     >
       <nav>
-        <div className="flex justify-between items-center m-auto gap-x-6 pr-8 tts-ignore w-full">
-          <div>
+        <div className="flex justify-between items-center pr-8 tts-ignore">
+          <div className="">
             <img src="/images/logo.png" alt="Website Logo" className="logo" />
           </div>
-          <div className="nav-links flex gap-4 items-center">
+
+          <div className="nav-links">
             {currentUser ? (
               <>
                 <Link className="link nav-link" to="/dashboard">
@@ -46,7 +53,7 @@ const MainNavbar = () => {
                 </Link>
 
                 <div className="dropdown">
-                  <button className="link nav-link">Recipes</button>
+                  <Link className="link nav-link">Recipes</Link>
                   <div className="dropdown-content">
                     <Link className="link dropdown-link" to="/CreateRecipe">
                       Create Recipe
@@ -54,11 +61,14 @@ const MainNavbar = () => {
                     <Link className="link dropdown-link" to="/SearchRecipes">
                       Search Recipes
                     </Link>
+                    <Link className="link dropdown-link" to="/recipe">
+                      My Recipes
+                    </Link>
                   </div>
                 </div>
 
                 <div className="dropdown">
-                  <button className="link nav-link">User</button>
+                  <Link className="link nav-link">User</Link>
                   <div className="dropdown-content">
                     <Link
                       className="link dropdown-link"
@@ -69,30 +79,17 @@ const MainNavbar = () => {
                     <Link className="link dropdown-link" to="/userProfile">
                       Profile
                     </Link>
-                    <Link className="link dropdown-link" to="/HealthCheckin">
-                      Health Check-in
-                    </Link>
                   </div>
                 </div>
 
-                <div className="dropdown">
-                  <button className="link nav-link">AI</button>
-                  <div className="dropdown-content">
-                    <Link className="link dropdown-link" to="/ScanProducts">
-                      Scan Products
-                    </Link>
-                    <Link className="link dropdown-link" to="/Nutribot">
-                      Nutribot
-                    </Link>
-                    <Link className="link dropdown-link" to="/ObesityPredict">
-                      ObesityPredict
-                    </Link>
-                  </div>
-                </div>
+                <Link className="link nav-link" to="/ScanProducts">
+                  Scan Products
+                </Link>
 
                 <Link className="link nav-link" to="/preferences">
                   Allergies & Intolerances
                 </Link>
+
                 <Link className="link nav-link" to="/healthtools">
                   Health Tools
                 </Link>
@@ -103,17 +100,16 @@ const MainNavbar = () => {
                 >
                   Log Out
                 </button>
-
                 <TextToSpeech />
                 <VoiceNavigation />
-                <div className="ml-4">
+                <Link>
                   <DarkModeToggle />
-                </div>
+                </Link>
               </>
             ) : (
               <>
                 <Link
-                  className={`link dropdown-link font-bold text-xl rounded-md ${
+                  className={`link dropdown-link font-bold text-xl rounded-md  ${
                     darkMode
                       ? "text-white hover:text-blue-300 hover:bg-blue-700"
                       : "text-[#333] hover:bg-blue-200 hover:text-blue-600"
@@ -123,7 +119,7 @@ const MainNavbar = () => {
                   Home
                 </Link>
                 <Link
-                  className={`link dropdown-link font-bold text-xl rounded-md ${
+                  className={`link dropdown-link font-bold text-xl rounded-md  ${
                     darkMode
                       ? "text-white hover:text-blue-300 hover:bg-blue-700"
                       : "text-[#333] hover:bg-blue-200 hover:text-blue-600"
@@ -133,7 +129,7 @@ const MainNavbar = () => {
                   Sign In
                 </Link>
                 <Link
-                  className={`link dropdown-link font-bold text-xl rounded-md ${
+                  className={`link dropdown-link font-bold text-xl rounded-md  ${
                     darkMode
                       ? "text-white hover:text-blue-300 hover:bg-blue-700"
                       : "text-[#333] hover:bg-blue-200 hover:text-blue-600"
@@ -142,11 +138,12 @@ const MainNavbar = () => {
                 >
                   Create Account
                 </Link>
+                <Link>
+                  <DarkModeToggle />
+                </Link>
                 <TextToSpeech />
                 <VoiceNavigation />
-                <div className="ml-4">
-                  <DarkModeToggle />
-                </div>
+                {/* Included from master branch */}
               </>
             )}
           </div>

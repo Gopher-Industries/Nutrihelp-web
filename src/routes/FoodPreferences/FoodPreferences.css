@@ -21,19 +21,19 @@
   padding: 1rem;
 }
 
-h1 {
+h1:not(#no-bg) {
   font-size: 1.8rem;
   margin-bottom: 0.3rem;
 }
 
-h2 {
+h2:not(#no-bg) {
   font-size: 1.1rem;
   color: var(--text-color2);
   font-weight: 500;
   margin-bottom: 0.5rem;
 }
 
-p {
+p:not(#no-bg) {
   margin-bottom: 1rem;
   color: var(--text-color2);
 }
@@ -50,7 +50,7 @@ p {
   cursor: pointer;
 }
 
-.grid {
+.grid:not(#no-bg) {
   display: flex;
   gap: 2rem;
   margin: 2rem 0;

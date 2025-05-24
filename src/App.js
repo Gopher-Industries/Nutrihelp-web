@@ -1,45 +1,41 @@
-import { useContext } from "react";
+import React, { useContext } from "react";
+import "semantic-ui-css/semantic.min.css";
+import "./App.css";
 import {
-  Navigate,
-  Route,
   BrowserRouter as Router,
   Routes,
+  Route,
+  Navigate,
 } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import "semantic-ui-css/semantic.min.css";
-import "./App.css";
 
 import { UserContext } from "./context/user.context";
 
-import MainNavbar from "./components/MainNavbar";
-import Recipe from "./components/Recipe";
-import AuthenticateRoute from "./routes/AuthenticateRoute/AuthenticateRoute";
-import CreateRecipe from "./routes/CreateRecipe/CreateRecipe";
-import FAQ from "./routes/FAQ/faq";
-import FoodPreferences from "./routes/FoodPreferences/FoodPreferences";
-import ForgotPassword from "./routes/ForgotPassword/ForgotPassword";
-import HealthNews from "./routes/HealthNews/HealthNews";
-import Home from "./routes/Home/Home";
 import Login from "./routes/Login/Login";
+import SignUp from "./routes/SignUp/SignUp";
+import ForgotPassword from "./routes/ForgotPassword/ForgotPassword";
+import CreateRecipe from "./routes/CreateRecipe/CreateRecipe";
+import SearchRecipes from "./routes/SearchRecipes/SearchRecipes";
+import CategoryResults from "./routes/SearchRecipes/CategoryResults"; // 🆕
+import YourPreferences from "./routes/UI-Only-Pages/YourPreferences/pref-dis-health";
+import UserProfilePage from "./routes/UI-Only-Pages/UserProfilePage/userprofile";
+import Home from "./routes/Home/Home";
+import DietaryRequirements from "./routes/UI-Only-Pages/DietaryRequirements/DietaryRequirements";
+import ScanProducts from "./routes/UI-Only-Pages/ScanProducts/ScanProducts";
+import Menu from "./routes/UI-Only-Pages/Menu/Menu";
+import Recipe from "./components/Recipe";
+import Appointment from "./routes/UI-Only-Pages/Appointment/Appointment";
+import newMenu from "./routes/NewMenu/newMenu";
 import Meal from "./routes/Meal/Meal";
 import MFAform from "./routes/MFA/MFAform";
 import Dashboard from "./routes/NewMenu/Dashboard";
-import CategoryResults from "./routes/SearchRecipes/CategoryResults";
-import SearchRecipes from "./routes/SearchRecipes/SearchRecipes";
-import SignUp from "./routes/SignUp/SignUp";
-import Appointment from "./routes/UI-Only-Pages/Appointment/Appointment";
-import DietaryRequirements from "./routes/UI-Only-Pages/DietaryRequirements/DietaryRequirements";
-import Menu from "./routes/UI-Only-Pages/Menu/Menu";
+import AuthenticateRoute from "./routes/AuthenticateRoute/AuthenticateRoute";
+import MainNavbar from "./components/MainNavbar";
+import FAQ from "./routes/FAQ/faq";
 import NutritionCalculator from "./routes/UI-Only-Pages/NutritionCalculator/NutritionCalculator";
-import ScanProducts from "./routes/UI-Only-Pages/ScanProducts/ScanProducts";
-import UserProfilePage from "./routes/UI-Only-Pages/UserProfilePage/userprofile";
-import YourPreferences from "./routes/UI-Only-Pages/YourPreferences/pref-dis-health";
-import Nutribot from "./routes/UI-Only-Pages/Nutribot/Nutribot";
-import ObesityPredict from "./routes/UI-Only-Pages/ObesityPredict/ObesityPredict";
-import ObesityResult from "./routes/UI-Only-Pages/ObesityPredict/ObesityResult";
-import HealthCheckin from "./routes/UI-Only-Pages/HealthCheckin/HealthCheckin";
-import HealthResults from "./routes/UI-Only-Pages/HealthCheckin/HealthResults";
+import HealthNews from "./routes/HealthNews/HealthNews";
+import FoodPreferences from "./routes/FoodPreferences/FoodPreferences";
 import HealthTools from "./routes/HealthTools/HealthTools";
 
 function App() {
@@ -57,25 +53,32 @@ function App() {
           }
         />
         <Route path="/login" element={<Login />} />
+        <Route path="/" element={<Home />} />
         <Route path="/home" element={<Home />} />
         <Route path="/signUp" element={<SignUp />} />
         <Route path="/forgotPassword" element={<ForgotPassword />} />
         <Route path="/faq" element={<FAQ />} />
-        <Route path="/recipe" element={<Recipe />} />
-        <Route path="/MFAform" element={<MFAform />} />
 
         {/* Private Routes */}
-        <Route path="/createRecipe" element={<CreateRecipe />} />
         <Route
-          path="/searchRecipes"
+          path="createRecipe"
+          element={
+            <AuthenticateRoute>
+              <CreateRecipe />
+            </AuthenticateRoute>
+          }
+        />
+        <Route
+          path="searchRecipes"
           element={
             <AuthenticateRoute>
               <SearchRecipes />
             </AuthenticateRoute>
           }
         />
+        {/* New route for category-specific results */}
         <Route
-          path="/searchRecipes/:category"
+          path="searchRecipes/:category"
           element={
             <AuthenticateRoute>
               <CategoryResults />
@@ -83,7 +86,7 @@ function App() {
           }
         />
         <Route
-          path="/yourPreferences"
+          path="yourPreferences"
           element={
             <AuthenticateRoute>
               <YourPreferences />
@@ -91,7 +94,7 @@ function App() {
           }
         />
         <Route
-          path="/userProfile"
+          path="userProfile"
           element={
             <AuthenticateRoute>
               <UserProfilePage />
@@ -99,7 +102,7 @@ function App() {
           }
         />
         <Route
-          path="/appointment"
+          path="Appointment"
           element={
             <AuthenticateRoute>
               <Appointment />
@@ -107,7 +110,7 @@ function App() {
           }
         />
         <Route
-          path="/dietaryRequirements"
+          path="dietaryRequirements"
           element={
             <AuthenticateRoute>
               <DietaryRequirements />
@@ -115,7 +118,7 @@ function App() {
           }
         />
         <Route
-          path="/scanProducts"
+          path="ScanProducts"
           element={
             <AuthenticateRoute>
               <ScanProducts />
@@ -123,7 +126,7 @@ function App() {
           }
         />
         <Route
-          path="/menu"
+          path="menu"
           element={
             <AuthenticateRoute>
               <Menu />
@@ -131,7 +134,15 @@ function App() {
           }
         />
         <Route
-          path="/meal"
+          path="recipe"
+          element={
+            <AuthenticateRoute>
+              <Recipe />
+            </AuthenticateRoute>
+          }
+        />
+        <Route
+          path="Meal"
           element={
             <AuthenticateRoute>
               <Meal />
@@ -139,31 +150,25 @@ function App() {
           }
         />
         <Route
-          path="/nutrition-calculator"
+          path="nutrition-calculator"
           element={
             <AuthenticateRoute>
               <NutritionCalculator />
             </AuthenticateRoute>
           }
         />
+        <Route path="/preferences" element={<FoodPreferences />} />
         <Route
-          path="/preferences"
-          element={
-            <AuthenticateRoute>
-              <FoodPreferences />
-            </AuthenticateRoute>
-          }
-        />
-        <Route
-          path="/healthnews"
+          path="healthnews"
           element={
             <AuthenticateRoute>
               <HealthNews />
             </AuthenticateRoute>
           }
         />
+        <Route path="MFAform" element={<MFAform />} />
         <Route
-          path="/dashboard"
+          path="dashboard"
           element={
             <AuthenticateRoute>
               <Dashboard />
@@ -171,47 +176,7 @@ function App() {
           }
         />
         <Route
-          path="/nutribot"
-          element={
-            <AuthenticateRoute>
-              <Nutribot />
-            </AuthenticateRoute>
-          }
-        />
-        <Route
-          path="/healthcheckin"
-          element={
-            <AuthenticateRoute>
-              <HealthCheckin />
-            </AuthenticateRoute>
-          }
-        />
-        <Route
-          path="/results"
-          element={
-            <AuthenticateRoute>
-              <HealthResults />
-            </AuthenticateRoute>
-          }
-        />
-        <Route
-          path="/obesitypredict"
-          element={
-            <AuthenticateRoute>
-              <ObesityPredict />
-            </AuthenticateRoute>
-          }
-        />
-        <Route
-          path="/predict/result"
-          element={
-            <AuthenticateRoute>
-              <ObesityResult />
-            </AuthenticateRoute>
-          }
-        />
-        <Route
-          path="/healthtools"
+          path="HealthTools"
           element={
             <AuthenticateRoute>
               <HealthTools />
