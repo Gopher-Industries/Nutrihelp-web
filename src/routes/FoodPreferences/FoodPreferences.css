@@ -1,11 +1,11 @@
 .page-wrapper {
-  background-color: #f2f2f2 !important;
+  background-color: var(--food-preferences-div-background-color);
   min-height: 100vh;
   padding: 3rem 1rem;
 }
 
 .purple-box {
-  background-color: #f6edff !important;
+  background-color: var(--food-preferences-box-background-color);
   text-align: left !important;
   border-radius: 18px;
   max-width: 1200px;
@@ -28,18 +28,18 @@ h1 {
 
 h2 {
   font-size: 1.1rem;
-  color: #333;
+  color: var(--text-color2);
   font-weight: 500;
   margin-bottom: 0.5rem;
 }
 
 p {
   margin-bottom: 1rem;
-  color: #555;
+  color: var(--text-color2);
 }
 
 .start-btn {
-  background-color: #2e32ff;
+  background-color: var(--button-background-color);
   color: white;
   padding: 0.5rem 1rem;
   font-size: 0.8rem;
@@ -50,7 +50,7 @@ p {
   cursor: pointer;
 }
 
-.grid:not(#no-bg) {
+.grid {
   display: flex;
   gap: 2rem;
   margin: 2rem 0;
@@ -61,7 +61,7 @@ p {
 }
 
 .white-card {
-  background: #fff !important;
+  background: var(--food-preferences-card-background-color);
   border-radius: 12px;
   padding: 1rem 1.2rem;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
@@ -129,7 +129,7 @@ p {
 }
 
 input:checked + .slider {
-  background-color: #2e32ff;
+  background-color: var(--button-background-color);
 }
 
 input:checked + .slider:before {
@@ -148,7 +148,7 @@ input:checked + .slider:before {
 }
 
 .tag {
-  background-color: #a397fb;
+  background-color: var(--button-background-color);
   padding: 0.4rem 1rem;
   border-radius: 10px;
   font-size: 0.95rem;
@@ -219,7 +219,7 @@ input:checked + .slider:before {
 
 .save-btn {
   padding: 0.7rem 1.6rem;
-  background-color: #14b6f7;
+  background-color: var(--button-background-color);
   color: black;
   font-weight: 600;
   font-size: 0.9rem;
@@ -236,7 +236,7 @@ input:checked + .slider:before {
 .section-heading h1 {
   font-size: 1.8rem;
   font-weight: 700;
-  color: #111;
+  color: var(--h1-color);
   margin-bottom: 0.5rem;
 }
 

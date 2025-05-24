@@ -1,7 +1,7 @@
 .userProfile-container {
   padding: 10px;
   margin: 0;
-  background: #f8e7ff !important;
+  background: var(--appointment-background-color) !important;
   font-family: "Lato", sans-serif;
   border-radius: 0;
   box-shadow: none;
@@ -50,7 +50,7 @@ nav ul li:hover {
 .userProfile-section {
   padding: 50px 40px;
   margin: 40px auto;
-  background: #fbfaff;
+  background: var(--background-color);
   border-radius: 12px;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
   max-width: 1600px;
@@ -330,7 +330,7 @@ input[type="date"] {
 }
 
 .appointment-header-wrapper {
-  background-color: #cfa7e8 !important;
+  background-color: var(--appointment-div-color) !important;
   padding: 40px 0;
   border-radius: 10px;
   margin-bottom: 30px;
@@ -391,7 +391,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .section-title {
   font-size: 24px;
   font-weight: 600;
-  color: #333;
+  color: var(--recipe-search-header-color);
 }
 
 .appointment-card {
@@ -743,7 +743,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 .status-filter-btn.active {
-  background-color: #ba49e7;
+  background-color: var(--button-background-color);
   color: white;
   box-shadow: 0 4px 10px rgba(186, 73, 231, 0.3);
 }

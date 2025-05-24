@@ -66,7 +66,7 @@ input {
 
 button {
   padding: 8px;
-  background-color: #a82fea;
+  background-color: var(--button-background-color);
   color: #fff;
   border: none;
   cursor: pointer;

@@ -25,7 +25,7 @@ import Login from "./routes/Login/Login";
 import Meal from "./routes/Meal/Meal";
 import MFAform from "./routes/MFA/MFAform";
 import Dashboard from "./routes/NewMenu/Dashboard";
-import CategoryResults from "./routes/SearchRecipes/CategoryResults"; // 🆕
+import CategoryResults from "./routes/SearchRecipes/CategoryResults";
 import SearchRecipes from "./routes/SearchRecipes/SearchRecipes";
 import SignUp from "./routes/SignUp/SignUp";
 import Appointment from "./routes/UI-Only-Pages/Appointment/Appointment";
@@ -35,6 +35,12 @@ import NutritionCalculator from "./routes/UI-Only-Pages/NutritionCalculator/Nutr
 import ScanProducts from "./routes/UI-Only-Pages/ScanProducts/ScanProducts";
 import UserProfilePage from "./routes/UI-Only-Pages/UserProfilePage/userprofile";
 import YourPreferences from "./routes/UI-Only-Pages/YourPreferences/pref-dis-health";
+import Nutribot from "./routes/UI-Only-Pages/Nutribot/Nutribot";
+import ObesityPredict from "./routes/UI-Only-Pages/ObesityPredict/ObesityPredict";
+import ObesityResult from "./routes/UI-Only-Pages/ObesityPredict/ObesityResult";
+import HealthCheckin from "./routes/UI-Only-Pages/HealthCheckin/HealthCheckin";
+import HealthResults from "./routes/UI-Only-Pages/HealthCheckin/HealthResults";
+import HealthTools from "./routes/HealthTools/HealthTools";
 
 function App() {
   const { currentUser } = useContext(UserContext);
@@ -51,32 +57,25 @@ function App() {
           }
         />
         <Route path="/login" element={<Login />} />
-        <Route path="/" element={<Home />} />
         <Route path="/home" element={<Home />} />
         <Route path="/signUp" element={<SignUp />} />
         <Route path="/forgotPassword" element={<ForgotPassword />} />
         <Route path="/faq" element={<FAQ />} />
+        <Route path="/recipe" element={<Recipe />} />
+        <Route path="/MFAform" element={<MFAform />} />
 
         {/* Private Routes */}
+        <Route path="/createRecipe" element={<CreateRecipe />} />
         <Route
-          path="createRecipe"
-          element={
-            <AuthenticateRoute>
-              <CreateRecipe />
-            </AuthenticateRoute>
-          }
-        />
-        <Route
-          path="searchRecipes"
+          path="/searchRecipes"
           element={
             <AuthenticateRoute>
               <SearchRecipes />
             </AuthenticateRoute>
           }
         />
-        {/* New route for category-specific results */}
         <Route
-          path="searchRecipes/:category"
+          path="/searchRecipes/:category"
           element={
             <AuthenticateRoute>
               <CategoryResults />
@@ -84,7 +83,7 @@ function App() {
           }
         />
         <Route
-          path="yourPreferences"
+          path="/yourPreferences"
           element={
             <AuthenticateRoute>
               <YourPreferences />
@@ -92,7 +91,7 @@ function App() {
           }
         />
         <Route
-          path="userProfile"
+          path="/userProfile"
           element={
             <AuthenticateRoute>
               <UserProfilePage />
@@ -100,7 +99,7 @@ function App() {
           }
         />
         <Route
-          path="Appointment"
+          path="/appointment"
           element={
             <AuthenticateRoute>
               <Appointment />
@@ -108,7 +107,7 @@ function App() {
           }
         />
         <Route
-          path="dietaryRequirements"
+          path="/dietaryRequirements"
           element={
             <AuthenticateRoute>
               <DietaryRequirements />
@@ -116,7 +115,7 @@ function App() {
           }
         />
         <Route
-          path="ScanProducts"
+          path="/scanProducts"
           element={
             <AuthenticateRoute>
               <ScanProducts />
@@ -124,16 +123,15 @@ function App() {
           }
         />
         <Route
-          path="menu"
+          path="/menu"
           element={
             <AuthenticateRoute>
               <Menu />
             </AuthenticateRoute>
           }
         />
-        <Route path="recipe" element={<Recipe />} />
         <Route
-          path="Meal"
+          path="/meal"
           element={
             <AuthenticateRoute>
               <Meal />
@@ -141,7 +139,7 @@ function App() {
           }
         />
         <Route
-          path="nutrition-calculator"
+          path="/nutrition-calculator"
           element={
             <AuthenticateRoute>
               <NutritionCalculator />
@@ -157,19 +155,66 @@ function App() {
           }
         />
         <Route
-          path="healthnews"
+          path="/healthnews"
           element={
             <AuthenticateRoute>
               <HealthNews />
             </AuthenticateRoute>
           }
         />
-        <Route path="MFAform" element={<MFAform />} />
         <Route
-          path="dashboard"
+          path="/dashboard"
           element={
             <AuthenticateRoute>
               <Dashboard />
+            </AuthenticateRoute>
+          }
+        />
+        <Route
+          path="/nutribot"
+          element={
+            <AuthenticateRoute>
+              <Nutribot />
+            </AuthenticateRoute>
+          }
+        />
+        <Route
+          path="/healthcheckin"
+          element={
+            <AuthenticateRoute>
+              <HealthCheckin />
+            </AuthenticateRoute>
+          }
+        />
+        <Route
+          path="/results"
+          element={
+            <AuthenticateRoute>
+              <HealthResults />
+            </AuthenticateRoute>
+          }
+        />
+        <Route
+          path="/obesitypredict"
+          element={
+            <AuthenticateRoute>
+              <ObesityPredict />
+            </AuthenticateRoute>
+          }
+        />
+        <Route
+          path="/predict/result"
+          element={
+            <AuthenticateRoute>
+              <ObesityResult />
+            </AuthenticateRoute>
+          }
+        />
+        <Route
+          path="/healthtools"
+          element={
+            <AuthenticateRoute>
+              <HealthTools />
             </AuthenticateRoute>
           }
         />

@@ -154,7 +154,7 @@ h3 {
   position: absolute;
   right: 20px;
   top: 90px;
-  background-color: #ba49e7;
+  background-color: var(--button-background-color);
   color: white;
   border: none;
   border-radius: 50px;
@@ -267,7 +267,7 @@ nav a.active {
 nav a {
   padding: 10px 20px;
   text-decoration: none;
-  color: #000;
+  color: var(--navtext-color);
 }
 
 .breakfast-btn {
@@ -354,7 +354,7 @@ nav a.active {
 .water-tracker {
   margin-top: 2rem;
   padding: 1rem;
-  border: 2px solid #ba49e7;
+  border: 2px solid var(--button-background-color);
   border-radius: 12px;
   background-color: #fdf1ff;
   text-align: center;

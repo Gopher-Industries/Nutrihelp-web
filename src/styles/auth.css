@@ -72,7 +72,7 @@ h2:not(#no-bg) {
 body {
   font-size: 13px;
   line-height: 1.8;
-  color: #222;
+  color: var(--color2);
   background: #f8f8f8;
   font-weight: 400;
   font-family: "Lato", sans-serif;
