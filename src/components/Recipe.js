@@ -4,25 +4,22 @@ import "../styles/recipe.css";
 import { RefreshCcwIcon } from "lucide-react";
 
 function Recipe() {
+  const userId = 15;
   const [recipes, setRecipes] = useState([]);
   const [refresh, setRefetch] = useState(false);
 
   const fetchRecipes = async () => {
     try {
-      const response = await fetch("http://localhost:80/api/recipe/", {
-        method: "POST", // Based on your backend
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
+      const response = await fetch(`http://localhost:3000/recipes/${userId}`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch recipes");
+      }
       const data = await response.json();
-      console.log("Fetched Recipes:", data);
-
-      // Save to state and render in component
       //setRecipes(data);
-    } catch (error) {
-      console.error("Error fetching recipes:", error);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -32,8 +29,11 @@ function Recipe() {
       setRecipes(data);
     };
     fetchData();
-    //fetchRecipes();
-  }, [refresh]); // Trigger on refresh
+
+    /*     if (userId) {
+      fetchRecipes();
+    } */
+  }, [refresh, userId]); // Trigger on refresh
 
   return (
     <div

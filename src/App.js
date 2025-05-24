@@ -131,14 +131,7 @@ function App() {
             </AuthenticateRoute>
           }
         />
-        <Route
-          path="recipe"
-          element={
-            <AuthenticateRoute>
-              <Recipe />
-            </AuthenticateRoute>
-          }
-        />
+        <Route path="recipe" element={<Recipe />} />
         <Route
           path="Meal"
           element={
@@ -155,7 +148,14 @@ function App() {
             </AuthenticateRoute>
           }
         />
-        <Route path="/preferences" element={<FoodPreferences />} />
+        <Route
+          path="/preferences"
+          element={
+            <AuthenticateRoute>
+              <FoodPreferences />
+            </AuthenticateRoute>
+          }
+        />
         <Route
           path="healthnews"
           element={
