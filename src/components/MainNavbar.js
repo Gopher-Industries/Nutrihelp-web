@@ -61,6 +61,9 @@ const MainNavbar = () => {
                     <Link className="link dropdown-link" to="/SearchRecipes">
                       Search Recipes
                     </Link>
+                    <Link className="link dropdown-link" to="/recipe">
+                      My Recipes
+                    </Link>
                   </div>
                 </div>
 
@@ -90,7 +93,7 @@ const MainNavbar = () => {
                 <Link className="link nav-link" to="/healthtools">
                   Health Tools
                 </Link>
-                
+
                 <button
                   className="link nav-link logout-button"
                   onClick={logOut}
@@ -141,7 +144,6 @@ const MainNavbar = () => {
                 <TextToSpeech />
                 <VoiceNavigation />
                 {/* Included from master branch */}
-
               </>
             )}
           </div>
