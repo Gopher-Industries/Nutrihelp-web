@@ -33,9 +33,9 @@ p.description {
   color: var(--text-color);
 }
 
-div:not(#no-bg) {
+/* div:not(#no-bg) {
   background-color: var(--background2-color);
-}
+} */
 
 h3 {
   color: var(--h3-color);
