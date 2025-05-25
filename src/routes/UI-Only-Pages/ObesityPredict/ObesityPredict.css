@@ -1,4 +1,4 @@
-/* ==== 卡片总容器 ==== */
+
 .obesity-card {
   max-width: 750px;
   height: 85vh;
@@ -12,7 +12,6 @@
   overflow: hidden;
 }
 
-/* ==== 顶部标题栏 ==== */
 .obesity-card h2 {
   text-align: center;
   color: #1e88e5;
@@ -24,7 +23,6 @@
   border-top-right-radius: 20px;
 }
 
-/* ==== 表单区域滚动 ==== */
 .obesity-form {
   flex: 1;
   overflow-y: auto;
@@ -35,7 +33,6 @@
   scroll-behavior: smooth;
 }
 
-/* ==== 每个问题区块 ==== */
 .field-block {
   display: flex;
   flex-direction: column;
@@ -60,50 +57,34 @@ input:focus, select:focus {
   outline: none;
 }
 
-/* ==== 提交按钮 ==== */
 .submit-btn {
   background-color: #1e88e5;
   color: white;
-  padding: 12px;
-  font-size: 18px;
+  padding: 10px 18px;
+  font-size: 15px;
   border: none;
   border-radius: 10px;
-  margin-top: 10px;
   cursor: pointer;
   transition: background-color 0.2s ease;
+  width: auto;
+  text-align: center;
+  white-space: nowrap;
+  display: inline-block;
 }
 
 .submit-btn:hover {
   background-color: #1565c0;
 }
 
-/* ==== 回到顶部按钮（非悬浮） ==== */
-.scroll-top-btn-inline {
-  margin-top: 10px;
-  padding: 10px 16px;
-  font-size: 14px;
-  background: #42a5f5;
-  color: white;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  align-self: flex-end;
-  transition: background-color 0.2s;
-}
 
-.scroll-top-btn-inline:hover {
-  background-color: #1e88e5;
-}
-
-/* ==== 滚动提示文本 ==== */
 .scroll-hint {
-  text-align: center;
+  text-align: left;
   margin-top: 20px;
   font-size: 15px;
   color: #388e3c;
 }
 
-/* ==== 进度条样式 ==== */
+
 .progress-bar-container {
   margin: 20px 30px 0;
   position: relative;
@@ -126,7 +107,15 @@ input:focus, select:focus {
   color: #444;
 }
 
-/* ==== 结果页卡片 ==== */
+.button-wrapper {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+
 .result-card {
   max-width: 600px;
   margin: 80px auto;
@@ -134,7 +123,7 @@ input:focus, select:focus {
   background: linear-gradient(to bottom right, #f0f9ff, #ffffff);
   border-radius: 20px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  text-align: center;
+  text-align: left;
 }
 
 .result-card h2 {
@@ -169,14 +158,17 @@ input:focus, select:focus {
   color: #333;
 }
 
-/* ==== 结果按钮组 ==== */
 .result-buttons {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  flex-wrap: wrap;
   gap: 12px;
   margin-top: 30px;
-  align-items: center;
 }
+
+
+
+
 
 
 

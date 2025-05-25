@@ -57,6 +57,8 @@ export default function ObesityPredict() {
 
   return (
     <div className="obesity-card">
+
+
       <h2>Obesity Risk Prediction</h2>
 
       <form ref={formRef} className="obesity-form" onSubmit={handleSubmit} onScroll={handleScroll}>
@@ -85,11 +87,16 @@ export default function ObesityPredict() {
           <div className="scroll-hint">✅ You’ve reached the bottom</div>
         )}
 
-        <button type="button" className="scroll-top-btn-inline" onClick={scrollToTop}>
-          ↑ Back to Top
-        </button>
+<div className="button-wrapper">
+  <button type="button" className="submit-btn" onClick={scrollToTop}>
+    ↑ Back to Top
+  </button>
+  <button type="submit" className="submit-btn">
+    Predict
+  </button>
+</div>
 
-        <button type="submit" className="submit-btn">Predict</button>
+
       </form>
     </div>
   );

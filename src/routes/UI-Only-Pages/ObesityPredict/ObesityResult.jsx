@@ -44,17 +44,19 @@ export default function ObesityResult() {
         <p>No result data available.</p>
       )}
 
-      <div className="result-buttons">
-        <button className="submit-btn" onClick={handleDownloadPDF}>
-          📄 Save as PDF
-        </button>
-        <button className="submit-btn" onClick={handleCopyLink}>
-          🔗 Copy Share Link
-        </button>
-        <Link to="/predict">
-          <button className="submit-btn">← Back to Questionnaire</button>
-        </Link>
-      </div>
+<div className="button-wrapper">
+  <button className="submit-btn" onClick={handleDownloadPDF}>
+    📄 Save as PDF
+  </button>
+  <button className="submit-btn" onClick={handleCopyLink}>
+    🔗 Copy Share Link
+  </button>
+  <Link to="/predict">
+    <button className="submit-btn">← Back to Questionnaire</button>
+  </Link>
+</div>
+
+
     </div>
   );
 }

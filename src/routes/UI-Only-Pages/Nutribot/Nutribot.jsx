@@ -10,7 +10,7 @@ export default function Nutribot() {
   const chatRef = useRef(null);
   const mascotRef = useRef(null);
 
-  const AI_API_URL = 'https://your-ai-api/chat'; // 替换为你的后端 API
+  const AI_API_URL = 'https://your-ai-api/chat';
 
   useEffect(() => {
     document.body.classList.toggle('dark-mode', darkMode);
@@ -67,7 +67,7 @@ export default function Nutribot() {
     }, 5000);
   };
 
-  // 拖动卡通小人
+
   useEffect(() => {
     const mascot = mascotRef.current;
     let isDragging = false;
