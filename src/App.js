@@ -17,7 +17,7 @@ import SignUp from "./routes/SignUp/SignUp";
 import ForgotPassword from "./routes/ForgotPassword/ForgotPassword";
 import CreateRecipe from "./routes/CreateRecipe/CreateRecipe";
 import SearchRecipes from "./routes/SearchRecipes/SearchRecipes";
-import CategoryResults from "./routes/SearchRecipes/CategoryResults";  // 🆕
+import CategoryResults from "./routes/SearchRecipes/CategoryResults"; // 🆕
 import YourPreferences from "./routes/UI-Only-Pages/YourPreferences/pref-dis-health";
 import UserProfilePage from "./routes/UI-Only-Pages/UserProfilePage/userprofile";
 import Home from "./routes/Home/Home";
@@ -181,7 +181,7 @@ function App() {
             <AuthenticateRoute>
               <HealthTools />
             </AuthenticateRoute>
-          } 
+          }
         />
       </Routes>
     </Router>
