@@ -1,0 +1,86 @@
+
+  /* Form container */
+  .fitness-form-container {
+    background: white; /* White background for the form */
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    width: 500px;
+    color: #000;
+    background-color: #1f1f1f;
+  }
+  
+  
+  /* Heading styles */
+  .fitness-form-container h2 {
+    text-align: center;
+    margin-bottom: 25px;
+    font-weight: 600;
+    color: #BA49E7; /* Navbar color */  
+  }
+
+  .fitness-form-container h3 {
+    text-align: center;
+    margin-bottom: 25px;
+    font-weight: 600;
+    color: #BA49E7; /* Navbar color */  
+  }
+  
+  /* Label and inputs */
+  label {
+    display: block;
+    margin-bottom: 15px;
+    font-weight: 300;
+    color: white; /* Dark text for readability */
+  }
+  
+  input,
+  select,
+  textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    box-sizing: border-box;
+    border: 1px solid #d3b8ff; /* Light purple border */
+    border-radius: 8px;
+    font-size: 14px;
+    background-color: #f9f5ff; /* Slightly purple background for inputs */
+  }
+  
+  /* Textarea */
+  textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+  
+  /* Buttons */
+  .fitness-form-container button {
+    background-color:#292929; /* Complementary teal for buttons */
+    color: white;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    margin-top: 15px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+  }
+  
+  .fitness-form-container button:hover {
+    background-color: #BA49E7; /* Darker teal for hover */
+  }
+  
+  /* Button group */
+  .button-group {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  /* Border around inputs when focused */
+  input:focus,
+  select:focus,
+  textarea:focus {
+    border-color: #BA49E7; /* Purple border when focused */
+    outline: none;
+  }
+  
