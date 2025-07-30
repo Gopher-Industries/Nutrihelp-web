@@ -1,157 +1,111 @@
 /* General header styling */
 .main-header {
-  position: fixed;
+  position: fixed; /* 固定在页面顶部 */
   top: 0;
   left: 0;
-  width: 112%;
-  z-index: 1000;
-  background-color: #BA49E792;
-  height: 86px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  z-index: 1000; /* 确保导航栏在其他内容上方 */
+  background-color: rgba(169, 231, 252, 0.575); /* 半透明背景 */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* 添加阴影效果 */
   padding: 1rem;
-  transition: background-color 0.3s ease-in-out;
+  transition: background-color 0.3s ease-in-out; /* 平滑背景色过渡 */
 }
 
 /* When scrolled, add solid background */
 .main-header.scrolled {
-  /* background-color: rgba(255, 255, 255, 1); */
-  background-color: #F8E7FF;
+  background-color: rgba(255, 255, 255, 1); /* 滚动后变为不透明背景 */
 }
 
-/* Navbar container */
+/* Header background and text color */
+.header {
+  background-color: var(--background-color); /* Set the background color */
+  color: var(--text-color); /* Set the text color */
+}
+
+/* Nav bar styling */
+.main-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+/* Navbar container styling */
 .nav-container {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   width: 100%;
 }
 
-/* Logo */
+/* Ensure logo moves to extreme left */
+.logo-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  background-color: var(--background-color);
+}
+
+/* Logo container */
 .logo-container img {
   height: 50px;
 }
 
-.logo{
-  margin-left: 0;
-}
-
-.user-profile{
-  position: relative;
-  left: 40%;
-  display: flex;
-  flex-direction: column;
-  cursor: pointer;
-}
-
-.profile-link {
-  display: flex;
-  flex-direction: column;  /* Stack image and text vertically */
-  align-items: center;     /* Center the items horizontally */
-  text-decoration: none;   /* Remove underline */
-}
-
-.profile-image{
-  width: 30px;
-}
-
-
-
-/* HAMBURGER MENU BUTTON */
-.hamburger {
-  font-size: 28px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: #333;
-  display: block; /* Always show */
-  position: relative;
-  right: 55%;
-  padding: none;
-  font-weight: bold;
-}
-
-.hamburger:hover{
-  color: #8b5cf6;
-  background-color: none;
-}
-
-/* NAV MENU - Initially Hidden */
+/* Navbar links */
 .nav-links {
-  position: absolute;
-  top: 80px;
-  left: -600px;
-  width: 290px;
-  height: fit-content;
-  background-color: #00000092;
-  color: rgb(26, 23, 23);
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  transition: left 0.3s ease-in-out;
-  opacity: 1;
-  border-radius: 15px;
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
-  padding-top: 22px;
-  padding-bottom: 22px;
+  gap: 1rem;
 }
 
-/* Show Menu when Open */
-.nav-links.open {
-  left: -50px;
-  background-color: #f8f9fa;
-}
-
-/* Links inside menu */
 .nav-link {
   color: var(--navtext-color); /* Set the text color */
   text-decoration: none;
-  font-size: 18px;
-  padding: 12px;
+  font-weight: bold;
+  padding: 0.5rem 1rem;
   transition: color 0.3s ease;
 }
 
 .nav-link:hover {
-  color: #0b1d51;
+  color: #007bff; /* 鼠标悬停时变色 */
 }
 
-/* DROPDOWN MENU */
+/* Dropdown menu */
+.dropdown {
+  position: relative;
+}
+
 .dropdown-content {
   display: none;
-  background-color: rgba(255, 255, 255, 0.9);
-  border-radius: 4px;
-  padding-top: 10px;
-  padding-bottom: 10px;
   position: absolute;
-  height: fit-content;
-  width: fit-content;
-  left: 90px;
-  top: 0px;
-  white-space: nowrap;
-  padding-left: 0px;
-  
+  background-color: white;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  z-index: 1;
+  min-width: 160px;
+  border-radius: 4px;
 }
-
-.dropdown-content ul{
-  list-style: none;
-  padding-left: 0;
-  margin: 0;
-}
-
 
 .dropdown:hover .dropdown-content {
-  display: flex;
-  flex-direction: row; 
-
+  display: block;
 }
 
-.dropdown-link:hover{
-  color: #0b1d51;
-  text-decoration: underline;
+.dropdown-link {
+  display: block;
+  padding: 10px;
+  text-decoration: none;
+  transition: background-color 0.2s ease;
 }
 
-/* Responsive: Keep hamburger visible on all screens */
+/* Responsive styling for mobile */
 @media screen and (max-width: 768px) {
   .nav-links {
-    width: 100%;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .dropdown-content {
+    position: static;
+    box-shadow: none;
   }
 }

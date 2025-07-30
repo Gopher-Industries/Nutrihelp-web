@@ -1,18 +1,24 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { UserContext } from "../context/user.context";
+import { useDarkMode } from "../routes/DarkModeToggle/DarkModeContext";
+import DarkModeToggle from "../routes/DarkModeToggle/DarkModeToggle"; // Included from master branch
 import "../styles/mainNavbar.css";
-import DarkModeToggle from "../routes/DarkModeToggle/DarkModeToggle";
-// import profileImage from '../images/profile.png';
+import TextToSpeech from "./TextToSpeech/TextToSpeech";
+import VoiceNavigation from "./VoiceControl/VoiceNavigation";
 
 const MainNavbar = () => {
   const { currentUser, logOut } = useContext(UserContext);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { darkMode } = useDarkMode();
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
+      if (window.scrollY > 50) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -22,75 +28,120 @@ const MainNavbar = () => {
   }, []);
 
   return (
-    <header className={`header main-header ${isScrolled ? "scrolled" : ""}`}>
-      <nav className="nav main-nav">
-        <div className="nav-container">
-          {/* Logo */}
-          <div className="logo-container">
+    <header
+      className={`shadow-2xl ${isScrolled ? "scrolled" : ""} ${
+        darkMode ? "bg-[#555555]" : "bg-white"
+      }`}
+    >
+      <nav>
+        <div className="flex justify-between items-center pr-8 tts-ignore">
+          <div className="">
             <img src="/images/logo.png" alt="Website Logo" className="logo" />
           </div>
 
-          <div className="user-profile">
+          <div className="nav-links">
             {currentUser ? (
               <>
-                <Link to="/userProfile" className="link profile-link" onClick={() => setIsMenuOpen(false)}>
-                {/* <img src={profileImage} alt="profile" className="profile-image" /> */}
-                <span className="profile-text">Profile</span>
+                <Link className="link nav-link" to="/dashboard">
+                  Menu
                 </Link>
-                
-              </>
-            ) : (
-              <span className="nav-placeholder"></span> // Keeps a permanent element
-            )}
-          </div>
-
-          {/* Hamburger Button */}
-          <button className="hamburger" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-            ☰
-          </button>
-
-          {/* Fullscreen Menu */}
-          <div className={`nav-links ${isMenuOpen ? "open" : ""}`}>
-            {currentUser ? (
-              <>
-
-                <DarkModeToggle />
-                <Link className="link nav-link" to='/home' onClick={() => setIsMenuOpen(false)}>Home</Link>
-                <Link className="link nav-link" to="/dashboard" onClick={() => setIsMenuOpen(false)}>Menu</Link>
-                <Link className="link nav-link" to="/Meal" onClick={() => setIsMenuOpen(false)}>Meal Planning</Link>
-                <Link className="link nav-link" to="/leaderboard" onClick={() => setIsMenuOpen(false)}>LeaderBoard</Link>
+                <Link className="link nav-link" to="/Meal">
+                  Meal Planning
+                </Link>
+                <Link className="link nav-link" to="/healthnews">
+                  Health News
+                </Link>
 
                 <div className="dropdown">
                   <Link className="link nav-link">Recipes</Link>
                   <div className="dropdown-content">
-                    <ul>
-                      <li><Link className="link dropdown-link" to="/CreateRecipe" onClick={() => setIsMenuOpen(false)}>Create Recipe</Link></li>
-                      <li><Link className="link dropdown-link" to="/SearchRecipes" onClick={() => setIsMenuOpen(false)}>Search Recipes</Link></li>
-                    </ul>
+                    <Link className="link dropdown-link" to="/CreateRecipe">
+                      Create Recipe
+                    </Link>
+                    <Link className="link dropdown-link" to="/SearchRecipes">
+                      Search Recipes
+                    </Link>
                   </div>
                 </div>
 
                 <div className="dropdown">
                   <Link className="link nav-link">User</Link>
                   <div className="dropdown-content">
-                    <ul>
-                      <li><Link className="link dropdown-link" to="/DietaryRequirements" onClick={() => setIsMenuOpen(false)}>Dietary Preference</Link></li>
-                    </ul>
+                    <Link
+                      className="link dropdown-link"
+                      to="/DietaryRequirements"
+                    >
+                      Dietary Preference
+                    </Link>
+                    <Link className="link dropdown-link" to="/userProfile">
+                      Profile
+                    </Link>
                   </div>
                 </div>
 
-                <Link className="link nav-link" to="/ScanProducts" onClick={() => setIsMenuOpen(false)}>Scan Products</Link>
+                <Link className="link nav-link" to="/ScanProducts">
+                  Scan Products
+                </Link>
 
+                <Link className="link nav-link" to="/preferences">
+                  Allergies & Intolerances
+                </Link>
+
+                <Link className="link nav-link" to="/healthtools">
+                  Health Tools
+                </Link>
                 
-
-                <button className="link nav-link logout-button" onClick={() => { logOut(); setIsMenuOpen(false); }}>Log Out</button>
+                <button
+                  className="link nav-link logout-button"
+                  onClick={logOut}
+                >
+                  Log Out
+                </button>
+                <TextToSpeech />
+                <VoiceNavigation />
+                <Link>
+                  <DarkModeToggle />
+                </Link>
               </>
             ) : (
               <>
-                <DarkModeToggle />
-                <Link className="link nav-link" to='/home' onClick={() => setIsMenuOpen(false)}>Home</Link>
-                <Link className="link nav-link" to='/login' onClick={() => setIsMenuOpen(false)}>Sign In</Link>
-                <Link className="link nav-link" to='/signUp' onClick={() => setIsMenuOpen(false)}>Create Account</Link>
+                <Link
+                  className={`link dropdown-link font-bold text-xl rounded-md  ${
+                    darkMode
+                      ? "text-white hover:text-blue-300 hover:bg-blue-700"
+                      : "text-[#333] hover:bg-blue-200 hover:text-blue-600"
+                  }`}
+                  to="/home"
+                >
+                  Home
+                </Link>
+                <Link
+                  className={`link dropdown-link font-bold text-xl rounded-md  ${
+                    darkMode
+                      ? "text-white hover:text-blue-300 hover:bg-blue-700"
+                      : "text-[#333] hover:bg-blue-200 hover:text-blue-600"
+                  }`}
+                  to="/login"
+                >
+                  Sign In
+                </Link>
+                <Link
+                  className={`link dropdown-link font-bold text-xl rounded-md  ${
+                    darkMode
+                      ? "text-white hover:text-blue-300 hover:bg-blue-700"
+                      : "text-[#333] hover:bg-blue-200 hover:text-blue-600"
+                  }`}
+                  to="/signUp"
+                >
+                  Create Account
+                </Link>
+                <Link>
+                  <DarkModeToggle />
+                </Link>
+                <TextToSpeech />
+                <VoiceNavigation />
+                {/* Included from master branch */}
+
               </>
             )}
           </div>
