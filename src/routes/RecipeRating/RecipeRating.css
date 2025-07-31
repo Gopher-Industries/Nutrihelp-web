@@ -1,0 +1,51 @@
+.recipe-rating-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.page-header {
+    text-align: center;
+    margin-bottom: 30px;
+    background: transparent;
+}
+
+.page-header h1 {
+    font-size: 2.2rem;
+    color: #2c3e50;
+    margin-bottom: 8px;
+}
+
+.page-header p {
+    font-size: 1.1rem;
+    color: #7f8c8d;
+}
+
+.recipe-container {
+    display: grid;
+    gap: 25px;
+}
+
+@media (min-width: 1330px) {
+    .recipe-container {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (min-width: 900px) and (max-width: 1329px) {
+    .recipe-container {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (min-width: 600px) and (max-width: 899px) {
+    .recipe-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 599px) {
+    .recipe-container {
+        grid-template-columns: 1fr;
+    }
+}
