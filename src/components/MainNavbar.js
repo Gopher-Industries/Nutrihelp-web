@@ -29,9 +29,8 @@ const MainNavbar = () => {
 
   return (
     <header
-      className={`shadow-2xl ${isScrolled ? "scrolled" : ""} ${
-        darkMode ? "bg-[#555555]" : "bg-white"
-      }`}
+      className={`shadow-2xl ${isScrolled ? "scrolled" : ""} ${darkMode ? "bg-[#555555]" : "bg-white"
+        }`}
     >
       <nav>
         <div className="flex justify-between items-center pr-8 tts-ignore">
@@ -60,6 +59,9 @@ const MainNavbar = () => {
                     </Link>
                     <Link className="link dropdown-link" to="/SearchRecipes">
                       Search Recipes
+                    </Link>
+                    <Link className="link dropdown-link" to="/RecipeRating">
+                      Recipe rating
                     </Link>
                   </div>
                 </div>
@@ -90,7 +92,7 @@ const MainNavbar = () => {
                 <Link className="link nav-link" to="/healthtools">
                   Health Tools
                 </Link>
-                
+
                 <button
                   className="link nav-link logout-button"
                   onClick={logOut}
@@ -106,31 +108,28 @@ const MainNavbar = () => {
             ) : (
               <>
                 <Link
-                  className={`link dropdown-link font-bold text-xl rounded-md  ${
-                    darkMode
+                  className={`link dropdown-link font-bold text-xl rounded-md  ${darkMode
                       ? "text-white hover:text-blue-300 hover:bg-blue-700"
                       : "text-[#333] hover:bg-blue-200 hover:text-blue-600"
-                  }`}
+                    }`}
                   to="/home"
                 >
                   Home
                 </Link>
                 <Link
-                  className={`link dropdown-link font-bold text-xl rounded-md  ${
-                    darkMode
+                  className={`link dropdown-link font-bold text-xl rounded-md  ${darkMode
                       ? "text-white hover:text-blue-300 hover:bg-blue-700"
                       : "text-[#333] hover:bg-blue-200 hover:text-blue-600"
-                  }`}
+                    }`}
                   to="/login"
                 >
                   Sign In
                 </Link>
                 <Link
-                  className={`link dropdown-link font-bold text-xl rounded-md  ${
-                    darkMode
+                  className={`link dropdown-link font-bold text-xl rounded-md  ${darkMode
                       ? "text-white hover:text-blue-300 hover:bg-blue-700"
                       : "text-[#333] hover:bg-blue-200 hover:text-blue-600"
-                  }`}
+                    }`}
                   to="/signUp"
                 >
                   Create Account
