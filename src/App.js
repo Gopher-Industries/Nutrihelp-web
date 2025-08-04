@@ -37,6 +37,7 @@ import NutritionCalculator from "./routes/UI-Only-Pages/NutritionCalculator/Nutr
 import HealthNews from "./routes/HealthNews/HealthNews";
 import FoodPreferences from "./routes/FoodPreferences/FoodPreferences";
 import HealthTools from "./routes/HealthTools/HealthTools";
+import RecipeRating from "./routes/RecipeRating/RecipeRating";
 
 function App() {
   const { currentUser } = useContext(UserContext);
@@ -122,6 +123,14 @@ function App() {
           element={
             <AuthenticateRoute>
               <ScanProducts />
+            </AuthenticateRoute>
+          }
+        />
+        <Route
+          path="RecipeRating"
+          element={
+            <AuthenticateRoute>
+              <RecipeRating />
             </AuthenticateRoute>
           }
         />
