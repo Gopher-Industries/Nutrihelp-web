@@ -37,6 +37,7 @@ import NutritionCalculator from "./routes/UI-Only-Pages/NutritionCalculator/Nutr
 import HealthNews from "./routes/HealthNews/HealthNews";
 import FoodPreferences from "./routes/FoodPreferences/FoodPreferences";
 import HealthTools from "./routes/HealthTools/HealthTools";
+import RecipeExplorer from "./components/recipe-explore";
 
 function App() {
   const { currentUser } = useContext(UserContext);
@@ -167,6 +168,7 @@ function App() {
           }
         />
         <Route path="MFAform" element={<MFAform />} />
+        <Route path="recipe-explorer" element={<RecipeExplorer />} />
         <Route
           path="dashboard"
           element={
