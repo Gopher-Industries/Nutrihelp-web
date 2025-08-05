@@ -61,14 +61,7 @@ function App() {
         <Route path="/faq" element={<FAQ />} />
 
         {/* Private Routes */}
-        <Route
-          path="createRecipe"
-          element={
-            <AuthenticateRoute>
-              <CreateRecipe />
-            </AuthenticateRoute>
-          }
-        />
+        <Route path="createRecipe" element={<CreateRecipe />} />
         <Route
           path="searchRecipes"
           element={
