@@ -38,6 +38,8 @@ import HealthNews from "./routes/HealthNews/HealthNews";
 import FoodPreferences from "./routes/FoodPreferences/FoodPreferences";
 import HealthTools from "./routes/HealthTools/HealthTools";
 import RecipeRating from "./routes/RecipeRating/RecipeRating";
+import SymptomAssessment from "./routes/SymptomAssessment/SymptomAssessment";
+ 
 
 function App() {
   const { currentUser } = useContext(UserContext);
@@ -167,6 +169,7 @@ function App() {
           }
         />
         <Route path="/preferences" element={<FoodPreferences />} />
+        <Route path="/symptomassessment" element={<SymptomAssessment />} />
         <Route
           path="healthnews"
           element={
