@@ -38,6 +38,8 @@ import HealthNews from "./routes/HealthNews/HealthNews";
 import FoodPreferences from "./routes/FoodPreferences/FoodPreferences";
 import HealthTools from "./routes/HealthTools/HealthTools";
 import RecipeRating from "./routes/RecipeRating/RecipeRating";
+import Leaderboard from "./routes/LeaderBoard/leaderBoard";
+
 
 function App() {
   const { currentUser } = useContext(UserContext);
@@ -59,6 +61,7 @@ function App() {
         <Route path="/signUp" element={<SignUp />} />
         <Route path="/forgotPassword" element={<ForgotPassword />} />
         <Route path="/faq" element={<FAQ />} />
+        <Route path="/leaderboard" element={<Leaderboard />} />
 
         {/* Private Routes */}
         <Route
