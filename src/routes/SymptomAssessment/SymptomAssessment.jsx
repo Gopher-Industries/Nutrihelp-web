@@ -291,17 +291,23 @@ export default function SymptomAssessmentPage() {
       <div className="form-section">
         <h2>How are you feeling?</h2>
         <div className="symptom-grid">
-          {symptomsList.map((symptom) => (
-            <label key={symptom} className="symptom-option">
-              <input
-                type="checkbox"
-                className="custom-checkbox"
-                checked={selectedSymptoms.includes(symptom)}
-                onChange={() => handleToggleSymptom(symptom)}
-              />
-              <span className="symptom-label-text">{symptom}</span>
-            </label>
-          ))}
+        {symptomsList.map((symptom, index) => {
+  const inputId = `symptom-${index}`;
+  return (
+    <div key={symptom} className="symptom-option">
+      <input
+        type="checkbox"
+        className="custom-checkbox"
+        id={inputId}
+        checked={selectedSymptoms.includes(symptom)}
+        onChange={() => handleToggleSymptom(symptom)}
+      />
+      <label htmlFor={inputId} className="symptom-label-text">
+        {symptom}
+      </label>
+    </div>
+  );
+})}
         </div>
  
         {}
