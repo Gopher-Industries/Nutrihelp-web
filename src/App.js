@@ -38,6 +38,7 @@ import HealthNews from "./routes/HealthNews/HealthNews";
 import FoodPreferences from "./routes/FoodPreferences/FoodPreferences";
 import HealthTools from "./routes/HealthTools/HealthTools";
 import RecipeRating from "./routes/RecipeRating/RecipeRating";
+import SymptomAssessment from "./routes/SymptomAssessment/SymptomAssessment";
 import Leaderboard from "./routes/LeaderBoard/leaderBoard";
 
 
@@ -170,6 +171,7 @@ function App() {
           }
         />
         <Route path="/preferences" element={<FoodPreferences />} />
+        <Route path="/symptomassessment" element={<SymptomAssessment />} />
         <Route
           path="healthnews"
           element={
