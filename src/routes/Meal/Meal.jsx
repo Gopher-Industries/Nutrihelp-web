@@ -3,6 +3,10 @@ import './Meal.css'; // Import your CSS file here
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import React, { createContext, useState } from 'react';
 import MotivationalPopup from './MotivationalPopup';
+import WeeklyMealPlan from './WeeklyMealPlan';
+import { exportMealPlanAsPDF } from './PDFExport';
+
+
 
 const Meal = () => {
     const [selectedItems, setSelectedItems] = useState([]);
@@ -10,13 +14,15 @@ const Meal = () => {
         calories: 0,
         proteins: 0,
         fats: 0,
-        vitamins:0,
-        sodium:0,
+        vitamins: 0,
+        sodium: 0,
     });
     const [showBreakfast, setShowBreakfast] = useState(true);
     const [showLunch, setShowLunch] = useState(false);
     const [showDinner, setShowDinner] = useState(false);
     const [showPopup, setShowPopup] = useState(true);
+    const [showWeeklyPlan, setShowWeeklyPlan] = useState(false);
+
 
 
     const toggleItemSelection = (item, mealType) => {
@@ -47,7 +53,7 @@ const Meal = () => {
                 vitamins: 80,
                 sodium: 300
             }
-            
+
         },
         {
             name: 'Omelete',
@@ -95,12 +101,12 @@ const Meal = () => {
                 vitamins: 90,
                 sodium: 5
             }
-            
+
         },
         {
             name: 'Quinoa Salad',
             imageUrl: 'https://cooktoria.com/wp-content/uploads/2018/08/Mediterranean-Quinoa-Salad-SQ-1.jpg',
-             details: {
+            details: {
                 calories: 150,
                 fats: 300,
                 proteins: 500,
@@ -143,12 +149,12 @@ const Meal = () => {
                 vitamins: 30,
                 sodium: 90
             }
-            
+
         },
         {
             name: 'Avocado',
             imageUrl: 'https://domf5oio6qrcr.cloudfront.net/medialibrary/5138/h0618g16207257173805.jpg',
-             details: {
+            details: {
                 calories: 150,
                 fats: 100,
                 proteins: 500,
@@ -177,11 +183,11 @@ const Meal = () => {
                 vitamins: 680,
                 sodium: 30
             }
-            
+
         },
     ];
-       // Function to find the details for a specific meal type
-       const findItemDetails = itemName => {
+    // Function to find the details for a specific meal type
+    const findItemDetails = itemName => {
         // Search in breakfast array
         let item = breakfast.find(item => item.name === itemName);
         if (item) return item.details;
@@ -195,10 +201,10 @@ const Meal = () => {
         if (item) return item.details;
 
         // Item not found, return empty details
-        return { calories: 0, proteins: 0, fats: 0, vitamins:0, sodium:0};
+        return { calories: 0, proteins: 0, fats: 0, vitamins: 0, sodium: 0 };
     };
-      // Update total nutrition whenever selected items change
-      React.useEffect(() => {
+    // Update total nutrition whenever selected items change
+    React.useEffect(() => {
         let totalCalories = 0;
         let totalProteins = 0;
         let totalFats = 0;
@@ -228,7 +234,7 @@ const Meal = () => {
                 <div style={{ width: "100%" }}>
                     <h3 className='heading' style={{ marginTop: "20px" }} onClick={() => setShowBreakfast(!showBreakfast)}>Breakfast</h3>
                     <div className="menuContainer" style={{ maxHeight: showBreakfast ? '500px' : '0', overflow: 'hidden', transition: 'max-height 0.5s ease' }}>
-                    {showBreakfast && breakfast.map(item => (
+                        {showBreakfast && breakfast.map(item => (
                             <div
                                 className={`food-item ${selectedItems.some(selected => selected.name === item.name) ? 'selected' : ''}`}
                                 key={item.name}
@@ -243,7 +249,7 @@ const Meal = () => {
                     </div>
                     <h3 className='heading' onClick={() => setShowLunch(!showLunch)}>Lunch</h3>
                     <div className="menuContainer" style={{ maxHeight: showLunch ? '500px' : '0', overflow: 'hidden', transition: 'max-height 0.5s ease' }}>
-                    {showLunch && lunch.map(item => (
+                        {showLunch && lunch.map(item => (
                             <div
                                 className={`food-item ${selectedItems.some(selected => selected.name === item.name) ? 'selected' : ''}`}
                                 key={item.name}
@@ -258,7 +264,7 @@ const Meal = () => {
                     </div>
                     <h3 className='heading' onClick={() => setShowDinner(!showDinner)}>Dinner</h3>
                     <div className="menuContainer" style={{ maxHeight: showDinner ? '500px' : '0', overflow: 'hidden', transition: 'max-height 0.5s ease' }}>
-                    {showDinner && dinner.map(item => (
+                        {showDinner && dinner.map(item => (
                             <div
                                 className={`food-item ${selectedItems.some(selected => selected.name === item.name) ? 'selected' : ''}`}
                                 key={item.name}
@@ -278,11 +284,11 @@ const Meal = () => {
 
                         <div>
                             <ul style={{ fontSize: "1.5rem", marginTop: "0.5rem" }}>
-                            <li>Calories: {totalNutrition.calories}</li>
-                        <li>Proteins: {totalNutrition.proteins}g</li>
-                        <li>Fats: {totalNutrition.fats}g</li>
-                        <li>Vitamins: {totalNutrition.vitamins}mg</li>
-                        <li>Sodium: {totalNutrition.sodium}mg</li>
+                                <li>Calories: {totalNutrition.calories}</li>
+                                <li>Proteins: {totalNutrition.proteins}g</li>
+                                <li>Fats: {totalNutrition.fats}g</li>
+                                <li>Vitamins: {totalNutrition.vitamins}mg</li>
+                                <li>Sodium: {totalNutrition.sodium}mg</li>
                             </ul>
                         </div>
                     </div>
@@ -293,6 +299,23 @@ const Meal = () => {
                     <Link className="link" to="/dashboard" state={{ selectedItems, totalNutrition }}>
                         <button className="viewplan"><h3>View Meal Plan</h3></button>
                     </Link>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '40px' }}>
+                        <button className="viewplan" onClick={() => setShowWeeklyPlan(!showWeeklyPlan)}>
+                            <h3>{showWeeklyPlan ? 'Hide Weekly Meal Plan' : 'Show Weekly Meal Plan'}</h3>
+                        </button>
+
+                        {showWeeklyPlan && (
+                            <div id="weekly-meal-plan-container" className="weekly-container">
+                                <WeeklyMealPlan />
+                                <div style={{ textAlign: 'center', marginTop: '20px' }}>
+                                    <button className="viewplan" onClick={() => exportMealPlanAsPDF('weekly-meal-plan-container')}>
+                                        <h3>Export Weekly Plan as PDF</h3>
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
 
 
                 </div>
