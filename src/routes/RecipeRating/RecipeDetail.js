@@ -1,14 +1,16 @@
-import React, { useState } from 'react';
-import {
-    Routes,
-    Route
-} from "react-router-dom";
-import RecipeCard from './RecipeCard';
-import RecipeDetail from './RecipeDetail';
-import './RecipeRating.css';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { FaStar, FaClock, FaFire, FaArrowLeft } from 'react-icons/fa';
+import './RecipeDetail.css';
+import FeedbackPopup from './FeedbackPopup';
 
-function RecipeRating() {
-    const [recipes] = useState([
+function RecipeDetail() {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const [showFeedback, setShowFeedback] = useState(false);
+  const [recipe, setRecipe] = useState(null);
+
+    const recipes = [
         {
             id: 1,
             title: 'Nutritious Breakfast Combo',
@@ -108,25 +110,104 @@ function RecipeRating() {
             prepTime: 15,
             calories: 150,
         }
-    ]);
+    ];
+
+    useEffect(() => {
+        const foundRecipe = recipes.find(r => r.id === parseInt(id));
+        setRecipe(foundRecipe);
+
+        if (foundRecipe && foundRecipe.rating <= 2.0) {
+            const timer = setTimeout(() => {
+                setShowFeedback(true);
+            }, 500);
+
+            return () => clearTimeout(timer);
+        }
+    }, [id]);
+
+    if (!recipe) {
+        return <div className="recipe-not-found">Recipe not found!</div>;
+    }
+
+    const renderStars = () => {
+        const stars = [];
+        const fullStars = Math.floor(recipe.rating);
+        const hasHalfStar = recipe.rating % 1 >= 0.5;
+
+        for (let i = 1; i <= 5; i++) {
+            if (i <= fullStars) {
+                stars.push(<FaStar key={i} className="star filled" />);
+            } else if (i === fullStars + 1 && hasHalfStar) {
+                stars.push(<FaStar key={i} className="star half-filled" />);
+            } else {
+                stars.push(<FaStar key={i} className="star" />);
+            }
+        }
+
+        return (
+            <div className="rating">
+                {stars}
+                <span className="rating-value">{recipe.rating.toFixed(1)}</span>
+            </div>
+        );
+    };
 
     return (
-        <div className="recipe-rating-container">
-            <header className="page-header">
-                <h1>Recipe rating</h1>
-                <p>Discover the healthy recipes that best suit your taste and needs</p>
-            </header>
+        <div className="recipe-detail-container">
+            {showFeedback && (
+                <FeedbackPopup
+                    rating={recipe.rating}
+                    tags={recipe.tags}
+                    onClose={() => setShowFeedback(false)}
+                />
+            )}
 
-            <div className="recipe-container">
-                {recipes.map((recipe) => (
-                    <RecipeCard
-                        key={recipe.id}
-                        {...recipe}
-                    />
+            <div className="recipe-header">
+                <h1>{recipe.title}</h1>
+                <p className="recipe-description">{recipe.description}</p>
+            </div>
+
+            <div className="recipe-meta">
+                <div className="meta-item">
+                    <FaClock className="meta-icon" />
+                    <span>Prep Time: {recipe.prepTime} minutes</span>
+                </div>
+                <div className="meta-item">
+                    <FaFire className="meta-icon" />
+                    <span>Calories: {recipe.calories}</span>
+                </div>
+            </div>
+
+            {renderStars()}
+
+            <div className="tag-group">
+                {recipe.tags.map((tag, index) => (
+                    <span key={index} className="tag">{tag}</span>
                 ))}
             </div>
+
+            <div className="recipe-content">
+                <h2>Ingredients</h2>
+                <ul className="ingredients-list">
+                    <li>Ingredient 1</li>
+                    <li>Ingredient 2</li>
+                    <li>Ingredient 3</li>
+                </ul>
+
+                <h2>Instructions</h2>
+                <ol className="instructions-list">
+                    <li>Step 1: Prepare the ingredients</li>
+                    <li>Step 2: Cook the main components</li>
+                    <li>Step 3: Combine and serve</li>
+                </ol>
+            </div>
+
+            <button className="back-button" onClick={() => navigate(-1)}>
+                <FaArrowLeft /> Back to Recipes
+            </button>
+
         </div>
     );
 }
 
-export default RecipeRating;
+export default RecipeDetail;
