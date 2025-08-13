@@ -434,9 +434,9 @@ function CreateRecipe() {
                     <label
                       htmlFor="file-upload"
                       id="no-bg"
-                      className="bg-[#BA49E7] text-white px-4 sm:px-6 py-3 sm:py-4 rounded-lg font-semibold text-sm sm:text-base cursor-pointer"
+                      className="bg-[#BA49E7] text-white px-4 sm:px-6 py-3 sm:py-4 rounded-full font-semibold text-sm sm:text-base cursor-pointer"
                     >
-                      Upload Image
+                      Upload
                     </label>
                   </div>
                 </div>
@@ -596,24 +596,43 @@ function CreateRecipe() {
                         >
                           Quantity
                         </label>
-                        <select
-                          id="no-bg"
-                          className="w-full sm:w-2/3 rounded-xl h-10 sm:h-12 border border-gray-400 px-4 bg-white"
-                          defaultValue=""
-                          value={ingredientQuantity}
-                          onChange={(e) =>
-                            handleIngredientQuantityChange(e.target.value)
-                          }
-                        >
-                          <option value="" disabled>
-                            Select one
-                          </option>
-                          <option value="ml">Ml</option>
-                          <option value="g">G</option>
-                          <option value="cups">Cups</option>
-                          <option value="tbsp">Tbsp</option>
-                          <option value="tsp">Tsp</option>
-                        </select>
+                        <div className="flex items-center w-full sm:w-2/3">
+                          <input
+                            id="no-bg"
+                            //list="units"
+                            className="w-full sm:w-2/3 rounded-xl h-10 sm:h-12 border border-gray-400 px-4 bg-white"
+                            defaultValue=""
+                            value={ingredientQuantity}
+                            onChange={(e) =>
+                              handleIngredientQuantityChange(e.target.value)
+                            }
+                          />
+                          {/*      <datalist id="units">
+                          <option value="ml" />
+                          <option value="g" />
+                          <option value="cups" />
+                          <option value="tbsp" />
+                          <option value="tsp" />
+                        </datalist> */}
+                          <select
+                            id="no-bg"
+                            className="w-2/3 sm:w-2/3 rounded-xl h-10 sm:h-12 border border-gray-400 px-4 bg-white"
+                            defaultValue=""
+                            /*   value={ingredientQuantity}
+                            onChange={(e) =>
+                              handleIngredientQuantityChange(e.target.value)
+                            } */
+                          >
+                            <option value="" disabled>
+                              Select one
+                            </option>
+                            <option value="ml">Ml</option>
+                            <option value="g">G</option>
+                            <option value="cups">Cups</option>
+                            <option value="tbsp">Tbsp</option>
+                            <option value="tsp"></option>
+                          </select>
+                        </div>
                       </div>
 
                       <div
@@ -623,10 +642,10 @@ function CreateRecipe() {
                         <button
                           type="button"
                           id="no-bg"
-                          className="bg-[#BA49E7] text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-semibold text-sm sm:text-base"
+                          className="bg-[#BA49E7] text-white px-4 sm:px-6 py-2 sm:py-3 rounded-full font-semibold text-sm sm:text-base"
                           onClick={() => handelIngredientsInTable()}
                         >
-                          Add Ingredient +
+                          Add
                         </button>
                       </div>
                     </div>
@@ -750,7 +769,7 @@ function CreateRecipe() {
               {/* Instructions Section */}
               <div
                 id="no-bg"
-                className="bg-purple-100 rounded-lg p-4 sm:p-6 mb-6 sm:mb-8"
+                className="bg-purple-100 rounded-lg p-4 sm:p-6 mb-6 sm:mb-8 w-full"
               >
                 <h2
                   id="no-bg"
@@ -758,44 +777,81 @@ function CreateRecipe() {
                 >
                   Instructions
                 </h2>
+                {instruction.length > 0 && (
+                  <div className="mt-4 w-full">
+                    {instruction.map((item, index) => (
+                      <FramerClient key={index}>
+                        <div
+                          id="no-bg"
+                          className="w-full flex flex-col justify-start sm:flex-row mb-4 sm:mb-6"
+                        >
+                          <div id="no-bg" className="w-full sm:w-1/4">
+                            <button
+                              type="button"
+                              id="no-bg"
+                              className="w-full bg-[#6F42C1] text-white py-2 sm:py-3 px-4 font-semibold text-sm sm:text-base"
+                            >
+                              Step {index + 1}:
+                            </button>
+                          </div>
+                          <div className="flex justify-start items-center w-full sm:w-3/4">
+                            <input
+                              id="no-bg"
+                              className="w-full sm:w-3/4 h-full py-2 sm:py-3 px-4 bg-white"
+                              placeholder="Enter step by step instructions here..."
+                              value={item}
+                              disabled
+                            />
+                            <div className="w-full -ml-[8px] bg-white text-black px-2 sm:px-3 py-1 sm:py-2 cursor-pointer flex items-center justify-end h-full gap-4">
+                              <RiDeleteBin6Fill />
+                              <MdEdit />
+                            </div>
+                          </div>
+                        </div>
+                      </FramerClient>
+                    ))}
+                  </div>
+                )}
 
-                <div
-                  id="no-bg"
-                  className="flex flex-col sm:flex-row gap-2 sm:gap-0 mb-4 sm:mb-6"
-                >
-                  <div id="no-bg" className="w-full sm:w-1/4">
-                    <button
-                      type="button"
+                <FramerClient>
+                  <div
+                    id="no-bg"
+                    className="flex flex-col sm:flex-row gap-2 sm:gap-0 mb-4 sm:mb-6  w-full justify-center items-center"
+                  >
+                    <div id="no-bg" className="w-full sm:w-1/4">
+                      <button
+                        type="button"
+                        id="no-bg"
+                        className="w-full bg-[#6F42C1] text-white py-2 sm:py-3 px-4 font-semibold text-sm sm:text-base"
+                      >
+                        Step {instruction.length + 1}:
+                      </button>
+                    </div>
+                    <input
                       id="no-bg"
-                      className="w-full bg-[#6F42C1] text-white py-2 sm:py-3 px-4 rounded-l-lg font-semibold text-sm sm:text-base"
+                      className="w-full -ml-[8px] sm:w-3/4 border border-gray-400 py-2 sm:py-3 px-4"
+                      placeholder="Enter step by step instructions here..."
+                      value={instructions}
+                      onChange={(e) => handleInstructionsChange(e.target.value)}
+                    />
+                  </div>
+
+                  <div id="no-bg" className="flex justify-end">
+                    <button
+                      id="no-bg"
+                      type="button"
+                      className="bg-[#BA49E7] text-white px-4 sm:px-6 py-2 sm:py-3 rounded-full font-semibold text-sm sm:text-base"
+                      onClick={() => {
+                        setInstruction((prev) => [...prev, instructions]);
+                        setInstructions("");
+                      }}
                     >
-                      Step {instruction.length + 1}:
+                      Add
                     </button>
                   </div>
-                  <input
-                    id="no-bg"
-                    className="w-full sm:w-3/4 rounded-r-lg border border-gray-400 py-2 sm:py-3 px-4"
-                    placeholder="Enter step by step instructions here..."
-                    value={instructions}
-                    onChange={(e) => handleInstructionsChange(e.target.value)}
-                  />
-                </div>
+                </FramerClient>
 
-                <div id="no-bg" className="flex justify-end">
-                  <button
-                    id="no-bg"
-                    type="button"
-                    className="bg-[#BA49E7] text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-semibold text-sm sm:text-base"
-                    onClick={() => {
-                      //console.log(instruction);
-                      setInstruction((prev) => [...prev, instructions]);
-                      setInstructions("");
-                    }}
-                  >
-                    Add Step +
-                  </button>
-                </div>
-                {instruction.length > 0 && (
+                {/* {instruction.length > 0 && (
                   <div id="no-bg" className="overflow-x-auto mt-4">
                     <table
                       id="no-bg"
@@ -855,7 +911,7 @@ function CreateRecipe() {
                       </tbody>
                     </table>
                   </div>
-                )}
+                )} */}
               </div>
 
               {/* Submit Button */}

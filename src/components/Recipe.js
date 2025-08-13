@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { getRecipes } from "../routes/CreateRecipe/data/db/db";
 import "../styles/recipe.css";
-import { RefreshCcwIcon } from "lucide-react";
+import { RefreshCcwIcon, SearchIcon } from "lucide-react";
 
 function Recipe() {
   const userId = 15;
@@ -59,6 +59,33 @@ function Recipe() {
             See All
             <RefreshCcwIcon size={24} className="animate-spin" />
           </button>
+        </div>
+        <div className="flex justify-center items-center mb-8">
+          <div className="relative w-full h-full sm:w-8/12">
+            <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
+            <input
+              id="no-bg"
+              className="w-full outline-none border border-gray-300 rounded-lg px-4 py-2 sm:px-6 sm:py-3 pr-24 text-gray-700 focus:border-[#BA49E7] focus:ring-[#BA49E7] transition duration-200 placeholder:pl-5 placeholder:font-medium"
+              type="text"
+              placeholder="search for..."
+            />
+          </div>
+          <select
+            id="no-bg"
+            className="w-2/12 h-[100px]  sm:h-14 border border-gray-400 px-4 bg-white"
+            defaultValue=""
+          >
+            <option value="" disabled>
+              All Categories
+            </option>
+            <option value="ml">Ml</option>
+            <option value="g">G</option>
+            <option value="cups">Cups</option>
+            <option value="tbsp">Tbsp</option>
+            <option value="tsp"></option>
+          </select>
+
+          <button className="ml-8 px-8 py- rounded-2xl">See All</button>
         </div>
 
         {/* Recipe Cards */}
