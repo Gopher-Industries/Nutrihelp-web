@@ -1,15 +1,15 @@
-import oatmealImage from '../../menupage_img/menup_oatmeal.jpg';
-import omeleteImage from '../../menupage_img/menup_omelete.jpg';
-import berrySmoothieImage from '../../menupage_img/menup_berrySmoothie.jpg';
-import vegetableStirFryImage from '../../menupage_img/menup_vegetable.jpg';
-import chocolateCakeImage from '../../menupage_img/menup_chocolateCake.jpg';
-import quinoaSaladImage from '../../menupage_img/menup_quinoaSalad.jpg';
-import chickenWingsImage from '../../menupage_img/menup_chickenWings.jpg';
-import hotdogImage from '../../menupage_img/menup_hotdog.jpg';
-import broccoliImage from '../../menupage_img/menup_broccoli.jpg';
-import avocadoImage from '../../menupage_img/menup_avocado.jpg';
-import salmonImage from '../../menupage_img/menup_salmon.jpg';
-import oatmeal2Image from '../../menupage_img/menup_oatmeal2.jpg';
+import oatmealImage from '../../images/menupage_img/menup_oatmeal.jpg';
+import omeleteImage from '../../images/menupage_img/menup_omelete.jpg';
+import berrySmoothieImage from '../../images/menupage_img/menup_berrySmoothie.jpg';
+import vegetableStirFryImage from '../../images/menupage_img/menup_vegetable.jpg';
+import chocolateCakeImage from '../../images/menupage_img/menup_chocolateCake.jpg';
+import quinoaSaladImage from '../../images/menupage_img/menup_quinoaSalad.jpg';
+import chickenWingsImage from '../../images/menupage_img/menup_chickenWings.jpg';
+import hotdogImage from '../../images/menupage_img/menup_hotdog.jpg';
+import broccoliImage from '../../images/menupage_img/menup_broccoli.jpg';
+import avocadoImage from '../../images/menupage_img/menup_avocado.jpg';
+import salmonImage from '../../images/menupage_img/menup_salmon.jpg';
+import oatmeal2Image from '../../images/menupage_img/menup_oatmeal2.jpg';
 
 const imageMapping = {
   Oatmeal: {
@@ -85,6 +85,48 @@ const imageMapping = {
     description: 'Another variant of healthy oatmeal.',
     recipeLink: 'https://www.eatingwell.com/recipe/268775/cinnamon-roll-overnight-oats/',
   },
+  'Greek Yogurt Parfait': {
+    title: 'Greek Yogurt Parfait',
+    description:'A refreshing layered blend of creamy Greek yogurt, crunchy granola, and fresh berries.',
+    recipeLink: 'https://foolproofliving.com/layered-yogurt-parfait/',
+ 
+  },
+  'Avocado Toast':
+  {
+    title: 'Avocado Toast',
+    description:'Toasted bread topped with creamy mashed avocado, a dash of lemon, and a sprinkle of seasoning.',
+    recipeLink: 'https://cookieandkate.com/avocado-toast-recipe/',
+ 
+  },
+  'Grilled Chicken Salad':
+  {
+    title: 'Grilled Chicken Salad',
+    description:'Juicy grilled chicken served over a bed of crisp greens, fresh veggies, and a light vinaigrette for a protein-packed, wholesome meal.',
+    recipeLink: 'https://www.delish.com/cooking/recipe-ideas/a21097616/grilled-chicken-salad-recipe/',
+ 
+  },
+  'Pasta Primavera':
+  {
+    title: 'Pasta Primavera',
+    description:'A vibrant medley of seasonal vegetables tossed with tender pasta and a light garlic-herb sauce.',
+    recipeLink: 'https://www.loveandlemons.com/pasta-primavera/',
+ 
+  },
+  'Stir-Fried Tofu Bowl':
+  {
+    title: 'Stir-Fried Tofu Bowl',
+    description:'Tofu stir-fried with colorful vegetables and savory sauce, served over rice or grains for a hearty and plant-based dinner option.',
+    recipeLink: 'https://rainbowplantlife.com/tofu-stir-fry/',
+ 
+  },
+  'Baked Sweet Potatoes':
+  {
+    title: 'Baked Sweet Potatoes',
+    description:'Tender, naturally sweet potatoes baked to perfection and served with a touch of butter, herbs, or spices for a warm and comforting meal.',
+    recipeLink: 'https://www.loveandlemons.com/baked-sweet-potato/',
+ 
+  }
+
 };
 
 export default imageMapping;

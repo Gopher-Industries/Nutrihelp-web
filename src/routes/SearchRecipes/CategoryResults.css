@@ -1,0 +1,29 @@
+/* CategoryResults.css */
+
+.category-results-page {
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.back-link {
+  text-align: left;
+  margin-bottom: 20px;
+}
+
+.back-link a {
+  color: #d42b91;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.back-link a:hover {
+  text-decoration: underline;
+}
+
+/* Make the cards line up horizontally and wrap */
+.recipes-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 30px;
+}

@@ -1,0 +1,60 @@
+
+:root {
+  --button-background-color: #a82fea;
+  --appointment-div-color: #cfa7e8;
+  --appointment-background-color: #F8E7FF;
+  --appointment-form-background-color: #F8E7FF;
+  --border-color: #690f87;
+  --placeholder-color: #690f87;
+  --food-preferences-div-background-color: #f2f2f2;
+  --food-preferences-box-background-color: #f6edff;
+  --food-preferences-card-background-color: #fff;
+  --search-recipe-button-background-color: #d42b91;
+  --recipe-search-header-color: #4444;
+}
+
+.light-mode {
+  --color: white;
+  --color2: #4444;
+  --hero1-background-color: #f4fbfe;
+  --card-background-color: #fff;
+  --background2-color: rgb(172, 172, 172);
+  --footer1-background-color: #f0f9fd;
+  --h3-color: #4444;
+  --text-color2: #777;
+  --navtext-color: #4444;
+  --h1-color: #6d34e0;
+  --text-color: #4444;
+  --meal-banner-background-color: #caa3e1;
+  --button-background-color: #a82fea;
+  --button-hover-color: #6d34e0;
+  --appointment-div-color: #cfa7e8;
+}
+
+.dark-mode {
+  --background-color: rgb(85, 85, 85);
+  --color: #5db5f0de;
+  --color2: #93c5fd;
+  --hero1-background-color: #2a2a2b;
+  --card-background-color: #7a7a7a;
+  --background2-color: rgb(85, 85, 85);
+  --footer1-background-color: #2a2a2b;
+  --h3-color: #93c5fd;
+  --text-color2: #0f3c7a;
+  --navtext-color: #2f7fea;
+  --h1-color: #93c5fd;
+  --meal-banner-background-color: #2a2a2b;
+  --button-background-color: #0077cc;
+  --button-hover-color: #005fa3;
+  --appointment-div-color: #153b7b;
+  --appointment-background-color: #2a2a2b;
+  --appointment-form-background-color: #3b3b3b;
+  --border-color: #005fa3;
+  --placeholder-color: #ffffff;
+  --food-preferences-div-background-color: #2a2a2b;
+  --food-preferences-box-background-color: #3b3b3b;
+  --food-preferences-card-background-color: #161616;
+  --search-recipe-button-background-color: #0077cc;
+  --recipe-search-header-color: #93c5fd;
+}
+
