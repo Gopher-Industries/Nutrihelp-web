@@ -6,6 +6,7 @@ import DarkModeToggle from "../routes/DarkModeToggle/DarkModeToggle"; // Include
 import "../styles/mainNavbar.css";
 import TextToSpeech from "./TextToSpeech/TextToSpeech";
 import VoiceNavigation from "./VoiceControl/VoiceNavigation";
+import SymptomAssessment from "../routes/SymptomAssessment/SymptomAssessment";
 
 const MainNavbar = () => {
   const { currentUser, logOut } = useContext(UserContext);
@@ -87,6 +88,10 @@ const MainNavbar = () => {
 
                 <Link className="link nav-link" to="/preferences">
                   Allergies & Intolerances
+                </Link>
+
+                <Link className="link nav-link" to="/symptomassessment">
+                  Symptom Assessment
                 </Link>
 
                 <Link className="link nav-link" to="/healthtools">

@@ -1,8 +1,15 @@
 import React from 'react';
 import { FaStar, FaClock, FaFire } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 import './RecipeCard.css';
 
 function RecipeCard({ id, title, description, tags, rating, prepTime, calories }) {
+    const navigate = useNavigate();
+
+    const handleCardClick = () => {
+        navigate(`/recipe/${id}`);
+    };
+
     const renderStars = () => {
         const stars = [];
         const fullStars = Math.floor(rating);
@@ -27,7 +34,7 @@ function RecipeCard({ id, title, description, tags, rating, prepTime, calories }
     };
 
     return (
-        <div className="recipe-card">
+        <div className="recipe-card" onClick={handleCardClick}>
             <div className="card-header">
                 <div className="card-badge">#{id}</div>
                 <h3 className="recipe-title">{title}</h3>
