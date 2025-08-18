@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import "semantic-ui-css/semantic.min.css";
 import "./App.css";
 import {
@@ -38,9 +38,13 @@ import HealthNews from "./routes/HealthNews/HealthNews";
 import FoodPreferences from "./routes/FoodPreferences/FoodPreferences";
 import HealthTools from "./routes/HealthTools/HealthTools";
 import RecipeRating from "./routes/RecipeRating/RecipeRating";
+import ShoppingList from "./routes/UI-Only-Pages/ShoppingList/ShoppingList";
 
 function App() {
   const { currentUser } = useContext(UserContext);
+  
+  // Development mode - set to true to bypass authentication
+  const DEVELOPMENT_MODE = true;
 
   return (
     <Router>
@@ -50,7 +54,8 @@ function App() {
         <Route
           path="/"
           element={
-            currentUser ? <Navigate to="/home" /> : <Navigate to="/login" />
+            DEVELOPMENT_MODE ? <Navigate to="/home" /> : 
+            (currentUser ? <Navigate to="/home" /> : <Navigate to="/login" />)
           }
         />
         <Route path="/login" element={<Login />} />
@@ -189,6 +194,14 @@ function App() {
           element={
             <AuthenticateRoute>
               <HealthTools />
+            </AuthenticateRoute>
+          }
+        />
+        <Route
+          path="shopping-list"
+          element={
+            <AuthenticateRoute>
+              <ShoppingList />
             </AuthenticateRoute>
           }
         />
