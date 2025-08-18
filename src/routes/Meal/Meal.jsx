@@ -450,6 +450,15 @@ const Meal = () => {
                 <h3>View Meal Plan</h3>
               </button>
             </Link>
+            <Link
+              className="link"
+              to="/shopping-list"
+              state={{ selectedItems, totalNutrition }}
+            >
+              <button className="viewplan">
+                <h3>🛒 Shopping List</h3>
+              </button>
+            </Link>
           </div>
         </div>
       </div>
