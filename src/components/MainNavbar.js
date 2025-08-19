@@ -64,6 +64,9 @@ const MainNavbar = () => {
                     <Link className="link dropdown-link" to="/RecipeRating">
                       Recipe rating
                     </Link>
+                    <Link className="link dropdown-link" to="/UITimer">
+                      UITimer
+                    </Link>
                   </div>
                 </div>
 
@@ -114,8 +117,8 @@ const MainNavbar = () => {
               <>
                 <Link
                   className={`link dropdown-link font-bold text-xl rounded-md  ${darkMode
-                      ? "text-white hover:text-blue-300 hover:bg-blue-700"
-                      : "text-[#333] hover:bg-blue-200 hover:text-blue-600"
+                    ? "text-white hover:text-blue-300 hover:bg-blue-700"
+                    : "text-[#333] hover:bg-blue-200 hover:text-blue-600"
                     }`}
                   to="/home"
                 >
@@ -123,8 +126,8 @@ const MainNavbar = () => {
                 </Link>
                 <Link
                   className={`link dropdown-link font-bold text-xl rounded-md  ${darkMode
-                      ? "text-white hover:text-blue-300 hover:bg-blue-700"
-                      : "text-[#333] hover:bg-blue-200 hover:text-blue-600"
+                    ? "text-white hover:text-blue-300 hover:bg-blue-700"
+                    : "text-[#333] hover:bg-blue-200 hover:text-blue-600"
                     }`}
                   to="/login"
                 >
@@ -132,8 +135,8 @@ const MainNavbar = () => {
                 </Link>
                 <Link
                   className={`link dropdown-link font-bold text-xl rounded-md  ${darkMode
-                      ? "text-white hover:text-blue-300 hover:bg-blue-700"
-                      : "text-[#333] hover:bg-blue-200 hover:text-blue-600"
+                    ? "text-white hover:text-blue-300 hover:bg-blue-700"
+                    : "text-[#333] hover:bg-blue-200 hover:text-blue-600"
                     }`}
                   to="/signUp"
                 >
