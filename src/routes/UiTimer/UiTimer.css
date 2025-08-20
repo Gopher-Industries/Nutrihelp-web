@@ -1,114 +1,85 @@
-.timer-container {
-    max-width: 600px;
-    margin: 20px auto;
-    padding: 20px;
-    text-align: center;
-    font-family: Arial, sans-serif;
+#UiTimer {
+    width: 100%;
+    height: calc(100vh - 78px);
+
+    .UiTimer {
+        width: 100%;
+        height: 100%;
+
+        .runningFalse,
+        .runningTrue {
+            width: 100%;
+            height: 80%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .runningFalse .runningDiv {
+            text-align: center;
+            font-size: 26px;
+            font-weight: 600;
+        }
+
+        .runningTrue .runningDiv {
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 36px;
+            font-weight: 900;
+            height: 150px;
+            width: 200px;
+            margin-right: 10px;
+            background-color: #a82fea;
+            color: white;
+        }
+
+        .runningDiv.animate {
+            animation: slideDown 0.5s ease-in-out;
+        }
+    }
+
+    .UiTimer input {
+        display: flex !important;
+        width: 200px !important;
+        height: 150px !important;
+        margin: 0 10px !important;
+        border-radius: 0 !important;
+        align-items: center !important;
+        font-size: 18px !important;
+    }
+
+    .UiTimer button {
+        box-sizing: border-box !important;
+        padding: 15px 20px !important;
+        margin: 0 !important;
+        width: 100% !important;
+        height: 20% !important;
+        font-size: 36px !important;
+        font-weight: 900 !important;
+    }
 }
 
-h2 {
-    color: #333;
-    margin-bottom: 20px;
-}
+@keyframes slideDown {
+    0% {
+        transform: translateY(0);
+        opacity: 1;
+    }
 
-.recipe-section {
-    margin-bottom: 20px;
-    padding: 15px;
-    border: 1px solid #ddd;
-}
-
-.recipe-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    justify-content: center;
-    margin: 15px 0;
-}
-
-.recipe-item {
-    padding: 8px 12px;
-    border: 1px solid #ccc;
-    cursor: pointer;
-    background: #fff;
-}
-
-.recipe-item:hover {
-    background: #f0f0f0;
-}
-
-.recipe-item.selected {
-    background: #e6f2ff;
-    border-color: #66b3ff;
-}
-
-.clear-btn {
-    background: transparent;
-    border: 1px solid #999;
-    padding: 5px 10px;
-    cursor: pointer;
-    margin-top: 10px;
-}
-
-.timer-display {
-    padding: 15px;
-    border: 1px solid #ddd;
-    margin-bottom: 15px;
-}
-
-.time-inputs,
-.time-values {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-    margin-bottom: 15px;
-}
-
-.time-group {
-    text-align: center;
-}
-
-.time-group input {
-    width: 100px;
-    padding: 5px;
-    text-align: center;
-    margin-bottom: 5px;
-}
-
-.time-value {
-    font-size: 1.5rem;
-    font-weight: bold;
-    padding: 0 10px;
-}
-
-.separator {
-    font-size: 1.5rem;
-    align-self: center;
-}
-
-.controls {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-}
-
-.control-btn {
-    color: #333;
-    padding: 8px 16px;
-    border: 1px solid #ccc;
-    background: #fff;
-    cursor: pointer;
-}
-
-.control-btn:hover {
-    background: #f0f0f0;
-}
-
-.animate {
-    animation: flash 0.5s;
-}
-
-@keyframes flash {
     50% {
-        color: #0066cc;
+        transform: translateY(100%);
+        opacity: 0;
+    }
+
+    51% {
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+
+    100% {
+        transform: translateY(0);
+        opacity: 1;
     }
 }

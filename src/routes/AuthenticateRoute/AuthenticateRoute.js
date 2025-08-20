@@ -5,9 +5,6 @@ import { UserContext } from '../../context/user.context';
 const AuthenticateRoute = ({ children }) => {
   const { currentUser, setCurrentUser } = useContext(UserContext);
 
-  // Development mode bypass - set to true to bypass authentication
-  const DEVELOPMENT_MODE = true;
-
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
@@ -20,11 +17,6 @@ const AuthenticateRoute = ({ children }) => {
       }
     }
   }, [setCurrentUser]);
-
-  // If in development mode, bypass authentication
-  if (DEVELOPMENT_MODE) {
-    return children;
-  }
 
   return currentUser ? children : <Navigate to="/login" replace />;
 };
