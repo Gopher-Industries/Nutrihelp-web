@@ -50,6 +50,7 @@
     ]
   },
   "devDependencies": {
+    "@types/react": "^19.1.9",
     "eslint": "^7.32.0",
     "tailwindcss": "3"
   }
