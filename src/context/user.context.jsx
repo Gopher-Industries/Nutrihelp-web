@@ -69,6 +69,63 @@
 //     );
 // };
 
+// import React, { createContext, useState, useEffect } from 'react';
+
+// export const UserContext = createContext({
+//     currentUser: null,
+//     setCurrentUser: () => null,
+//     logOut: () => null,
+// });
+
+// export const UserProvider = ({ children }) => {
+//     const [currentUser, setCurrentUser] = useState(() => {
+//         // get value of current user from localstorage
+//         const storedUser = localStorage.getItem('user');
+//         const storedExpirationTime = localStorage.getItem('expirationTime');
+        
+//         if (storedUser && storedExpirationTime) {
+//             // Check if the expiration time is still valid
+//             const expirationTime = JSON.parse(storedExpirationTime);
+//             if (Date.now() > expirationTime) {
+//                 // If expired, clear the user data
+//                 localStorage.removeItem('user');
+//                 localStorage.removeItem('expirationTime');
+//                 return null;
+//             }
+//             return JSON.parse(storedUser);
+//         }
+//         return null;
+//     });
+
+//     const setUser = (user, expirationTimeInMillis) => {
+//         if (user) {
+//             // Set expiration time if the user is logged in
+//             setCurrentUser(user);
+//             const expirationTime = Date.now() + expirationTimeInMillis;
+//             localStorage.setItem('user', JSON.stringify(user));
+//             localStorage.setItem('expirationTime', JSON.stringify(expirationTime));
+//         } else {
+//             // Clear user and expiration time if logged out
+//             localStorage.removeItem('user');
+//             localStorage.removeItem('expirationTime');
+//         }
+//     };
+
+//     const logOut = () => {
+//         localStorage.removeItem('user');
+//         localStorage.removeItem('userExpireTime');
+//         setCurrentUser(null);
+//     };
+
+//     const value = { currentUser, setCurrentUser: setUser, logOut };
+
+//     return (
+//         <UserContext.Provider value={value}>
+//             {children}
+//         </UserContext.Provider>
+//     );
+// };
+
 import React, { createContext, useState, useEffect } from 'react';
 
 export const UserContext = createContext({
@@ -78,11 +135,27 @@ export const UserContext = createContext({
 });
 
 export const UserProvider = ({ children }) => {
+    // Development mode - set to true to bypass authentication with mock user
+    const DEVELOPMENT_MODE = true;
+
+    // Mock user data for development mode
+    const mockUser = {
+        user_id: 1,
+        email: "s224384155@deakin.edu.au",
+        name: "Test User",
+        mfa_enabled: false
+    };
+
     const [currentUser, setCurrentUser] = useState(() => {
+        // If in development mode, return mock user
+        if (DEVELOPMENT_MODE) {
+            return mockUser;
+        }
+
         // get value of current user from localstorage
         const storedUser = localStorage.getItem('user');
         const storedExpirationTime = localStorage.getItem('expirationTime');
-        
+
         if (storedUser && storedExpirationTime) {
             // Check if the expiration time is still valid
             const expirationTime = JSON.parse(storedExpirationTime);
