@@ -41,7 +41,6 @@ import RecipeRating from "./routes/RecipeRating/RecipeRating";
 import RecipeDetail from "./routes/RecipeRating/RecipeDetail";
 import SymptomAssessment from "./routes/SymptomAssessment/SymptomAssessment";
 import Leaderboard from "./routes/LeaderBoard/leaderBoard";
-import UITimer from "./routes/UiTimer/UiTimer"
 
 function App() {
   const { currentUser } = useContext(UserContext);
@@ -66,6 +65,7 @@ function App() {
         <Route path="/forgotPassword" element={<ForgotPassword />} />
         <Route path="/faq" element={<FAQ />} />
         <Route path="/leaderboard" element={<Leaderboard />} />
+        <Route path="/survey" element={<ObesityPredictor />} />
 
         {/* Private Routes */}
         <Route

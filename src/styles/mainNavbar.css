@@ -1,26 +1,22 @@
 /* General header styling */
 .main-header {
-  position: fixed; /* 固定在页面顶部 */
+  position: sticky;
   top: 0;
   left: 0;
   width: 100%;
-  z-index: 1000; /* 确保导航栏在其他内容上方 */
-  background-color: rgba(169, 231, 252, 0.575); /* 半透明背景 */
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* 添加阴影效果 */
+  z-index: 1000; 
   padding: 1rem;
-  transition: background-color 0.3s ease-in-out; /* 平滑背景色过渡 */
+  background-color: #8d5cf6;
+  transition: background-color 0.5s ease-in-out;
 }
 
-/* When scrolled, add solid background */
+
 .main-header.scrolled {
-  background-color: rgba(255, 255, 255, 1); /* 滚动后变为不透明背景 */
+  background: linear-gradient(44deg, #7B44FF 0%, #F26CBA 100%); 
+  backdrop-filter: blur(8px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
 }
 
-/* Header background and text color */
-.header {
-  background-color: var(--background-color); /* Set the background color */
-  color: var(--text-color); /* Set the text color */
-}
 
 /* Nav bar styling */
 .main-nav {
@@ -28,48 +24,27 @@
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  padding: 0;
+  padding: 8px;
   margin: 0;
+  height: 53px;
 }
 
-/* Navbar container styling */
-.nav-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-}
+
 
 /* Ensure logo moves to extreme left */
 .logo-container {
-  flex: 1;
   display: flex;
   align-items: center;
-  background-color: var(--background-color);
+  width: 180px;
+  background-color: none !important;
 }
 
 /* Logo container */
 .logo-container img {
-  height: 50px;
+    height: 60px;
+    width: 233px;
 }
 
-/* Navbar links */
-.nav-links {
-  display: flex;
-  gap: 1rem;
-}
-
-.nav-link {
-  color: var(--navtext-color); /* Set the text color */
-  text-decoration: none;
-  font-weight: bold;
-  padding: 0.5rem 1rem;
-  transition: color 0.3s ease;
-}
-
-.nav-link:hover {
-  color: #007bff; /* 鼠标悬停时变色 */
-}
 
 /* Dropdown menu */
 .dropdown {
@@ -97,7 +72,7 @@
   transition: background-color 0.2s ease;
 }
 
-/* Responsive styling for mobile */
+
 @media screen and (max-width: 768px) {
   .nav-links {
     flex-direction: column;
@@ -108,4 +83,121 @@
     position: static;
     box-shadow: none;
   }
+}
+
+/* Hamburger icon */
+.hamburger {
+  font-size: 2rem;
+  cursor: pointer;
+  background-color: none;
+}
+
+.darkmode{
+  background-color: none !important;
+}
+
+/* Sidebar container */
+.side-menu {
+  position: fixed;
+  top: 70px;
+  left: -300px;
+  width: 280px;
+  height: fit-content;
+  background: linear-gradient(44deg, #7B44FF 0%, #F26CBA 100%);
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
+  padding: 1rem 1rem;
+  transition: left 0.3s ease-in-out;
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
+  border-radius: 15px;
+}
+
+.hamburger:hover{
+  color: black;
+}
+
+.side-menu.open {
+  left: 10px;
+}
+
+
+/* Sidebar links */
+.side-menu .nav-links {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.side-menu .nav-links a,
+.side-menu .nav-links button span {
+  text-decoration: none;
+  color: white !important;
+  font-weight: bold;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.side-menu .dropdown {
+  position: relative;
+}
+
+.side-menu .dropdown:hover .dropdown-content {
+  display: flex;
+}
+
+
+/* Optional: make dropdown links look distinct */
+.side-menu .dropdown-content a span {
+  font-weight: normal;
+  padding: 0.3rem 0;
+  border-left: 2px solid #ccc;
+}
+
+/* Side menu dropdown toggle style */
+.side-menu .dropdown-toggle {
+  cursor: pointer;
+  font-weight: bold;
+  padding: 0.5rem 0;
+  color: white !important;
+}
+
+/* Dropdown content hidden by default in side menu */
+.side-menu .dropdown-content {
+  display: flex;
+  flex-direction: column;
+  padding-left: 1rem;
+  margin-top: 0.3rem;
+}
+
+.side-menu .dropdown-content a {
+  font-weight: normal;
+  padding: 0.3rem 0;
+  border-left: 2px solid #ccc;
+}
+
+.side-menu .dropdown-content {
+  position: absolute;
+  left: 150%; /* show to the right of the parent */
+  top: 0;
+  background: linear-gradient(44deg, #7B44FF 0%, #F26CBA 100%)!important;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  /* border: 2px solid; */
+  border-radius: 15px;
+}
+
+.close-button {
+  font-size: 2rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #333;
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  line-height: 1;
+  padding: 0;
 }

@@ -73,15 +73,12 @@ input {
 
 button {
   padding: 8px;
-  background-color: var(--button-background-color);
+  /* background-color: var(--button-background-color); */
   color: #fff;
   border: none;
   cursor: pointer;
 }
 
-button:hover {
-  background-color: #45a049;
-}
 
 /* #menuContainer {
   display: flex;
