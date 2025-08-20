@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext } from "react";
 import "semantic-ui-css/semantic.min.css";
 import "./App.css";
 import {
@@ -41,10 +41,9 @@ import RecipeRating from "./routes/RecipeRating/RecipeRating";
 import RecipeDetail from "./routes/RecipeRating/RecipeDetail";
 import SymptomAssessment from "./routes/SymptomAssessment/SymptomAssessment";
 import Leaderboard from "./routes/LeaderBoard/leaderBoard";
-
+import ObesityPredictor from "./routes/survey/ObesityPredictor";
 function App() {
   const { currentUser } = useContext(UserContext);
-  const DEVELOPMENT_MODE = true;
 
   return (
     <Router>
@@ -54,8 +53,7 @@ function App() {
         <Route
           path="/"
           element={
-            DEVELOPMENT_MODE ? <Navigate to="/home" /> :
-              (currentUser ? <Navigate to="/home" /> : <Navigate to="/login" />)
+            currentUser ? <Navigate to="/home" /> : <Navigate to="/login" />
           }
         />
         <Route path="/login" element={<Login />} />
@@ -138,14 +136,6 @@ function App() {
           element={
             <AuthenticateRoute>
               <RecipeRating />
-            </AuthenticateRoute>
-          }
-        />
-        <Route
-          path="UITimer"
-          element={
-            <AuthenticateRoute>
-              <UITimer />
             </AuthenticateRoute>
           }
         />
