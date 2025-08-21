@@ -38,6 +38,7 @@ import HealthNews from "./routes/HealthNews/HealthNews";
 import FoodPreferences from "./routes/FoodPreferences/FoodPreferences";
 import HealthTools from "./routes/HealthTools/HealthTools";
 import RecipeRating from "./routes/RecipeRating/RecipeRating";
+import ShoppingList from "./routes/UI-Only-Pages/ShoppingList/ShoppingList";
 import RecipeDetail from "./routes/RecipeRating/RecipeDetail";
 import SymptomAssessment from "./routes/SymptomAssessment/SymptomAssessment";
 import Leaderboard from "./routes/LeaderBoard/leaderBoard";
@@ -206,6 +207,14 @@ function App() {
           element={
             <AuthenticateRoute>
               <HealthTools />
+            </AuthenticateRoute>
+          }
+        />
+        <Route
+          path="shopping-list"
+          element={
+            <AuthenticateRoute>
+              <ShoppingList />
             </AuthenticateRoute>
           }
         />
