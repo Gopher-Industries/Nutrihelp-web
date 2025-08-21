@@ -1,0 +1,970 @@
+/* Shopping List Page Styles */
+.shopping-list-page {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f3e8ff 25%, #f9f7fc 75%);
+    padding: 20px;
+    font-family: 'Poppins', sans-serif;
+    overflow-x: hidden; /* Prevent horizontal scrolling */
+}
+
+.shopping-list-header {
+    text-align: center;
+    color: #333;
+    margin-bottom: 30px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+.shopping-list-header h1 {
+    font-size: 2.5rem;
+    margin: 0 0 10px 0;
+    color: #333;
+}
+
+.shopping-list-header p {
+    font-size: 1.1rem;
+    margin: 0;
+    opacity: 0.9;
+}
+
+.meal-plan-summary {
+    margin-top: 10px;
+    padding: 8px 16px;
+    background: rgba(102, 126, 234, 0.1);
+    border-radius: 20px;
+    display: inline-block;
+}
+
+.meal-plan-summary span {
+    font-size: 0.9rem;
+    color: #667eea;
+    font-weight: 500;
+}
+
+/* Ensure select box container has correct z-index */
+.add-item-form {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    flex-wrap: wrap;
+    position: relative; /* Provide positioning context for dropdown */
+    z-index: 1000; /* Ensure form container has high enough z-index */
+    overflow: visible !important; /* Ensure dropdown options are not clipped */
+}
+
+/* Unified base styles for all input fields and select boxes */
+.item-input, .quantity-input, .unit-select, .category-select, .unit-edit, .quantity-edit, .search-input {
+    border-radius: 8px !important;
+    border: 2px solid #e0e0e0 !important;
+    transition: border-color 0.3s !important;
+    outline: none !important;
+    box-sizing: border-box !important;
+    font-family: 'Poppins', sans-serif !important;
+    background-color: white !important;
+    color: #333 !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    line-height: 1.2 !important; /* Adjust line height to ensure text vertical centering */
+    display: flex !important; /* Use flexbox to ensure vertical centering */
+    align-items: center !important; /* Vertical center alignment */
+}
+
+.item-input {
+    padding: 12px 15px !important;
+    font-size: 14px !important;
+    height: 48px !important;
+    flex: 2;
+    min-width: 200px;
+    background-color: white !important;
+    color: #333 !important;
+    line-height: 1.2 !important;
+    display: flex !important;
+    align-items: center !important;
+}
+
+.item-input:focus {
+    border-color: #667eea !important;
+}
+
+.item-input::placeholder {
+    color: #999 !important;
+    opacity: 1 !important;
+}
+
+.quantity-input, .unit-select, .category-select {
+    padding: 12px 15px !important;
+    font-size: 14px !important;
+    background: white !important;
+    height: 48px !important;
+    flex: 1;
+    min-width: 120px;
+    position: relative;
+    z-index: 1;
+    color: #333 !important;
+    line-height: 1.2 !important;
+    display: flex !important;
+    align-items: center !important;
+}
+
+.quantity-input:focus, .unit-select:focus, .category-select:focus {
+    border-color: #667eea !important;
+    z-index: 10;
+}
+
+/* Ensure dropdown options are not blocked */
+.unit-select option, .category-select option, .unit-edit option {
+    background: white !important;
+    color: #333 !important;
+    padding: 8px !important;
+    font-size: 14px !important;
+}
+
+/* Unified select box display */
+.unit-select, .category-select, .unit-edit {
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    -o-appearance: none !important;
+    -ms-appearance: none !important;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+    padding-right: 45px !important; /* Increase right padding to leave more space for dropdown arrow */
+    position: relative;
+    z-index: 1001;
+    background-color: white !important;
+    color: #333 !important;
+    font-size: 14px !important;
+    -webkit-box-sizing: border-box !important;
+    -moz-box-sizing: border-box !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    background-position: right 12px center !important;
+    background-size: 16px !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    overflow: hidden !important; /* Ensure text doesn't overflow */
+    max-width: 100% !important; /* Ensure it doesn't exceed container width */
+    line-height: 1.2 !important; /* Adjust line height to ensure text vertical centering */
+    display: flex !important; /* Use flexbox to ensure vertical centering */
+    align-items: center !important; /* Vertical center alignment */
+}
+
+/* Select box styles for adding new items */
+.add-item-form .unit-select,
+.add-item-form .category-select {
+    flex: 1 !important;
+    min-width: 120px !important;
+    padding-right: 45px !important; /* Ensure new item form select boxes have enough right padding */
+    max-width: calc(100% - 10px) !important; /* Leave some space for flex layout */
+    line-height: 1.2 !important; /* Ensure text vertical centering */
+    display: flex !important;
+    align-items: center !important;
+}
+
+/* Select box styles for editing items */
+.unit-edit {
+    width: 80px !important;
+    flex-shrink: 0 !important;
+    height: 32px !important;
+    padding: 6px 10px !important;
+    padding-right: 35px !important; /* Add right padding for unit select box when editing */
+    font-size: 12px !important;
+    min-width: 80px !important;
+    background-color: white !important;
+    color: #333 !important;
+    max-width: 80px !important; /* Limit maximum width */
+    line-height: 1.2 !important; /* Ensure text vertical centering */
+    display: flex !important;
+    align-items: center !important;
+}
+
+/* Ensure dropdown options are fully visible */
+.unit-select:focus, .category-select:focus, .unit-edit:focus {
+    z-index: 1002 !important;
+    border-color: #667eea !important;
+}
+
+/* Add better visual feedback for select boxes */
+.unit-select:hover, .category-select:hover, .unit-edit:hover {
+    border-color: #667eea !important;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2) !important;
+}
+
+/* Improved remove button styles */
+.remove-button {
+    background: #ff4757 !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 50% !important;
+    width: 32px !important;
+    height: 32px !important;
+    cursor: pointer !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 18px !important;
+    font-weight: bold !important;
+    transition: all 0.3s ease !important;
+    flex-shrink: 0 !important;
+    position: relative !important;
+    z-index: 10 !important;
+}
+
+.remove-button:hover {
+    background: #ff3742 !important;
+    transform: scale(1.1) !important;
+    box-shadow: 0 4px 12px rgba(255, 71, 87, 0.3) !important;
+}
+
+.remove-button:active {
+    transform: scale(0.95) !important;
+}
+
+/* Ensure select boxes display normally on mobile devices */
+@media (max-width: 768px) {
+    .add-item-form .unit-select,
+    .add-item-form .category-select {
+        width: 100% !important;
+        min-width: unset !important;
+        flex: none !important;
+        margin-bottom: 5px !important;
+        padding-right: 45px !important; /* Ensure mobile devices have enough right padding */
+        max-width: 100% !important; /* Use full width on mobile devices */
+        line-height: 1.2 !important;
+        display: flex !important;
+        align-items: center !important;
+    }
+    
+    .unit-edit {
+        width: 70px !important;
+        min-width: 70px !important;
+        padding-right: 35px !important; /* Ensure unit select box when editing has enough space on mobile devices */
+        max-width: 70px !important; /* Limit maximum width on mobile devices */
+        line-height: 1.2 !important;
+        display: flex !important;
+        align-items: center !important;
+    }
+}
+
+/* Ensure select boxes display normally on small screens */
+@media (max-width: 480px) {
+    .add-item-form .unit-select,
+    .add-item-form .category-select {
+        z-index: 1003 !important;
+        position: relative !important;
+        transform: translateZ(0) !important;
+        padding-right: 45px !important; /* Ensure small screens have enough right padding */
+        max-width: 100% !important; /* Use full width on small screens */
+        line-height: 1.2 !important;
+        display: flex !important;
+        align-items: center !important;
+    }
+    
+    .unit-edit {
+        z-index: 1003 !important;
+        position: relative !important;
+        transform: translateZ(0) !important;
+        width: 60px !important;
+        min-width: 60px !important;
+        padding-right: 30px !important; /* Slightly reduce right padding on small screens but maintain enough space */
+        max-width: 60px !important; /* Limit maximum width on small screens */
+        line-height: 1.2 !important;
+        display: flex !important;
+        align-items: center !important;
+    }
+    
+    .remove-button {
+        width: 28px !important;
+        height: 28px !important;
+        font-size: 16px !important;
+    }
+    
+    /* Ensure select box container doesn't clip content */
+    .add-item-section {
+        overflow: visible !important;
+        position: relative !important;
+        z-index: 1000 !important;
+    }
+    
+    /* Ensure the entire page container doesn't clip select boxes */
+    .shopping-list-container {
+        overflow: visible !important;
+        position: relative !important;
+    }
+}
+
+.add-button {
+    padding: 12px 25px;
+    background-color: var(--button-background-color);
+    color: #3E3E3E;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all ease-in-out 0.3s;
+    height: 48px;
+    box-sizing: border-box;
+    white-space: nowrap;
+    min-width: fit-content;
+    flex-shrink: 0;
+}
+
+.add-button:hover {
+    color: white;
+    background: #8531ce;
+}
+
+/* Search and Filter Section */
+.search-filter-section {
+    padding: 25px 30px;
+    background: #f8f9fa;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.search-box {
+    margin-bottom: 20px;
+}
+
+/* Unified search input box styles */
+.search-input {
+    width: 100%;
+    padding: 12px 15px !important;
+    font-size: 14px !important;
+    height: 48px !important;
+    min-width: 0;
+    background-color: white !important;
+    color: #333 !important;
+    line-height: 1.2 !important;
+    display: flex !important;
+    align-items: center !important;
+}
+
+.search-input:focus {
+    border-color: #667eea !important;
+}
+
+.search-input::placeholder {
+    color: #999 !important;
+    opacity: 1 !important;
+}
+
+.filter-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+/* Unified border-radius styles for all buttons */
+.filter-btn, .clear-btn, .clear-all-btn, .clear-meal-plan-btn, .add-button, .back-button {
+    border-radius: 8px !important;
+}
+
+.filter-btn {
+    padding: 8px 16px;
+    border: 2px solid #e0e0e0;
+    background: white;
+    color: #666;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.filter-btn:hover {
+    border-color: var(--category-color, #667eea);
+    color: var(--category-color, #667eea);
+}
+
+.filter-btn.active {
+    background: var(--category-color, #667eea);
+    color: white;
+    border-color: var(--category-color, #667eea);
+}
+
+/* Progress Section */
+.progress-section {
+    padding: 20px 30px;
+    background: #f8f9fa;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background: #e0e0e0;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #4CAF50, #8BC34A);
+    transition: width 0.3s ease;
+}
+
+.progress-text {
+    text-align: center;
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.progress-percentage {
+    color: #4CAF50;
+    font-weight: 600;
+    margin-left: 5px;
+}
+
+.progress-details {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    font-size: 12px;
+    color: #666;
+}
+
+.completed-count {
+    color: #4CAF50;
+    font-weight: 500;
+}
+
+.remaining-count {
+    color: #FF9800;
+    font-weight: 500;
+}
+
+/* Items Section */
+.items-section {
+    padding: 30px;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.section-header h2 {
+    margin: 0;
+    color: #333;
+    font-size: 1.5rem;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.clear-btn, .clear-all-btn, .clear-meal-plan-btn, .mark-all-btn {
+    padding: 8px 16px;
+    border: none;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.3s;
+    border-radius: 8px;
+}
+
+.mark-all-btn {
+    background: #4CAF50;
+    color: white;
+}
+
+.mark-all-btn:hover {
+    background: #45a049;
+}
+
+.clear-btn {
+    background: #ff9800;
+    color: white;
+}
+
+.clear-btn:hover {
+    background: #f57c00;
+}
+
+.clear-all-btn {
+    background: #f44336;
+    color: white;
+}
+
+.clear-all-btn:hover {
+    background: #d32f2f;
+}
+
+.clear-meal-plan-btn {
+    background: #667eea;
+    color: white;
+}
+
+.clear-meal-plan-btn:hover {
+    background: #5a67d8;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #666;
+}
+
+.empty-icon {
+    font-size: 4rem;
+    margin-bottom: 20px;
+}
+
+.empty-state h3 {
+    margin: 0 0 10px 0;
+    color: #333;
+}
+
+.empty-state p {
+    margin: 0;
+    font-size: 14px;
+}
+
+/* Items List */
+.items-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* Improved shopping list item layout */
+.shopping-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px 20px;
+    background: #fafafa;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.shopping-item:hover {
+    background: #f0f0f0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+.shopping-item.checked {
+    background: #e8f5e8;
+    border-color: #4CAF50;
+    opacity: 0.7;
+}
+
+.item-checkbox {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: #4CAF50;
+}
+
+/* Improved item info area styles */
+.item-info {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0; /* Prevent text overflow */
+}
+
+.item-name {
+    font-weight: 600;
+    font-size: 16px;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    word-break: break-word; /* Allow long text to wrap */
+}
+
+.meal-plan-badge {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 8px;
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: capitalize;
+}
+
+.purchased-badge {
+    background: linear-gradient(135deg, #4CAF50, #45a049);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 8px;
+    font-size: 10px;
+    font-weight: 500;
+    margin-left: 8px;
+}
+
+.item-category {
+    font-size: 12px;
+    font-weight: 500;
+    opacity: 0.8;
+}
+
+.shopping-item.checked .item-name {
+    text-decoration: line-through;
+    color: #666;
+}
+
+.shopping-item.checked {
+    background: #e8f5e8;
+    border-color: #4CAF50;
+    opacity: 0.8;
+}
+
+.shopping-item.checked .item-category {
+    opacity: 0.6;
+}
+
+/* Improved quantity editing area styles */
+.item-quantity {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: nowrap;
+    min-width: 0; /* Prevent overflow */
+}
+
+/* Unified quantity editing input box styles */
+.quantity-edit {
+    width: 60px !important;
+    text-align: center !important;
+    flex-shrink: 0 !important;
+    padding: 6px 10px !important;
+    font-size: 12px !important;
+    background: white !important;
+    height: 32px !important;
+    min-width: 0 !important;
+    color: #333 !important;
+    line-height: 1.2 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important; /* Horizontal centering */
+}
+
+.quantity-edit:focus {
+    border-color: #667eea !important;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2) !important;
+}
+
+/* Remove duplicate style definitions */
+
+/* Remove duplicate remove-button style definitions */
+
+/* Back Section */
+.back-section {
+    padding: 20px 30px;
+    background: #f8f9fa;
+    border-top: 1px solid #e0e0e0;
+    text-align: center;
+}
+
+.back-button {
+    display: inline-block;
+    padding: 12px 25px;
+    background-color: var(--button-background-color);
+    color: #3E3E3E;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all ease-in-out 0.3s;
+}
+
+.back-button:hover {
+    color: white;
+    background: #8531ce;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .shopping-list-page {
+        padding: 10px;
+    }
+    
+    .shopping-list-header h1 {
+        font-size: 2rem;
+    }
+    
+    .add-item-form {
+        flex-direction: column;
+        gap: 10px;
+        align-items: stretch;
+    }
+    
+    .item-input, .quantity-input, .unit-select, .category-select {
+        width: 100%;
+        min-width: unset;
+        flex: none;
+    }
+    
+    .add-button {
+        width: 100%;
+        margin-top: 10px;
+    }
+    
+    .filter-buttons {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    .section-header {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+    
+    .action-buttons {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    .shopping-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 15px;
+    }
+    
+    .item-quantity {
+        width: 100%;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    
+    .quantity-edit, .unit-edit {
+        min-width: 80px;
+        flex: 1;
+    }
+    
+    .remove-button {
+        align-self: flex-end;
+    }
+}
+
+@media (max-width: 480px) {
+    .shopping-list-container {
+        border-radius: 8px;
+        margin: 0 5px;
+    }
+    
+    .add-item-section, .search-filter-section, .items-section {
+        padding: 15px;
+    }
+    
+    .filter-buttons {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .filter-btn {
+        text-align: center;
+        width: 100%;
+    }
+    
+    /* Ensure select boxes are fully visible on small screens */
+    .unit-select, .category-select, .unit-edit {
+        z-index: 1003 !important;
+        position: relative !important;
+        transform: translateZ(0) !important;
+    }
+    
+    /* Prevent select boxes from being clipped by parent container */
+    .add-item-section {
+        overflow: visible !important;
+        position: relative !important;
+        z-index: 1000 !important;
+    }
+    
+    /* Ensure the entire page container doesn't clip select boxes */
+    .shopping-list-container {
+        overflow: visible !important;
+        position: relative !important;
+    }
+} 
+
+/* Ensure page container doesn't clip content */
+.shopping-list-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    overflow: visible !important; /* Changed to visible to prevent select boxes from being clipped */
+    border: 1px solid #ddd;
+    position: relative; /* Provide positioning context for child elements */
+}
+
+/* Add Item Section */
+.add-item-section {
+    padding: 30px;
+    background: white;
+    border-bottom: 1px solid #e0e0e0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: relative; /* Provide positioning context for dropdown */
+    z-index: 1; /* Ensure correct z-index */
+    overflow: visible !important; /* Ensure dropdown options are not clipped */
+}
+
+.add-item-section h2 {
+    margin: 0 0 20px 0;
+    color: #333;
+    font-size: 1.5rem;
+} 
+
+.item-actions {
+    display: flex;
+    align-items: center;
+    margin-right: 12px;
+}
+
+.purchase-btn {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    min-width: 120px;
+}
+
+.purchase-btn.unpurchased {
+    background: #FF9800;
+    color: white;
+}
+
+.purchase-btn.unpurchased:hover {
+    background: #f57c00;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(255, 152, 0, 0.3);
+}
+
+.purchase-btn.purchased {
+    background: #4CAF50;
+    color: white;
+}
+
+.purchase-btn.purchased:hover {
+    background: #45a049;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+}
+
+.shopping-item {
+    display: flex;
+    align-items: center;
+    padding: 16px;
+    margin-bottom: 12px;
+    background: white;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+} 
+
+/* Responsive design for purchase buttons */
+@media (max-width: 768px) {
+    .purchase-btn {
+        padding: 8px 10px;
+        font-size: 11px;
+        min-width: 100px;
+    }
+    
+    .item-actions {
+        margin-right: 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .purchase-btn {
+        padding: 6px 8px;
+        font-size: 10px;
+        min-width: 80px;
+    }
+    
+    .purchase-btn.unpurchased {
+        content: "⏳ Mark";
+    }
+    
+    .purchase-btn.purchased {
+        content: "✅ Done";
+    }
+} 
+
+.multi-select-checkbox {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: #4CAF50;
+}
+
+.shopping-item.selected {
+    background: #e3f2fd;
+    border-color: #2196F3;
+    box-shadow: 0 4px 8px rgba(33, 150, 243, 0.2);
+}
+
+.multi-select-btn {
+    background: #9C27B0;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.3s;
+    border-radius: 8px;
+}
+
+.multi-select-btn:hover {
+    background: #7B1FA2;
+}
+
+.mark-selected-btn {
+    background: #4CAF50;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.3s;
+    border-radius: 8px;
+    margin-right: 8px;
+}
+
+.mark-selected-btn:hover:not(:disabled) {
+    background: #45a049;
+}
+
+.mark-selected-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+.cancel-multi-select-btn {
+    background: #f44336;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.3s;
+    border-radius: 8px;
+}
+
+.cancel-multi-select-btn:hover {
+    background: #d32f2f;
+} 
