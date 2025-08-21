@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './HealthNews.css';
 import { FaHeart, FaRegHeart } from 'react-icons/fa';
+import { supabase } from '../../utils/supabase';
 import newsBg1 from '../../images/HealthNews_background_image/news_background_image_1.png';
 import newsBg2 from '../../images/HealthNews_background_image/news_background_image_2.png';
 import newsBg3 from '../../images/HealthNews_background_image/news_background_image_3.png';
@@ -31,6 +32,14 @@ const HealthNews = () => {
   const [apiSearchQuery, setApiSearchQuery] = useState('');
   const [apiSearchResults, setApiSearchResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [searchError, setSearchError] = useState('');
+  const [hasSearched, setHasSearched] = useState(false);
+
+  // Add Supabase database test states
+  const [dbNews, setDbNews] = useState([]);
+  const [isLoadingDb, setIsLoadingDb] = useState(false);
+  const [dbError, setDbError] = useState('');
+  const [hasLoadedDb, setHasLoadedDb] = useState(false);
 
   const sampleNews = [
     {
@@ -184,14 +193,45 @@ const HealthNews = () => {
     if (!apiSearchQuery.trim()) return;
     
     setIsSearching(true);
+    setSearchError('');
+    setHasSearched(false);
     try {
       const response = await fetch(`https://mdauzoueyzgtqsojttkp.supabase.co/functions/v1/search-articles?q=${encodeURIComponent(apiSearchQuery)}`);
       const data = await response.json();
       setApiSearchResults(data);
+      setHasSearched(true);
     } catch (error) {
+      setSearchError('Failed to fetch search results.');
       console.error('Error searching articles:', error);
     } finally {
       setIsSearching(false);
+    }
+  };
+
+  // Function to fetch news from Supabase database
+  const fetchDbNews = async () => {
+    setIsLoadingDb(true);
+    setDbError('');
+    setHasLoadedDb(false);
+    
+    try {
+      const { data, error } = await supabase
+        .from('health_news')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
+      if (error) {
+        throw error;
+      }
+      
+      setDbNews(data || []);
+      setHasLoadedDb(true);
+      console.log('Fetched news from database:', data);
+    } catch (error) {
+      setDbError('Failed to fetch news from database: ' + error.message);
+      console.error('Error fetching from database:', error);
+    } finally {
+      setIsLoadingDb(false);
     }
   };
 
@@ -204,7 +244,7 @@ const HealthNews = () => {
           <h1 className="news-title">Health News</h1>
         </div>
 
-        {/* Full-width News Slider */}
+        {/* Enhanced News Slider */}
         <div className="news-slider-wrapper">
           <div className="news-slider">
             {sliderNews.map((news, index) => (
@@ -213,24 +253,47 @@ const HealthNews = () => {
                 className={`slider-item ${index === currentSliderIndex ? 'active' : ''}`}
                 onClick={() => handleReadMore(news.url)}
               >
-                <img src={news.backgroundImage} alt={news.title} />
+                <div className="slider-image-container">
+                  <img src={news.backgroundImage} alt={news.title} />
+                  <div className="slider-overlay"></div>
+                </div>
                 <div className="slider-content">
-                  <h3>{news.title}</h3>
-                  <span className="slider-category">{news.category}</span>
+                  <div className="slider-category-badge">{news.category}</div>
+                  <h3 className="slider-title">{news.title}</h3>
+                  <div className="slider-read-more">
+                    <span>Read More</span>
+                    <div className="slider-arrow">→</div>
+                  </div>
                 </div>
               </div>
             ))}
           </div>
           
-          {/* Slider navigation dots */}
-          <div className="slider-dots">
-            {sliderNews.map((_, index) => (
-              <span 
-                key={index} 
-                className={`dot ${index === currentSliderIndex ? 'active' : ''}`}
-                onClick={() => goToSlide(index)}
-              />
-            ))}
+          {/* Enhanced Slider navigation */}
+          <div className="slider-navigation">
+            <div className="slider-dots">
+              {sliderNews.map((_, index) => (
+                <span 
+                  key={index} 
+                  className={`dot ${index === currentSliderIndex ? 'active' : ''}`}
+                  onClick={() => goToSlide(index)}
+                />
+              ))}
+            </div>
+            <div className="slider-arrows">
+              <button 
+                className="slider-arrow-btn prev"
+                onClick={() => goToSlide(currentSliderIndex === 0 ? sliderNews.length - 1 : currentSliderIndex - 1)}
+              >
+                ←
+              </button>
+              <button 
+                className="slider-arrow-btn next"
+                onClick={() => goToSlide(currentSliderIndex === sliderNews.length - 1 ? 0 : currentSliderIndex + 1)}
+              >
+                →
+              </button>
+            </div>
           </div>
         </div>
 
@@ -325,38 +388,198 @@ const HealthNews = () => {
 
         {/* Test API Search Section */}
         <div className="test-api-section">
-          <div className="test-badge">TEST FEATURE</div>
+          <div className="test-badge">
+            TEST FEATURE
+          </div>
           <h3 className="test-title">Search Articles API Test</h3>
+          <p className="test-description">
+            To test the Supabase API integration for searching health articles (Collaborate with QINGDA MENG).
+          </p>
+          
           <div className="test-search-container">
-            <input
-              type="text"
-              placeholder="Search articles via Supabase API..."
-              value={apiSearchQuery}
-              onChange={(e) => setApiSearchQuery(e.target.value)}
-              className="test-search-input"
-              onKeyPress={(e) => e.key === 'Enter' && searchArticles()}
-            />
+            <div className="search-input-wrapper">
+              <input
+                type="text"
+                placeholder="Enter keywords (e.g., nutrition, diet, health)..."
+                value={apiSearchQuery}
+                onChange={(e) => setApiSearchQuery(e.target.value)}
+                className="test-search-input"
+                onKeyPress={(e) => e.key === 'Enter' && searchArticles()}
+                disabled={isSearching}
+              />
+              {isSearching && (
+                <div className="search-spinner">
+                  <div className="spinner"></div>
+                </div>
+              )}
+            </div>
             <button 
               className="test-search-button"
               onClick={searchArticles}
-              disabled={isSearching}
+              disabled={isSearching || !apiSearchQuery.trim()}
             >
-              {isSearching ? 'Searching...' : 'Search'}
+              {isSearching ? (
+                <>
+                  <span className="button-spinner"></span>
+                  Searching...
+                </>
+              ) : (
+                <>
+                  Search
+                </>
+              )}
             </button>
           </div>
           
-          {apiSearchResults.length > 0 && (
+          {hasSearched && (
             <div className="test-results">
-              <h4>Results:</h4>
-              <ul className="test-results-list">
-                {apiSearchResults.map((article) => (
-                  <li key={article.id} className="test-result-item">
-                    <h5>{article.title}</h5>
-                    <p>{article.content || 'No content'}</p>
-                    <p className="test-result-author">By: {article.author}</p>
-                  </li>
-                ))}
-              </ul>
+              <div className="results-header">
+                <h4>Search Results</h4>
+                <span className="results-count">
+                  {searchError ? 'Error' : `${apiSearchResults.length} article${apiSearchResults.length !== 1 ? 's' : ''} found`}
+                </span>
+              </div>
+              
+              {searchError ? (
+                <div className="error-container">
+                  <p className="error-message">{searchError}</p>
+                  <button 
+                    className="retry-button"
+                    onClick={searchArticles}
+                    disabled={isSearching}
+                  >
+                    Try Again
+                  </button>
+                </div>
+              ) : apiSearchResults.length === 0 ? (
+                <div className="no-results">
+                  <p>No articles found for "{apiSearchQuery}"</p>
+                  <p className="no-results-suggestion">Try different keywords or check your search terms.</p>
+                </div>
+              ) : (
+                <div className="results-grid">
+                  {apiSearchResults.map((article, index) => (
+                    <div key={article.id || index} className="test-result-card">
+                      <div className="result-card-header">
+                        <h5 className="result-title">{article.title || 'Untitled Article'}</h5>
+                        <span className="result-number">#{index + 1}</span>
+                      </div>
+                      <div className="result-content">
+                        <p className="result-text">
+                          {article.content ? 
+                            (article.content.length > 150 ? 
+                              `${article.content.substring(0, 150)}...` : 
+                              article.content
+                            ) : 
+                            'No content available'
+                          }
+                        </p>
+                      </div>
+                      {article.author && (
+                        <div className="result-footer">
+                          <span className="result-author">
+                            By: {article.author}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Supabase Database Test Section */}
+        <div className="test-api-section">
+          <div className="test-badge">
+            DATABASE TEST
+          </div>
+          <h3 className="test-title">Supabase Database Connection Test</h3>
+          <p className="test-description">
+            Test the connection to the health_news table in Supabase database. (Collaborate with ZEYU LIN).
+          </p>
+          
+          <div className="test-search-container">
+            <button 
+              className="test-search-button"
+              onClick={fetchDbNews}
+              disabled={isLoadingDb}
+            >
+              {isLoadingDb ? (
+                <>
+                  <span className="button-spinner"></span>
+                  Loading from Database...
+                </>
+              ) : (
+                <>
+                  Load News from Database
+                </>
+              )}
+            </button>
+          </div>
+          
+          {hasLoadedDb && (
+            <div className="test-results">
+              <div className="results-header">
+                <h4>Database Results</h4>
+                <span className="results-count">
+                  {dbError ? 'Error' : `${dbNews.length} article${dbNews.length !== 1 ? 's' : ''} found in database`}
+                </span>
+              </div>
+              
+              {dbError ? (
+                <div className="error-container">
+                  <p className="error-message">{dbError}</p>
+                  <button 
+                    className="retry-button"
+                    onClick={fetchDbNews}
+                    disabled={isLoadingDb}
+                  >
+                    Try Again
+                  </button>
+                </div>
+              ) : dbNews.length === 0 ? (
+                <div className="no-results">
+                  <p>No articles found in the database</p>
+                  <p className="no-results-suggestion">The health_news table might be empty or not accessible.</p>
+                </div>
+              ) : (
+                <div className="results-grid">
+                  {dbNews.map((article, index) => (
+                    <div key={article.id || index} className="test-result-card">
+                      <div className="result-card-header">
+                        <h5 className="result-title">{article.title || 'Untitled Article'}</h5>
+                        <span className="result-number">#{index + 1}</span>
+                      </div>
+                      <div className="result-content">
+                        <p className="result-text">
+                          {article.summary ? 
+                            (article.summary.length > 150 ? 
+                              `${article.summary.substring(0, 150)}...` : 
+                              article.summary
+                            ) : 
+                            'No summary available'
+                          }
+                        </p>
+                        {article.content && (
+                          <p className="result-content-full">
+                            {article.content.length > 200 ? 
+                              `${article.content.substring(0, 200)}...` : 
+                              article.content
+                            }
+                          </p>
+                        )}
+                      </div>
+                      <div className="result-footer">
+                        <span className="result-date">
+                          {article.created_at ? new Date(article.created_at).toLocaleDateString() : 'No date'}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
         </div>
