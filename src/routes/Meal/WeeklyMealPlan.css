@@ -1,0 +1,77 @@
+/* WeeklyMealPlan.css */
+
+.weekly-meal-plan-container {
+  padding: 20px;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #fff;
+  min-height: 100vh;
+  text-align: center;
+}
+
+.weekly-meal-plan-container h2 {
+  color: #2e7d32;
+  margin-bottom: 15px;
+}
+
+.weekly-meal-plan-container button {
+  background-color: #2e7d32;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  margin-bottom: 30px;
+  cursor: pointer;
+  border-radius: 5px;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.weekly-meal-plan-container button:hover {
+  background-color: #27642a;
+}
+
+#meal-plan-pdf {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+
+/* Day Card */
+.day-card {
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 20px;
+  width: 300px;
+  background-color: #f9f9f9;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  text-align: left;
+}
+
+/* Day Heading */
+.day-card h3 {
+  color: #1a237e;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 8px;
+  margin-bottom: 16px;
+}
+
+/* Meal Section */
+.day-card p {
+  margin: 4px 0;
+  color: #333;
+}
+
+.day-card p:first-of-type {
+  color: #2e7d32;
+  font-weight: bold;
+}
+
+.day-card p:nth-of-type(2) {
+  font-weight: bold;
+  color: #000;
+}
+
+.day-card p:nth-of-type(3) {
+  font-size: 14px;
+  color: #555;
+}

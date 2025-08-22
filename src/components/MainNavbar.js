@@ -6,6 +6,7 @@ import DarkModeToggle from "../routes/DarkModeToggle/DarkModeToggle"; // Include
 import "../styles/mainNavbar.css";
 import TextToSpeech from "./TextToSpeech/TextToSpeech";
 import VoiceNavigation from "./VoiceControl/VoiceNavigation";
+import SymptomAssessment from "../routes/SymptomAssessment/SymptomAssessment";
 
 const MainNavbar = () => {
   const { currentUser, logOut } = useContext(UserContext);
@@ -63,6 +64,9 @@ const MainNavbar = () => {
                     <Link className="link dropdown-link" to="/RecipeRating">
                       Recipe rating
                     </Link>
+                    <Link className="link dropdown-link" to="/UITimer">
+                      UITimer
+                    </Link>
                   </div>
                 </div>
 
@@ -89,6 +93,10 @@ const MainNavbar = () => {
                   Allergies & Intolerances
                 </Link>
 
+                <Link className="link nav-link" to="/symptomassessment">
+                  Symptom Assessment
+                </Link>
+
                 <Link className="link nav-link" to="/healthtools">
                   Health Tools
                 </Link>
@@ -109,8 +117,8 @@ const MainNavbar = () => {
               <>
                 <Link
                   className={`link dropdown-link font-bold text-xl rounded-md  ${darkMode
-                      ? "text-white hover:text-blue-300 hover:bg-blue-700"
-                      : "text-[#333] hover:bg-blue-200 hover:text-blue-600"
+                    ? "text-white hover:text-blue-300 hover:bg-blue-700"
+                    : "text-[#333] hover:bg-blue-200 hover:text-blue-600"
                     }`}
                   to="/home"
                 >
@@ -118,8 +126,8 @@ const MainNavbar = () => {
                 </Link>
                 <Link
                   className={`link dropdown-link font-bold text-xl rounded-md  ${darkMode
-                      ? "text-white hover:text-blue-300 hover:bg-blue-700"
-                      : "text-[#333] hover:bg-blue-200 hover:text-blue-600"
+                    ? "text-white hover:text-blue-300 hover:bg-blue-700"
+                    : "text-[#333] hover:bg-blue-200 hover:text-blue-600"
                     }`}
                   to="/login"
                 >
@@ -127,8 +135,8 @@ const MainNavbar = () => {
                 </Link>
                 <Link
                   className={`link dropdown-link font-bold text-xl rounded-md  ${darkMode
-                      ? "text-white hover:text-blue-300 hover:bg-blue-700"
-                      : "text-[#333] hover:bg-blue-200 hover:text-blue-600"
+                    ? "text-white hover:text-blue-300 hover:bg-blue-700"
+                    : "text-[#333] hover:bg-blue-200 hover:text-blue-600"
                     }`}
                   to="/signUp"
                 >
