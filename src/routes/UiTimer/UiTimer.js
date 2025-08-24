@@ -1,207 +1,154 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import "./UiTimer.css";
 
-// Basic recipe list
-const RECIPES = [
-  { id: 1, name: "Boiled Egg", time: 300 },   // 5min
-  { id: 2, name: "Pasta", time: 600 },        // 10min
-  { id: 3, name: "Rice", time: 1200 },        // 20min
-  { id: 4, name: "Steak", time: 300 },        // 5min
-  { id: 5, name: "Baked Potato", time: 1800 } // 30min
-];
-
-// Helper functions
-const formatTime = (totalSeconds) => {
-  const hours = Math.floor(totalSeconds / 3600);
-  const minutes = Math.floor((totalSeconds % 3600) / 60);
-  const seconds = totalSeconds % 60;
-  return { hours, minutes, seconds };
-};
-
-const pad = (num) => num.toString().padStart(2, "0");
-
 function UiTimer() {
-  const [time, setTime] = useState({ hours: 0, minutes: 0, seconds: 0 });
+  const [seconds, setSeconds] = useState(0);
+  const [branch, setBranch] = useState(0);
+  const [hour, setHour] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
-  const [selectedRecipe, setSelectedRecipe] = useState(null);
-  const [animate, setAnimate] = useState({ hours: false, minutes: false, seconds: false });
+  const [animate, setAnimate] = useState({ hour: false, branch: false, second: false });
 
-  // Convert time to total seconds
-  // const getTotalSeconds = () => {
-  //   return time.hours * 3600 + time.minutes * 60 + time.seconds;
-  // };
+  const inputChange = (event, setter) => {
+    const value = parseInt(event.target.value, 10);
+    if (!isNaN(value) && value >= 0) {
+      setter(value);
+    } else {
+      alert("The set time is incorrect");
+    }
+  };
 
-  // Countdown logic
-  useEffect(() => {
-    if (!isRunning) return;
+  const inputBlur = (event, setterType) => {
+    const value = parseInt(event.target.value, 10);
+    if (!isNaN(value)) {
+      let newBranch = branch;
+      let newHour = hour;
 
-    const interval = setInterval(() => {
-      setTime(prev => {
-        const total = prev.hours * 3600 + prev.minutes * 60 + prev.seconds - 1;
-
-        // Timer completion
-        if (total <= 0) {
-          clearInterval(interval);
-          setIsRunning(false);
-          alert("Time's up!");
-          return { hours: 0, minutes: 0, seconds: 0 };
+      if (setterType === 1) { // branch
+        if (value >= 60) {
+          newBranch = value % 60;
+          const addedHours = Math.floor(value / 60);
+          newHour += addedHours;
+        } else {
+          newBranch = value;
         }
+        setBranch(newBranch);
+        setHour(newHour);
+      } else if (setterType === 2) { // seconds
+        if (value >= 60) {
+          const newSeconds = value % 60;
+          const addedMinutes = Math.floor(value / 60);
+          newBranch += addedMinutes;
 
-        // Calculate new time values
-        const newTime = formatTime(total);
+          if (newBranch >= 60) {
+            const extraHours = Math.floor(newBranch / 60);
+            newBranch %= 60;
+            newHour += extraHours;
+          }
+          setBranch(newBranch);
+          setHour(newHour);
+          setSeconds(newSeconds);
+        } else {
+          setSeconds(value);
+        }
+      }
+    }
+  };
 
-        // Set animation flags for changed values
-        setAnimate({
-          hours: newTime.hours !== prev.hours,
-          minutes: newTime.minutes !== prev.minutes,
-          seconds: newTime.seconds !== prev.seconds
+  const branchRef = useRef(branch);
+  const hourRef = useRef(hour);
+
+  useEffect(() => {
+    branchRef.current = branch;
+    hourRef.current = hour;
+  }, [branch, hour]);
+
+  useEffect(() => {
+    if (isRunning) {
+      const intervalId = setInterval(() => {
+        setSeconds((prevSeconds) => {
+          if (prevSeconds === 0) {
+            if (branchRef.current === 0) {
+              if (hourRef.current === 0) {
+                alert("Time is over");
+                setIsRunning(false);
+                setSeconds(0);
+              } else {
+                setAnimate((prev) => ({ ...prev, hour: true, branch: true, second: true }));
+                setHour(hourRef.current - 1);
+                setBranch(59);
+              }
+            } else {
+              setAnimate((prev) => ({ ...prev, branch: true, second: true }));
+              setBranch(branchRef.current - 1);
+            }
+            return 59;
+          }
+          setAnimate((prev) => ({ ...prev, second: true }));
+          return prevSeconds - 1;
         });
+      }, 1000);
 
-        return newTime;
-      });
-    }, 1000);
-
-    return () => clearInterval(interval);
+      return () => clearInterval(intervalId);
+    }
   }, [isRunning]);
 
-  // Clear animation after it completes
   useEffect(() => {
-    if (Object.values(animate).some(flag => flag)) {
-      const timer = setTimeout(() => setAnimate({ hours: false, minutes: false, seconds: false }), 500);
-      return () => clearTimeout(timer);
-    }
+    const timeoutId = setTimeout(() => setAnimate({ hour: false, branch: false, second: false }), 500);
+    return () => clearTimeout(timeoutId);
   }, [animate]);
 
-  // Handle recipe selection
-  const selectRecipe = (recipe) => {
-    setIsRunning(false);
-    setSelectedRecipe(recipe.id);
-    setTime(formatTime(recipe.time));
-  };
-
-  // Clear recipe selection
-  const clearRecipe = () => {
-    setSelectedRecipe(null);
-    setTime({ hours: 0, minutes: 0, seconds: 0 });
-    setIsRunning(false);
-  };
-
-  // Handle manual time input
-  const handleTimeChange = (e, unit) => {
-    const value = parseInt(e.target.value, 10) || 0;
-    setTime(prev => ({ ...prev, [unit]: value }));
-  };
-
-  // Reset timer
-  const resetTimer = () => {
-    if (selectedRecipe) {
-      const recipe = RECIPES.find(r => r.id === selectedRecipe);
-      setTime(formatTime(recipe.time));
-    } else {
-      setTime({ hours: 0, minutes: 0, seconds: 0 });
-    }
-    setIsRunning(false);
-  };
-
   return (
-    <div className="timer-container">
-      <h2>Cooking Timer</h2>
-
-      {/* Recipe Selection */}
-      <div className="recipe-section">
-        <h3>Select Recipe</h3>
-        <div className="recipe-list">
-          {RECIPES.map(recipe => (
-            <div
-              key={recipe.id}
-              className={`recipe-item ${selectedRecipe === recipe.id ? 'selected' : ''}`}
-              onClick={() => selectRecipe(recipe)}
-            >
-              {recipe.name} ({formatTime(recipe.time).minutes}m)
-            </div>
-          ))}
-        </div>
-        {selectedRecipe && (
-          <button className="clear-btn" onClick={clearRecipe}>
-            Clear Selection
-          </button>
-        )}
-      </div>
-
-      {/* Timer Display */}
-      <div className="timer-display">
-        {!isRunning ? (
-          <div className="time-inputs">
-            <div className="time-group">
-              <input
-                type="number"
-                value={time.hours}
-                min="0"
-                onChange={(e) => handleTimeChange(e, 'hours')}
-                placeholder="00"
-              />
-              <div>Hours</div>
-            </div>
-            <span className="separator">:</span>
-            <div className="time-group">
-              <input
-                type="number"
-                value={time.minutes}
-                min="0"
-                max="59"
-                onChange={(e) => handleTimeChange(e, 'minutes')}
-                placeholder="00"
-              />
-              <div>Minutes</div>
-            </div>
-            <span className="separator">:</span>
-            <div className="time-group">
-              <input
-                type="number"
-                value={time.seconds}
-                min="0"
-                max="59"
-                onChange={(e) => handleTimeChange(e, 'seconds')}
-                placeholder="00"
-              />
-              <div>Seconds</div>
-            </div>
-          </div>
-        ) : (
-          <div className="time-values">
-            <div className={`time-value ${animate.hours ? 'animate' : ''}`}>
-              {pad(time.hours)}
-              <div className="unit">Hours</div>
-            </div>
-            <span className="separator">:</span>
-            <div className={`time-value ${animate.minutes ? 'animate' : ''}`}>
-              {pad(time.minutes)}
-              <div className="unit">Minutes</div>
-            </div>
-            <span className="separator">:</span>
-            <div className={`time-value ${animate.seconds ? 'animate' : ''}`}>
-              {pad(time.seconds)}
-              <div className="unit">Seconds</div>
-            </div>
-          </div>
-        )}
-
-        <div className="controls">
-          <button
-            className="control-btn"
-            onClick={() => setIsRunning(!isRunning)}
-          >
-            {isRunning ? 'Pause' : 'Start'}
-          </button>
-          <button
-            className="control-btn"
-            onClick={resetTimer}
-          >
-            Reset
-          </button>
+    <>
+      <div id="UiTimer">
+        <div className="UiTimer">
+          {!isRunning ? (
+            <>
+              <div className="runningFalse">
+                <div className="runningDiv">
+                  <input
+                    type="number"
+                    value={hour}
+                    min="0"
+                    onChange={(e) => inputChange(e, setHour)}
+                  />
+                  hour
+                </div>
+                <div className="runningDiv">
+                  <input
+                    type="number"
+                    value={branch}
+                    min="0"
+                    onChange={(e) => inputChange(e, setBranch)}
+                    onBlur={(e) => inputBlur(e, 1)}
+                  />
+                  branch
+                </div>
+                <div className="runningDiv">
+                  <input
+                    type="number"
+                    value={seconds}
+                    min="0"
+                    onChange={(e) => inputChange(e, setSeconds)}
+                    onBlur={(e) => inputBlur(e, 2)}
+                  />
+                  seconds
+                </div>
+              </div>
+              <button onClick={() => setIsRunning(!isRunning)}>Start timing</button>
+            </>
+          ) : (
+            <>
+              <div className="runningTrue">
+                <div className={`runningDiv ${animate.hour ? "animate" : ""}`}>{hour}</div>
+                <div className={`runningDiv ${animate.branch ? "animate" : ""}`}>{branch}</div>
+                <div className={`runningDiv ${animate.second ? "animate" : ""}`}>{seconds}</div>
+              </div>
+              <button onClick={() => setIsRunning(!isRunning)}>set time</button>
+            </>
+          )}
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
