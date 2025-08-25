@@ -5,6 +5,8 @@ import React, { createContext, useState } from 'react';
 import MotivationalPopup from './MotivationalPopup';
 import WeeklyMealPlan from './WeeklyMealPlan';
 import { exportMealPlanAsPDF } from './PDFExport';
+import { Carousel } from 'react-responsive-carousel';
+import 'react-responsive-carousel/lib/styles/carousel.min.css';
 
 const Meal = () => {
     const [selectedItems, setSelectedItems] = useState([]);
@@ -16,8 +18,8 @@ const Meal = () => {
         sodium: 0,
     });
     const [showBreakfast, setShowBreakfast] = useState(true);
-    const [showLunch, setShowLunch] = useState(false);
-    const [showDinner, setShowDinner] = useState(false);
+    const [showLunch, setShowLunch] = useState(true);
+    const [showDinner, setShowDinner] = useState(true);
     const [showPopup, setShowPopup] = useState(true);
     const [showWeeklyPlan, setShowWeeklyPlan] = useState(false);
 
@@ -82,6 +84,30 @@ const Meal = () => {
                 sodium: 60
             }
         },
+        {
+            name: "Greek Yogurt Parfait",
+            imageUrl:
+              "https://foolproofliving.com/wp-content/uploads/2017/12/Greek-Yogurt-Parfait-with-fruit-600x600.jpg",
+            details: {
+              calories: 220,
+              fats: 70,
+              proteins: 120,
+              vitamins: 90,
+              sodium: 60,
+            },
+          },
+          {
+            name: "Avocado Toast",
+            imageUrl:
+              "https://loveincrediblerecipes.com/wp-content/uploads/2024/02/avocado-toast-sourdough.jpg",
+            details: {
+              calories: 250,
+              fats: 180,
+              proteins: 80,
+              vitamins: 70,
+              sodium: 40,
+            },
+          },
     ];
 
     const lunch = [
@@ -129,6 +155,30 @@ const Meal = () => {
                 sodium: 20
             }
         },
+        {
+            name: "Grilled Chicken Salad",
+            imageUrl:
+              "https://cdn-aboak.nitrocdn.com/QJsLnWfsWAiuukSIMowyVEHtotvSQZoR/assets/images/optimized/rev-ca18e1d/www.slenderkitchen.com/sites/default/files/styles/featured_1500/public/recipe_images/grilled-chicken-Greek-salad.jpg",
+            details: {
+              calories: 320,
+              fats: 140,
+              proteins: 350,
+              vitamins: 110,
+              sodium: 150,
+            },
+          },
+          {
+            name: "Pasta Primavera",
+            imageUrl:
+              "https://www.budgetbytes.com/wp-content/uploads/2023/05/Pasta-Primavera-V3-1152x1536.jpg",
+            details: {
+              calories: 420,
+              fats: 160,
+              proteins: 180,
+              vitamins: 120,
+              sodium: 90,
+            },
+          },
     ];
 
     const dinner = [
@@ -176,6 +226,30 @@ const Meal = () => {
                 sodium: 30
             }
         },
+        {
+            name: "Stir-Fried Tofu Bowl",
+            imageUrl:
+              "https://marleyspoon.com/media/recipes/121135/main_photos/large/super_fast_tofu_buddha_s_delight_bowl-773b44bbf9caae9dbdd753a4c450065d.jpeg",
+            details: {
+              calories: 350,
+              fats: 180,
+              proteins: 250,
+              vitamins: 85,
+              sodium: 110,
+            },
+          },
+          {
+            name: "Baked Sweet Potatoes",
+            imageUrl:
+              "https://hips.hearstapps.com/hmg-prod/images/delish-perfect-baked-sweet-potato-1-1637646197.jpg?crop=1.00xw:0.710xh;0,0.187xh&resize=1200:*",
+            details: {
+              calories: 300,
+              fats: 60,
+              proteins: 90,
+              vitamins: 160,
+              sodium: 30,
+            },
+          },      
     ];
 
     const findItemDetails = itemName => {
@@ -213,7 +287,7 @@ const Meal = () => {
     return (
         <div>
             {showPopup && <MotivationalPopup onClose={handleClosePopup} />}
-            <header>
+            <header className="meal-header">
                 <h1>What is Your Meal Plan Today?</h1>
             </header>
 

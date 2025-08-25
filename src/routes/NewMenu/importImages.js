@@ -85,6 +85,47 @@ const imageMapping = {
     description: 'Another variant of healthy oatmeal.',
     recipeLink: 'https://www.eatingwell.com/recipe/268775/cinnamon-roll-overnight-oats/',
   },
+  'Greek Yogurt Parfait': {
+    title: 'Greek Yogurt Parfait',
+    description:'A refreshing layered blend of creamy Greek yogurt, crunchy granola, and fresh berries.',
+    recipeLink: 'https://foolproofliving.com/layered-yogurt-parfait/',
+ 
+  },
+  'Avocado Toast':
+  {
+    title: 'Avocado Toast',
+    description:'Toasted bread topped with creamy mashed avocado, a dash of lemon, and a sprinkle of seasoning.',
+    recipeLink: 'https://cookieandkate.com/avocado-toast-recipe/',
+ 
+  },
+  'Grilled Chicken Salad':
+  {
+    title: 'Grilled Chicken Salad',
+    description:'Juicy grilled chicken served over a bed of crisp greens, fresh veggies, and a light vinaigrette for a protein-packed, wholesome meal.',
+    recipeLink: 'https://www.delish.com/cooking/recipe-ideas/a21097616/grilled-chicken-salad-recipe/',
+ 
+  },
+  'Pasta Primavera':
+  {
+    title: 'Pasta Primavera',
+    description:'A vibrant medley of seasonal vegetables tossed with tender pasta and a light garlic-herb sauce.',
+    recipeLink: 'https://www.loveandlemons.com/pasta-primavera/',
+ 
+  },
+  'Stir-Fried Tofu Bowl':
+  {
+    title: 'Stir-Fried Tofu Bowl',
+    description:'Tofu stir-fried with colorful vegetables and savory sauce, served over rice or grains for a hearty and plant-based dinner option.',
+    recipeLink: 'https://rainbowplantlife.com/tofu-stir-fry/',
+ 
+  },
+  'Baked Sweet Potatoes':
+  {
+    title: 'Baked Sweet Potatoes',
+    description:'Tender, naturally sweet potatoes baked to perfection and served with a touch of butter, herbs, or spices for a warm and comforting meal.',
+    recipeLink: 'https://www.loveandlemons.com/baked-sweet-potato/',
+ 
+  }
 };
 
 export default imageMapping;
