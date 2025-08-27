@@ -1,6 +1,8 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import "semantic-ui-css/semantic.min.css";
 import "./App.css";
+import "./styles/global-dark-mode.css";
+import { initializeFontSize, loadSavedSettings } from "./utils/fontSizeManager";
 import {
   BrowserRouter as Router,
   Routes,
@@ -38,13 +40,35 @@ import HealthNews from "./routes/HealthNews/HealthNews";
 import FoodPreferences from "./routes/FoodPreferences/FoodPreferences";
 import HealthTools from "./routes/HealthTools/HealthTools";
 import RecipeRating from "./routes/RecipeRating/RecipeRating";
+import Settings from "./routes/Settings/Settings";
 import ShoppingList from "./routes/UI-Only-Pages/ShoppingList/ShoppingList";
 import RecipeDetail from "./routes/RecipeRating/RecipeDetail";
 import SymptomAssessment from "./routes/SymptomAssessment/SymptomAssessment";
 import Leaderboard from "./routes/LeaderBoard/leaderBoard";
 import ObesityPredictor from "./routes/survey/ObesityPredictor";
+
 function App() {
   const { currentUser } = useContext(UserContext);
+  
+  // Development mode - set to true to bypass authentication
+  const DEVELOPMENT_MODE = true;
+  
+  // Initialize font size settings for elderly users
+  useEffect(() => {
+    // Initialize font size
+    initializeFontSize();
+    
+    // Load saved settings including global dark mode
+    loadSavedSettings();
+    
+    // Initialize global dark mode on app startup
+    const savedGlobalDarkMode = localStorage.getItem('globalDarkMode') === 'true';
+    if (savedGlobalDarkMode) {
+      document.body.classList.add('dark-mode');
+    } else {
+      document.body.classList.remove('dark-mode');
+    }
+  }, []);
 
   return (
     <Router>
@@ -54,7 +78,8 @@ function App() {
         <Route
           path="/"
           element={
-            currentUser ? <Navigate to="/home" /> : <Navigate to="/login" />
+            DEVELOPMENT_MODE ? <Navigate to="/home" /> : 
+            (currentUser ? <Navigate to="/home" /> : <Navigate to="/login" />)
           }
         />
         <Route path="/login" element={<Login />} />
@@ -197,6 +222,14 @@ function App() {
           element={
             <AuthenticateRoute>
               <HealthTools />
+            </AuthenticateRoute>
+          }
+        />
+        <Route
+          path="settings"
+          element={
+            <AuthenticateRoute>
+              <Settings />
             </AuthenticateRoute>
           }
         />
