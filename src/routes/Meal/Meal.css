@@ -1,5 +1,170 @@
 /* Meal Page Styles with Dark Mode Support */
 
+/* Weekly Meal Plan Heading */
+.weekly-plan-title {
+  font-size: 2.2rem;
+  margin: 20px 0;
+  padding: 15px 25px;
+  background: var(--gradient-primary);
+  color: var(--text-inverse);
+  border-radius: 12px;
+  box-shadow: var(--card-shadow);
+  font-weight: 700;
+  text-align: center;
+}
+
+/* Toggle Weekly Plan Button */
+.toggle-weekly-btn {
+  background: var(--gradient-primary);
+  color: var(--button-text);
+  border: none;
+  padding: 12px 28px;
+  border-radius: 25px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: var(--card-shadow);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.toggle-weekly-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--card-shadow-hover);
+}
+
+/* Export Button */
+.export-btn {
+  background-color: #2e7d32;
+  color: white;
+  border: none;
+  padding: 10px 22px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+.export-btn:hover {
+  background-color: #27642a;
+}
+
+/* Meal headers inside Weekly Plan */
+.meal-header {
+  color: #1b5e20 !important;
+  font-weight: 700 !important;
+}
+
+/* ===== Personalized Plan (additive) ===== */
+.personalize-card {
+  width: 100%;
+  max-width: 980px;
+  margin: 20px auto 10px;
+  padding: 20px 22px;
+  border-radius: 16px;
+  background: #ffffff;              /* solid white for strong contrast */
+  color: #111;                      /* high contrast text */
+  border: 1px solid #c3a3f0;        /* subtle purple border to match theme */
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.06);
+}
+
+.personalize-title {
+  margin: 0 0 12px 0;
+  text-align: center;
+  font-weight: 800;
+  font-size: 1.25rem;
+  color: #111;
+}
+
+.personalize-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.personalize-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.personalize-label {
+  font-weight: 600;
+  color: #222;
+}
+
+.personalize-input {
+  appearance: none;
+  background: #faf8ff;              /* very light purple so text pops */
+  color: #111;
+  border: 1px solid #bda6e8;
+  border-radius: 12px;
+  padding: 10px 12px;
+  outline: none;
+  transition: box-shadow .15s ease, border-color .15s ease;
+}
+
+.personalize-input:focus {
+  border-color: #7a57d1;
+  box-shadow: 0 0 0 3px rgba(122, 87, 209, 0.18);
+}
+
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.chip {
+  background: #f3edff;
+  color: #1f1a3d;
+  border: 1px solid #bda6e8;
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .15s ease, transform .1s ease, border-color .15s ease;
+}
+
+.chip:hover {
+  transform: translateY(-1px);
+  border-color: #7a57d1;
+}
+
+.chip--active {
+  background: linear-gradient(135deg, #7a57d1, #5b7cfa);
+  color: #fff;
+  border-color: transparent;
+}
+
+.personalize-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+/* Solid primary button (keeps your gradient vibe but with readable text) */
+.btn-primary-solid {
+  background: linear-gradient(135deg, #2e7d32, #43a047);
+  color: #fff;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(67, 160, 71, 0.25);
+  transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
+}
+
+.btn-primary-solid:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.03);
+  box-shadow: 0 10px 24px rgba(67, 160, 71, 0.35);
+}
+
+/* Make sure meal headers remain readable (you asked earlier) */
+.meal-header {
+  color: #1b5e20 !important;
+  font-weight: 700 !important;
+}
+
 .meal-container {
   max-width: 1200px;
   margin: 0 auto;

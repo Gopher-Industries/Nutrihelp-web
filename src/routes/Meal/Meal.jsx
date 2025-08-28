@@ -5,6 +5,8 @@ import React, { createContext, useState } from 'react';
 import MotivationalPopup from './MotivationalPopup';
 import WeeklyMealPlan from './WeeklyMealPlan';
 import { exportMealPlanAsPDF } from './PDFExport';
+import PersonalizedPlanForm from './PersonalizedPlanForm';
+import PersonalizedWeeklyPlan from './PersonalizedWeeklyPlan';
 
 const Meal = () => {
     const [selectedItems, setSelectedItems] = useState([]);
@@ -20,6 +22,8 @@ const Meal = () => {
     const [showDinner, setShowDinner] = useState(false);
     const [showPopup, setShowPopup] = useState(true);
     const [showWeeklyPlan, setShowWeeklyPlan] = useState(false);
+    const [showPersonalized, setShowPersonalized] = useState(false);
+    const [personalFilters, setPersonalFilters] = useState(null);
 
     const toggleItemSelection = (item, mealType) => {
         setSelectedItems(prevSelectedItems => {
@@ -223,8 +227,8 @@ const Meal = () => {
                     <div className="menuContainer" style={{ maxHeight: showBreakfast ? '500px' : '0', overflow: 'hidden', transition: 'max-height 0.5s ease' }}>
                         {showBreakfast && breakfast.map(item => (
                             <div className={`food-item ${selectedItems.some(selected => selected.name === item.name) ? 'selected' : ''}`}
-                                 key={item.name}
-                                 onClick={() => toggleItemSelection(item, 'breakfast')}>
+                                key={item.name}
+                                onClick={() => toggleItemSelection(item, 'breakfast')}>
                                 <img src={item.imageUrl} alt={item.name} />
                                 <div className='names'><b>{item.name}</b></div>
                             </div>
@@ -235,8 +239,8 @@ const Meal = () => {
                     <div className="menuContainer" style={{ maxHeight: showLunch ? '500px' : '0', overflow: 'hidden', transition: 'max-height 0.5s ease' }}>
                         {showLunch && lunch.map(item => (
                             <div className={`food-item ${selectedItems.some(selected => selected.name === item.name) ? 'selected' : ''}`}
-                                 key={item.name}
-                                 onClick={() => toggleItemSelection(item, 'lunch')}>
+                                key={item.name}
+                                onClick={() => toggleItemSelection(item, 'lunch')}>
                                 <img src={item.imageUrl} alt={item.name} />
                                 <div className='names'><b>{item.name}</b></div>
                             </div>
@@ -247,8 +251,8 @@ const Meal = () => {
                     <div className="menuContainer" style={{ maxHeight: showDinner ? '500px' : '0', overflow: 'hidden', transition: 'max-height 0.5s ease' }}>
                         {showDinner && dinner.map(item => (
                             <div className={`food-item ${selectedItems.some(selected => selected.name === item.name) ? 'selected' : ''}`}
-                                 key={item.name}
-                                 onClick={() => toggleItemSelection(item, 'dinner')}>
+                                key={item.name}
+                                onClick={() => toggleItemSelection(item, 'dinner')}>
                                 <img src={item.imageUrl} alt={item.name} />
                                 <div className='names'><b>{item.name}</b></div>
                             </div>
@@ -276,22 +280,48 @@ const Meal = () => {
                         <button className="viewplan"><h3>View Meal Plan</h3></button>
                     </Link>
 
+                    {/* Inside Meal.jsx, replace the toggle block */}
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '40px' }}>
-                        <button className="viewplan" onClick={() => setShowWeeklyPlan(!showWeeklyPlan)}>
-                            <h3>{showWeeklyPlan ? 'Hide Weekly Meal Plan' : 'Show Weekly Meal Plan'}</h3>
+                        <button
+                            className="toggle-weekly-btn"
+                            onClick={() => setShowWeeklyPlan(!showWeeklyPlan)}
+                        >
+                            {showWeeklyPlan ? 'Hide Weekly Meal Plan' : 'Show Weekly Meal Plan'}
                         </button>
 
                         {showWeeklyPlan && (
                             <div id="weekly-meal-plan-container" className="weekly-container">
+                                <h2 className="weekly-plan-title">🌱 Weekly Meal Plan 🌱</h2>
                                 <WeeklyMealPlan />
                                 <div style={{ textAlign: 'center', marginTop: '20px' }}>
-                                    <button className="viewplan" onClick={() => exportMealPlanAsPDF('weekly-meal-plan-container')}>
-                                        <h3>Export Weekly Plan as PDF</h3>
+                                    <button className="export-btn" onClick={() => exportMealPlanAsPDF('weekly-meal-plan-container')}>
+                                        Export Weekly Plan as PDF
                                     </button>
                                 </div>
                             </div>
                         )}
                     </div>
+
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '30px', width: '100%' }}>
+                        <button
+                            className="toggle-weekly-btn"
+                            onClick={() => setShowPersonalized(!showPersonalized)}
+                        >
+                            {showPersonalized ? 'Hide Personalized Weekly Plan' : 'Show Personalized Weekly Plan'}
+                        </button>
+
+                        {showPersonalized && (
+                            <div style={{ width: '100%' }}>
+                                <PersonalizedPlanForm onGenerate={(filters) => setPersonalFilters(filters)} />
+                                {personalFilters && (
+                                    <div className="weekly-container" style={{ width: '100%' }}>
+                                        <PersonalizedWeeklyPlan filters={personalFilters} />
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </div>
+
                 </div>
             </div>
         </div>
