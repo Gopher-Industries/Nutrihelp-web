@@ -1,0 +1,181 @@
+/* ====== Main Card Layout ====== */
+.obesity-card {
+  width: 2000px;
+  min-height: 799px;
+    margin: 30px auto;
+    padding: 30px;
+    background: #dec7ea !important;
+    border-radius: 16px;
+    /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); */
+    font-family: "Segoe UI", sans-serif;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+    gap: 52px;
+}
+
+
+.heading_survey h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+    font-size: xx-large;
+    font-family: revert-layer;
+}
+
+/* ====== Progress Bar ====== */
+.progress-bar-container {
+  position: relative;
+  height: 24px;
+  background-color: #f1f1f1;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #4CAF50, #45a049);
+  border-radius: 12px;
+  transition: width 0.3s ease-in-out;
+}
+
+.progress-label {
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  top: 0;
+  line-height: 24px;
+  font-size: 0.85rem;
+  font-weight: bold;
+  color: #fff;
+}
+
+/* ====== Form Styling ====== */
+.obesity-form {
+  overflow-y: auto;
+  padding-right: 10px;
+  scroll-behavior: smooth;
+}
+
+.field-block {
+  margin-bottom: 18px;
+}
+
+.field-block label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #444;
+}
+
+.field-block input,
+.field-block select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.field-block input:focus,
+.field-block select:focus {
+  border-color: #4CAF50;
+  box-shadow: 0 0 4px rgba(76, 175, 80, 0.3);
+}
+
+/* ====== Scroll Hint ====== */
+.scroll-hint {
+  text-align: center;
+  font-size: 0.9rem;
+  color: #28a745;
+  margin: 10px 0;
+}
+
+/* ====== Buttons ====== */
+.scroll-top-btn-inline,
+.submit-btn {
+  display: inline-block;
+  padding: 10px 16px;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 10px;
+}
+
+.scroll-top-btn-inline {
+  background: #f0f0f0;
+  color: #333;
+  margin-right: 8px;
+}
+
+.scroll-top-btn-inline:hover {
+  background: #ddd;
+}
+
+.submit-btn {
+  background: #4CAF50;
+  color: white;
+}
+
+.submit-btn:hover {
+  background: #45a049;
+}
+
+/* ====== Scrollbar Styling ====== */
+.obesity-form::-webkit-scrollbar {
+  width: 8px;
+}
+
+.obesity-form::-webkit-scrollbar-thumb {
+  background-color: rgba(0,0,0,0.2);
+  border-radius: 4px;
+}
+
+.obesity-form::-webkit-scrollbar-track {
+  background-color: #f1f1f1;
+}
+
+.fullscreen-form {
+  height: 100vh; /* full viewport height */
+  width: 100vw;  /* full viewport width */
+  padding: 20px 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* align top */
+  align-items: center;
+  background: #f5f7fa; /* light background */
+  overflow-y: auto;
+}
+
+.questions-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* 2 equal columns */
+  gap: 20px 40px; /* vertical and horizontal gaps */
+  width: 100%;
+  margin-top: 20px;
+}
+
+.question-card {
+    background: white !important;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 433px;
+}
+
+.question-card label{
+    color: black;
+}
+
+.question-card input{
+    color: black;
+}

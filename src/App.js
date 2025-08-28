@@ -35,6 +35,15 @@ import MainNavbar from "./components/MainNavbar";
 import FAQ from "./routes/FAQ/faq";
 import NutritionCalculator from "./routes/UI-Only-Pages/NutritionCalculator/NutritionCalculator";
 import HealthNews from "./routes/HealthNews/HealthNews";
+import FoodPreferences from "./routes/FoodPreferences/FoodPreferences";
+import HealthTools from "./routes/HealthTools/HealthTools";
+import RecipeRating from "./routes/RecipeRating/RecipeRating";
+import ShoppingList from "./routes/UI-Only-Pages/ShoppingList/ShoppingList";
+import RecipeDetail from "./routes/RecipeRating/RecipeDetail";
+import SymptomAssessment from "./routes/SymptomAssessment/SymptomAssessment";
+import Leaderboard from "./routes/LeaderBoard/leaderBoard";
+import ObesityPredictor from "./routes/survey/ObesityPredictor";
+import UiTimer from "./routes/UiTimer/UiTimer"
 
 function App() {
   const { currentUser } = useContext(UserContext);
@@ -56,6 +65,8 @@ function App() {
         <Route path="/signUp" element={<SignUp />} />
         <Route path="/forgotPassword" element={<ForgotPassword />} />
         <Route path="/faq" element={<FAQ />} />
+        <Route path="/leaderboard" element={<Leaderboard />} />
+        <Route path="/survey" element={<ObesityPredictor />} />
 
         {/* Private Routes */}
         <Route
@@ -124,6 +135,22 @@ function App() {
           }
         />
         <Route
+          path="RecipeRating"
+          element={
+            <AuthenticateRoute>
+              <RecipeRating />
+            </AuthenticateRoute>
+          }
+        />
+        <Route
+          path="UiTimer"
+          element={
+            <AuthenticateRoute>
+              <UiTimer />
+            </AuthenticateRoute>
+          }
+        />
+        <Route
           path="menu"
           element={
             <AuthenticateRoute>
@@ -139,6 +166,7 @@ function App() {
             </AuthenticateRoute>
           }
         />
+        <Route path="/recipe/:id" element={<RecipeDetail />} />
         <Route
           path="Meal"
           element={
@@ -155,6 +183,8 @@ function App() {
             </AuthenticateRoute>
           }
         />
+        <Route path="/preferences" element={<FoodPreferences />} />
+        <Route path="/symptomassessment" element={<SymptomAssessment />} />
         <Route
           path="healthnews"
           element={
@@ -169,6 +199,22 @@ function App() {
           element={
             <AuthenticateRoute>
               <Dashboard />
+            </AuthenticateRoute>
+          }
+        />
+        <Route
+          path="HealthTools"
+          element={
+            <AuthenticateRoute>
+              <HealthTools />
+            </AuthenticateRoute>
+          }
+        />
+        <Route
+          path="shopping-list"
+          element={
+            <AuthenticateRoute>
+              <ShoppingList />
             </AuthenticateRoute>
           }
         />

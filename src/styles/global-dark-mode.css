@@ -1,0 +1,363 @@
+/* Global Dark Mode Styles for NutriHelp Application */
+
+/* CSS Variables for Light Mode */
+:root {
+  /* Primary Colors */
+  --primary-color: #a82fea;
+  --primary-hover: #6d34e0;
+  --primary-light: #e9d5ff;
+  --primary-dark: #7c3aed;
+  
+  /* Background Colors */
+  --background-color: #ffffff;
+  --background-secondary: #f8fafc;
+  --background-tertiary: #f1f5f9;
+  
+  /* Card and Container Colors */
+  --card-background: #ffffff;
+  --card-background-secondary: #f8fafc;
+  --container-background: #ffffff;
+  
+  /* Text Colors */
+  --text-primary: #2d3748;
+  --text-secondary: #4a5568;
+  --text-muted: #718096;
+  --text-inverse: #ffffff;
+  
+  /* Border Colors */
+  --border-color: #e2e8f0;
+  --border-color-secondary: #cbd5e0;
+  --border-color-focus: #a82fea;
+  
+  /* Input Colors */
+  --input-background: #ffffff;
+  --input-border: #e2e8f0;
+  --input-border-focus: #a82fea;
+  --input-text: #2d3748;
+  --input-placeholder: #a0aec0;
+  
+  /* Button Colors */
+  --button-background: #a82fea;
+  --button-background-secondary: #f1f5f9;
+  --button-text: #ffffff;
+  --button-text-secondary: #4a5568;
+  --button-border: #a82fea;
+  --button-hover: #6d34e0;
+  
+  /* Navigation Colors */
+  --nav-background: #8d5cf6;
+  --nav-text: #ffffff;
+  --nav-hover: rgba(255, 255, 255, 0.1);
+  --nav-active: rgba(255, 255, 255, 0.2);
+  
+  /* Shadow Colors */
+  --card-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  --card-shadow-hover: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --dropdown-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  
+  /* Status Colors */
+  --success-color: #48bb78;
+  --warning-color: #ed8936;
+  --error-color: #f56565;
+  --info-color: #4299e1;
+  
+  /* Overlay Colors */
+  --overlay-background: rgba(0, 0, 0, 0.5);
+  --modal-background: #ffffff;
+  
+  /* Gradient Colors */
+  --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  --gradient-nav: linear-gradient(44deg, #7B44FF 0%, #F26CBA 100%);
+}
+
+/* CSS Variables for Dark Mode */
+.dark-mode {
+  /* Primary Colors */
+  --primary-color: #a82fea;
+  --primary-hover: #6d34e0;
+  --primary-light: #2d1b69;
+  --primary-dark: #7c3aed;
+  
+  /* Background Colors */
+  --background-color: #1a1a1a;
+  --background-secondary: #2d2d2e;
+  --background-tertiary: #3a3a3b;
+  
+  /* Card and Container Colors */
+  --card-background: #2d2d2e;
+  --card-background-secondary: #3a3a3b;
+  --container-background: #2d2d2e;
+  
+  /* Text Colors */
+  --text-primary: #ffffff;
+  --text-secondary: #e2e8f0;
+  --text-muted: #a0aec0;
+  --text-inverse: #2d3748;
+  
+  /* Border Colors */
+  --border-color: #4a5568;
+  --border-color-secondary: #2d3748;
+  --border-color-focus: #a82fea;
+  
+  /* Input Colors */
+  --input-background: #2d2d2e;
+  --input-border: #4a5568;
+  --input-border-focus: #a82fea;
+  --input-text: #ffffff;
+  --input-placeholder: #718096;
+  
+  /* Button Colors */
+  --button-background: #a82fea;
+  --button-background-secondary: #3a3a3b;
+  --button-text: #ffffff;
+  --button-text-secondary: #e2e8f0;
+  --button-border: #a82fea;
+  --button-hover: #6d34e0;
+  
+  /* Navigation Colors */
+  --nav-background: #2D3748;
+  --nav-text: #ffffff;
+  --nav-hover: rgba(255, 255, 255, 0.1);
+  --nav-active: rgba(255, 255, 255, 0.2);
+  
+  /* Shadow Colors */
+  --card-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+  --card-shadow-hover: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+  --dropdown-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+  
+  /* Status Colors */
+  --success-color: #48bb78;
+  --warning-color: #ed8936;
+  --error-color: #f56565;
+  --info-color: #4299e1;
+  
+  /* Overlay Colors */
+  --overlay-background: rgba(0, 0, 0, 0.7);
+  --modal-background: #2d2d2e;
+  
+  /* Gradient Colors */
+  --gradient-primary: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+  --gradient-secondary: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+  --gradient-nav: linear-gradient(44deg, #2d3748 0%, #1a202c 100%);
+}
+
+/* Global Dark Mode Styles */
+.dark-mode {
+  /* Base Elements */
+  color: var(--text-primary);
+  background-color: var(--background-color);
+}
+
+/* Typography */
+.dark-mode h1,
+.dark-mode h2,
+.dark-mode h3,
+.dark-mode h4,
+.dark-mode h5,
+.dark-mode h6 {
+  color: var(--text-primary);
+}
+
+.dark-mode p {
+  color: var(--text-secondary);
+}
+
+.dark-mode a {
+  color: var(--primary-color);
+}
+
+.dark-mode a:hover {
+  color: var(--primary-hover);
+}
+
+/* Form Elements */
+.dark-mode input,
+.dark-mode textarea,
+.dark-mode select {
+  background-color: var(--input-background);
+  color: var(--input-text);
+  border-color: var(--input-border);
+}
+
+.dark-mode input:focus,
+.dark-mode textarea:focus,
+.dark-mode select:focus {
+  border-color: var(--input-border-focus);
+  box-shadow: 0 0 0 3px rgba(168, 47, 234, 0.1);
+}
+
+.dark-mode input::placeholder,
+.dark-mode textarea::placeholder {
+  color: var(--input-placeholder);
+}
+
+/* Buttons */
+.dark-mode .btn,
+.dark-mode button {
+  background-color: var(--button-background);
+  color: var(--button-text);
+  border-color: var(--button-border);
+}
+
+.dark-mode .btn:hover,
+.dark-mode button:hover {
+  background-color: var(--button-hover);
+}
+
+.dark-mode .btn-secondary {
+  background-color: var(--button-background-secondary);
+  color: var(--button-text-secondary);
+  border-color: var(--border-color);
+}
+
+/* Cards and Containers */
+.dark-mode .card,
+.dark-mode .container,
+.dark-mode .box,
+.dark-mode .panel {
+  background-color: var(--card-background);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+  box-shadow: var(--card-shadow);
+}
+
+.dark-mode .card:hover,
+.dark-mode .container:hover,
+.dark-mode .box:hover {
+  box-shadow: var(--card-shadow-hover);
+}
+
+/* Navigation */
+.dark-mode .nav,
+.dark-mode .navbar,
+.dark-mode .navigation {
+  background-color: var(--nav-background);
+  color: var(--nav-text);
+}
+
+.dark-mode .nav-link,
+.dark-mode .nav-item {
+  color: var(--nav-text);
+}
+
+.dark-mode .nav-link:hover,
+.dark-mode .nav-item:hover {
+  background-color: var(--nav-hover);
+  color: var(--primary-color);
+}
+
+.dark-mode .nav-link.active,
+.dark-mode .nav-item.active {
+  background-color: var(--nav-active);
+  color: var(--primary-color);
+}
+
+/* Dropdowns */
+.dark-mode .dropdown-menu,
+.dark-mode .dropdown-content {
+  background-color: var(--card-background);
+  border-color: var(--border-color);
+  box-shadow: var(--dropdown-shadow);
+}
+
+.dark-mode .dropdown-item {
+  color: var(--text-primary);
+}
+
+.dark-mode .dropdown-item:hover {
+  background-color: var(--background-secondary);
+  color: var(--primary-color);
+}
+
+/* Tables */
+.dark-mode table {
+  background-color: var(--card-background);
+  color: var(--text-primary);
+}
+
+.dark-mode th,
+.dark-mode td {
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+.dark-mode tr:hover {
+  background-color: var(--background-secondary);
+}
+
+/* Modals and Overlays */
+.dark-mode .modal,
+.dark-mode .overlay {
+  background-color: var(--overlay-background);
+}
+
+.dark-mode .modal-content,
+.dark-mode .modal-body {
+  background-color: var(--modal-background);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+/* Lists */
+.dark-mode ul,
+.dark-mode ol {
+  color: var(--text-primary);
+}
+
+.dark-mode li {
+  color: var(--text-secondary);
+}
+
+/* Code and Pre */
+.dark-mode code,
+.dark-mode pre {
+  background-color: var(--background-secondary);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+/* Blockquotes */
+.dark-mode blockquote {
+  border-left-color: var(--primary-color);
+  background-color: var(--background-secondary);
+  color: var(--text-secondary);
+}
+
+/* Horizontal Rules */
+.dark-mode hr {
+  border-color: var(--border-color);
+}
+
+/* Focus Indicators for Accessibility */
+.dark-mode *:focus {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+  .dark-mode {
+    --border-color: #ffffff;
+    --text-muted: #ffffff;
+  }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  .dark-mode * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .dark-mode {
+    --background-color: #ffffff;
+    --text-primary: #000000;
+    --card-background: #ffffff;
+    --border-color: #000000;
+  }
+}

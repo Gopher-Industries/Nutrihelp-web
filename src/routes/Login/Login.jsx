@@ -12,7 +12,7 @@ import NutrihelpLogo from "./Nutrihelp_Logo.PNG";
 const Login = () => {
   const navigate = useNavigate();
   const { setCurrentUser } = useContext(UserContext);
-
+  const [showPassword, setShowPassword] = useState(false);
   const [contact, setContact] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
   const [isChecked, setIsChecked] = useState(false);
@@ -129,12 +129,18 @@ const Login = () => {
                   }`}
                   id="password"
                   name="password"
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   placeholder="Min. 8 characters"
                   onChange={handleChange}
                   value={password}
                 />
-                <span className="eye-icon tts-ignore">👁️</span>
+                <span
+                  className="eye-icon tts-ignore cursor-pointer"
+                  aria-hidden="true"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? "🙈" : "👁️"}
+                </span>
               </div>
             </div>
 

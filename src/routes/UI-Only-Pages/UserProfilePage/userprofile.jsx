@@ -1,154 +1,292 @@
-import React, { useState } from "react";
-import { MdDynamicFeed } from "react-icons/md";
-import { FaUserCircle } from "react-icons/fa";
-import { AiFillBug } from "react-icons/ai";
-import { FaUserPen } from "react-icons/fa6";
+import React, { useMemo, useRef, useState } from "react";
 import "./user-profile.css";
-
-const UserProfilePage = () => {
-  const [isMFAEnabled, setIsMFAEnabled] = useState(false);
-
-  const handleInputValue = (e) => {
-    e.preventDefault();
-    const userFirstName = firstName.value;
-    const userLastName = lastName.value;
-    const userNumber = number.value;
-    const userEmail = email.value;
-    const userPassword = password.value;
-    const userHealth = health.value;
-    const userPreferred = preferred.value;
-
-    const inputArray = [
-      {
-        firstName: userFirstName,
-        lastName: userLastName,
-        number: userNumber,
-        email: userEmail,
-        password: userPassword,
-        healthCondition: userHealth,
-        preferredCuisine: userPreferred,
-        isMFAEnabled: isMFAEnabled,
-      },
+ 
+const GOALS = [
+  { id: "muscle", label: "Muscle Gain" },
+  { id: "weightloss", label: "Weight Loss" },
+  { id: "generalwell", label: "General Well-Being" },
+  { id: "hypertension", label: "Hypertension Control" },
+  { id: "hearthealth", label: "Heart Health" },
+];
+ 
+const initial = {
+  name: "",
+  email: "",
+  phone: "",
+  password: "",
+  confirm: "",
+  goals: [],
+  avatar: null,
+};
+ 
+const emailOk = (e) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e || "");
+const phoneOk = (p) => /^[0-9]{8,15}$/.test((p || "").replace(/\s/g, ""));
+ 
+export default function UserProfilePage() {
+  const [form, setForm] = useState(initial);
+  const [touched, setTouched] = useState({});
+  const fileRef = useRef(null);
+ 
+  const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
+  const mark = (k) => setTouched((t) => ({ ...t, [k]: true }));
+ 
+ 
+  const completion = useMemo(() => {
+    const checks = [
+      !!form.name && emailOk("a@a.co") ? !!form.name : !!form.name, 
+      emailOk(form.email),
+      phoneOk(form.phone),
+      form.password.length >= 6,
+      form.confirm === form.password && !!form.confirm,
+      !!form.avatar,
+      form.goals.length > 0,
     ];
-
-    console.log(inputArray);
+    const done = checks.reduce((s, b) => s + (b ? 1 : 0), 0);
+    return Math.round((done / checks.length) * 100);
+  }, [form]);
+ 
+  const errors = useMemo(() => {
+    const e = {};
+    if (!form.name) e.name = "Enter your full name";
+    if (!emailOk(form.email)) e.email = "Enter a valid email";
+    if (!phoneOk(form.phone)) e.phone = "Phone must be 8–15 digits";
+    if (form.password.length < 6) e.password = "Min 6 characters";
+    if (form.confirm !== form.password) e.confirm = "Passwords don’t match";
+    if (!form.goals.length) e.goals = "Pick at least one goal";
+    return e;
+  }, [form]);
+ 
+  const onPick = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const url = URL.createObjectURL(file);
+    set("avatar", { file, url });
   };
-
-  const toggleMFA = () => {
-    setIsMFAEnabled(!isMFAEnabled);
+ 
+  const toggleGoal = (id) =>
+    set(
+      "goals",
+      form.goals.includes(id)
+        ? form.goals.filter((g) => g !== id)
+        : [...form.goals, id]
+    );
+ 
+  const submit = (e) => {
+    e.preventDefault();
+    setTouched({
+      name: true,
+      email: true,
+      phone: true,
+      password: true,
+      confirm: true,
+      goals: true,
+    });
+    if (Object.keys(errors).length) return;
+    console.log("PROFILE", form);
+    alert("Profile saved!");
   };
-
+ 
+  const reset = () => {
+    setForm(initial);
+    setTouched({});
+    if (fileRef.current) fileRef.current.value = "";
+  };
+ 
   return (
-    <div className="container-fluid bg-white">
-      <div className="container m-1">
-        <div className="custom-row w-100">
-          <div className="container70 w-70">
-            <form className="was-validated">
-              <div className="mb-3">
-                <label htmlFor="name" className="form-label">Full Name</label>
-                <input className="form-control is-invalid" id="name" placeholder="Type Your Name Here.." required />
-                <span className="error">Valid Name </span>
-              </div>
+    <div className="profile-page">
+      <div className="grid">
 
-              <div className="mb-3">
-                <label htmlFor="email" className="form-label">Email Id</label>
-                <input className="form-control is-invalid" id="email" placeholder="Type Your Email Here.." required />
-                <span className="error">✗</span>
+        <form className="card form horizontal"  onSubmit={submit} noValidate>
+          <div className="band">
+            <h2>User Profile</h2>
+            <div className="band-right">{completion}% complete</div>
+          </div>
+ 
+          <div className="pad">
+         
+            <div className="form-grid">
+         
+              <Field
+                id="name"
+                label="Full Name"
+                placeholder="Type your name"
+                value={form.name}
+                onChange={(v) => set("name", v)}
+                onBlur={() => mark("name")}
+                error={touched.name && errors.name}
+              />
+ 
+              <Field
+                id="email"
+                label="Email"
+                type="email"
+                placeholder="you@domain.com"
+                value={form.email}
+                onChange={(v) => set("email", v)}
+                onBlur={() => mark("email")}
+                error={touched.email && errors.email}
+              />
+ 
+              <Field
+                id="password"
+                label="Password"
+                type="password"
+                placeholder="••••••"
+                value={form.password}
+                onChange={(v) => set("password", v)}
+                onBlur={() => mark("password")}
+                error={touched.password && errors.password}
+              />
+ 
+              <Field
+                id="confirm"
+                label="Confirm Password"
+                type="password"
+                placeholder="retype password"
+                value={form.confirm}
+                onChange={(v) => set("confirm", v)}
+                onBlur={() => mark("confirm")}
+                error={touched.confirm && errors.confirm}
+              />
+ 
+       
+             
+ 
+              <Field
+                id="phone"
+                label="Contact Number"
+                inputMode="tel"
+                placeholder="e.g., 0412345678"
+                value={form.phone}
+                onChange={(v) => set("phone", v)}
+                onBlur={() => mark("phone")}
+                error={touched.phone && errors.phone}
+              />
+ 
+           
+              <div className="col-span-3">
+                <label className="block-label">Fitness Goals</label>
+                <div className="chips">
+                  {GOALS.map((g) => (
+                    <button
+                      key={g.id}
+                      type="button"
+                      className={
+                        "chip " + (form.goals.includes(g.id) ? "on" : "")
+                      }
+                      onClick={() => toggleGoal(g.id)}
+                    >
+                      {g.label}
+                    </button>
+                  ))}
+                </div>
+                {touched.goals && errors.goals && (
+                  <small className="error">{errors.goals}</small>
+                )}
               </div>
-
-              <div className="mb-3">
-                <label htmlFor="contact" className="form-label">Contact No</label>
-                <input className="form-control is-invalid" id="contact" placeholder="Type Your Phone No Here.." required />
-                <span className="error">✗</span>
-                <div className="invalidfeedback"> Phone no is invalid</div>
-              </div>
-
-              <div className="mb-3">
-                <label htmlFor="password" className="form-label">Password</label>
-                <input className="form-control is-invalid" id="password" type="password" required />
-                <span className="error">✗</span>
-              </div>
-
-              <div className="mb-3">
-                <label htmlFor="cpassword" className="form-label"> Confirm Password</label>
-                <input className="form-control is-invalid" id="cpassword" type="password" required />
-                <span className="error">✗</span>
-              </div>
-
-              <div className="form-group">
-                <label>Choose Fitness Goal</label>
-                <div className="gender-options">
-                  <label>
-                    <input
-                      type="radio"
-                      className="form-check-input"
-                      name="fitnessGoal"
-                      value="muscle"
+ 
+              <div className="avatar-col native-upload">
+                <span className="label">Upload your Profile Picture</span>
+                  <div className="avatar">
+                    <img
+                      alt="avatar"
+                      src={
+                        form.avatar?.url ||
+                        "./images/avatar.png"
+                      }
                     />
-                    Muscle Gain
-                  </label>
-                  <label>
-                    <input
-                      type="radio"
-                      name="fitnessGoal"
-                      className="form-check-input"
-                      value="weightloss"
-                    />
-                    Weight Loss
-                  </label>
-                  <label>
-                    <input
-                      type="radio"
-                      name="fitnessGoal"
-                      className="form-check-input"
-                      value="generalwell"
-                    />
-                    General Well Being
-                  </label>
-                  <label>
-                    <input
-                      type="radio"
-                      name="fitnessGoal"
-                      className="form-check-input"
-                      value="hypertension"
-                    />
-                    Hypertension Control
-                  </label>
-                  <label>
-                    <input
-                      type="radio"
-                      name="fitnessGoal"
-                      className="form-check-input"
-                      value="hearthealth"
-                    />
-                    Heart Health
-                  </label>
+                  </div>
+                  <div className="upload-wrap">
+                  <input
+                    ref={fileRef}
+                    className="file-input"
+                    type="file"
+                    accept="image/*"
+                    onChange={onPick}
+                  />
                 </div>
               </div>
-
-              <label>
-                <input type="checkbox" name="signup" />
-                By Signing up you agree to receive updates and special offers
-              </label>
-
-              <button type="submit" className="btn buttoncolor">SUBMIT</button>
-              <button type="reset" className="btn buttoncolor">RESET</button>
-            </form>
-
-            <div className="progress-bar">
-              <div className="progress"></div>
             </div>
           </div>
-
-          <div className="container310 w-30">
-            <img src="./images/avatar.png" className="img" />
-            <input type="file" className="form-control" name="image" />
-            <div className="mt-4 pt-4"></div>
+ 
+          <div className="actions">
+            <button className="btn primary" type="button" onClick={reset}>
+              Reset
+            </button>
+            <button className="btn primary" type="submit">
+              Save Changes
+            </button>
           </div>
-        </div>
+        </form>
+ 
+    
+        <aside className="card preview">
+          <div className="band">
+            <h2>Preview</h2>
+          </div>
+          <div className="pad">
+            <div className="preview-avatar">
+              <img src={form.avatar?.url || "./images/avatar.png"} />
+            </div>
+            <div className="kv">
+              <span>Name</span>
+              <strong>{form.name || "—"}</strong>
+            </div>
+            <div className="kv">
+              <span>Email</span>
+              <strong>{form.email || "—"}</strong>
+            </div>
+            <div className="kv">
+              <span>Phone</span>
+              <strong>{form.phone || "—"}</strong>
+            </div>
+            <div className="kv goals-line">
+              <span>Goals</span>
+              <div className="pill-wrap">
+                {form.goals.length ? (
+                  form.goals.map((id) => (
+                    <span className="pill" key={id}>
+                      {GOALS.find((g) => g.id === id)?.label || id}
+                    </span>
+                  ))
+                ) : (
+                  <em>none</em>
+                )}
+              </div>
+            </div>
+          </div>
+        </aside>
       </div>
     </div>
   );
-};
+}
+ 
 
-export default UserProfilePage;
+function Field({
+  id,
+  label,
+  value,
+  onChange,
+  onBlur,
+  placeholder,
+  error,
+  type = "text",
+  inputMode,
+}) {
+  return (
+    <label htmlFor={id} className={"field " + (error ? "has-error" : "")}>
+      <span className="label">{label}</span>
+      <input
+        id={id}
+        type={type}
+        inputMode={inputMode}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        onBlur={onBlur}
+        placeholder={placeholder}
+        aria-invalid={!!error}
+      />
+      {error ? <small className="error">{error}</small> : null}
+    </label>
+  );
+}

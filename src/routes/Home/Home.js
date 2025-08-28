@@ -457,7 +457,7 @@ const Home = () => {
                 darkMode ? "bg-transparent" : "bg-white"
               }`}
             >
-              <div id="no-bg" className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div id="no-bg" className="flex flex-col gap-4">
                 <input
                   type="text"
                   name="name"
