@@ -1,5 +1,7 @@
 import { motion } from "framer-motion";
 import { useRef, useState } from "react";
+import { MdArrowDropDown, MdArrowDropUp, MdEdit } from "react-icons/md";
+import { RiDeleteBin6Fill } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import FramerClient from "../../components/framer-client.jsx";
 import {
@@ -28,6 +30,7 @@ function CreateRecipe() {
   const [instructions, setInstructions] = useState("");
   const [instruction, setInstruction] = useState([]);
   const [tableData, setRecipeTable] = useState([]);
+  const [showIngredients, setShowIngredients] = useState(true);
   //const [isEditing, setIsEditing] = useState("");
 
   const [ingredients, setIngredients] = useState([
@@ -431,9 +434,9 @@ function CreateRecipe() {
                     <label
                       htmlFor="file-upload"
                       id="no-bg"
-                      className="bg-[#BA49E7] text-white px-4 sm:px-6 py-3 sm:py-4 rounded-lg font-semibold text-sm sm:text-base cursor-pointer"
+                      className="bg-[#BA49E7] text-white px-4 sm:px-6 py-3 sm:py-4 rounded-full font-semibold text-sm sm:text-base cursor-pointer"
                     >
-                      Upload Image
+                      Upload
                     </label>
                   </div>
                 </div>
@@ -499,229 +502,274 @@ function CreateRecipe() {
                 id="no-bg"
                 className="bg-purple-100 rounded-lg p-4 sm:p-6 mb-6 sm:mb-8"
               >
-                <h2
-                  id="no-bg"
-                  className="text-lg sm:text-xl md:text-2xl font-medium mb-4 sm:mb-6"
-                >
-                  Ingredients
-                </h2>
-                <div
-                  id="no-bg"
-                  className="flex flex-col sm:flex-row gap-4 sm:gap-6 mb-4 sm:mb-6"
-                >
-                  <div
+                <div className="w-full flex justify-between items-center">
+                  <h2
                     id="no-bg"
-                    className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-0 sm:w-1/2"
+                    className="text-lg sm:text-xl md:text-2xl font-medium mb-4 sm:mb-6"
                   >
-                    <label
-                      id="no-bg"
-                      className="w-full sm:w-1/3 text-sm sm:text-base md:text-lg"
-                    >
-                      Category
-                    </label>
-                    <select
-                      id="no-bg"
-                      className="w-full sm:w-2/3 rounded-xl h-10 sm:h-12 border border-gray-400 px-4 bg-white"
-                      defaultValue=""
-                      onChange={(e) =>
-                        handleIngredientCategoryChange(e.target.value)
-                      }
-                      value={ingredientCategory}
-                    >
-                      <option value="" disabled>
-                        Select one
-                      </option>
-                      <option value="meat">Meat</option>
-                      <option value="vegetables">Vegetables</option>
-                      <option value="grains">Grains</option>
-                      <option value="carbs">Carbs</option>
-                      <option value="dairy">Dairy</option>
-                      <option value="spices">Spices</option>
-                    </select>
-                  </div>
-
-                  <div
-                    id="no-bg"
-                    className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-0 sm:w-1/2"
-                  >
-                    <label
-                      id="no-bg"
-                      className="w-full sm:w-1/3 text-sm sm:text-base md:text-lg"
-                    >
-                      Ingredient
-                    </label>
-                    <input
-                      id="no-bg"
-                      className="w-full sm:w-2/3 rounded-xl h-10 sm:h-12 border border-gray-400 px-4"
-                      placeholder="Enter Ingredient"
-                      value={ingredient}
-                      onChange={(e) => handleIngredientChange(e.target.value)}
+                    Ingredients
+                  </h2>
+                  {showIngredients ? (
+                    <MdArrowDropUp
+                      size={24}
+                      className="cursor-pointer text-black"
+                      onClick={() => setShowIngredients(!showIngredients)}
                     />
-                  </div>
+                  ) : (
+                    <MdArrowDropDown
+                      size={24}
+                      className="cursor-pointer text-black"
+                      onClick={() => setShowIngredients(!showIngredients)}
+                    />
+                  )}
                 </div>
-
-                <div
-                  id="no-bg"
-                  className="flex flex-col sm:flex-row gap-4 sm:gap-6 mb-6 sm:mb-8 w-full"
-                >
-                  <div
-                    id="no-bg"
-                    className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-0 sm:w-1/2"
-                  >
-                    <label
+                {showIngredients && (
+                  <FramerClient>
+                    <div
                       id="no-bg"
-                      className="w-full sm:w-1/3 text-sm sm:text-base md:text-lg"
+                      className="flex flex-col sm:flex-row gap-4 sm:gap-6 mb-4 sm:mb-6"
                     >
-                      Quantity
-                    </label>
-                    <select
-                      id="no-bg"
-                      className="w-full sm:w-2/3 rounded-xl h-10 sm:h-12 border border-gray-400 px-4 bg-white"
-                      defaultValue=""
-                      value={ingredientQuantity}
-                      onChange={(e) =>
-                        handleIngredientQuantityChange(e.target.value)
-                      }
-                    >
-                      <option value="" disabled>
-                        Select one
-                      </option>
-                      <option value="ml">Ml</option>
-                      <option value="g">G</option>
-                      <option value="cups">Cups</option>
-                      <option value="tbsp">Tbsp</option>
-                      <option value="tsp">Tsp</option>
-                    </select>
-                  </div>
-
-                  <div
-                    id="no-bg"
-                    className="flex items-center justify-end sm:justify-end sm:w-1/2"
-                  >
-                    <button
-                      type="button"
-                      id="no-bg"
-                      className="bg-[#BA49E7] text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-semibold text-sm sm:text-base"
-                      onClick={() => handelIngredientsInTable()}
-                    >
-                      Add Ingredient +
-                    </button>
-                  </div>
-                </div>
-
-                <div id="no-bg" className="overflow-x-auto">
-                  <table
-                    id="no-bg"
-                    className="min-w-full border border-gray-300"
-                  >
-                    <thead id="no-bg" className="bg-[#6F42C1] text-white">
-                      <tr>
-                        <th
+                      <div
+                        id="no-bg"
+                        className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-0 sm:w-1/2"
+                      >
+                        <label
                           id="no-bg"
-                          className="border border-gray-300 px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base"
+                          className="w-full sm:w-1/3 text-sm sm:text-base md:text-lg"
                         >
                           Category
-                        </th>
-                        <th
+                        </label>
+                        <select
                           id="no-bg"
-                          className="border border-gray-300 px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base"
+                          className="w-full sm:w-2/3 rounded-xl h-10 sm:h-12 border border-gray-400 px-4 bg-white"
+                          defaultValue=""
+                          onChange={(e) =>
+                            handleIngredientCategoryChange(e.target.value)
+                          }
+                          value={ingredientCategory}
+                        >
+                          <option value="" disabled>
+                            Select one
+                          </option>
+                          <option value="meat">Meat</option>
+                          <option value="vegetables">Vegetables</option>
+                          <option value="grains">Grains</option>
+                          <option value="carbs">Carbs</option>
+                          <option value="dairy">Dairy</option>
+                          <option value="spices">Spices</option>
+                        </select>
+                      </div>
+
+                      <div
+                        id="no-bg"
+                        className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-0 sm:w-1/2"
+                      >
+                        <label
+                          id="no-bg"
+                          className="w-full sm:w-1/3 text-sm sm:text-base md:text-lg"
                         >
                           Ingredient
-                        </th>
-                        <th
+                        </label>
+                        <input
                           id="no-bg"
-                          className="border border-gray-300 px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base"
+                          className="w-full sm:w-2/3 rounded-xl h-10 sm:h-12 border border-gray-400 px-4"
+                          placeholder="Enter Ingredient"
+                          value={ingredient}
+                          onChange={(e) =>
+                            handleIngredientChange(e.target.value)
+                          }
+                        />
+                      </div>
+                    </div>
+
+                    <div
+                      id="no-bg"
+                      className="flex flex-col sm:flex-row gap-4 sm:gap-6 mb-6 sm:mb-8 w-full"
+                    >
+                      <div
+                        id="no-bg"
+                        className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-0 sm:w-1/2"
+                      >
+                        <label
+                          id="no-bg"
+                          className="w-full sm:w-1/3 text-sm sm:text-base md:text-lg"
                         >
                           Quantity
-                        </th>
-                        <th
+                        </label>
+                        <div className="flex items-center w-full sm:w-2/3">
+                          <input
+                            id="no-bg"
+                            //list="units"
+                            className="w-full sm:w-2/3 rounded-xl h-10 sm:h-12 border border-gray-400 px-4 bg-white"
+                            defaultValue=""
+                            value={ingredientQuantity}
+                            onChange={(e) =>
+                              handleIngredientQuantityChange(e.target.value)
+                            }
+                          />
+                          {/*      <datalist id="units">
+                          <option value="ml" />
+                          <option value="g" />
+                          <option value="cups" />
+                          <option value="tbsp" />
+                          <option value="tsp" />
+                        </datalist> */}
+                          <select
+                            id="no-bg"
+                            className="w-2/3 sm:w-2/3 rounded-xl h-10 sm:h-12 border border-gray-400 px-4 bg-white"
+                            defaultValue=""
+                            /*   value={ingredientQuantity}
+                            onChange={(e) =>
+                              handleIngredientQuantityChange(e.target.value)
+                            } */
+                          >
+                            <option value="" disabled>
+                              Select one
+                            </option>
+                            <option value="ml">Ml</option>
+                            <option value="g">G</option>
+                            <option value="cups">Cups</option>
+                            <option value="tbsp">Tbsp</option>
+                            <option value="tsp"></option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div
+                        id="no-bg"
+                        className="flex items-center justify-end sm:justify-end sm:w-1/2"
+                      >
+                        <button
+                          type="button"
                           id="no-bg"
-                          className="border border-gray-300 px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base"
+                          className="bg-[#BA49E7] text-white px-4 sm:px-6 py-2 sm:py-3 rounded-full font-semibold text-sm sm:text-base"
+                          onClick={() => handelIngredientsInTable()}
                         >
-                          Actions
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {ingredients.map((item, index) => (
-                        <motion.tr
-                          id="no-bg"
-                          className="bg-[#F4F4F4]"
-                          key={index}
-                          initial={{ opacity: 0, y: -10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: 10 }}
-                          transition={{ duration: 0.3 }}
-                        >
-                          <td
-                            id="no-bg"
-                            className="border border-gray-300 px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base"
-                          >
-                            {item.ingredientCategory}
-                          </td>
-                          <td
-                            id="no-bg"
-                            className="border border-gray-300 px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base"
-                          >
-                            {item.ingredient}
-                          </td>
-                          <td
-                            id="no-bg"
-                            className="border border-gray-300 px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base"
-                          >
-                            {item.ingredientQuantity}
-                          </td>
-                          <td
-                            id="no-bg"
-                            className="border border-gray-300 px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base"
-                          >
-                            {item.ingredientCategory &&
-                              item.ingredient &&
-                              item.ingredientQuantity && (
-                                <div className="flex justify-center items-center gap-x-4">
-                                  <div
-                                    id="no-bg"
-                                    className="text-blue-500 mr-2 cursor-pointer"
-                                    onClick={() => {
-                                      setIngredientCategory(
-                                        item.ingredientCategory
-                                      );
-                                      setIngredient(item.ingredient);
-                                      setIngredientQuantity(
-                                        item.ingredientQuantity
-                                      );
-                                      setIngredients((prev) =>
-                                        prev.filter((_, i) => i !== index)
-                                      );
-                                    }}
-                                  >
-                                    Edit
-                                  </div>
-                                  <div
-                                    id="no-bg"
-                                    className="text-red-500 cursor-pointer"
-                                    onClick={() => {
-                                      setIngredients((prev) =>
-                                        prev.filter((_, i) => i !== index)
-                                      );
-                                    }}
-                                  >
-                                    Delete
-                                  </div>
-                                </div>
-                              )}
-                          </td>
-                        </motion.tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                          Add
+                        </button>
+                      </div>
+                    </div>
+                    <div id="no-bg" className="overflow-x-auto">
+                      <table
+                        id="no-bg"
+                        className="min-w-full border border-gray-300"
+                      >
+                        <thead id="no-bg" className="bg-[#6F42C1] text-white">
+                          <tr>
+                            <th
+                              id="no-bg"
+                              className="border border-gray-300 px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base"
+                            >
+                              Category
+                            </th>
+                            <th
+                              id="no-bg"
+                              className="border border-gray-300 px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base"
+                            >
+                              Ingredient
+                            </th>
+                            <th
+                              id="no-bg"
+                              className="border border-gray-300 px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base"
+                            >
+                              Quantity
+                            </th>
+                            <th
+                              id="no-bg"
+                              className="border border-gray-300 px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base"
+                            >
+                              Actions
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {ingredients.map((item, index) => (
+                            <motion.tr
+                              id="no-bg"
+                              className="bg-[#F4F4F4]"
+                              key={index}
+                              initial={{ opacity: 0, y: -10 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={{ opacity: 0, y: 10 }}
+                              transition={{ duration: 0.3 }}
+                            >
+                              <td
+                                id="no-bg"
+                                className="border border-gray-300 px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base"
+                              >
+                                {item.ingredientCategory}
+                              </td>
+                              <td
+                                id="no-bg"
+                                className="border border-gray-300 px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base"
+                              >
+                                {item.ingredient}
+                              </td>
+                              <td
+                                id="no-bg"
+                                className="border border-gray-300 px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base"
+                              >
+                                {item.ingredientQuantity}
+                              </td>
+                              <td
+                                id="no-bg"
+                                className="border border-gray-300 px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base"
+                              >
+                                {item.ingredientCategory &&
+                                  item.ingredient &&
+                                  item.ingredientQuantity && (
+                                    <div className="flex justify-center items-center gap-x-4">
+                                      <div
+                                        id="no-bg"
+                                        className="text-red-500 cursor-pointer"
+                                        onClick={() => {
+                                          setIngredients((prev) =>
+                                            prev.filter((_, i) => i !== index)
+                                          );
+                                        }}
+                                      >
+                                        <RiDeleteBin6Fill
+                                          className="text-black"
+                                          size={24}
+                                        />
+                                      </div>
+                                      <div
+                                        id="no-bg"
+                                        className="text-blue-500 mr-2 cursor-pointer"
+                                        onClick={() => {
+                                          setIngredientCategory(
+                                            item.ingredientCategory
+                                          );
+                                          setIngredient(item.ingredient);
+                                          setIngredientQuantity(
+                                            item.ingredientQuantity
+                                          );
+                                          setIngredients((prev) =>
+                                            prev.filter((_, i) => i !== index)
+                                          );
+                                        }}
+                                      >
+                                        <MdEdit
+                                          className="text-black"
+                                          size={24}
+                                        />
+                                      </div>
+                                    </div>
+                                  )}
+                              </td>
+                            </motion.tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </FramerClient>
+                )}
               </div>
 
               {/* Instructions Section */}
               <div
                 id="no-bg"
-                className="bg-purple-100 rounded-lg p-4 sm:p-6 mb-6 sm:mb-8"
+                className="bg-purple-100 rounded-lg p-4 sm:p-6 mb-6 sm:mb-8 w-full"
               >
                 <h2
                   id="no-bg"
@@ -729,44 +777,94 @@ function CreateRecipe() {
                 >
                   Instructions
                 </h2>
+                {instruction.length > 0 && (
+                  <div className="mt-4 w-full">
+                    {instruction.map((item, index) => (
+                      <FramerClient key={index}>
+                        <div
+                          id="no-bg"
+                          className="w-full flex flex-col justify-start sm:flex-row mb-4 sm:mb-6"
+                        >
+                          <div id="no-bg" className="w-full sm:w-1/4">
+                            <button
+                              type="button"
+                              id="no-bg"
+                              className="w-full bg-[#6F42C1] text-white py-2 sm:py-3 px-4 font-semibold text-sm sm:text-base"
+                            >
+                              Step {index + 1}:
+                            </button>
+                          </div>
+                          <div className="flex justify-start items-center w-full sm:w-3/4">
+                            <input
+                              id="no-bg"
+                              className="w-full sm:w-3/4 h-full py-2 sm:py-3 px-4 bg-white"
+                              placeholder="Enter step by step instructions here..."
+                              value={item}
+                              disabled
+                            />
+                            <div className="w-full -ml-[8px] bg-white text-black px-2 sm:px-3 py-1 sm:py-2 cursor-pointer flex items-center justify-end h-full gap-4">
+                              <RiDeleteBin6Fill
+                                onClick={() => {
+                                  setInstruction((prev) =>
+                                    prev.filter((_, i) => i !== index)
+                                  );
+                                }}
+                              />
+                              <MdEdit
+                                onClick={() => {
+                                  setInstructions(item);
+                                  setInstruction((prev) =>
+                                    prev.filter((_, i) => i !== index)
+                                  );
+                                }}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </FramerClient>
+                    ))}
+                  </div>
+                )}
 
-                <div
-                  id="no-bg"
-                  className="flex flex-col sm:flex-row gap-2 sm:gap-0 mb-4 sm:mb-6"
-                >
-                  <div id="no-bg" className="w-full sm:w-1/4">
-                    <button
-                      type="button"
+                <FramerClient>
+                  <div
+                    id="no-bg"
+                    className="flex flex-col sm:flex-row gap-2 sm:gap-0 mb-4 sm:mb-6  w-full justify-center items-center"
+                  >
+                    <div id="no-bg" className="w-full sm:w-1/4">
+                      <button
+                        type="button"
+                        id="no-bg"
+                        className="w-full bg-[#6F42C1] text-white py-2 sm:py-3 px-4 font-semibold text-sm sm:text-base"
+                      >
+                        Step {instruction.length + 1}:
+                      </button>
+                    </div>
+                    <input
                       id="no-bg"
-                      className="w-full bg-[#6F42C1] text-white py-2 sm:py-3 px-4 rounded-l-lg font-semibold text-sm sm:text-base"
+                      className="w-full -ml-[8px] sm:w-3/4 border border-gray-400 py-2 sm:py-3 px-4"
+                      placeholder="Enter step by step instructions here..."
+                      value={instructions}
+                      onChange={(e) => handleInstructionsChange(e.target.value)}
+                    />
+                  </div>
+
+                  <div id="no-bg" className="flex justify-end">
+                    <button
+                      id="no-bg"
+                      type="button"
+                      className="bg-[#BA49E7] text-white px-4 sm:px-6 py-2 sm:py-3 rounded-full font-semibold text-sm sm:text-base"
+                      onClick={() => {
+                        setInstruction((prev) => [...prev, instructions]);
+                        setInstructions("");
+                      }}
                     >
-                      Step {instruction.length + 1}:
+                      Add
                     </button>
                   </div>
-                  <input
-                    id="no-bg"
-                    className="w-full sm:w-3/4 rounded-r-lg border border-gray-400 py-2 sm:py-3 px-4"
-                    placeholder="Enter step by step instructions here..."
-                    value={instructions}
-                    onChange={(e) => handleInstructionsChange(e.target.value)}
-                  />
-                </div>
+                </FramerClient>
 
-                <div id="no-bg" className="flex justify-end">
-                  <button
-                    id="no-bg"
-                    type="button"
-                    className="bg-[#BA49E7] text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-semibold text-sm sm:text-base"
-                    onClick={() => {
-                      //console.log(instruction);
-                      setInstruction((prev) => [...prev, instructions]);
-                      setInstructions("");
-                    }}
-                  >
-                    Add Step +
-                  </button>
-                </div>
-                {instruction.length > 0 && (
+                {/* {instruction.length > 0 && (
                   <div id="no-bg" className="overflow-x-auto mt-4">
                     <table
                       id="no-bg"
@@ -826,7 +924,7 @@ function CreateRecipe() {
                       </tbody>
                     </table>
                   </div>
-                )}
+                )} */}
               </div>
 
               {/* Submit Button */}
