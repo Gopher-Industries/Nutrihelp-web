@@ -18,8 +18,8 @@ const Meal = () => {
         sodium: 0,
     });
     const [showBreakfast, setShowBreakfast] = useState(true);
-    const [showLunch, setShowLunch] = useState(false);
-    const [showDinner, setShowDinner] = useState(false);
+    const [showLunch, setShowLunch] = useState(true);
+    const [showDinner, setShowDinner] = useState(true);
     const [showPopup, setShowPopup] = useState(true);
     const [showWeeklyPlan, setShowWeeklyPlan] = useState(false);
     const [showPersonalized, setShowPersonalized] = useState(false);
@@ -86,6 +86,66 @@ const Meal = () => {
                 sodium: 60
             }
         },
+        
+        {
+            name: "Greek Yogurt Parfait",
+            imageUrl:
+              "https://foolproofliving.com/wp-content/uploads/2017/12/Greek-Yogurt-Parfait-with-fruit-600x600.jpg",
+            details: {
+              calories: 220,
+              fats: 70,
+              proteins: 120,
+              vitamins: 90,
+              sodium: 60,
+            },
+          },
+          {
+            name: "Avocado Toast",
+            imageUrl:
+              "https://loveincrediblerecipes.com/wp-content/uploads/2024/02/avocado-toast-sourdough.jpg",
+            details: {
+              calories: 250,
+              fats: 180,
+              proteins: 80,
+              vitamins: 70,
+              sodium: 40,
+            }
+        },
+        {
+            name: "Veggie Omelette",
+            imageUrl:
+              "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIjznNy7hZJdRV96uJm1ICqViC-rltL3mxAQ&s",
+            details: {
+              calories: 310,
+              fats: 130,
+              proteins: 240,
+              vitamins: 120,
+              sodium: 150,
+            },
+          },
+          {
+            name: "Whole Grain Waffles",
+            imageUrl: "https://totaste.com/wp-content/uploads/2024/08/IMG_3792.jpg",
+            details: {
+              calories: 350,
+              fats: 140,
+              proteins: 150,
+              vitamins: 90,
+              sodium: 180,
+            },
+          },
+          {
+            name: "Fruit Salad",
+            imageUrl:
+              "https://i0.wp.com/fortheloveofcooking.net/wp-content/uploads/2013/05/DSC_4449.1.jpg?resize=1536%2C1018&ssl=1",
+            details: {
+              calories: 180,
+              fats: 20,
+              proteins: 40,
+              vitamins: 200,
+              sodium: 20,
+            },
+          },
     ];
 
     const lunch = [
@@ -133,6 +193,67 @@ const Meal = () => {
                 sodium: 20
             }
         },
+        {
+            name: "Grilled Chicken Salad",
+            imageUrl:
+              "https://cdn-aboak.nitrocdn.com/QJsLnWfsWAiuukSIMowyVEHtotvSQZoR/assets/images/optimized/rev-ca18e1d/www.slenderkitchen.com/sites/default/files/styles/featured_1500/public/recipe_images/grilled-chicken-Greek-salad.jpg",
+            details: {
+              calories: 320,
+              fats: 140,
+              proteins: 350,
+              vitamins: 110,
+              sodium: 150,
+            },
+          },
+          {
+            name: "Pasta Primavera",
+            imageUrl:
+              "https://www.budgetbytes.com/wp-content/uploads/2023/05/Pasta-Primavera-V3-1152x1536.jpg",
+            details: {
+              calories: 420,
+              fats: 160,
+              proteins: 180,
+              vitamins: 120,
+              sodium: 90,
+            },
+          },
+          {
+            name: "Falafel Bowl",
+            imageUrl:
+              "https://tastythriftytimely.com/wp-content/uploads/2023/06/Falafel-Bowl-1.jpg",
+            details: {
+              calories: 370,
+              fats: 140,
+              proteins: 180,
+              vitamins: 150,
+              sodium: 180,
+            },
+          },
+          {
+            name: "Shrimp Tacos",
+            imageUrl:
+              "https://i0.wp.com/www.pepperdelight.com/wp-content/uploads/2019/10/pepper-delight-shrimp-tacos-2.jpg?w=2000&ssl=1",
+            details: {
+              calories: 340,
+              fats: 110,
+              proteins: 200,
+              vitamins: 130,
+              sodium: 210,
+            },
+          },
+          {
+            name: "Stuffed Bell Peppers",
+            imageUrl:
+              "https://www.onceuponachef.com/images/2022/02/stuffed-peppers-01-1120x1384.jpg",
+            details: {
+              calories: 300,
+              fats: 100,
+              proteins: 160,
+              vitamins: 150,
+              sodium: 120,
+            },
+          },      
+
     ];
 
     const dinner = [
@@ -180,6 +301,67 @@ const Meal = () => {
                 sodium: 30
             }
         },
+        {
+            name: "Stir-Fried Tofu Bowl",
+            imageUrl:
+              "https://marleyspoon.com/media/recipes/121135/main_photos/large/super_fast_tofu_buddha_s_delight_bowl-773b44bbf9caae9dbdd753a4c450065d.jpeg",
+            details: {
+              calories: 350,
+              fats: 180,
+              proteins: 250,
+              vitamins: 85,
+              sodium: 110,
+            },
+          },
+          {
+            name: "Baked Sweet Potatoes",
+            imageUrl:
+              "https://hips.hearstapps.com/hmg-prod/images/delish-perfect-baked-sweet-potato-1-1637646197.jpg?crop=1.00xw:0.710xh;0,0.187xh&resize=1200:*",
+            details: {
+              calories: 300,
+              fats: 60,
+              proteins: 90,
+              vitamins: 160,
+              sodium: 30,
+            },
+          },
+          {
+            name: "Chicken Fajitas",
+            imageUrl:
+              "https://www.simplyrecipes.com/thmb/uEbOAcnk8KKHdbiWWLtbdr9sXz8=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc():format(webp)/__opt__aboutcom__coeus__resources__content_migration__simply_recipes__uploads__2015__04__chicken-fajitas-vertical-a2-1600-daacb06e3a9647a5b857067d62f765ea.jpg",
+            details: {
+              calories: 420,
+              fats: 150,
+              proteins: 280,
+              vitamins: 130,
+              sodium: 200,
+            },
+          },
+          {
+            name: "Grilled Veggie Skewers",
+            imageUrl:
+              "https://www.rebootwithjoe.com/wp-content/uploads/2011/07/grilled-veg-post.jpg",
+            details: {
+              calories: 300,
+              fats: 90,
+              proteins: 100,
+              vitamins: 180,
+              sodium: 90,
+            },
+          },
+          {
+            name: "Mushroom Risotto",
+            imageUrl:
+              "https://www.allrecipes.com/thmb/resvgswnsI0RQEyDYQ9Z0hiB3kM=/750x0/filters:no_upscale():max_bytes(150000):strip_icc():format(webp)/85389-gourmet-mushroom-risotto-DDMFS-4x3-a8a80a8deb064c6a8f15452b808a0258.jpg",
+            details: {
+              calories: 400,
+              fats: 140,
+              proteins: 170,
+              vitamins: 130,
+              sodium: 190,
+            },
+          },
+       
     ];
 
     const findItemDetails = itemName => {
@@ -221,10 +403,10 @@ const Meal = () => {
                 <h1>What is Your Meal Plan Today?</h1>
             </header>
 
-            <div className="mealcontainer">
+            <div className="meal-container">
                 <div style={{ width: "100%" }}>
                     <h3 className='heading' style={{ marginTop: "20px" }} onClick={() => setShowBreakfast(!showBreakfast)}>Breakfast</h3>
-                    <div className="menuContainer" style={{ maxHeight: showBreakfast ? '500px' : '0', overflow: 'hidden', transition: 'max-height 0.5s ease' }}>
+                    <div className="menuContainer" style={{ maxHeight: showBreakfast ? '9999px' : '0', overflow: 'hidden', transition: 'max-height 0.5s ease' }}>
                         {showBreakfast && breakfast.map(item => (
                             <div className={`food-item ${selectedItems.some(selected => selected.name === item.name) ? 'selected' : ''}`}
                                 key={item.name}
@@ -236,7 +418,7 @@ const Meal = () => {
                     </div>
 
                     <h3 className='heading' onClick={() => setShowLunch(!showLunch)}>Lunch</h3>
-                    <div className="menuContainer" style={{ maxHeight: showLunch ? '500px' : '0', overflow: 'hidden', transition: 'max-height 0.5s ease' }}>
+                    <div className="menuContainer" style={{ maxHeight: showLunch ? '9999px' : '0', overflow: 'hidden', transition: 'max-height 0.5s ease' }}>
                         {showLunch && lunch.map(item => (
                             <div className={`food-item ${selectedItems.some(selected => selected.name === item.name) ? 'selected' : ''}`}
                                 key={item.name}
@@ -248,7 +430,7 @@ const Meal = () => {
                     </div>
 
                     <h3 className='heading' onClick={() => setShowDinner(!showDinner)}>Dinner</h3>
-                    <div className="menuContainer" style={{ maxHeight: showDinner ? '500px' : '0', overflow: 'hidden', transition: 'max-height 0.5s ease' }}>
+                    <div className="menuContainer" style={{ maxHeight: showDinner ? '9999px' : '0', overflow: 'hidden', transition: 'max-height 0.5s ease' }}>
                         {showDinner && dinner.map(item => (
                             <div className={`food-item ${selectedItems.some(selected => selected.name === item.name) ? 'selected' : ''}`}
                                 key={item.name}
