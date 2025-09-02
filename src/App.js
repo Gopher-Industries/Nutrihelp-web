@@ -44,6 +44,7 @@ import SymptomAssessment from "./routes/SymptomAssessment/SymptomAssessment";
 import Leaderboard from "./routes/LeaderBoard/leaderBoard";
 import ObesityPredictor from "./routes/survey/ObesityPredictor";
 import UiTimer from "./routes/UiTimer/UiTimer"
+import HealthFAQ from "./routes/HealthFAQ/HealthFAQ";
 
 function App() {
   const { currentUser } = useContext(UserContext);
@@ -215,6 +216,14 @@ function App() {
           element={
             <AuthenticateRoute>
               <ShoppingList />
+            </AuthenticateRoute>
+          }
+        />
+        <Route
+          path="HealthFAQ"
+          element={
+            <AuthenticateRoute>
+              <HealthFAQ />
             </AuthenticateRoute>
           }
         />
