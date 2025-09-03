@@ -29,6 +29,7 @@ import Appointment from "./routes/UI-Only-Pages/Appointment/Appointment";
 import newMenu from "./routes/NewMenu/newMenu";
 import Meal from "./routes/Meal/Meal";
 import MFAform from "./routes/MFA/MFAform";
+import DailyPlanEdit from "./routes/DailyPlan/DailyPlanEdit";
 import Dashboard from "./routes/NewMenu/Dashboard";
 import AuthenticateRoute from "./routes/AuthenticateRoute/AuthenticateRoute";
 import MainNavbar from "./components/MainNavbar";
@@ -38,12 +39,6 @@ import HealthNews from "./routes/HealthNews/HealthNews";
 import FoodPreferences from "./routes/FoodPreferences/FoodPreferences";
 import HealthTools from "./routes/HealthTools/HealthTools";
 import RecipeRating from "./routes/RecipeRating/RecipeRating";
-import ShoppingList from "./routes/UI-Only-Pages/ShoppingList/ShoppingList";
-import RecipeDetail from "./routes/RecipeRating/RecipeDetail";
-import SymptomAssessment from "./routes/SymptomAssessment/SymptomAssessment";
-import Leaderboard from "./routes/LeaderBoard/leaderBoard";
-import ObesityPredictor from "./routes/survey/ObesityPredictor";
-import UiTimer from "./routes/UiTimer/UiTimer"
 
 function App() {
   const { currentUser } = useContext(UserContext);
@@ -63,11 +58,10 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/home" element={<Home />} />
         <Route path="/signUp" element={<SignUp />} />
+        <Route path="/daily-plan-edit" element={<DailyPlanEdit />} />
         <Route path="/forgotPassword" element={<ForgotPassword />} />
         <Route path="/faq" element={<FAQ />} />
-        <Route path="/leaderboard" element={<Leaderboard />} />
-        <Route path="/survey" element={<ObesityPredictor />} />
-
+       
         {/* Private Routes */}
         <Route
           path="createRecipe"
@@ -94,6 +88,7 @@ function App() {
             </AuthenticateRoute>
           }
         />
+        
         <Route
           path="yourPreferences"
           element={
@@ -143,14 +138,6 @@ function App() {
           }
         />
         <Route
-          path="UiTimer"
-          element={
-            <AuthenticateRoute>
-              <UiTimer />
-            </AuthenticateRoute>
-          }
-        />
-        <Route
           path="menu"
           element={
             <AuthenticateRoute>
@@ -166,7 +153,6 @@ function App() {
             </AuthenticateRoute>
           }
         />
-        <Route path="/recipe/:id" element={<RecipeDetail />} />
         <Route
           path="Meal"
           element={
@@ -184,7 +170,6 @@ function App() {
           }
         />
         <Route path="/preferences" element={<FoodPreferences />} />
-        <Route path="/symptomassessment" element={<SymptomAssessment />} />
         <Route
           path="healthnews"
           element={
@@ -207,14 +192,6 @@ function App() {
           element={
             <AuthenticateRoute>
               <HealthTools />
-            </AuthenticateRoute>
-          }
-        />
-        <Route
-          path="shopping-list"
-          element={
-            <AuthenticateRoute>
-              <ShoppingList />
             </AuthenticateRoute>
           }
         />
