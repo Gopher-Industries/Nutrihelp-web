@@ -24,81 +24,13 @@ const CostEstimate = () =>{
         console.log("recipe id: "+recipeId);
         console.log("serving size: "+serving);
         console.log("partial id: "+partial);
-        if(recipeId == null){
-        alert("RecipeId is required");}
-        else if((partial == null) && (serving == null)){
-            fetch(`http://localhost:80/api/recipe/cost/${recipeId}`, {
-                method: 'GET',
-                headers: {
-                    'Origin' : 'http://localhost:3000/',
-                    'Content-type' : 'application/json'
-                }, 
-            })
-                .then(response => response.json())
-                .then((json) => {
-                    setData(json);
-                    var high = data.high_cost.price;
-                    var low = data.low_cost.price;
-                    console.log("The data is:" , data.high_cost.price);
-                    alert("The high cost is: " + high +"\nThe low cost is: " + low);
-                })
-                .catch((err) => setError(err.message));
-    }
-        else if(partial == null){
-            console.log("The serving is working: " ,serving);
-            fetch(`http://localhost:80/api/recipe/cost/${recipeId}?desired_servings=${serving}`,{
-                method : 'GET',
-                headers :{
-                    'Origin' : 'http://localhost:3000/',
-                    'Content-type' : 'application/json'
-                }
-            })
-            .then(response => response.json())
-            .then((json) => {
-                setData(json);
-                var high = data.high_cost.price;
-                var low = data.low_cost.price;
-                console.log("The data is:" , data);
-                alert("The high cost is: " + high +"\nThe low cost is: " + low);
-            })
-            .catch((err) => setError(err.message));
+        try{
+        const json = await Fetching(recipeId, serving, partial)
+        setData(json);
+        alert("The high cost is: " + data.high_cost.price +"\nThe low cost is: "+ data.low_cost.price);
         }
-
-        else if(serving == null){
-            fetch(`http://localhost:80/api/recipe/cost/${recipeId}?exclude_ids=${partial}`,{
-                method : 'GET',
-                headers :{
-                    'Origin' : 'http://localhost:3000/',
-                    'Content-type' : 'application/json'
-                }
-            })
-            .then(response => response.json())
-            .then((json) => {
-                setData(json);
-                var high = data.high_cost.price;
-                var low = data.low_cost.price;
-                console.log("The data is:" , data);
-                alert("The high cost is: " + high +"\nThe low cost is: " + low);
-            })
-            .catch((err) => setError(err.message));
-        }
-        else{
-            fetch(`http://localhost:80/api/recipe/cost/${recipeId}?desired_servings=${serving}&exclude_ids=${partial}`,{
-                method : 'GET',
-                headers :{
-                    'Origin' : 'http://localhost:3000/',
-                    'Content-type' : 'application/json'
-                }
-            })
-            .then(response => response.json())
-            .then((json) => {
-                setData(json);
-                var high = data.high_cost.price;
-                var low = data.low_cost.price;
-                console.log("The data is:" , data);
-                alert("The high cost is: " + high +"\nThe low cost is: " + low);
-            })
-            .catch((err) => setError(err.message));
+        catch(err){
+            setError(err.message);
         }
 }
 

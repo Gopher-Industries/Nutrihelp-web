@@ -1,19 +1,24 @@
 export async function Fetching(recipeId, serving, partial){
-    /*const res = awaitfetch(`http://localhost:80/api/recipe/cost/${recipeId}`,{
-        method: 'GET',
-        headers: {
-            'Origin' : 'http://localhost:3000/',
-            'Content-type' : 'application/json'
-        }
-    });*/
-
-    const url = `http://localhost:80/api/recipe/cost/${recipeId}`;
-
+    let url;
+    if(recipeId == null){return null}
+    else if((serving == null) && (partial == null)){
+        url = `http://localhost:80/api/recipe/cost/${recipeId}`;
+    }
+    else if(partial == null){
+        url = `http://localhost:80/api/recipe/cost/${recipeId}?desired_servings=${serving}`;
+    }
+    else if(serving == null){
+        url = `http://localhost:80/api/recipe/cost/${recipeId}?exclude_ids=${partial}`;
+    }
+    else{
+        url = `http://localhost:80/api/recipe/cost/${recipeId}?desired_servings=${serving}&exclude_ids=${partial}`;
+    }
+    
     let res;
   try {
     res = await fetch(url, {
       method: "GET",
-      headers: { Accept: "application/json" }, // don't set "Origin"
+      headers: { Accept: "application/json" },
     });
   } catch (err) {
     throw new Error(`Network error reaching API: ${err?.message || err}`);
@@ -31,14 +36,3 @@ export async function Fetching(recipeId, serving, partial){
     throw new Error("Invalid JSON in response");
   }
 }
-
-
-
-/*try{
-    const json = await Fetching(recipeId, serving, partial)
-    setData(json);
-    console.log("The final data is: " , data);
-    }
-    catch(err){
-        setError(err.message);
-    }*/
