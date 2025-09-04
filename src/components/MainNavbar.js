@@ -87,8 +87,9 @@ const MainNavbar = () => {
 
           <div className="logo-container">
             <img src="/images/logo.png" alt="Website Logo" />
-          </div>
+          </div>        <div className="nav-shortcuts">
 
+        </div>
           <div className="darkmode">
             <Link to="/userProfile" onClick={toggleMenu}>
               <UserIcon width={40} height={30} color="#fff" />
