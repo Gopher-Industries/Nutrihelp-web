@@ -27,7 +27,7 @@ const CostEstimate = () =>{
         try{
         const json = await Fetching(recipeId, serving, partial)
         setData(json);
-        alert("The high cost is: " + data.high_cost.price +"\nThe low cost is: "+ data.low_cost.price);
+        alert("The high cost is: " + json.high_cost.price +"\nThe low cost is: "+ json.low_cost.price);
         }
         catch(err){
             setError(err.message);

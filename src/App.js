@@ -135,9 +135,7 @@ function App() {
         <Route
           path="RecipeRating"
           element={
-            <AuthenticateRoute>
               <RecipeRating />
-            </AuthenticateRoute>
           }
         />
         <Route
