@@ -1,11 +1,11 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 
 /**
- * DailyPlanEdit (single-file page)
- * - No changes to other files
- * - Persists to localStorage under key "mealPlan"
+ * DailyPlanEdit (standalone page)
+ * - LocalStorage persistence (key: "mealPlan")
  * - CRUD items across Breakfast/Lunch/Dinner/Snacks
- * - Live totals (calories, protein, fat, vitamins, sodium)
+ * - Live totals (calories, protein, vitamins, sodium)
+ * - Editable date + Prev/Next day controls
  */
 
 const STORAGE_KEY = "mealPlan";
@@ -33,7 +33,7 @@ const ensureShape = (raw) => {
 
 const blankItem = () => ({
   name: "",
-  details: { calories: 0, proteins: 0, fats: 0, vitamins: 0, sodium: 0 },
+  details: { calories: 0, proteins: 0, vitamins: 0, sodium: 0 },
 });
 
 const MEAL_KEYS = [
@@ -43,8 +43,9 @@ const MEAL_KEYS = [
   { key: "snacks", label: "Snacks" },
 ];
 
-/* Scoped CSS override to defeat global button styles that hide text */
+/* Keep buttons readable if a global theme overrides them */
 const CSS_OVERRIDE = `
+  #daily-plan-edit * { box-sizing: border-box; }
   #daily-plan-edit button {
     color: #222 !important;
     font-size: 14px !important;
@@ -53,16 +54,70 @@ const CSS_OVERRIDE = `
     line-height: 1.2 !important;
   }
   #daily-plan-edit button::before,
-  #daily-plan-edit button::after {
-    content: none !important;
+  #daily-plan-edit button::after { content: none !important; }
+  #daily-plan-edit button > * { color: #222 !important; font-size: 14px !important; }
+`;
+
+/* --- UPDATED layout --- */
+const RESPONSIVE_CSS = `
+  /* One row: Name | Calories | Protein | Vitamins | Sodium | Actions */
+  #daily-plan-edit .meal-row{
+    display:grid;
+    grid-template-columns: minmax(200px,1fr) repeat(4,96px) 300px;
+    gap:12px;                             /* a bit more space between columns */
+    align-items:center;
+    padding:10px 0;
+    border-bottom:1px solid #eee;
   }
-  #daily-plan-edit button > * {
-    color: #222 !important;
-    font-size: 14px !important;
+
+  #daily-plan-edit .number-input{
+    width:100%;
+    min-width:0;
+    padding:6px 10px;                     /* smaller inputs */
+    border:1px solid #ddd;
+    border-radius:18px;
+    font-size:13px;
+  }
+
+  /* Actions cell now has a little left padding and bigger internal gap */
+  #daily-plan-edit .meal-actions{
+    display:flex;
+    gap:12px;
+    justify-content:flex-end;
+    align-items:center;
+    padding-left:6px;                     /* creates extra breathing room from Sodium */
+    flex-wrap:nowrap;
+  }
+  #daily-plan-edit .meal-actions select{
+    min-width:150px;                      /* keep the select readable */
+    height:40px;
+    padding:8px 12px;
+    border:1px solid #ddd;
+    border-radius:10px;
+    background:#fff;
+    cursor:pointer;
+    font-size:14px;
+  }
+  #daily-plan-edit .meal-actions button{
+    min-width:104px;                      /* ensure "Remove" never clips */
+    padding:8px 12px;
+  }
+
+  /* Mobile: stack cleanly */
+  @media (max-width:720px){
+    #daily-plan-edit .meal-row{
+      grid-template-columns:1fr;
+      row-gap:8px;
+    }
+    #daily-plan-edit .meal-actions{
+      justify-content:flex-start;
+      flex-wrap:wrap;
+      padding-left:0;
+    }
   }
 `;
 
-/* Local button base style (also clears aggressive globals) */
+/* Base button styling */
 const BTN = {
   all: "unset",
   display: "inline-flex",
@@ -103,13 +158,12 @@ export default function DailyPlanEdit() {
   }, [plan]);
 
   const totals = useMemo(() => {
-    const sum = { calories: 0, proteins: 0, fats: 0, vitamins: 0, sodium: 0 };
+    const sum = { calories: 0, proteins: 0, vitamins: 0, sodium: 0 };
     Object.values(plan.meals).forEach((arr) => {
       arr.forEach((it) => {
         const d = it?.details || {};
         sum.calories += +d.calories || 0;
         sum.proteins += +d.proteins || 0;
-        sum.fats += +d.fats || 0;
         sum.vitamins += +d.vitamins || 0;
         sum.sodium += +d.sodium || 0;
       });
@@ -118,6 +172,11 @@ export default function DailyPlanEdit() {
   }, [plan]);
 
   const setDate = (date) => setPlan((p) => ({ ...p, date }));
+  const shiftDate = (days) => {
+    const d = new Date(plan.date);
+    d.setDate(d.getDate() + days);
+    setDate(d.toISOString().slice(0, 10));
+  };
 
   const addItem = (mealKey) =>
     setPlan((p) => ({
@@ -129,9 +188,8 @@ export default function DailyPlanEdit() {
     setPlan((p) => {
       const arr = p.meals[mealKey].slice();
       const it = { ...arr[idx] };
-      if (field === "name") {
-        it.name = value;
-      } else {
+      if (field === "name") it.name = value;
+      else {
         it.details = { ...(it.details || {}) };
         it.details[field] = value === "" ? 0 : Number(value);
       }
@@ -192,7 +250,7 @@ export default function DailyPlanEdit() {
 
   return (
     <div id="daily-plan-edit" style={{ maxWidth: 960, margin: "0 auto", padding: 16 }}>
-      <style>{CSS_OVERRIDE}</style>
+      <style>{CSS_OVERRIDE + RESPONSIVE_CSS}</style>
 
       <header
         style={{
@@ -205,53 +263,62 @@ export default function DailyPlanEdit() {
       >
         <div>
           <h2 style={{ margin: 0 }}>Edit Daily Meal Plan</h2>
-          <div style={{ opacity: 0.8, marginTop: 6 }}>
-            Date{" "}
-            <input
-              aria-label="Select date"
-              type="date"
-              value={plan.date}
-              onChange={(e) => setDate(e.target.value)}
-              style={{ padding: "6px 8px", borderRadius: 8, border: "1px solid #ddd" }}
-            />
-          </div>
         </div>
 
-        <div style={{ display: "flex", gap: 8 }}>
-          <button
-            type="button"
-            name="savePlan"
-            aria-label="Save plan"
-            title="Save plan"
-            onClick={saveNow}
-            style={BTN}
-          >
+        <a
+          href="/daily-plan-edit"
+          style={{ color: "#4b2c7a", fontWeight: 700, textDecoration: "none" }}
+          onClick={(e) => e.preventDefault()}
+          title="You are on this page"
+        >
+          Edit Plan
+        </a>
+      </header>
+
+      <section
+        style={{
+          background: "#caa7e6",
+          color: "#fff",
+          padding: 16,
+          borderRadius: 12,
+          marginTop: 12,
+        }}
+      >
+        <div style={{ fontWeight: 600, marginBottom: 6 }}>Date</div>
+        <input
+          aria-label="Select date"
+          type="date"
+          value={plan.date}
+          onChange={(e) => setDate(e.target.value)}
+          style={{
+            padding: "10px 14px",
+            borderRadius: 22,
+            border: "1px solid #ddd",
+            color: "#222",
+            background: "#fff",
+          }}
+        />
+
+        <div style={{ display: "flex", gap: 8, marginTop: 12, flexWrap: "wrap" }}>
+          <button type="button" name="prevDay" style={{ ...BTN, minWidth: 90 }} onClick={() => shiftDate(-1)}>
+            ← Prev
+          </button>
+          <button type="button" name="nextDay" style={{ ...BTN, minWidth: 90 }} onClick={() => shiftDate(1)}>
+            Next →
+          </button>
+        </div>
+
+        <div style={{ display: "flex", gap: 8, marginTop: 12, flexWrap: "wrap" }}>
+          <button type="button" name="savePlan" onClick={saveNow} style={BTN}>
             <span style={{ pointerEvents: "none" }}>Save</span>
           </button>
-
-          <button
-            type="button"
-            name="clearAll"
-            aria-label="Clear all"
-            title="Clear all"
-            onClick={clearAll}
-            style={BTN}
-          >
+          <button type="button" name="clearAll" onClick={clearAll} style={BTN}>
             <span style={{ pointerEvents: "none" }}>Clear All</span>
           </button>
-
-          <button
-            type="button"
-            name="exportJSON"
-            aria-label="Export JSON"
-            title="Export JSON"
-            onClick={exportJSON}
-            style={BTN}
-          >
+          <button type="button" name="exportJSON" onClick={exportJSON} style={BTN}>
             <span style={{ pointerEvents: "none" }}>Export</span>
           </button>
 
-          {/* Import as button + hidden input */}
           <input
             ref={importRef}
             type="file"
@@ -259,18 +326,11 @@ export default function DailyPlanEdit() {
             hidden
             onChange={(e) => e.target.files?.[0] && importJSON(e.target.files[0])}
           />
-          <button
-            type="button"
-            name="importJSON"
-            aria-label="Import JSON"
-            title="Import JSON"
-            onClick={() => importRef.current?.click()}
-            style={BTN}
-          >
+          <button type="button" name="importJSON" onClick={() => importRef.current?.click()} style={BTN}>
             <span style={{ pointerEvents: "none" }}>Import</span>
           </button>
         </div>
-      </header>
+      </section>
 
       <section
         style={{
@@ -284,8 +344,7 @@ export default function DailyPlanEdit() {
       >
         <strong>Totals</strong>
         <div style={{ marginTop: 6 }}>
-          Calories: {totals.calories} · Protein: {totals.proteins} · Fat: {totals.fats} ·
-          Vitamins: {totals.vitamins} · Sodium: {totals.sodium}
+          Calories: {totals.calories} · Protein: {totals.proteins} · Vitamins: {totals.vitamins} · Sodium: {totals.sodium}
         </div>
       </section>
 
@@ -305,19 +364,12 @@ export default function DailyPlanEdit() {
   );
 }
 
-/* ---------------------- Helpers ---------------------- */
+/* ---------- Subcomponents ---------- */
 
 function MealSection({ title, mealKey, items, onAdd, onRemove, onMove, onChange }) {
   return (
     <section style={{ marginTop: 24 }}>
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          gap: 8,
-        }}
-      >
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8 }}>
         <h3 style={{ margin: 0 }}>{title}</h3>
         <button
           type="button"
@@ -331,76 +383,36 @@ function MealSection({ title, mealKey, items, onAdd, onRemove, onMove, onChange 
         </button>
       </div>
 
-      {(!items || items.length === 0) && (
-        <p style={{ opacity: 0.7, marginTop: 8 }}>No items yet.</p>
-      )}
+      {(!items || items.length === 0) && <p style={{ opacity: 0.7, marginTop: 8 }}>No items yet.</p>}
 
       {items?.map((it, idx) => {
         const d = it?.details || {};
         return (
-          <div
-            key={idx}
-            style={{
-              display: "grid",
-              gridTemplateColumns: "minmax(160px,1fr) repeat(5, 120px) auto",
-              gap: 8,
-              alignItems: "center",
-              padding: "10px 0",
-              borderBottom: "1px solid #eee",
-            }}
-          >
+          <div key={idx} className="meal-row">
             {/* Name */}
             <input
               type="text"
               placeholder="Item name"
               value={it?.name ?? ""}
               onChange={(e) => onChange(idx, "name", e.target.value)}
-              style={{ padding: "6px 8px", borderRadius: 8, border: "1px solid #ddd" }}
+              style={{ padding: "8px 12px", borderRadius: 18, border: "1px solid #ddd" }}
               aria-label="Item name"
               name="itemName"
             />
 
-            {/* Macros */}
-            <NumberField
-              label="Calories"
-              value={d.calories}
-              onChange={(v) => onChange(idx, "calories", v)}
-            />
-            <NumberField
-              label="Protein"
-              value={d.proteins}
-              onChange={(v) => onChange(idx, "proteins", v)}
-            />
-            <NumberField
-              label="Fat"
-              value={d.fats}
-              onChange={(v) => onChange(idx, "fats", v)}
-            />
-            <NumberField
-              label="Vitamins"
-              value={d.vitamins}
-              onChange={(v) => onChange(idx, "vitamins", v)}
-            />
-            <NumberField
-              label="Sodium"
-              value={d.sodium}
-              onChange={(v) => onChange(idx, "sodium", v)}
-            />
+            {/* Macros (no Fat column) */}
+            <NumberField label="Calories" value={d.calories} onChange={(v) => onChange(idx, "calories", v)} />
+            <NumberField label="Protein"  value={d.proteins} onChange={(v) => onChange(idx, "proteins", v)} />
+            <NumberField label="Vitamins" value={d.vitamins} onChange={(v) => onChange(idx, "vitamins", v)} />
+            <NumberField label="Sodium"   value={d.sodium}   onChange={(v) => onChange(idx, "sodium", v)} />
 
-            {/* Actions */}
-            <div style={{ display: "flex", gap: 6, justifyContent: "flex-end" }}>
+            {/* Actions (fixed column) */}
+            <div className="meal-actions">
               <select
                 aria-label="Move to meal"
                 name="moveToMeal"
                 value={mealKey}
                 onChange={(e) => onMove(idx, e.target.value)}
-                style={{
-                  padding: "6px 8px",
-                  borderRadius: 8,
-                  border: "1px solid #ddd",
-                  background: "#fff",
-                  cursor: "pointer",
-                }}
               >
                 <option value="breakfast">Breakfast</option>
                 <option value="lunch">Lunch</option>
@@ -431,17 +443,12 @@ function NumberField({ label, value, onChange }) {
     <div style={{ display: "grid", gap: 4 }}>
       <label style={{ fontSize: 12, opacity: 0.7 }}>{label}</label>
       <input
+        className="number-input"
         type="number"
         value={value ?? 0}
         min="0"
         step="1"
         onChange={(e) => onChange(e.target.value)}
-        style={{
-          padding: "6px 8px",
-          borderRadius: 8,
-          border: "1px solid #ddd",
-          width: "100%",
-        }}
         aria-label={label}
         name={label.toLowerCase()}
       />
