@@ -7,12 +7,14 @@ import {
   FaBackward
 } from 'react-icons/fa';
 import { useLocation } from 'react-router-dom';
+import { getVoiceSettings, applyVoiceSettings, isVoiceEnabled } from '../../utils/voiceSettingsManager';
  
 const TextToSpeechDropdown = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [hasFinished, setHasFinished] = useState(false);
   const [voices, setVoices] = useState([]);
+  const [voiceSettings, setVoiceSettings] = useState(getVoiceSettings());
   const utteranceRef = useRef(null);
   const ttsRef = useRef(null);
   const hasSpokenRef = useRef(false);
@@ -39,6 +41,62 @@ const TextToSpeechDropdown = () => {
     setHasFinished(false);
     hasSpokenRef.current = false;
   }, [location]);
+
+  // Listen for voice settings changes
+  useEffect(() => {
+    const handleStorageChange = (e) => {
+      if (e.key === 'voiceSettings') {
+        const newSettings = getVoiceSettings();
+        setVoiceSettings(newSettings);
+        
+        // If currently speaking, restart with new settings
+        if (speechSynthesis.speaking && !speechSynthesis.paused) {
+          speechSynthesis.cancel();
+          setTimeout(() => {
+            if (!newSettings.enabled) {
+              setIsPlaying(false);
+              return;
+            }
+            speak();
+          }, 100);
+        }
+      }
+    };
+
+    const handleCustomSettingsChange = (e) => {
+      const newSettings = e.detail;
+      setVoiceSettings(newSettings);
+      
+      // If currently speaking, restart with new settings
+      if (speechSynthesis.speaking && !speechSynthesis.paused) {
+        speechSynthesis.cancel();
+        setTimeout(() => {
+          if (!newSettings.enabled) {
+            setIsPlaying(false);
+            return;
+          }
+          speak();
+        }, 100);
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('voiceSettingsChanged', handleCustomSettingsChange);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('voiceSettingsChanged', handleCustomSettingsChange);
+    };
+  }, []);
+
+  // Check if voice is enabled before any speech operation
+  const checkVoiceEnabled = () => {
+    if (!isVoiceEnabled()) {
+      console.log('Voice is disabled in settings');
+      return false;
+    }
+    return true;
+  };
  
  
   const isVisible = (el) => {
@@ -86,15 +144,25 @@ const TextToSpeechDropdown = () => {
     return textContent.trim();
   };
  
-  const speak = () => {
+    const speak = () => {
     if (hasSpokenRef.current || speechSynthesis.speaking) return;
- 
+    
+    // Check if voice is enabled
+    if (!checkVoiceEnabled()) {
+      return;
+    }
+
     const text = collectVisibleText();
     if (!text) return;
- 
+
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.voice = voices.find(v => v.lang.startsWith('en')) || null;
-    utterance.rate = 1;
+    
+    // Apply current voice settings
+    if (!applyVoiceSettings(utterance, voiceSettings)) {
+      console.log('Voice settings could not be applied');
+      return;
+    }
  
     utterance.onstart = () => {
       setIsPlaying(true);
@@ -118,6 +186,10 @@ const TextToSpeechDropdown = () => {
   };
  
   const handlePlayPause = () => {
+    if (!checkVoiceEnabled()) {
+      return;
+    }
+    
     if (!speechSynthesis.speaking && !speechSynthesis.paused) {
       hasSpokenRef.current = false;
       setHasFinished(false);
@@ -140,6 +212,10 @@ const TextToSpeechDropdown = () => {
   };
  
   const handleReplay = () => {
+    if (!checkVoiceEnabled()) {
+      return;
+    }
+    
     speechSynthesis.cancel();
     hasSpokenRef.current = false;
     setHasFinished(false);
@@ -153,12 +229,18 @@ const TextToSpeechDropdown = () => {
     <div className="relative z-50" ref={ttsRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="p-2 bg-blue-100 rounded-full hover:bg-blue-200 text-blue-600"
+        className={`p-2 rounded-full transition-all duration-300 ${
+          voiceSettings.enabled 
+            ? 'bg-blue-100 hover:bg-blue-200 text-blue-600' 
+            : 'bg-gray-100 hover:bg-gray-200 text-gray-400 cursor-not-allowed'
+        }`}
+        disabled={!voiceSettings.enabled}
+        title={voiceSettings.enabled ? 'Text-to-Speech Controls' : 'Text-to-Speech is disabled in settings'}
       >
         <FaVolumeUp size={20} />
       </button>
  
-      {isOpen && (
+      {isOpen && voiceSettings.enabled && (
         <div className="absolute top-12 right-0 bg-gray-100 border border-gray-300 shadow-xl rounded-md p-3 flex gap-3 z-50">
           <button onClick={handlePlayPause} title="Play" className={buttonBaseStyle}>
             <FaPlay size={16} />
@@ -172,6 +254,14 @@ const TextToSpeechDropdown = () => {
           <button onClick={handleReplay} title="Replay" className={buttonBaseStyle}>
             🔁
           </button>
+        </div>
+      )}
+      
+      {isOpen && !voiceSettings.enabled && (
+        <div className="absolute top-12 right-0 bg-gray-100 border border-gray-300 shadow-xl rounded-md p-3 z-50">
+          <p className="text-gray-500 text-sm whitespace-nowrap">
+            Voice is disabled in settings
+          </p>
         </div>
       )}
     </div>

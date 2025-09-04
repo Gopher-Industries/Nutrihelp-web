@@ -1,6 +1,7 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import "semantic-ui-css/semantic.min.css";
 import "./App.css";
+import { initializeFontSize } from "./utils/fontSizeManager";
 import {
   BrowserRouter as Router,
   Routes,
@@ -44,9 +45,18 @@ import SymptomAssessment from "./routes/SymptomAssessment/SymptomAssessment";
 import Leaderboard from "./routes/LeaderBoard/leaderBoard";
 import ObesityPredictor from "./routes/survey/ObesityPredictor";
 import UiTimer from "./routes/UiTimer/UiTimer"
+import Settings from "./routes/Settings/Settings"
 
 function App() {
   const { currentUser } = useContext(UserContext);
+  
+  // Development mode - set to true to bypass authentication
+  const DEVELOPMENT_MODE = true;
+  
+  // Initialize font size settings for elderly users
+  useEffect(() => {
+    initializeFontSize();
+  }, []);
 
   return (
     <Router>
@@ -56,7 +66,8 @@ function App() {
         <Route
           path="/"
           element={
-            currentUser ? <Navigate to="/home" /> : <Navigate to="/login" />
+            DEVELOPMENT_MODE ? <Navigate to="/home" /> : 
+            (currentUser ? <Navigate to="/home" /> : <Navigate to="/login" />)
           }
         />
         <Route path="/login" element={<Login />} />
@@ -215,6 +226,14 @@ function App() {
           element={
             <AuthenticateRoute>
               <ShoppingList />
+            </AuthenticateRoute>
+          }
+        />
+        <Route
+          path="settings"
+          element={
+            <AuthenticateRoute>
+              <Settings />
             </AuthenticateRoute>
           }
         />
