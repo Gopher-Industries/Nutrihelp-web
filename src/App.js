@@ -18,7 +18,7 @@ import SignUp from "./routes/SignUp/SignUp";
 import ForgotPassword from "./routes/ForgotPassword/ForgotPassword";
 import CreateRecipe from "./routes/CreateRecipe/CreateRecipe";
 import SearchRecipes from "./routes/SearchRecipes/SearchRecipes";
-import CategoryResults from "./routes/SearchRecipes/CategoryResults";  // 🆕
+import CategoryResults from "./routes/SearchRecipes/CategoryResults"; // 🆕
 import YourPreferences from "./routes/UI-Only-Pages/YourPreferences/pref-dis-health";
 import UserProfilePage from "./routes/UI-Only-Pages/UserProfilePage/userprofile";
 import Home from "./routes/Home/Home";
@@ -46,6 +46,8 @@ import Leaderboard from "./routes/LeaderBoard/leaderBoard";
 import ObesityPredictor from "./routes/survey/ObesityPredictor";
 import UiTimer from "./routes/UiTimer/UiTimer"
 import Settings from "./routes/Settings/Settings"
+import HealthFAQ from "./routes/HealthFAQ/HealthFAQ";
+
 
 function App() {
   const { currentUser } = useContext(UserContext);
@@ -230,10 +232,18 @@ function App() {
           }
         />
         <Route
-          path="settings"
+         path="settings"
+         element={
+          <AuthenticateRoute>
+            <Settings />
+          </AuthenticateRoute>
+         }
+        />
+        <Route
+          path="HealthFAQ"
           element={
             <AuthenticateRoute>
-              <Settings />
+              <HealthFAQ />
             </AuthenticateRoute>
           }
         />
