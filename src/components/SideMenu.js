@@ -42,6 +42,7 @@ const SideMenu = ({ isOpen, toggleMenu }) => {
             <Link to="/daily-plan-edit" onClick={toggleMenu}>Edit Daily Plan</Link>
             <Link to="/healthnews" onClick={toggleMenu}>Health News</Link>
             <Link to="/leaderboard" onClick={toggleMenu}>LeaderBoard</Link>
+            <Link to="/HealthFAQ" onClick={toggleMenu}>HealthFAQ</Link>
 
             {/* Recipes Dropdown */}
             <div className="dropdown">
@@ -116,6 +117,7 @@ const SideMenu = ({ isOpen, toggleMenu }) => {
                   <Link to="/SearchRecipes" onClick={toggleMenu}>Search Recipes</Link>
                   <Link to="/RecipeRating" onClick={toggleMenu}>Recipe Rating</Link>
                   <Link to="/UiTimer" onClick={toggleMenu}>UiTimer</Link>
+                  <Link to="/HealthFAQ" onClick={toggleMenu}>HealthFAQ</Link>
                 </div>
               )}
             </div>
