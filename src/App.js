@@ -53,7 +53,7 @@ function App() {
   const { currentUser } = useContext(UserContext);
   
   // Development mode - set to true to bypass authentication
-  const DEVELOPMENT_MODE = true;
+  const DEVELOPMENT_MODE = false;
   
   // Initialize font size settings for elderly users
   useEffect(() => {
