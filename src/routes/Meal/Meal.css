@@ -811,6 +811,7 @@
   .btn {
     border: 2px solid var(--text-primary);
   }
+}
 
 .food-item-image {
   width: 100%;
