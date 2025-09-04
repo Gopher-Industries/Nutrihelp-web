@@ -88,14 +88,7 @@ const MainNavbar = () => {
           <div className="logo-container">
             <img src="/images/logo.png" alt="Website Logo" />
           </div>        <div className="nav-shortcuts">
-          <Link
-            to="/daily-plan-edit"
-            className="nav-link"
-            onClick={toggleMenu}
-            style={{ color: "#2b1b76", fontWeight: 700 }}
-          >
-            Edit Plan
-          </Link>
+
         </div>
           <div className="darkmode">
             <Link to="/userProfile" onClick={toggleMenu}>
