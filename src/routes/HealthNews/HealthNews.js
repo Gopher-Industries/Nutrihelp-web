@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './HealthNews.css';
 import { FaHeart, FaRegHeart } from 'react-icons/fa';
 import { supabase } from '../../utils/supabase';
+import { useNavigate } from 'react-router-dom';
 import newsBg1 from '../../images/HealthNews_background_image/news_background_image_1.png';
 import newsBg2 from '../../images/HealthNews_background_image/news_background_image_2.png';
 import newsBg3 from '../../images/HealthNews_background_image/news_background_image_3.png';
@@ -40,6 +41,7 @@ const HealthNews = () => {
   const [isLoadingDb, setIsLoadingDb] = useState(false);
   const [dbError, setDbError] = useState('');
   const [hasLoadedDb, setHasLoadedDb] = useState(false);
+  const navigate = useNavigate();
 
   const sampleNews = [
     {
@@ -233,6 +235,12 @@ const HealthNews = () => {
     } finally {
       setIsLoadingDb(false);
     }
+  };
+
+  // Navigate to detail page for a database article
+  const openArticleDetail = (article) => {
+    if (!article?.id) return;
+    navigate(`/healthnews/${article.id}`);
   };
 
   return (
@@ -490,14 +498,14 @@ const HealthNews = () => {
           )}
         </div>
 
-        {/* Supabase Database Test Section */}
+        {/* Daily Health News Section (Collaborate with ZEYU)*/}
         <div className="test-api-section">
           <div className="test-badge">
-            DATABASE TEST
+            DAILY NEWS
           </div>
-          <h3 className="test-title">Supabase Database Connection Test</h3>
+          <h3 className="test-title">Daily Health News</h3>
           <p className="test-description">
-            Test the connection to the health_news table in Supabase database. (Collaborate with ZEYU LIN).
+            A small daily pick from the health_news supabase collection.
           </p>
           
           <div className="test-search-container">
@@ -509,11 +517,11 @@ const HealthNews = () => {
               {isLoadingDb ? (
                 <>
                   <span className="button-spinner"></span>
-                  Loading from Database...
+                  Fetching today's news...
                 </>
               ) : (
                 <>
-                  Load News from Database
+                  Get Today's News
                 </>
               )}
             </button>
@@ -522,9 +530,9 @@ const HealthNews = () => {
           {hasLoadedDb && (
             <div className="test-results">
               <div className="results-header">
-                <h4>Database Results</h4>
+                <h4>Today's News</h4>
                 <span className="results-count">
-                  {dbError ? 'Error' : `${dbNews.length} article${dbNews.length !== 1 ? 's' : ''} found in database`}
+                  {dbError ? 'Error' : `${dbNews.length} article${dbNews.length !== 1 ? 's' : ''} found`}
                 </span>
               </div>
               
@@ -547,7 +555,7 @@ const HealthNews = () => {
               ) : (
                 <div className="results-grid">
                   {dbNews.map((article, index) => (
-                    <div key={article.id || index} className="test-result-card">
+                    <div key={article.id || index} className="test-result-card" onClick={() => openArticleDetail(article)} style={{ cursor: 'pointer' }}>
                       <div className="result-card-header">
                         <h5 className="result-title">{article.title || 'Untitled Article'}</h5>
                         <span className="result-number">#{index + 1}</span>
