@@ -54,8 +54,6 @@ import HealthFAQ from "./routes/HealthFAQ/HealthFAQ";
 function App() {
   const { currentUser } = useContext(UserContext);
   
-  // Development mode - set to true to bypass authentication
-  const DEVELOPMENT_MODE = false;
   
   // Initialize font size settings for elderly users
   useEffect(() => {
@@ -70,8 +68,7 @@ function App() {
         <Route
           path="/"
           element={
-            DEVELOPMENT_MODE ? <Navigate to="/home" /> : 
-            (currentUser ? <Navigate to="/home" /> : <Navigate to="/login" />)
+            currentUser ? <Navigate to="/home" /> : <Navigate to="/login" />
           }
         />
         <Route path="/login" element={<Login />} />
