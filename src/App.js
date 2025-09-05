@@ -49,6 +49,9 @@ import ObesityPredictor from "./routes/survey/ObesityPredictor";
 import UiTimer from "./routes/UiTimer/UiTimer"
 import Settings from "./routes/Settings/Settings"
 import HealthFAQ from "./routes/HealthFAQ/HealthFAQ";
+import DailyPlanEdit from "./routes/DailyPlan/DailyPlanEdit";
+
+
 
 
 function App() {
@@ -76,6 +79,7 @@ function App() {
         <Route path="/home" element={<Home />} />
         <Route path="/signUp" element={<SignUp />} />
         <Route path="/forgotPassword" element={<ForgotPassword />} />
+        <Route path="/daily-plan-edit" element={<DailyPlanEdit />} />
         <Route path="/faq" element={<FAQ />} />
         <Route path="/leaderboard" element={<Leaderboard />} />
         <Route path="/survey" element={<ObesityPredictor />} />
