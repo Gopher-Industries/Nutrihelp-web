@@ -1,6 +1,7 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import "semantic-ui-css/semantic.min.css";
 import "./App.css";
+import { initializeFontSize } from "./utils/fontSizeManager";
 import "./styles/global-dark-mode.css";
 import {
   BrowserRouter as Router,
@@ -46,10 +47,18 @@ import SymptomAssessment from "./routes/SymptomAssessment/SymptomAssessment";
 import Leaderboard from "./routes/LeaderBoard/leaderBoard";
 import ObesityPredictor from "./routes/survey/ObesityPredictor";
 import UiTimer from "./routes/UiTimer/UiTimer"
+import Settings from "./routes/Settings/Settings"
 import HealthFAQ from "./routes/HealthFAQ/HealthFAQ";
+
 
 function App() {
   const { currentUser } = useContext(UserContext);
+  
+  
+  // Initialize font size settings for elderly users
+  useEffect(() => {
+    initializeFontSize();
+  }, []);
 
   return (
     <Router>
@@ -228,6 +237,14 @@ function App() {
               <ShoppingList />
             </AuthenticateRoute>
           }
+        />
+        <Route
+         path="settings"
+         element={
+          <AuthenticateRoute>
+            <Settings />
+          </AuthenticateRoute>
+         }
         />
         <Route
           path="HealthFAQ"
