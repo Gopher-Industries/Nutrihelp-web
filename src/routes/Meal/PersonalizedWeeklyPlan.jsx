@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { exportMealPlanAsPDF } from './PDFExport';
 import { fetchPersonalizedMealPlan } from './WeeklyMealUtils';
 
-export default function PersonalizedWeeklyPlan({ filters }) {
+export default function PersonalizedWeeklyPlan({ filters, showExport = true }) {
   const [mealPlan, setMealPlan] = useState([]);
   const [ingredientsByRecipe, setIngredientsByRecipe] = useState({});
   const [loading, setLoading] = useState(true);
@@ -107,18 +107,20 @@ export default function PersonalizedWeeklyPlan({ filters }) {
 
   return (
     <div style={{ width: '100%', maxWidth: 1200, margin: '0 auto' }}>
-      <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-        <button
-          onClick={() => exportMealPlanAsPDF('personalized-meal-plan')}
-          style={{
-            backgroundColor: '#2e7d32', color: 'white', border: 'none',
-            padding: '10px 20px', margin: '10px 0', cursor: 'pointer',
-            borderRadius: '5px', fontWeight: 'bold'
-          }}
-        >
-          Export as PDF
-        </button>
-      </div>
+      {showExport && (
+        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <button
+            onClick={() => exportMealPlanAsPDF('personalized-meal-plan')}
+            style={{
+              backgroundColor: '#2e7d32', color: 'white', border: 'none',
+              padding: '10px 20px', margin: '10px 0', cursor: 'pointer',
+              borderRadius: '5px', fontWeight: 'bold'
+            }}
+          >
+            Export as PDF
+          </button>
+        </div>
+      )}
 
       <div id="personalized-meal-plan">
         {mealPlan.map((dayPlan, idx) => <DayRow key={idx} dayPlan={dayPlan} />)}

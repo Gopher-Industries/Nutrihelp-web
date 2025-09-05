@@ -21,7 +21,7 @@ const GOALS = [
 // Shellfish removed per your request
 const ALLERGENS = ['Nuts', 'Dairy', 'Soy', 'Gluten'];
 
-export default function PersonalizedPlanForm({ onGenerate }) {
+export default function PersonalizedPlanForm({ onGenerate, onExport }) {
   const [dietType, setDietType] = useState('Balanced');
   const [goal, setGoal] = useState('Maintenance');
   const [allergies, setAllergies] = useState([]);
@@ -88,10 +88,15 @@ export default function PersonalizedPlanForm({ onGenerate }) {
         </div>
       </div>
 
-      <div className="personalize-actions">
+      <div className="personalize-actions" style={{ display: 'flex', gap: 12 }}>
         <button type="submit" className="btn-primary-solid">
           Generate Personalized Plan
         </button>
+        {onExport && (
+          <button type="button" className="export-btn" onClick={onExport}>
+            Export as PDF
+          </button>
+        )}
       </div>
     </form>
   );
