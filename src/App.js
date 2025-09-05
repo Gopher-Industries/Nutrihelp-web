@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
 import "semantic-ui-css/semantic.min.css";
 import "./App.css";
+import "./styles/global-dark-mode.css";
 import {
   BrowserRouter as Router,
   Routes,
@@ -35,6 +36,7 @@ import MainNavbar from "./components/MainNavbar";
 import FAQ from "./routes/FAQ/faq";
 import NutritionCalculator from "./routes/UI-Only-Pages/NutritionCalculator/NutritionCalculator";
 import HealthNews from "./routes/HealthNews/HealthNews";
+import NewsDetail from "./routes/HealthNews/NewsDetail";
 import FoodPreferences from "./routes/FoodPreferences/FoodPreferences";
 import HealthTools from "./routes/HealthTools/HealthTools";
 import RecipeRating from "./routes/RecipeRating/RecipeRating";
@@ -191,6 +193,14 @@ function App() {
           element={
             <AuthenticateRoute>
               <HealthNews />
+            </AuthenticateRoute>
+          }
+        />
+        <Route
+          path="healthnews/:id"
+          element={
+            <AuthenticateRoute>
+              <NewsDetail />
             </AuthenticateRoute>
           }
         />
