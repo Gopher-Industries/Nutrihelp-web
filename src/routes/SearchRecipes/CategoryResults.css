@@ -27,3 +27,26 @@
   justify-content: center;
   gap: 30px;
 }
+
+.category-results-page > *:first-child {
+  margin-top: 0 !important;
+}
+ 
+
+.section-title {
+  margin-top: 8px !important;
+}
+ 
+
+.category-results-page {
+  padding-top: 16px;          
+  max-width: 1200px;
+  margin: 0 auto;
+}
+ 
+
+.category-results-page {
+  display: block;             
+}
+ 
+ 
