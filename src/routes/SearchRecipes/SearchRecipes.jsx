@@ -24,14 +24,14 @@ function SearchRecipes() {
 
   // Hard-coded category list
   const categories = [
-    { name: "Chinese",        img: chineseImg },
-    { name: "Indian",         img: indianImg },
-    { name: "Mexican",        img: mexicanImg },
-    { name: "Salads",         img: saladsImg },
-    { name: "Thai",           img: thaiImg },
-    { name: "Italian",        img: italianImg },
+    { name: "Chinese", img: chineseImg },
+    { name: "Indian", img: indianImg },
+    { name: "Mexican", img: mexicanImg },
+    { name: "Salads", img: saladsImg },
+    { name: "Thai", img: thaiImg },
+    { name: "Italian", img: italianImg },
     { name: "Middle Eastern", img: middleEasternImg },
-    { name: "Desserts",       img: dessertsImg },
+    { name: "Desserts", img: dessertsImg },
   ];
 
   // Load recipes once
@@ -72,33 +72,32 @@ function SearchRecipes() {
         />
       </div>
 
-      <h2 className="section-title">Popular Recipes</h2>
-      <div className="popular-chips">
-        {["Indian", "Italian", "Desserts"].map(tag => (
-          <button key={tag} onClick={() => setSearchTerm(tag)}>
-            {tag}
-          </button>
-        ))}
+      <div className="section">
+        <h2 className="section-title">Popular Recipes</h2>
+        <div className="popular-chips">
+          {["Indian", "Italian", "Desserts"].map(tag => (
+            <button key={tag} onClick={() => setSearchTerm(tag)}>{tag}</button>
+          ))}
+        </div>
       </div>
 
-      <h2 className="section-title">Top Categories</h2>
-      <div className="categories-grid">
-        {filteredCategories.length > 0 ? (
-          filteredCategories.map(cat => (
-            <Link
-              to={`/searchRecipes/${cat.name}`}
-              key={cat.name}
-              className="category-card"
-            >
-              <img src={cat.img} alt={cat.name} />
-              <h3>{cat.name}</h3>
-            </Link>
-          ))
-        ) : (
-          <p className="no-results">No categories found.</p>
-        )}
-      </div>
 
+      <div className="section">
+        <h2 className="section-title">Top Categories</h2>
+        <div className="categories-grid">
+          {filteredCategories.length ? (
+            filteredCategories.map(cat => (
+              <Link to={`/searchRecipes/${cat.name}`} key={cat.name} className="category-card">
+                <img src={cat.img} alt={cat.name} />
+                <h3>{cat.name}</h3>
+              </Link>
+            ))
+          ) : (
+            <p className="no-results">No categories found.</p>
+          )}
+        </div>
+      </div>
+      
       <button className="search-button" onClick={() => { /* optional extra logic */ }}>
         Search
       </button>
