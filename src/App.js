@@ -1,6 +1,8 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import "semantic-ui-css/semantic.min.css";
 import "./App.css";
+import { initializeFontSize } from "./utils/fontSizeManager";
+import "./styles/global-dark-mode.css";
 import {
   BrowserRouter as Router,
   Routes,
@@ -17,7 +19,7 @@ import SignUp from "./routes/SignUp/SignUp";
 import ForgotPassword from "./routes/ForgotPassword/ForgotPassword";
 import CreateRecipe from "./routes/CreateRecipe/CreateRecipe";
 import SearchRecipes from "./routes/SearchRecipes/SearchRecipes";
-import CategoryResults from "./routes/SearchRecipes/CategoryResults";  // 🆕
+import CategoryResults from "./routes/SearchRecipes/CategoryResults"; // 🆕
 import YourPreferences from "./routes/UI-Only-Pages/YourPreferences/pref-dis-health";
 import UserProfilePage from "./routes/UI-Only-Pages/UserProfilePage/userprofile";
 import Home from "./routes/Home/Home";
@@ -35,6 +37,7 @@ import MainNavbar from "./components/MainNavbar";
 import FAQ from "./routes/FAQ/faq";
 import NutritionCalculator from "./routes/UI-Only-Pages/NutritionCalculator/NutritionCalculator";
 import HealthNews from "./routes/HealthNews/HealthNews";
+import NewsDetail from "./routes/HealthNews/NewsDetail";
 import FoodPreferences from "./routes/FoodPreferences/FoodPreferences";
 import HealthTools from "./routes/HealthTools/HealthTools";
 import RecipeRating from "./routes/RecipeRating/RecipeRating";
@@ -43,11 +46,16 @@ import RecipeDetail from "./routes/RecipeRating/RecipeDetail";
 import SymptomAssessment from "./routes/SymptomAssessment/SymptomAssessment";
 import Leaderboard from "./routes/LeaderBoard/leaderBoard";
 import ObesityPredictor from "./routes/survey/ObesityPredictor";
-import UiTimer from "./routes/UiTimer/UiTimer";
-import CostEstimate from "./routes/RecipeCost/CostEstimate";
+import UiTimer from "./routes/UiTimer/UiTimer"
 
 function App() {
   const { currentUser } = useContext(UserContext);
+  
+  
+  // Initialize font size settings for elderly users
+  useEffect(() => {
+    initializeFontSize();
+  }, []);
 
   return (
     <Router>
@@ -195,6 +203,14 @@ function App() {
             </AuthenticateRoute>
           }
         />
+        <Route
+          path="healthnews/:id"
+          element={
+            <AuthenticateRoute>
+              <NewsDetail />
+            </AuthenticateRoute>
+          }
+        />
         <Route path="MFAform" element={<MFAform />} />
         <Route
           path="dashboard"
@@ -217,6 +233,22 @@ function App() {
           element={
             <AuthenticateRoute>
               <ShoppingList />
+            </AuthenticateRoute>
+          }
+        />
+        <Route
+         path="settings"
+         element={
+          <AuthenticateRoute>
+            <Settings />
+          </AuthenticateRoute>
+         }
+        />
+        <Route
+          path="HealthFAQ"
+          element={
+            <AuthenticateRoute>
+              <HealthFAQ />
             </AuthenticateRoute>
           }
         />

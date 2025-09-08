@@ -2,13 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDarkMode } from '../../routes/DarkModeToggle/DarkModeContext';
 import { getFontSizeOptions, applyFontSize, getCurrentFontSize } from '../../utils/fontSizeManager';
-import { MoonIcon, SunIcon } from "lucide-react";
+import { testVoiceSettings, saveVoiceSettings } from '../../utils/voiceSettingsManager';
+import { MoonIcon, SunIcon, Bell, Globe, Save, Volume2 } from "lucide-react";
 import './Settings.css';
 
 const Settings = () => {
   const navigate = useNavigate();
   const { darkMode, setDarkMode } = useDarkMode();
-  const [fontSize, setFontSize] = useState('medium'); // Default to medium
+  const [fontSize, setFontSize] = useState('medium');
   const [fontSizes, setFontSizes] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [highContrast, setHighContrast] = useState(false);
@@ -16,62 +17,99 @@ const Settings = () => {
   const [screenReaderSupport, setScreenReaderSupport] = useState(false);
   const [rememberPreferences, setRememberPreferences] = useState(true);
   const [showHelpfulTips, setShowHelpfulTips] = useState(true);
+  
+  // Settings states
+  const [autoSave, setAutoSave] = useState(true);
+  const [language, setLanguage] = useState('en');
+  const [notifications, setNotifications] = useState({
+    mealReminders: true,
+    waterReminders: true,
+    healthTips: true,
+    weeklyReports: false,
+    systemUpdates: true
+  });
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  
+  // Voice/Audio settings states
+  const [voiceSettings, setVoiceSettings] = useState({
+    enabled: true,
+    volume: 0.8,
+    rate: 1.0,
+    pitch: 1.0,
+    autoPlay: false,
+    voice: 'default'
+  });
 
-  // Initialize font sizes safely
+  // Language options
+  const languageOptions = [
+    { code: 'en', name: 'English', flag: '🇺🇸' },
+    { code: 'zh', name: '中文', flag: '🇨🇳' },
+    { code: 'es', name: 'Español', flag: '🇪🇸' },
+    { code: 'fr', name: 'Français', flag: '🇫🇷' },
+    { code: 'de', name: 'Deutsch', flag: '🇩🇪' }
+  ];
+
+  // Initialize settings
   useEffect(() => {
     try {
       const options = getFontSizeOptions();
       setFontSizes(options);
       
-      // Get current font size safely
       const currentSize = getCurrentFontSize();
       if (options[currentSize]) {
         setFontSize(currentSize);
-        // Apply the saved font size immediately
         applyFontSize(options[currentSize].size);
       }
       
-      // Load global dark mode preference
+      // Load all saved settings
       const savedGlobalDarkMode = localStorage.getItem('globalDarkMode') === 'true';
-      setDarkMode(savedGlobalDarkMode);
+      const savedHighContrast = localStorage.getItem('highContrast') === 'true';
+      const savedShowFocusIndicators = localStorage.getItem('showFocusIndicators') === 'true';
+      const savedScreenReaderSupport = localStorage.getItem('screenReaderSupport') === 'true';
+      const savedRememberPreferences = localStorage.getItem('rememberPreferences') !== 'false';
+      const savedShowHelpfulTips = localStorage.getItem('showHelpfulTips') !== 'false';
+      const savedAutoSave = localStorage.getItem('autoSave') !== 'false';
+      const savedLanguage = localStorage.getItem('language') || 'en';
+      const savedNotifications = JSON.parse(localStorage.getItem('notifications') || '{}');
+      const savedVoiceSettings = JSON.parse(localStorage.getItem('voiceSettings') || '{}');
       
-      // Apply global dark mode on initialization
+      setDarkMode(savedGlobalDarkMode);
+      setHighContrast(savedHighContrast);
+      setShowFocusIndicators(savedShowFocusIndicators);
+      setScreenReaderSupport(savedScreenReaderSupport);
+      setRememberPreferences(savedRememberPreferences);
+      setShowHelpfulTips(savedShowHelpfulTips);
+      setAutoSave(savedAutoSave);
+      setLanguage(savedLanguage);
+      setNotifications({ ...notifications, ...savedNotifications });
+      setVoiceSettings({ ...voiceSettings, ...savedVoiceSettings });
+      
       if (savedGlobalDarkMode) {
         document.body.classList.add('dark-mode');
       } else {
         document.body.classList.remove('dark-mode');
       }
       
-      // Load other saved settings
-      const savedHighContrast = localStorage.getItem('highContrast') === 'true';
-      const savedShowFocusIndicators = localStorage.getItem('showFocusIndicators') === 'true';
-      const savedScreenReaderSupport = localStorage.getItem('screenReaderSupport') === 'true';
-      const savedRememberPreferences = localStorage.getItem('rememberPreferences') !== 'false';
-      const savedShowHelpfulTips = localStorage.getItem('showHelpfulTips') !== 'false';
-      
-      setHighContrast(savedHighContrast);
-      setShowFocusIndicators(savedShowFocusIndicators);
-      setScreenReaderSupport(savedScreenReaderSupport);
-      setRememberPreferences(savedRememberPreferences);
-      setShowHelpfulTips(savedShowHelpfulTips);
-      
       setIsLoading(false);
     } catch (error) {
-      console.error('Error initializing font sizes:', error);
+      console.error('Error initializing settings:', error);
       setIsLoading(false);
     }
   }, []);
 
-  // Ensure saved font size is applied on component mount
+  // Auto-save functionality
   useEffect(() => {
-    const savedFontSize = localStorage.getItem('fontSize');
-    if (savedFontSize) {
-      // Apply the saved font size to ensure consistency
-      applyFontSize(savedFontSize);
+    if (autoSave && hasUnsavedChanges) {
+      const timer = setTimeout(() => {
+        saveSettings();
+        setHasUnsavedChanges(false);
+      }, 2000);
+      
+      return () => clearTimeout(timer);
     }
-  }, []);
+  }, [autoSave, hasUnsavedChanges, fontSize, darkMode, highContrast, showFocusIndicators, screenReaderSupport, rememberPreferences, showHelpfulTips, language, notifications, voiceSettings]);
 
-  // Apply font size to the document
+  // Apply font size
   useEffect(() => {
     if (fontSize && fontSizes[fontSize]) {
       try {
@@ -86,8 +124,8 @@ const Settings = () => {
   const handleFontSizeChange = (newSize) => {
     if (fontSizes[newSize]) {
       setFontSize(newSize);
-      // Save font size immediately to localStorage
       localStorage.setItem('fontSize', fontSizes[newSize].size);
+      setHasUnsavedChanges(true);
     }
   };
 
@@ -96,61 +134,88 @@ const Settings = () => {
     const newDarkMode = !darkMode;
     setDarkMode(newDarkMode);
     
-    // Apply dark mode globally to the entire application
     if (newDarkMode) {
       document.body.classList.add('dark-mode');
     } else {
       document.body.classList.remove('dark-mode');
     }
     
-    // Save dark mode preference globally
     localStorage.setItem('globalDarkMode', newDarkMode.toString());
+    setHasUnsavedChanges(true);
   };
 
-  // Handle back navigation
-  const handleBack = () => {
-    navigate(-1);
+  // Handle notification toggle
+  const handleNotificationToggle = (key) => {
+    setNotifications(prev => ({
+      ...prev,
+      [key]: !prev[key]
+    }));
+    setHasUnsavedChanges(true);
   };
 
-  // Handle save settings
-  const handleSaveSettings = () => {
-    // Save font size to localStorage
+  // Handle language change
+  const handleLanguageChange = (newLanguage) => {
+    setLanguage(newLanguage);
+    setHasUnsavedChanges(true);
+  };
+
+  // Handle voice settings change
+  const handleVoiceSettingChange = (setting, value) => {
+    setVoiceSettings(prev => ({
+      ...prev,
+      [setting]: value
+    }));
+    setHasUnsavedChanges(true);
+  };
+
+  // Test voice settings
+  const handleTestVoice = () => {
+    testVoiceSettings(voiceSettings);
+  };
+
+  // Save all settings
+  const saveSettings = () => {
     if (fontSize && fontSizes[fontSize]) {
       localStorage.setItem('fontSize', fontSizes[fontSize].size);
     }
     
-    // Save all other settings to localStorage
     localStorage.setItem('highContrast', highContrast);
     localStorage.setItem('showFocusIndicators', showFocusIndicators);
     localStorage.setItem('screenReaderSupport', screenReaderSupport);
     localStorage.setItem('rememberPreferences', rememberPreferences);
     localStorage.setItem('showHelpfulTips', showHelpfulTips);
+    localStorage.setItem('autoSave', autoSave);
+    localStorage.setItem('language', language);
+    localStorage.setItem('notifications', JSON.stringify(notifications));
+    saveVoiceSettings(voiceSettings);
     
-    // Apply high contrast mode
+    // Apply accessibility settings
     if (highContrast) {
       document.body.classList.add('high-contrast');
     } else {
       document.body.classList.remove('high-contrast');
     }
     
-    // Apply focus indicators
     if (showFocusIndicators) {
       document.body.classList.add('show-focus-indicators');
     } else {
       document.body.classList.remove('show-focus-indicators');
     }
     
-    // Apply screen reader support
     if (screenReaderSupport) {
       document.body.classList.add('screen-reader-support');
     } else {
       document.body.classList.remove('screen-reader-support');
     }
     
-    // Show success message
+    showSuccessMessage('Settings saved successfully!');
+  };
+
+  // Show success message
+  const showSuccessMessage = (message) => {
     const successMessage = document.createElement('div');
     successMessage.className = 'settings-success-message';
-    successMessage.textContent = 'Settings saved successfully!';
+    successMessage.textContent = message;
     document.body.appendChild(successMessage);
     
     setTimeout(() => {
@@ -158,7 +223,23 @@ const Settings = () => {
         document.body.removeChild(successMessage);
       }
     }, 3000);
-    
+  };
+
+  // Handle back navigation
+  const handleBack = () => {
+    if (hasUnsavedChanges) {
+      if (window.confirm('You have unsaved changes. Are you sure you want to leave?')) {
+        navigate(-1);
+      }
+    } else {
+      navigate(-1);
+    }
+  };
+
+  // Handle save settings
+  const handleSaveSettings = () => {
+    saveSettings();
+    setHasUnsavedChanges(false);
     navigate(-1);
   };
 
@@ -175,7 +256,6 @@ const Settings = () => {
     );
   }
 
-  // Safety check for fontSizes
   if (!fontSizes || Object.keys(fontSizes).length === 0) {
     return (
       <div className={`settings-page ${darkMode ? 'dark-mode' : ''}`}>
@@ -192,8 +272,385 @@ const Settings = () => {
     );
   }
 
-  // Get current font size safely
   const currentFontSize = fontSizes[fontSize] || fontSizes.medium || { size: '16px', label: 'Medium' };
+
+  // Define all settings sections
+  const allSections = [
+    {
+      id: 'display',
+      title: 'Display Settings',
+      description: 'Customize your display preferences',
+      content: (
+        <div className="dark-mode-toggle">
+          <div className="toggle-label">
+            <span>Dark Mode</span>
+            <span>Switch between light and dark themes for better visibility</span>
+          </div>
+          <div 
+            className={`toggle-switch ${darkMode ? 'active' : ''}`}
+            onClick={handleDarkModeToggle}
+            role="button"
+            tabIndex={0}
+            aria-label={`Switch to ${darkMode ? "light" : "dark"} mode`}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                handleDarkModeToggle();
+              }
+            }}
+          >
+            <div className="toggle-slider"></div>
+            <div className="toggle-icon">
+              {darkMode ? <SunIcon size={20} /> : <MoonIcon size={20} />}
+            </div>
+          </div>
+        </div>
+      )
+    },
+    {
+      id: 'font',
+      title: 'Font Size',
+      description: 'Adjust the text size to make it easier to read for elderly users',
+      content: (
+        <>
+          <div className="font-size-options">
+            {Object.entries(fontSizes).map(([key, value]) => (
+              <button
+                key={key}
+                className={`font-size-option ${fontSize === key ? 'selected' : ''}`}
+                onClick={() => handleFontSizeChange(key)}
+              >
+                <span className="font-size-label">{value.label}</span>
+                <span className={`font-size-preview font-size-${key}`}>Aa</span>
+              </button>
+            ))}
+          </div>
+          <div className="font-size-preview-container">
+            <h3 className="preview-title">Preview:</h3>
+            <p className="preview-text" style={{ fontSize: currentFontSize.size }}>
+              This is how the text will appear with your selected font size. 
+              The text should be comfortable to read for elderly users.
+            </p>
+          </div>
+        </>
+      )
+    },
+    {
+      id: 'accessibility',
+      title: 'Accessibility',
+      description: 'Additional settings for better accessibility',
+      content: (
+        <div className="accessibility-options">
+          <div className="checkbox-group">
+            <input 
+              type="checkbox" 
+              className="checkbox-input"
+              checked={highContrast}
+              onChange={(e) => {
+                setHighContrast(e.target.checked);
+                setHasUnsavedChanges(true);
+              }}
+            />
+            <div>
+              <div className="checkbox-label">High contrast mode</div>
+              <div className="checkbox-description">Enhance text and background contrast</div>
+            </div>
+          </div>
+          
+          <div className="checkbox-group">
+            <input 
+              type="checkbox" 
+              className="checkbox-input"
+              checked={showFocusIndicators}
+              onChange={(e) => {
+                setShowFocusIndicators(e.target.checked);
+                setHasUnsavedChanges(true);
+              }}
+            />
+            <div>
+              <div className="checkbox-label">Show focus indicators</div>
+              <div className="checkbox-description">Highlight focused elements for better navigation</div>
+            </div>
+          </div>
+          
+          <div className="checkbox-group">
+            <input 
+              type="checkbox" 
+              className="checkbox-input"
+              checked={screenReaderSupport}
+              onChange={(e) => {
+                setScreenReaderSupport(e.target.checked);
+                setHasUnsavedChanges(true);
+              }}
+            />
+            <div>
+              <div className="checkbox-label">Enable screen reader support</div>
+              <div className="checkbox-description">Improve compatibility with assistive technologies</div>
+            </div>
+          </div>
+        </div>
+      )
+    },
+    {
+      id: 'notifications',
+      title: 'Notifications',
+      description: 'Manage your notification preferences',
+      content: (
+        <div className="notification-options">
+          <div className="checkbox-group">
+            <input 
+              type="checkbox" 
+              className="checkbox-input"
+              checked={notifications.mealReminders}
+              onChange={() => handleNotificationToggle('mealReminders')}
+            />
+            <div>
+              <div className="checkbox-label">Meal reminders</div>
+              <div className="checkbox-description">Get reminded about your scheduled meals</div>
+            </div>
+          </div>
+          
+          <div className="checkbox-group">
+            <input 
+              type="checkbox" 
+              className="checkbox-input"
+              checked={notifications.waterReminders}
+              onChange={() => handleNotificationToggle('waterReminders')}
+            />
+            <div>
+              <div className="checkbox-label">Water intake reminders</div>
+              <div className="checkbox-description">Stay hydrated with regular water reminders</div>
+            </div>
+          </div>
+          
+          <div className="checkbox-group">
+            <input 
+              type="checkbox" 
+              className="checkbox-input"
+              checked={notifications.healthTips}
+              onChange={() => handleNotificationToggle('healthTips')}
+            />
+            <div>
+              <div className="checkbox-label">Health tips</div>
+              <div className="checkbox-description">Receive daily health and nutrition tips</div>
+            </div>
+          </div>
+          
+          <div className="checkbox-group">
+            <input 
+              type="checkbox" 
+              className="checkbox-input"
+              checked={notifications.weeklyReports}
+              onChange={() => handleNotificationToggle('weeklyReports')}
+            />
+            <div>
+              <div className="checkbox-label">Weekly progress reports</div>
+              <div className="checkbox-description">Get weekly summaries of your health progress</div>
+            </div>
+          </div>
+          
+          <div className="checkbox-group">
+            <input 
+              type="checkbox" 
+              className="checkbox-input"
+              checked={notifications.systemUpdates}
+              onChange={() => handleNotificationToggle('systemUpdates')}
+            />
+            <div>
+              <div className="checkbox-label">System updates</div>
+              <div className="checkbox-description">Receive notifications about app updates</div>
+            </div>
+          </div>
+        </div>
+      )
+    },
+    {
+      id: 'language',
+      title: 'Language',
+      description: 'Choose your preferred language',
+      content: (
+        <div className="language-options">
+          {languageOptions.map((lang) => (
+            <button
+              key={lang.code}
+              className={`language-option ${language === lang.code ? 'selected' : ''}`}
+              onClick={() => handleLanguageChange(lang.code)}
+            >
+              <span className="language-flag">{lang.flag}</span>
+              <span className="language-name">{lang.name}</span>
+            </button>
+          ))}
+        </div>
+      )
+    },
+    {
+      id: 'voice',
+      title: 'Voice & Audio',
+      description: 'Configure text-to-speech and audio settings',
+      content: (
+        <div className="voice-options">
+          <div className="checkbox-group">
+            <input 
+              type="checkbox" 
+              className="checkbox-input"
+              checked={voiceSettings.enabled}
+              onChange={(e) => handleVoiceSettingChange('enabled', e.target.checked)}
+            />
+            <div>
+              <div className="checkbox-label">Enable text-to-speech</div>
+              <div className="checkbox-description">Turn on/off the voice reading feature</div>
+            </div>
+          </div>
+          
+          <div className="slider-group">
+            <div className="slider-label">
+              <span>Voice Volume: {Math.round(voiceSettings.volume * 100)}%</span>
+            </div>
+            <div className="voice-slider-container">
+              <div 
+                className="voice-slider-progress" 
+                style={{ width: `${voiceSettings.volume * 100}%` }}
+              ></div>
+              <input
+                type="range"
+                min="0"
+                max="1"
+                step="0.1"
+                value={voiceSettings.volume}
+                onChange={(e) => handleVoiceSettingChange('volume', parseFloat(e.target.value))}
+                className="voice-slider"
+              />
+            </div>
+          </div>
+          
+          <div className="slider-group">
+            <div className="slider-label">
+              <span>Speech Rate: {voiceSettings.rate}x</span>
+            </div>
+            <div className="voice-slider-container">
+              <div 
+                className="voice-slider-progress" 
+                style={{ width: `${((voiceSettings.rate - 0.5) / 1.5) * 100}%` }}
+              ></div>
+              <input
+                type="range"
+                min="0.5"
+                max="2"
+                step="0.1"
+                value={voiceSettings.rate}
+                onChange={(e) => handleVoiceSettingChange('rate', parseFloat(e.target.value))}
+                className="voice-slider"
+              />
+            </div>
+          </div>
+          
+          <div className="slider-group">
+            <div className="slider-label">
+              <span>Voice Pitch: {voiceSettings.pitch}x</span>
+            </div>
+            <div className="voice-slider-container">
+              <div 
+                className="voice-slider-progress" 
+                style={{ width: `${((voiceSettings.pitch - 0.5) / 1.5) * 100}%` }}
+              ></div>
+              <input
+                type="range"
+                min="0.5"
+                max="2"
+                step="0.1"
+                value={voiceSettings.pitch}
+                onChange={(e) => handleVoiceSettingChange('pitch', parseFloat(e.target.value))}
+                className="voice-slider"
+              />
+            </div>
+          </div>
+          
+          <div className="checkbox-group">
+            <input 
+              type="checkbox" 
+              className="checkbox-input"
+              checked={voiceSettings.autoPlay}
+              onChange={(e) => handleVoiceSettingChange('autoPlay', e.target.checked)}
+            />
+            <div>
+              <div className="checkbox-label">Auto-play on page load</div>
+              <div className="checkbox-description">Automatically start reading when a new page loads</div>
+            </div>
+          </div>
+          
+          <div className="voice-test-section">
+            <button 
+              className="test-voice-btn"
+              onClick={handleTestVoice}
+              disabled={!voiceSettings.enabled}
+            >
+              <Volume2 size={16} />
+              Test Voice Settings
+            </button>
+            <p className="test-description">
+              Click to hear a sample with your current voice settings
+            </p>
+          </div>
+        </div>
+      )
+    },
+    {
+      id: 'preferences',
+      title: 'User Preferences',
+      description: 'Customize your experience',
+      content: (
+        <div className="preference-options">
+          <div className="checkbox-group">
+            <input 
+              type="checkbox" 
+              className="checkbox-input"
+              checked={rememberPreferences}
+              onChange={(e) => {
+                setRememberPreferences(e.target.checked);
+                setHasUnsavedChanges(true);
+              }}
+            />
+            <div>
+              <div className="checkbox-label">Remember my preferences</div>
+              <div className="checkbox-description">Save your settings across sessions</div>
+            </div>
+          </div>
+          
+          <div className="checkbox-group">
+            <input 
+              type="checkbox" 
+              className="checkbox-input"
+              checked={showHelpfulTips}
+              onChange={(e) => {
+                setShowHelpfulTips(e.target.checked);
+                setHasUnsavedChanges(true);
+              }}
+            />
+            <div>
+              <div className="checkbox-label">Show helpful tips</div>
+              <div className="checkbox-description">Display contextual help and tips</div>
+            </div>
+          </div>
+          
+          <div className="checkbox-group">
+            <input 
+              type="checkbox" 
+              className="checkbox-input"
+              checked={autoSave}
+              onChange={(e) => {
+                setAutoSave(e.target.checked);
+                setHasUnsavedChanges(true);
+              }}
+            />
+            <div>
+              <div className="checkbox-label">Auto-save settings</div>
+              <div className="checkbox-description">Automatically save changes after 2 seconds</div>
+            </div>
+          </div>
+        </div>
+      )
+    }
+  ];
 
   return (
     <div className={`settings-page ${darkMode ? 'dark-mode' : ''}`}>
@@ -207,132 +664,31 @@ const Settings = () => {
             ← Back
           </button>
           <h1 className="settings-title">Settings</h1>
-          <div className="header-spacer"></div>
+          <p className="settings-subtitle">Customize your NutriHelp experience</p>
         </div>
 
         <div className="settings-content">
-          <div className="settings-section">
-            <h2 className="section-title">Display Settings</h2>
-            <p className="section-description">
-              Customize your display preferences
-            </p>
-            
-            <div className="dark-mode-toggle">
-              <div className="toggle-label">
-                <span>Dark Mode</span>
-                <span>Switch between light and dark themes for better visibility</span>
-              </div>
-              <div 
-                className={`toggle-switch ${darkMode ? 'active' : ''}`}
-                onClick={handleDarkModeToggle}
-                role="button"
-                tabIndex={0}
-                aria-label={`Switch to ${darkMode ? "light" : "dark"} mode`}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    handleDarkModeToggle();
-                  }
-                }}
-              >
-                <div className="toggle-slider"></div>
-                <div className="toggle-icon">
-                  {darkMode ? <SunIcon size={20} /> : <MoonIcon size={20} />}
-                </div>
-              </div>
-            </div>
-          </div>
+          {/* Quick Actions section removed */}
 
-          <div className="settings-section">
-            <h2 className="section-title">Font Size</h2>
-            <p className="section-description">
-              Adjust the text size to make it easier to read for elderly users
-            </p>
-            
-            <div className="font-size-options">
-              {Object.entries(fontSizes).map(([key, value]) => (
-                <button
-                  key={key}
-                  className={`font-size-option ${fontSize === key ? 'selected' : ''}`}
-                  onClick={() => handleFontSizeChange(key)}
-                >
-                  <span className="font-size-label">{value.label}</span>
-                  <span className={`font-size-preview font-size-${key}`}>Aa</span>
-                </button>
-              ))}
-            </div>
-
-            <div className="font-size-preview-container">
-              <h3 className="preview-title">Preview:</h3>
-              <p className="preview-text" style={{ fontSize: currentFontSize.size }}>
-                This is how the text will appear with your selected font size. 
-                The text should be comfortable to read for elderly users.
+          {/* Settings Sections */}
+          {allSections.map((section) => (
+            <div key={section.id} className="settings-section">
+              <h2 className="section-title">
+                                 {section.title === 'Display Settings' && <SunIcon size={24} />}
+                 {section.title === 'Font Size' && <span style={{ fontSize: '24px' }}>Aa</span>}
+                 {section.title === 'Accessibility' && <span style={{ fontSize: '24px' }}>♿</span>}
+                 {section.title === 'Notifications' && <Bell size={24} />}
+                 {section.title === 'Language' && <Globe size={24} />}
+                 {section.title === 'Voice & Audio' && <Volume2 size={24} />}
+                 {section.title === 'User Preferences' && <span style={{ fontSize: '24px' }}>⚙️</span>}
+                {section.title}
+              </h2>
+              <p className="section-description">
+                {section.description}
               </p>
+              {section.content}
             </div>
-          </div>
-
-          <div className="settings-section">
-            <h2 className="section-title">Accessibility</h2>
-            <p className="section-description">
-              Additional settings for better accessibility
-            </p>
-            
-            <div className="accessibility-options">
-              <label className="checkbox-label">
-                <input 
-                  type="checkbox" 
-                  checked={highContrast}
-                  onChange={(e) => setHighContrast(e.target.checked)}
-                />
-                <span>High contrast mode</span>
-              </label>
-              
-              <label className="checkbox-label">
-                <input 
-                  type="checkbox" 
-                  checked={showFocusIndicators}
-                  onChange={(e) => setShowFocusIndicators(e.target.checked)}
-                />
-                <span>Show focus indicators</span>
-              </label>
-              
-              <label className="checkbox-label">
-                <input 
-                  type="checkbox" 
-                  checked={screenReaderSupport}
-                  onChange={(e) => setScreenReaderSupport(e.target.checked)}
-                />
-                <span>Enable screen reader support</span>
-              </label>
-            </div>
-          </div>
-
-          <div className="settings-section">
-            <h2 className="section-title">User Preferences</h2>
-            <p className="section-description">
-              Customize your experience
-            </p>
-            
-            <div className="preference-options">
-              <label className="checkbox-label">
-                <input 
-                  type="checkbox" 
-                  checked={rememberPreferences}
-                  onChange={(e) => setRememberPreferences(e.target.checked)}
-                />
-                <span>Remember my preferences</span>
-              </label>
-              
-              <label className="checkbox-label">
-                <input 
-                  type="checkbox" 
-                  checked={showHelpfulTips}
-                  onChange={(e) => setShowHelpfulTips(e.target.checked)}
-                />
-                <span>Show helpful tips</span>
-              </label>
-            </div>
-          </div>
+          ))}
         </div>
 
         <div className="settings-footer">
@@ -345,8 +701,9 @@ const Settings = () => {
           <button 
             className="save-settings-btn"
             onClick={handleSaveSettings}
+            disabled={!hasUnsavedChanges}
           >
-            Save
+            {hasUnsavedChanges ? 'Save Changes' : 'Saved'}
           </button>
         </div>
       </div>
