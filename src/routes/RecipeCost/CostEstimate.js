@@ -1,4 +1,6 @@
-import { useState, useEffect } from "react";
+//This was the initial code i used before creating the final integration
+
+/*import { useState, useEffect } from "react";
 import { Fetching } from "./Fetching";
 
 const CostEstimate = () =>{
@@ -64,4 +66,4 @@ const CostEstimate = () =>{
 
 }
 
-export default CostEstimate;
+export default CostEstimate; */

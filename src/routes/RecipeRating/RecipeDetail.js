@@ -3,17 +3,22 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { FaStar, FaClock, FaFire, FaArrowLeft } from 'react-icons/fa';
 import './RecipeDetail.css';
 import FeedbackPopup from './FeedbackPopup';
+import { Fetching } from './Fetching';
 
 function RecipeDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [showFeedback, setShowFeedback] = useState(false);
   const [recipe, setRecipe] = useState(null);
+  const [error, setError] = useState(null);
+  const [data, setData] = useState(null);
+  const [serving, setServing] = useState(null);
+  const [partial, setPartial] = useState(null);
 
     const recipes = [
         {
-            id: 1,
-            title: 'Nutritious Breakfast Combo',
+            id: 18,
+            title: 'Tomato pesto chicken pasta',
             description: 'Whole wheat bread with brewed coffee and low-sugar cola, providing morning energy',
             tags: ['High Fat', 'High Salt', 'Quick'],
             rating: 3.5,
@@ -21,8 +26,8 @@ function RecipeDetail() {
             calories: 320,
         },
         {
-            id: 2,
-            title: 'Fitness Lunch Set',
+            id: 22,
+            title: 'Quinoa Salmon Bowl',
             description: 'Fresh salad with grilled chicken breast and fresh juice, a healthy low-fat high-protein option',
             tags: ['Low Fat', 'High Fiber', 'Fitness'],
             rating: 4.2,
@@ -30,8 +35,8 @@ function RecipeDetail() {
             calories: 420,
         },
         {
-            id: 3,
-            title: 'Balanced Dinner',
+            id: 261,
+            title: 'Southern-style Chicken Salad',
             description: 'Pan-seared salmon with seasonal vegetables and multigrain rice, rich in omega-3 and dietary fiber',
             tags: ['High Protein', 'Balanced', 'Seafood'],
             rating: 4.7,
@@ -39,8 +44,8 @@ function RecipeDetail() {
             calories: 580,
         },
         {
-            id: 4,
-            title: 'Vegan Power Bowl',
+            id: 263,
+            title: 'Asian Chicken Noodles',
             description: 'Quinoa base with roasted vegetables and hummus, 100% plant-based protein source',
             tags: ['Vegetarian', 'High Fiber', 'Gluten-Free'],
             rating: 4.0,
@@ -129,6 +134,27 @@ function RecipeDetail() {
         return <div className="recipe-not-found">Recipe not found!</div>;
     }
 
+    const handleChange = (event) =>{
+        const {name , value} = event.target;
+        if(name === "Serving")
+        setServing(value);
+        else if(name === "Partial")
+        setPartial(value);
+    }
+    const handleSubmit = async (event) =>{
+        event.preventDefault();
+        console.log("recipe id: "+id);
+        /*console.log("serving size: "+serving);
+        console.log("partial id: "+partial);*/
+        try{
+        const json = await Fetching(id, serving, partial)
+        setData(json);
+        alert("The high cost is: " + json.high_cost.price +"\nThe low cost is: "+ json.low_cost.price);
+        }
+        catch(err){
+            setError(err.message);
+        }
+    }
     const renderStars = () => {
         const stars = [];
         const fullStars = Math.floor(recipe.rating);
@@ -205,9 +231,25 @@ function RecipeDetail() {
             <button className="back-button" onClick={() => navigate(-1)}>
                 <FaArrowLeft /> Back to Recipes
             </button>
+            <label htmlFor="userInput">Enter Serving Size:</label>
+        <input
+            name = "Serving"
+            type="text"
+            value={serving} 
+            onChange={handleChange} 
+        />
+        <label htmlFor="userInput">Enter Ingredients to remove:</label>
+        <input
+            name = "Partial"
+            type="text"
+            value={partial} 
+            onChange={handleChange} 
+        />
+            <button className="back-button" onClick={handleSubmit}>
+                CostEstimate
+            </button>
 
         </div>
     );
 }
-
 export default RecipeDetail;

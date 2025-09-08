@@ -1,6 +1,4 @@
-//This was the initial code i used before creating the final integration
-
-/*export async function Fetching(recipeId, serving, partial){
+export async function Fetching(recipeId, serving, partial){
     let url;
     if(recipeId == null){return null}
     else if((serving == null) && (partial == null)){
@@ -37,4 +35,4 @@
   } catch {
     throw new Error("Invalid JSON in response");
   }
-}*/
+}

@@ -82,14 +82,18 @@ function App() {
         <Route
           path="searchRecipes"
           element={
+            <AuthenticateRoute>
               <SearchRecipes />
+              </AuthenticateRoute>
           }
         />
         {/* New route for category-specific results */}
         <Route
           path="searchRecipes/:category"
           element={
+            <AuthenticateRoute>
               <CategoryResults />
+            </AuthenticateRoute>
           }
         />
         <Route
@@ -135,7 +139,9 @@ function App() {
         <Route
           path="RecipeRating"
           element={
+            <AuthenticateRoute>
               <RecipeRating />
+              </AuthenticateRoute>
           }
         />
         <Route
@@ -157,14 +163,18 @@ function App() {
         <Route
           path="recipe"
           element={
+            <AuthenticateRoute>
               <Recipe />
+            </AuthenticateRoute>
           }
         />
         <Route path="/recipe/:id" element={<RecipeDetail />} />
         <Route
           path="Meal"
           element={
+            <AuthenticateRoute>
               <Meal />
+            </AuthenticateRoute>
           }
         />
         <Route
