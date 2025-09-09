@@ -1,14 +1,7 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext } from "react";
 import "semantic-ui-css/semantic.min.css";
 import "./App.css";
-import { initializeFontSize } from "./utils/fontSizeManager";
-import "./styles/global-dark-mode.css";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Navigate,
-} from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -19,7 +12,7 @@ import SignUp from "./routes/SignUp/SignUp";
 import ForgotPassword from "./routes/ForgotPassword/ForgotPassword";
 import CreateRecipe from "./routes/CreateRecipe/CreateRecipe";
 import SearchRecipes from "./routes/SearchRecipes/SearchRecipes";
-import CategoryResults from "./routes/SearchRecipes/CategoryResults"; // 🆕
+import CategoryResults from "./routes/SearchRecipes/CategoryResults";
 import YourPreferences from "./routes/UI-Only-Pages/YourPreferences/pref-dis-health";
 import UserProfilePage from "./routes/UI-Only-Pages/UserProfilePage/userprofile";
 import Home from "./routes/Home/Home";
@@ -28,7 +21,7 @@ import ScanProducts from "./routes/UI-Only-Pages/ScanProducts/ScanProducts";
 import Menu from "./routes/UI-Only-Pages/Menu/Menu";
 import Recipe from "./components/Recipe";
 import Appointment from "./routes/UI-Only-Pages/Appointment/Appointment";
-import newMenu from "./routes/NewMenu/newMenu";
+import newMenu from "./routes/NewMenu/newMenu"; // (kept if used elsewhere)
 import Meal from "./routes/Meal/Meal";
 import MFAform from "./routes/MFA/MFAform";
 import Dashboard from "./routes/NewMenu/Dashboard";
@@ -37,7 +30,6 @@ import MainNavbar from "./components/MainNavbar";
 import FAQ from "./routes/FAQ/faq";
 import NutritionCalculator from "./routes/UI-Only-Pages/NutritionCalculator/NutritionCalculator";
 import HealthNews from "./routes/HealthNews/HealthNews";
-import NewsDetail from "./routes/HealthNews/NewsDetail";
 import FoodPreferences from "./routes/FoodPreferences/FoodPreferences";
 import HealthTools from "./routes/HealthTools/HealthTools";
 import RecipeRating from "./routes/RecipeRating/RecipeRating";
@@ -46,41 +38,45 @@ import RecipeDetail from "./routes/RecipeRating/RecipeDetail";
 import SymptomAssessment from "./routes/SymptomAssessment/SymptomAssessment";
 import Leaderboard from "./routes/LeaderBoard/leaderBoard";
 import ObesityPredictor from "./routes/survey/ObesityPredictor";
-import UiTimer from "./routes/UiTimer/UiTimer"
-import Settings from "./routes/Settings/Settings"
+import UiTimer from "./routes/UiTimer/UiTimer";
 import HealthFAQ from "./routes/HealthFAQ/HealthFAQ";
-
+import DailyPlanEdit from "./routes/DailyPlan/DailyPlanEdit";
 
 function App() {
   const { currentUser } = useContext(UserContext);
-  
-  
-  // Initialize font size settings for elderly users
-  useEffect(() => {
-    initializeFontSize();
-  }, []);
 
   return (
     <Router>
       <MainNavbar />
       <ToastContainer />
       <Routes>
+        {/* Redirect root based on auth */}
         <Route
           path="/"
-          element={
-            currentUser ? <Navigate to="/home" /> : <Navigate to="/login" />
-          }
+          element={currentUser ? <Navigate to="/home" /> : <Navigate to="/login" />}
         />
+
+        {/* Public */}
         <Route path="/login" element={<Login />} />
-        <Route path="/" element={<Home />} />
         <Route path="/home" element={<Home />} />
         <Route path="/signUp" element={<SignUp />} />
         <Route path="/forgotPassword" element={<ForgotPassword />} />
         <Route path="/faq" element={<FAQ />} />
         <Route path="/leaderboard" element={<Leaderboard />} />
         <Route path="/survey" element={<ObesityPredictor />} />
+        <Route path="/recipe/:id" element={<RecipeDetail />} />
+        <Route path="/preferences" element={<FoodPreferences />} />
+        <Route path="/symptomassessment" element={<SymptomAssessment />} />
 
-        {/* Private Routes */}
+        {/* Protected */}
+        <Route
+          path="/daily-plan-edit"
+          element={
+            <AuthenticateRoute>
+              <DailyPlanEdit />
+            </AuthenticateRoute>
+          }
+        />
         <Route
           path="createRecipe"
           element={
@@ -97,7 +93,6 @@ function App() {
             </AuthenticateRoute>
           }
         />
-        {/* New route for category-specific results */}
         <Route
           path="searchRecipes/:category"
           element={
@@ -178,7 +173,6 @@ function App() {
             </AuthenticateRoute>
           }
         />
-        <Route path="/recipe/:id" element={<RecipeDetail />} />
         <Route
           path="Meal"
           element={
@@ -195,21 +189,11 @@ function App() {
             </AuthenticateRoute>
           }
         />
-        <Route path="/preferences" element={<FoodPreferences />} />
-        <Route path="/symptomassessment" element={<SymptomAssessment />} />
         <Route
           path="healthnews"
           element={
             <AuthenticateRoute>
               <HealthNews />
-            </AuthenticateRoute>
-          }
-        />
-        <Route
-          path="healthnews/:id"
-          element={
-            <AuthenticateRoute>
-              <NewsDetail />
             </AuthenticateRoute>
           }
         />
@@ -237,14 +221,6 @@ function App() {
               <ShoppingList />
             </AuthenticateRoute>
           }
-        />
-        <Route
-         path="settings"
-         element={
-          <AuthenticateRoute>
-            <Settings />
-          </AuthenticateRoute>
-         }
         />
         <Route
           path="HealthFAQ"

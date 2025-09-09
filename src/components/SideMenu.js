@@ -4,6 +4,7 @@ import { UserContext } from "../context/user.context";
 import "../styles/mainNavbar.css";
 import TextToSpeech from "./TextToSpeech/TextToSpeech";
 import VoiceNavigation from "./VoiceControl/VoiceNavigation";
+import DarkModeToggle from "../routes/DarkModeToggle/DarkModeToggle";
 
 const SideMenu = ({ isOpen, toggleMenu }) => {
   const { currentUser, logOut } = useContext(UserContext);
@@ -34,12 +35,13 @@ const SideMenu = ({ isOpen, toggleMenu }) => {
       <div className="nav-links column">
         {currentUser ? (
           <>
+            <DarkModeToggle />
             <Link to="/home" onClick={toggleMenu}>Home</Link>
             <Link to="/dashboard" onClick={toggleMenu}>Menu</Link>
             <Link to="/Meal" onClick={toggleMenu}>Meal Planning</Link>
+            <Link to="/daily-plan-edit" onClick={toggleMenu}>Edit Daily Plan</Link>
             <Link to="/healthnews" onClick={toggleMenu}>Health News</Link>
             <Link to="/leaderboard" onClick={toggleMenu}>LeaderBoard</Link>
-            <Link to="/HealthFAQ" onClick={toggleMenu}>HealthFAQ</Link>
 
             {/* Recipes Dropdown */}
             <div className="dropdown">
@@ -79,7 +81,7 @@ const SideMenu = ({ isOpen, toggleMenu }) => {
             <Link to="/preferences" onClick={toggleMenu}>Allergies & Intolerances</Link>
             <Link to="/symptomassessment" onClick={toggleMenu}>Symptom Assessment</Link>
             <Link to="/healthtools" onClick={toggleMenu}>Health Tools</Link>
-            <Link to="/settings" onClick={toggleMenu}>Settings</Link>
+
             <button onClick={() => { logOut(); toggleMenu(); }}>Log Out</button>
             <TextToSpeech />
             <VoiceNavigation />
@@ -92,9 +94,11 @@ const SideMenu = ({ isOpen, toggleMenu }) => {
             <Link to="/signUp" onClick={toggleMenu}>Create Account</Link>
             <TextToSpeech />
             <VoiceNavigation /> */}
+            <DarkModeToggle />
             <Link to="/home" onClick={toggleMenu}>Home</Link>
             <Link to="/dashboard" onClick={toggleMenu}>Menu</Link>
             <Link to="/Meal" onClick={toggleMenu}>Meal Planning</Link>
+            <Link to="/daily-plan-edit" onClick={toggleMenu}>Edit Daily Plan</Link>
             <Link to="/healthnews" onClick={toggleMenu}>Health News</Link>
             <Link to="/leaderboard" onClick={toggleMenu}>LeaderBoard</Link>
 
@@ -112,7 +116,6 @@ const SideMenu = ({ isOpen, toggleMenu }) => {
                   <Link to="/SearchRecipes" onClick={toggleMenu}>Search Recipes</Link>
                   <Link to="/RecipeRating" onClick={toggleMenu}>Recipe Rating</Link>
                   <Link to="/UiTimer" onClick={toggleMenu}>UiTimer</Link>
-                  <Link to="/HealthFAQ" onClick={toggleMenu}>HealthFAQ</Link>
                 </div>
               )}
             </div>
@@ -137,7 +140,7 @@ const SideMenu = ({ isOpen, toggleMenu }) => {
             <Link to="/preferences" onClick={toggleMenu}>Allergies & Intolerances</Link>
             <Link to="/symptomassessment" onClick={toggleMenu}>Symptom Assessment</Link>
             <Link to="/healthtools" onClick={toggleMenu}>Health Tools</Link>
-            <Link to="/settings" onClick={toggleMenu}>Settings</Link>
+
             <button onClick={() => { logOut(); toggleMenu(); }}>Log Out</button>
             <TextToSpeech />
             <VoiceNavigation />
