@@ -364,7 +364,7 @@ const Meal = () => {
        
     ];
 
-    const findItemDetails = itemName => {
+    const findItemDetails = (itemName) => {
         let item = breakfast.find(item => item.name === itemName);
         if (item) return item.details;
 
@@ -396,114 +396,362 @@ const Meal = () => {
         setTotalNutrition({ calories: totalCalories, proteins: totalProteins, fats: totalFats, vitamins: totalVitamins, sodium: totalSodium });
     }, [selectedItems]);
 
+    // Helpers for UI presentation only (no CSS file edits)
+    const SectionHeader = ({ title, show, toggle, totalCount, selectedCount }) => (
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 12,
+          cursor: 'pointer',
+          marginTop: 12
+        }}
+        onClick={toggle}
+      >
+        <h3 className="heading" style={{ margin: 0 }}>{title}</h3>
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+          <span style={{
+            fontSize: 12,
+            padding: '2px 8px',
+            borderRadius: 999,
+            background: '#eef2ff',
+            color: '#3730a3'
+          }}>
+            {totalCount} items
+          </span>
+          <span style={{
+            fontSize: 12,
+            padding: '2px 8px',
+            borderRadius: 999,
+            background: selectedCount > 0 ? '#ecfdf5' : '#f3f4f6',
+            color: selectedCount > 0 ? '#065f46' : '#374151'
+          }}>
+            {selectedCount} selected
+          </span>
+          <span style={{ marginLeft: 'auto', fontSize: 12, color: '#6b7280' }}>
+            {show ? 'Tap to collapse' : 'Tap to expand'}
+          </span>
+        </div>
+      </div>
+    );
+
+    const isSelected = (name) => selectedItems.some(s => s.name === name);
+
+    const SelectedBadge = () => (
+      <div style={{
+        position: 'absolute',
+        top: 8,
+        right: 8,
+        background: 'rgba(16,185,129,0.95)',
+        color: 'white',
+        fontSize: 12,
+        padding: '2px 6px',
+        borderRadius: 8,
+        boxShadow: '0 1px 4px rgba(0,0,0,0.15)'
+      }}>
+        Selected
+      </div>
+    );
+
+    const NutritionBar = ({ label, value, max=1000, unit='' }) => {
+      const pct = Math.max(0, Math.min(100, Math.round((value / max) * 100)));
+      return (
+        <div style={{ marginBottom: 10 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4, fontSize: 14 }}>
+            <span>{label}</span>
+            <span>{value}{unit}</span>
+          </div>
+          <div style={{ height: 8, background: '#f3f4f6', borderRadius: 999 }}>
+            <div style={{ width: `${pct}%`, height: '100%', borderRadius: 999, background: '#60a5fa' }} />
+          </div>
+        </div>
+      );
+    };
+
     return (
-        <div>
-            {showPopup && <MotivationalPopup onClose={handleClosePopup} />}
-            <header>
-                <h1>What is Your Meal Plan Today?</h1>
-            </header>
+        <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
+            <div style={{ width: '100%', maxWidth: '1200px', padding: '16px' }}>
+                {showPopup && <MotivationalPopup onClose={handleClosePopup} />}
 
-            <div className="meal-container">
-                <div style={{ width: "100%" }}>
-                    <h3 className='heading' style={{ marginTop: "20px" }} onClick={() => setShowBreakfast(!showBreakfast)}>Breakfast</h3>
-                    <div className="menuContainer" style={{ maxHeight: showBreakfast ? '9999px' : '0', overflow: 'hidden', transition: 'max-height 0.5s ease' }}>
-                        {showBreakfast && breakfast.map(item => (
-                            <div className={`food-item ${selectedItems.some(selected => selected.name === item.name) ? 'selected' : ''}`}
-                                key={item.name}
-                                onClick={() => toggleItemSelection(item, 'breakfast')}>
-                                <img src={item.imageUrl} alt={item.name} />
-                                <div className='names'><b>{item.name}</b></div>
-                            </div>
-                        ))}
+                {/* Header */}
+                <header
+                  style={{
+                    width: '100%',
+                    background: 'linear-gradient(135deg, #a543c2ff 0%, #ffffff 100%)',
+                    borderRadius: '16px',
+                    padding: '20px',
+                    margin: '8px 0 16px 0',
+                    boxShadow: '0 2px 12px rgba(0,0,0,0.06)'
+                  }}
+                >
+                    <div style={{ maxWidth: '900px', margin: '0 auto', textAlign: 'center' }}>
+                        <h1 style={{ margin: 0, fontSize: 'clamp(22px, 4vw, 36px)', lineHeight: 1.2 }}>
+                            What is Your Meal Plan Today?
+                        </h1>
                     </div>
+                </header>
 
-                    <h3 className='heading' onClick={() => setShowLunch(!showLunch)}>Lunch</h3>
-                    <div className="menuContainer" style={{ maxHeight: showLunch ? '9999px' : '0', overflow: 'hidden', transition: 'max-height 0.5s ease' }}>
-                        {showLunch && lunch.map(item => (
-                            <div className={`food-item ${selectedItems.some(selected => selected.name === item.name) ? 'selected' : ''}`}
-                                key={item.name}
-                                onClick={() => toggleItemSelection(item, 'lunch')}>
-                                <img src={item.imageUrl} alt={item.name} />
-                                <div className='names'><b>{item.name}</b></div>
-                            </div>
-                        ))}
-                    </div>
-
-                    <h3 className='heading' onClick={() => setShowDinner(!showDinner)}>Dinner</h3>
-                    <div className="menuContainer" style={{ maxHeight: showDinner ? '9999px' : '0', overflow: 'hidden', transition: 'max-height 0.5s ease' }}>
-                        {showDinner && dinner.map(item => (
-                            <div className={`food-item ${selectedItems.some(selected => selected.name === item.name) ? 'selected' : ''}`}
-                                key={item.name}
-                                onClick={() => toggleItemSelection(item, 'dinner')}>
-                                <img src={item.imageUrl} alt={item.name} />
-                                <div className='names'><b>{item.name}</b></div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-
-                <div className="details-container">
-                    <div className="details-box">
-                        <h3 style={{ fontSize: "2rem" }}>Nutritional Value</h3>
-                        <ul style={{ fontSize: "1.5rem", marginTop: "0.5rem" }}>
-                            <li>Calories: {totalNutrition.calories}</li>
-                            <li>Proteins: {totalNutrition.proteins}g</li>
-                            <li>Fats: {totalNutrition.fats}g</li>
-                            <li>Vitamins: {totalNutrition.vitamins}mg</li>
-                            <li>Sodium: {totalNutrition.sodium}mg</li>
-                        </ul>
-                    </div>
-
-                    <Link className="link" to="/nutrition-calculator">
-                        <button className="viewplan"><h3>Go to Nutrition Calculator</h3></button>
-                    </Link>
-
-                    <Link className="link" to="/dashboard" state={{ selectedItems, totalNutrition }}>
-                        <button className="viewplan"><h3>View Meal Plan</h3></button>
-                    </Link>
-
-                    {/* Inside Meal.jsx, replace the toggle block */}
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '40px' }}>
-                        <button
-                            className="toggle-weekly-btn"
-                            onClick={() => setShowWeeklyPlan(!showWeeklyPlan)}
-                        >
-                            {showWeeklyPlan ? 'Hide Weekly Meal Plan' : 'Show Weekly Meal Plan'}
-                        </button>
-
-                        {showWeeklyPlan && (
-                            <div id="weekly-meal-plan-container" className="weekly-container">
-                                <h2 className="weekly-plan-title">🌱 Weekly Meal Plan 🌱</h2>
-                                <WeeklyMealPlan />
-                                <div style={{ textAlign: 'center', marginTop: '20px' }}>
-                                    <button className="export-btn" onClick={() => exportMealPlanAsPDF('weekly-meal-plan-container')}>
-                                        Export Weekly Plan as PDF
-                                    </button>
-                                </div>
-                            </div>
-                        )}
-                    </div>
-
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '30px', width: '100%' }}>
+                {/* Personalized Weekly Plan at top */}
+                <div
+                  style={{
+                    width: '100%',
+                    background: '#d397e6ff',
+                    borderRadius: '16px',
+                    padding: '16px',
+                    boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
+                    marginBottom: '20px'
+                  }}
+                >
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
                         <button
                             className="toggle-weekly-btn"
                             onClick={() => setShowPersonalized(!showPersonalized)}
+                            style={{
+                                width: '100%',
+                                maxWidth: '520px',
+                                padding: '12px 16px',
+                                borderRadius: '12px',
+                                fontSize: '16px',
+                                cursor: 'pointer'
+                            }}
                         >
                             {showPersonalized ? 'Hide Personalized Weekly Plan' : 'Show Personalized Weekly Plan'}
                         </button>
 
                         {showPersonalized && (
-                            <div style={{ width: '100%' }}>
-                                <PersonalizedPlanForm onGenerate={(filters) => setPersonalFilters(filters)} />
-                                {personalFilters && (
-                                    <div className="weekly-container" style={{ width: '100%' }}>
-                                        <PersonalizedWeeklyPlan filters={personalFilters} />
-                                    </div>
-                                )}
+                            <div style={{ width: '100%', marginTop: '16px' }}>
+                                <div
+                                  className="weekly-container"
+                                  style={{
+                                    width: '100%',
+                                    background: '#fafafa',
+                                    borderRadius: '12px',
+                                    padding: '16px',
+                                    border: '1px solid #eee'
+                                  }}
+                                >
+                                    <h2 style={{ textAlign: 'center', marginTop: 0 }}>🎯 Personalized Weekly Plan</h2>
+                                    <PersonalizedPlanForm onGenerate={(filters) => setPersonalFilters(filters)} />
+                                    {personalFilters && (
+                                        <div style={{ width: '100%', marginTop: '12px' }}>
+                                            <PersonalizedWeeklyPlan filters={personalFilters} />
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         )}
                     </div>
+                </div>
 
+                <div className="meal-container" style={{ gap: '16px', alignItems: 'flex-start' }}>
+                    {/* LEFT: Menus */}
+                    <div style={{ width: "100%" }}>
+                        {/* Breakfast */}
+                        <SectionHeader
+                          title="Breakfast"
+                          show={showBreakfast}
+                          toggle={() => setShowBreakfast(!showBreakfast)}
+                          totalCount={breakfast.length}
+                          selectedCount={selectedItems.filter(s => s.mealType === 'breakfast').length}
+                        />
+                        <div
+                          className="menuContainer"
+                          style={{
+                            maxHeight: showBreakfast ? '9999px' : '0',
+                            overflow: 'hidden',
+                            transition: 'max-height 0.5s ease'
+                          }}
+                        >
+                          {showBreakfast && breakfast.map(item => (
+                            <div
+                              className={`food-item ${isSelected(item.name) ? 'selected' : ''}`}
+                              key={item.name}
+                              onClick={() => toggleItemSelection(item, 'breakfast')}
+                              style={{
+                                cursor: 'pointer',
+                                position: 'relative',
+                                borderRadius: 12,
+                                overflow: 'hidden',
+                                boxShadow: '0 1px 6px rgba(0,0,0,0.08)'
+                              }}
+                            >
+                              {isSelected(item.name) && <SelectedBadge />}
+                              <img src={item.imageUrl} alt={item.name} />
+                              <div className='names' style={{ paddingBottom: 6 }}>
+                                <b>{item.name}</b>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* Lunch */}
+                        <SectionHeader
+                          title="Lunch"
+                          show={showLunch}
+                          toggle={() => setShowLunch(!showLunch)}
+                          totalCount={lunch.length}
+                          selectedCount={selectedItems.filter(s => s.mealType === 'lunch').length}
+                        />
+                        <div
+                          className="menuContainer"
+                          style={{
+                            maxHeight: showLunch ? '9999px' : '0',
+                            overflow: 'hidden',
+                            transition: 'max-height 0.5s ease'
+                          }}
+                        >
+                          {showLunch && lunch.map(item => (
+                            <div
+                              className={`food-item ${isSelected(item.name) ? 'selected' : ''}`}
+                              key={item.name}
+                              onClick={() => toggleItemSelection(item, 'lunch')}
+                              style={{
+                                cursor: 'pointer',
+                                position: 'relative',
+                                borderRadius: 12,
+                                overflow: 'hidden',
+                                boxShadow: '0 1px 6px rgba(0,0,0,0.08)'
+                              }}
+                            >
+                              {isSelected(item.name) && <SelectedBadge />}
+                              <img src={item.imageUrl} alt={item.name} />
+                              <div className='names' style={{ paddingBottom: 6 }}>
+                                <b>{item.name}</b>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* Dinner */}
+                        <SectionHeader
+                          title="Dinner"
+                          show={showDinner}
+                          toggle={() => setShowDinner(!showDinner)}
+                          totalCount={dinner.length}
+                          selectedCount={selectedItems.filter(s => s.mealType === 'dinner').length}
+                        />
+                        <div
+                          className="menuContainer"
+                          style={{
+                            maxHeight: showDinner ? '9999px' : '0',
+                            overflow: 'hidden',
+                            transition: 'max-height 0.5s ease'
+                          }}
+                        >
+                          {showDinner && dinner.map(item => (
+                            <div
+                              className={`food-item ${isSelected(item.name) ? 'selected' : ''}`}
+                              key={item.name}
+                              onClick={() => toggleItemSelection(item, 'dinner')}
+                              style={{
+                                cursor: 'pointer',
+                                position: 'relative',
+                                borderRadius: 12,
+                                overflow: 'hidden',
+                                boxShadow: '0 1px 6px rgba(0,0,0,0.08)'
+                              }}
+                            >
+                              {isSelected(item.name) && <SelectedBadge />}
+                              <img src={item.imageUrl} alt={item.name} />
+                              <div className='names' style={{ paddingBottom: 6 }}>
+                                <b>{item.name}</b>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                    </div>
+
+                    {/* RIGHT: Details */}
+                    <div className="details-container" style={{ position: 'sticky', top: '16px' }}>
+                        <div className="details-box" style={{ borderRadius: 16 }}>
+                            <h3 style={{ fontSize: "2rem", marginTop: 0 }}>Nutritional Value</h3>
+                            <ul style={{ fontSize: "1.2rem", marginTop: "0.5rem", listStyle: 'none', paddingLeft: 0, marginBottom: 12 }}>
+                                <li>Total items selected: {selectedItems.length}</li>
+                            </ul>
+
+                            {/* Simple bars for quick visual scan */}
+                            <div style={{ marginTop: 8 }}>
+                                <NutritionBar label="Calories" value={totalNutrition.calories} max={2500} unit="" />
+                                <NutritionBar label="Proteins" value={totalNutrition.proteins} max={250} unit="g" />
+                                <NutritionBar label="Fats" value={totalNutrition.fats} max={250} unit="g" />
+                                <NutritionBar label="Vitamins" value={totalNutrition.vitamins} max={1000} unit="mg" />
+                                <NutritionBar label="Sodium" value={totalNutrition.sodium} max={2300} unit="mg" />
+                            </div>
+
+                            {/* Raw values (kept exactly as you had) */}
+                            <ul style={{ fontSize: "1.3rem", marginTop: "12px" }}>
+                                <li>Calories: {totalNutrition.calories}</li>
+                                <li>Proteins: {totalNutrition.proteins}g</li>
+                                <li>Fats: {totalNutrition.fats}g</li>
+                                <li>Vitamins: {totalNutrition.vitamins}mg</li>
+                                <li>Sodium: {totalNutrition.sodium}mg</li>
+                            </ul>
+                        </div>
+
+                        <Link className="link" to="/nutrition-calculator">
+                            <button className="viewplan"><h3>Go to Nutrition Calculator</h3></button>
+                        </Link>
+
+                        <Link className="link" to="/dashboard" state={{ selectedItems, totalNutrition }}>
+                            <button className="viewplan"><h3>View Meal Plan</h3></button>
+                        </Link>
+
+                        {/* Weekly plan (kept) */}
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '24px' }}>
+                            <button
+                                className="toggle-weekly-btn"
+                                onClick={() => setShowWeeklyPlan(!showWeeklyPlan)}
+                                style={{ width: '100%', maxWidth: '520px', padding: '12px 16px', borderRadius: '12px' }}
+                            >
+                                {showWeeklyPlan ? 'Hide Weekly Meal Plan' : 'Show Weekly Meal Plan'}
+                            </button>
+
+                            {showWeeklyPlan && (
+                                <div
+                                  id="weekly-meal-plan-container"
+                                  className="weekly-container"
+                                  style={{
+                                    width: '100%',
+                                    marginTop: '16px',
+                                    background: '#fff',
+                                    borderRadius: '12px',
+                                    padding: '16px',
+                                    boxShadow: '0 2px 12px rgba(0,0,0,0.06)'
+                                  }}
+                                >
+                                    <h2 className="weekly-plan-title" style={{ textAlign: 'center', marginTop: 0 }}>🌱 Weekly Meal Plan 🌱</h2>
+                                    <WeeklyMealPlan />
+                                    <div style={{ textAlign: 'center', marginTop: '20px' }}>
+                                        <button className="export-btn" onClick={() => exportMealPlanAsPDF('weekly-meal-plan-container')}>
+                                            Export Weekly Plan as PDF
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Original personalized block retained, hidden, since we moved it to the top */}
+                        <div style={{ display: 'none' }}>
+                            <button
+                                className="toggle-weekly-btn"
+                                onClick={() => setShowPersonalized(!showPersonalized)}
+                            >
+                                {showPersonalized ? 'Hide Personalized Weekly Plan' : 'Show Personalized Weekly Plan'}
+                            </button>
+
+                            {showPersonalized && (
+                                <div style={{ width: '100%' }}>
+                                    <PersonalizedPlanForm onGenerate={(filters) => setPersonalFilters(filters)} />
+                                    {personalFilters && (
+                                        <div className="weekly-container" style={{ width: '100%' }}>
+                                            <PersonalizedWeeklyPlan filters={personalFilters} />
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+
+                    </div>
                 </div>
             </div>
         </div>
