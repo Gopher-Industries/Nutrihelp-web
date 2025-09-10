@@ -1,40 +1,4 @@
-/* --- Force input text to black (overrides parent white text) --- */
-.meal-row input,
-.meal-row select,
-.meal-grid input,
-.meal-grid select,
-.dp-controls input[type="date"],
-.dp-controls input[type="text"],
-.dp-controls input[type="number"] {
-  color: #000 !important;          /* numbers & typed text */
-  background-color: #fff;          /* keep white background */
-  caret-color: #000;
-}
-
-/* Placeholder color */
-.meal-row input::placeholder,
-.meal-grid input::placeholder {
-  color: #6b7280;                   /* gray-500 */
-  opacity: 1;
-}
-
-/* Chrome/Safari autofill text color */
-.meal-row input:-webkit-autofill,
-.meal-grid input:-webkit-autofill,
-.dp-controls input:-webkit-autofill {
-  -webkit-text-fill-color: #000 !important;
-  transition: background-color 5000s ease-in-out 0s; /* suppress yellow flash */
-}
-
-/* (Optional) make number spinners consistent/hidden if desired */
-.meal-row input[type="number"]::-webkit-outer-spin-button,
-.meal-row input[type="number"]::-webkit-inner-spin-button,
-.meal-grid input[type="number"]::-webkit-outer-spin-button,
-.meal-grid input[type="number"]::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-.meal-row input[type="number"],
-.meal-grid input[type="number"] {
-  -moz-appearance: textfield;
+.daily-plan-container {
+  max-width: 600px;
+  margin: auto;
 }
