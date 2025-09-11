@@ -1,6 +1,6 @@
 // src/routes/Meal/PDFExport.js
 
-// import html2pdf from 'html2pdf.js';
+import html2pdf from 'html2pdf.js';
 
 export function exportMealPlanAsPDF(elementId) {
   const element = document.getElementById(elementId);
