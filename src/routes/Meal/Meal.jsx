@@ -382,9 +382,20 @@ const Meal = () => {
           </div>
         </div>
 
-        <div className="meal-container" style={{ gap: "16px", alignItems: "flex-start" }}>
-          {/* LEFT: Menus */}
-          <div style={{ width: "100%" }}>
+        {/* Main content with meals on left and nutritional panel on right */}
+        <div 
+          className="meal-container" 
+          style={{ 
+            display: "flex",
+            gap: "24px",
+            alignItems: "flex-start"
+          }}
+        >
+          {/* LEFT: Meal sections */}
+          <div style={{ 
+            flex: "1",
+            minWidth: "0"
+          }}>
             {/* Breakfast */}
             <SectionHeader
               title="Breakfast"
@@ -503,8 +514,17 @@ const Meal = () => {
             </div>
           </div>
 
-          {/* RIGHT: Details and actions */}
-          <div className="details-container" style={{ position: "sticky", top: "16px" }}>
+          {/* RIGHT: Nutritional Value Panel - Sticky positioned */}
+          <div 
+            className="details-container" 
+            style={{ 
+              position: "sticky",
+              top: "16px",
+              width: "350px",
+              flexShrink: 0,
+              alignSelf: "flex-start"
+            }}
+          >
             <div className="details-box" style={{ borderRadius: 16 }}>
               <h3 style={{ fontSize: "2rem", marginTop: 0 }}>Nutritional Value</h3>
               <ul
@@ -559,7 +579,11 @@ const Meal = () => {
               <button
                 className="toggle-weekly-btn"
                 onClick={() => setShowWeeklyPlan(!showWeeklyPlan)}
-                style={{ width: "100%", maxWidth: "520px", padding: "12px 16px", borderRadius: "12px" }}
+                style={{ 
+                  width: "100%", 
+                  padding: "12px 16px", 
+                  borderRadius: "12px" 
+                }}
               >
                 {showWeeklyPlan ? "Hide Weekly Meal Plan" : "Show Weekly Meal Plan"}
               </button>
@@ -592,9 +616,6 @@ const Meal = () => {
                 </div>
               )}
             </div>
-
-            {/* Hidden duplicate personalized block kept out since we render it on top */}
-            <div style={{ display: "none" }} />
           </div>
         </div>
       </div>
