@@ -49,6 +49,7 @@ import ObesityPredictor from "./routes/survey/ObesityPredictor";
 import UiTimer from "./routes/UiTimer/UiTimer"
 import Settings from "./routes/Settings/Settings"
 import HealthFAQ from "./routes/HealthFAQ/HealthFAQ";
+import AuthCallback from "./pages/AuthCallback";
 
 
 function App() {
@@ -187,6 +188,7 @@ function App() {
             </AuthenticateRoute>
           }
         />
+        <Route path="/auth/callback" element={<AuthCallback />} />
         <Route
           path="nutrition-calculator"
           element={

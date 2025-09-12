@@ -1,3 +1,6 @@
+import { Auth } from "@supabase/auth-ui-react";
+import { ThemeSupa } from "@supabase/auth-ui-shared";
+import { supabase } from '../../supabaseClient';
 import { UserIcon } from "lucide-react";
 import React, { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -78,6 +81,21 @@ const Login = () => {
     } catch (error) {
       console.error("Error signing in:", error.message);
       setError("Failed to sign in. An error occurred.");
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    try {
+      await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback?next=/home`,
+          queryParams: { access_type: "offline", prompt: "consent" },
+        },
+      });
+    } catch (err) {
+      console.error("Google sign-in error:", err);
+      toast.error("Google sign-in failed. Please try again.");
     }
   };
 
@@ -188,7 +206,7 @@ const Login = () => {
                   ? "bg-green-700 hover:bg-green-500"
                   : "bg-green-500 text-gray-800 hover:bg-green-700 hover:text-white"
               }`}
-              onClick={handleSignIn}
+              onClick={handleGoogleSignIn}
             >
               <img
                 src="https://static.vecteezy.com/system/resources/previews/022/613/027/non_2x/google-icon-logo-symbol-free-png.png"
