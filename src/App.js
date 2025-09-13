@@ -43,6 +43,7 @@ import RecipeDetail from "./routes/RecipeRating/RecipeDetail";
 import SymptomAssessment from "./routes/SymptomAssessment/SymptomAssessment";
 import Leaderboard from "./routes/LeaderBoard/leaderBoard";
 import ObesityPredictor from "./routes/survey/ObesityPredictor";
+import Predictionresult from "./routes/survey/predictionresult";
 function App() {
   const { currentUser } = useContext(UserContext);
 
@@ -65,6 +66,7 @@ function App() {
         <Route path="/faq" element={<FAQ />} />
         <Route path="/leaderboard" element={<Leaderboard />} />
         <Route path="/survey" element={<ObesityPredictor />} />
+        <Route path="/survey/result" element= {<Predictionresult/>}/>
 
         {/* Private Routes */}
         <Route
