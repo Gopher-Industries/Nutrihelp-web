@@ -43,8 +43,9 @@ import RecipeDetail from "./routes/RecipeRating/RecipeDetail";
 import SymptomAssessment from "./routes/SymptomAssessment/SymptomAssessment";
 import Leaderboard from "./routes/LeaderBoard/leaderBoard";
 import ObesityPredictor from "./routes/survey/ObesityPredictor";
-import UiTimer from "./routes/UiTimer/UiTimer"
+import UiTimer from "./routes/UiTimer/UiTimer";
 import HealthFAQ from "./routes/HealthFAQ/HealthFAQ";
+import RecipeExplorer from "./components/recipe-explorer";
 
 function App() {
   const { currentUser } = useContext(UserContext);
@@ -68,16 +69,8 @@ function App() {
         <Route path="/faq" element={<FAQ />} />
         <Route path="/leaderboard" element={<Leaderboard />} />
         <Route path="/survey" element={<ObesityPredictor />} />
-
         {/* Private Routes */}
-        <Route
-          path="createRecipe"
-          element={
-            <AuthenticateRoute>
-              <CreateRecipe />
-            </AuthenticateRoute>
-          }
-        />
+        <Route path="createRecipe" element={<CreateRecipe />} />
         <Route
           path="searchRecipes"
           element={
@@ -159,14 +152,7 @@ function App() {
             </AuthenticateRoute>
           }
         />
-        <Route
-          path="recipe"
-          element={
-            <AuthenticateRoute>
-              <Recipe />
-            </AuthenticateRoute>
-          }
-        />
+        <Route path="recipe" element={<Recipe />} />
         <Route path="/recipe/:id" element={<RecipeDetail />} />
         <Route
           path="Meal"
@@ -195,6 +181,7 @@ function App() {
           }
         />
         <Route path="MFAform" element={<MFAform />} />
+        <Route path="recipe-explorer" element={<RecipeExplorer />} />
         <Route
           path="dashboard"
           element={
