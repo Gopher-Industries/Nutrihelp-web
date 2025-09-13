@@ -46,10 +46,10 @@ import RecipeDetail from "./routes/RecipeRating/RecipeDetail";
 import SymptomAssessment from "./routes/SymptomAssessment/SymptomAssessment";
 import Leaderboard from "./routes/LeaderBoard/leaderBoard";
 import ObesityPredictor from "./routes/survey/ObesityPredictor";
-import UiTimer from "./routes/UiTimer/UiTimer"
-import Settings from "./routes/Settings/Settings"
+import UiTimer from "./routes/UiTimer/UiTimer";
+import CostEstimate from "./routes/RecipeCost/CostEstimate";
+import Settings from "./routes/Settings/Settings";
 import HealthFAQ from "./routes/HealthFAQ/HealthFAQ";
-
 
 function App() {
   const { currentUser } = useContext(UserContext);
@@ -79,6 +79,7 @@ function App() {
         <Route path="/faq" element={<FAQ />} />
         <Route path="/leaderboard" element={<Leaderboard />} />
         <Route path="/survey" element={<ObesityPredictor />} />
+        <Route path = "/Estimation" element = {<CostEstimate />} />
 
         {/* Private Routes */}
         <Route
@@ -94,7 +95,7 @@ function App() {
           element={
             <AuthenticateRoute>
               <SearchRecipes />
-            </AuthenticateRoute>
+              </AuthenticateRoute>
           }
         />
         {/* New route for category-specific results */}
@@ -151,7 +152,7 @@ function App() {
           element={
             <AuthenticateRoute>
               <RecipeRating />
-            </AuthenticateRoute>
+              </AuthenticateRoute>
           }
         />
         <Route
