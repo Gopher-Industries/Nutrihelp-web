@@ -6,17 +6,26 @@
   width: 100%;
   z-index: 1000; 
   padding: 1rem;
-  background-color: #8d5cf6;
+  background-color: var(--nav-background);
   transition: background-color 0.5s ease-in-out;
+  box-shadow: var(--card-shadow);
 }
 
+.dark-mode .main-header {
+  background-color: #2D3748;
+  box-shadow: var(--card-shadow);
+}
 
 .main-header.scrolled {
-  background: linear-gradient(44deg, #7B44FF 0%, #F26CBA 100%); 
+  background: var(--gradient-nav);
   backdrop-filter: blur(8px);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  box-shadow: var(--card-shadow-hover);
 }
 
+.dark-mode .main-header.scrolled {
+  background: #2D3748;
+  box-shadow: var(--card-shadow-hover);
+}
 
 /* Nav bar styling */
 .main-nav {
@@ -29,14 +38,12 @@
   height: 53px;
 }
 
-
-
 /* Ensure logo moves to extreme left */
 .logo-container {
   display: flex;
   align-items: center;
   width: 180px;
-  background-color: none !important;
+  background-color: transparent !important;
 }
 
 /* Logo container */
@@ -44,7 +51,6 @@
     height: 60px;
     width: 233px;
 }
-
 
 /* Dropdown menu */
 .dropdown {
@@ -54,11 +60,18 @@
 .dropdown-content {
   display: none;
   position: absolute;
-  background-color: white;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  background-color: var(--card-background);
+  box-shadow: var(--dropdown-shadow);
   z-index: 1;
   min-width: 160px;
   border-radius: 4px;
+  border: 1px solid var(--border-color);
+}
+
+.dark-mode .dropdown-content {
+  background-color: var(--card-background);
+  border-color: var(--border-color);
+  box-shadow: var(--dropdown-shadow);
 }
 
 .dropdown:hover .dropdown-content {
@@ -70,8 +83,22 @@
   padding: 10px;
   text-decoration: none;
   transition: background-color 0.2s ease;
+  color: var(--text-primary);
 }
 
+.dark-mode .dropdown-link {
+  color: var(--text-primary);
+}
+
+.dropdown-link:hover {
+  background-color: var(--background-secondary);
+  color: var(--primary-color);
+}
+
+.dark-mode .dropdown-link:hover {
+  background-color: var(--background-secondary);
+  color: var(--primary-color);
+}
 
 @media screen and (max-width: 768px) {
   .nav-links {
@@ -89,11 +116,25 @@
 .hamburger {
   font-size: 2rem;
   cursor: pointer;
-  background-color: none;
+  background-color: transparent;
+  color: var(--nav-text);
+  transition: color 0.3s ease;
 }
 
-.darkmode{
-  background-color: none !important;
+.dark-mode .hamburger {
+  color: var(--nav-text);
+}
+
+.hamburger:hover {
+  color: var(--primary-color);
+}
+
+.dark-mode .hamburger:hover {
+  color: var(--primary-color);
+}
+
+.darkmode {
+  background-color: transparent !important;
 }
 
 /* Sidebar container */
@@ -103,8 +144,8 @@
   left: -300px;
   width: 280px;
   height: fit-content;
-  background: linear-gradient(44deg, #7B44FF 0%, #F26CBA 100%);
-  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
+  background: var(--gradient-nav);
+  box-shadow: var(--card-shadow-hover);
   padding: 1rem 1rem;
   transition: left 0.3s ease-in-out;
   z-index: 2000;
@@ -113,14 +154,14 @@
   border-radius: 15px;
 }
 
-.hamburger:hover{
-  color: black;
+.dark-mode .side-menu {
+  background: #2D3748;
+  box-shadow: var(--card-shadow-hover);
 }
 
 .side-menu.open {
   left: 10px;
 }
-
 
 /* Sidebar links */
 .side-menu .nav-links {
@@ -133,12 +174,18 @@
 .side-menu .nav-links a,
 .side-menu .nav-links button span {
   text-decoration: none;
-  color: white !important;
+  color: var(--nav-text) !important;
   font-weight: bold;
   background: none;
   border: none;
   cursor: pointer;
   font-size: 1rem;
+  transition: color 0.3s ease;
+}
+
+.side-menu .nav-links a:hover,
+.side-menu .nav-links button:hover span {
+  color: var(--primary-color) !important;
 }
 
 .side-menu .dropdown {
@@ -149,12 +196,17 @@
   display: flex;
 }
 
-
 /* Optional: make dropdown links look distinct */
 .side-menu .dropdown-content a span {
   font-weight: normal;
   padding: 0.3rem 0;
-  border-left: 2px solid #ccc;
+  border-left: 2px solid var(--border-color);
+  color: var(--text-primary);
+}
+
+.dark-mode .side-menu .dropdown-content a span {
+  border-left-color: var(--border-color);
+  color: var(--text-primary);
 }
 
 /* Side menu dropdown toggle style */
@@ -162,7 +214,12 @@
   cursor: pointer;
   font-weight: bold;
   padding: 0.5rem 0;
-  color: white !important;
+  color: var(--nav-text) !important;
+  transition: color 0.3s ease;
+}
+
+.side-menu .dropdown-toggle:hover {
+  color: var(--primary-color) !important;
 }
 
 /* Dropdown content hidden by default in side menu */
@@ -176,17 +233,33 @@
 .side-menu .dropdown-content a {
   font-weight: normal;
   padding: 0.3rem 0;
-  border-left: 2px solid #ccc;
+  border-left: 2px solid var(--border-color);
+  color: var(--text-primary);
+  transition: color 0.3s ease;
+}
+
+.dark-mode .side-menu .dropdown-content a {
+  border-left-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+.side-menu .dropdown-content a:hover {
+  color: var(--primary-color);
 }
 
 .side-menu .dropdown-content {
   position: absolute;
   left: 150%; /* show to the right of the parent */
   top: 0;
-  background: linear-gradient(44deg, #7B44FF 0%, #F26CBA 100%)!important;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-  /* border: 2px solid; */
+  background: var(--gradient-nav) !important;
+  box-shadow: var(--dropdown-shadow);
   border-radius: 15px;
+  border: 1px solid var(--border-color);
+}
+
+.dark-mode .side-menu .dropdown-content {
+  background: #2D3748 !important;
+  border-color: var(--border-color);
 }
 
 .close-button {
@@ -194,10 +267,67 @@
   background: none;
   border: none;
   cursor: pointer;
-  color: #333;
+  color: var(--text-primary);
   position: absolute;
   top: 10px;
   right: 20px;
   line-height: 1;
   padding: 0;
+  transition: color 0.3s ease;
+}
+
+.dark-mode .close-button {
+  color: var(--text-primary);
+}
+
+.close-button:hover {
+  color: var(--primary-color);
+}
+
+.dark-mode .close-button:hover {
+  color: var(--primary-color);
+}
+
+/* Accessibility Features */
+.show-focus-indicators *:focus {
+  outline: 3px solid var(--primary-color) !important;
+  outline-offset: 2px !important;
+}
+
+.screen-reader-support {
+  /* Add ARIA labels and screen reader support */
+}
+
+/* High Contrast Mode for Navigation */
+.high-contrast .side-menu {
+  background: #000 !important;
+  color: #fff !important;
+}
+
+.high-contrast .side-menu a,
+.high-contrast .side-menu button,
+.high-contrast .side-menu .dropdown-toggle {
+  color: #fff !important;
+}
+
+.high-contrast .side-menu .dropdown-content {
+  background: #000 !important;
+  border: 1px solid #fff !important;
+}
+
+.high-contrast .side-menu .dropdown-content a {
+  color: #fff !important;
+}
+
+.high-contrast .side-menu .dropdown-content a:hover {
+  background: #333 !important;
+}
+
+.high-contrast .main-header {
+  background: #000 !important;
+  color: #fff !important;
+}
+
+.high-contrast .hamburger {
+  color: #fff !important;
 }
