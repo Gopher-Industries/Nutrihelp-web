@@ -67,58 +67,60 @@ function ScanProducts() {
   };
 
   return (
-    <div className="scan-products-container">
-      <SubHeading text="Scan Products" />
-      {/* Input Title */}
-      <div className="scan-products-segment">
-        <div className="scan-products-form">
-          <label className="scan-products-label">Title</label>
-          <input
-            className="scan-products-input"
-            placeholder="Enter product title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
-        </div>
-
-        {/* Input Description */}
-        <div className="scan-products-form">
-          <label className="scan-products-label">Description</label>
-          <input
-            className="scan-products-input"
-            placeholder="Enter product description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-          />
-        </div>
-
-        {/* Select image */}
-        <div className="scan-products-form">
-          <label className="scan-products-label">Image</label>
-          <div className="upload-section">
-            <label htmlFor="file-upload">
-              <p>Drop your image here, or browse</p>
-            </label>
-            <input id="file-upload" type="file" onChange={handleFileUploadChange} />
-            {uploadedImage && (
-              <p className="file-name">
-                {/* Displays if there is an image selected (displays the image name) */}
-                Image added: {uploadedImage.name}
-              </p>
-            )}
+    <div className="scan-products-page">
+      <div className="scan-products-container">
+        <SubHeading text="Scan Products" />
+        {/* Input Title */}
+        <div className="scan-products-segment">
+          <div className="scan-products-form">
+            <label className="scan-products-label">Title</label>
+            <input
+              className="scan-products-input"
+              placeholder="Enter product title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            />
           </div>
+
+          {/* Input Description */}
+          <div className="scan-products-form">
+            <label className="scan-products-label">Description</label>
+            <input
+              className="scan-products-input"
+              placeholder="Enter product description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            />
+          </div>
+
+          {/* Select image */}
+          <div className="scan-products-form">
+            <label className="scan-products-label">Image</label>
+            <div className="upload-section">
+              <label htmlFor="file-upload">
+                <p>Drop your image here, or browse</p>
+              </label>
+              <input id="file-upload" type="file" onChange={handleFileUploadChange} />
+              {uploadedImage && (
+                <p className="file-name">
+                  {/* Displays if there is an image selected (displays the image name) */}
+                  Image added: {uploadedImage.name}
+                </p>
+              )}
+            </div>
+          </div>
+
+          {/* Upload button */}
+          <button className="upload-button" onClick={handleImageUpload}>
+            Upload Image
+          </button>
         </div>
 
-        {/* Upload button */}
-        <button className="upload-button" onClick={handleImageUpload}>
-          Upload Image
+        {/* View History Button */}
+        <button className="view-history-button" onClick={handleViewHistory}>
+          View Upload History
         </button>
       </div>
-
-      {/* View History Button */}
-      <button className="view-history-button" onClick={handleViewHistory}>
-        View Upload History
-      </button>
     </div>
   );
 }
