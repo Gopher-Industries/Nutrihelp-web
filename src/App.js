@@ -1,6 +1,8 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import "semantic-ui-css/semantic.min.css";
 import "./App.css";
+import { initializeFontSize } from "./utils/fontSizeManager";
+import "./styles/global-dark-mode.css";
 import {
   BrowserRouter as Router,
   Routes,
@@ -35,6 +37,7 @@ import MainNavbar from "./components/MainNavbar";
 import FAQ from "./routes/FAQ/faq";
 import NutritionCalculator from "./routes/UI-Only-Pages/NutritionCalculator/NutritionCalculator";
 import HealthNews from "./routes/HealthNews/HealthNews";
+import NewsDetail from "./routes/HealthNews/NewsDetail";
 import FoodPreferences from "./routes/FoodPreferences/FoodPreferences";
 import HealthTools from "./routes/HealthTools/HealthTools";
 import RecipeRating from "./routes/RecipeRating/RecipeRating";
@@ -43,12 +46,19 @@ import RecipeDetail from "./routes/RecipeRating/RecipeDetail";
 import SymptomAssessment from "./routes/SymptomAssessment/SymptomAssessment";
 import Leaderboard from "./routes/LeaderBoard/leaderBoard";
 import ObesityPredictor from "./routes/survey/ObesityPredictor";
-import UiTimer from "./routes/UiTimer/UiTimer";
+import UiTimer from "./routes/UiTimer/UiTimer"
+import Settings from "./routes/Settings/Settings"
 import HealthFAQ from "./routes/HealthFAQ/HealthFAQ";
-import RecipeExplorer from "./components/recipe-explorer";
+
 
 function App() {
   const { currentUser } = useContext(UserContext);
+  
+  
+  // Initialize font size settings for elderly users
+  useEffect(() => {
+    initializeFontSize();
+  }, []);
 
   return (
     <Router>
@@ -69,8 +79,16 @@ function App() {
         <Route path="/faq" element={<FAQ />} />
         <Route path="/leaderboard" element={<Leaderboard />} />
         <Route path="/survey" element={<ObesityPredictor />} />
+
         {/* Private Routes */}
-        <Route path="createRecipe" element={<CreateRecipe />} />
+        <Route
+          path="createRecipe"
+          element={
+            <AuthenticateRoute>
+              <CreateRecipe />
+            </AuthenticateRoute>
+          }
+        />
         <Route
           path="searchRecipes"
           element={
@@ -152,7 +170,14 @@ function App() {
             </AuthenticateRoute>
           }
         />
-        <Route path="recipe" element={<Recipe />} />
+        <Route
+          path="recipe"
+          element={
+            <AuthenticateRoute>
+              <Recipe />
+            </AuthenticateRoute>
+          }
+        />
         <Route path="/recipe/:id" element={<RecipeDetail />} />
         <Route
           path="Meal"
@@ -180,8 +205,15 @@ function App() {
             </AuthenticateRoute>
           }
         />
+        <Route
+          path="healthnews/:id"
+          element={
+            <AuthenticateRoute>
+              <NewsDetail />
+            </AuthenticateRoute>
+          }
+        />
         <Route path="MFAform" element={<MFAform />} />
-        <Route path="recipe-explorer" element={<RecipeExplorer />} />
         <Route
           path="dashboard"
           element={
@@ -205,6 +237,14 @@ function App() {
               <ShoppingList />
             </AuthenticateRoute>
           }
+        />
+        <Route
+         path="settings"
+         element={
+          <AuthenticateRoute>
+            <Settings />
+          </AuthenticateRoute>
+         }
         />
         <Route
           path="HealthFAQ"
