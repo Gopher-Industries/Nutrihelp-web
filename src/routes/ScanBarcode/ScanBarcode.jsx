@@ -1,0 +1,165 @@
+import React, { useState, useContext } from 'react';
+import { toast } from "react-toastify";
+import { UserContext } from "../../context/user.context";
+
+function BarcodeInputForm({ value, handleOnchange, handleSubmit } ) {
+  return (
+    <>
+      <div>
+        <div>
+          <label>Barcode</label>
+          <input
+            placeholder="Enter barcode number. Ex: 3017624010701"
+            value={value}
+            onChange={(e) => handleOnchange(e.target.value)}
+          />
+        </div>
+
+        <button className="upload-button w-100" onClick={handleSubmit}>
+          Get Barcode Information
+        </button>
+      </div>
+    </>
+  )
+}
+
+function DetectionResult({ hasAllergen, matchingAllergens }) {
+  if (!hasAllergen) {
+    return <p style={{ color: '#50C878' }}>Safe to use - no allergens detected</p>;
+  } else {
+    return (
+      <>
+        <div className="text-center" style={{ color: '#FF0000' }}>
+          <p>
+            Allergen detected! This product contains ingredients from your allergy list
+          </p>
+          <p style={{ fontWeight: "bold" }}>{matchingAllergens.join(", ")}</p>
+        </div>
+      </>
+    );
+  }
+}
+
+function BarcodeInformation({ barcodeResult, productName, barcodeIngredients }) {
+  return (
+    <>
+      <table cellPadding={10} style={{ width: '80%', fontSize: 16, border: '2px solid #e0e0e0'}}>
+      <tbody>
+        <tr>
+          <th>Code</th>
+          <td>{barcodeResult}</td>
+        </tr>
+        <tr>
+          <th>Product</th>
+          <td>{productName}</td>
+        </tr>
+        
+        <tr>
+          <th rowSpan={barcodeIngredients.length + 1}>Ingredients</th>
+        </tr>
+        {barcodeIngredients.map((ingredient, index) => (
+          <tr key={index}>
+            <td style={{ padding: 6, borderBottom: '1px solid #f0f0f0' }}>{index + 1}. {ingredient}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+    </>
+  );
+}
+
+// Example barcode: 3017624010701
+function ScanBarcode() {
+  const { currentUser } = useContext(UserContext);
+  const user_id = currentUser?.user_id;
+  
+  // Access user_id from the context
+  const [barcodeInput, setBarcodeInput] = useState('');
+  const [showBarcodeInfo, setShowBarcodeInfo] = useState('none');
+  
+  // Scan result: barcode information
+  const [barcodeResult, setBarcodeResult] = useState('');
+  const [productName, setProductName] = useState('');
+  const [barcodeIngredients, setBarcodeIngredients] = useState([]);
+  // Scan result: allergen detection
+  const [hasAllergen, setHasAllergen] = useState(false);
+  const [matchingAllergens, setMatchingAllergens] = useState([]);
+
+  const handleFetchResult = (message, toast_function) => {
+    toast_function(message, {
+      position: "top-center",
+      autoClose: true,
+      closeOnClick: true,
+      style: {
+        fontSize: "1.1rem",
+        fontWeight: "bold",
+        padding: "1.2rem",
+        borderRadius: "10px",
+        boxShadow: "0px 4px 12px rgba(0,0,0,0.1)",
+        backgroundColor: "#d1f0ff",
+        color: "#0d47a1",
+      }
+    });
+  }
+
+  const handleBarcodeScanning = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await fetch(`http://localhost:80/api/barcode?code=${barcodeInput}`, {
+        method: "POST",
+        body: JSON.stringify({ user_id }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setBarcodeResult(barcodeInput);
+        setProductName(data.product_name);
+        setBarcodeIngredients(data.barcode_ingredients);
+
+        setHasAllergen(data.detection_result.hasUserAllergen);
+        setMatchingAllergens(data.detection_result.matchingAllergens);
+
+        setShowBarcodeInfo('block');
+        handleFetchResult("Get barcode data successful!", toast.success);
+      } else {
+        const data = await response.json();
+        setShowBarcodeInfo('none');
+        handleFetchResult(data.error || "Failed to fetch data. Please check your input and try again later.", toast.warning);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error.message);
+      setShowBarcodeInfo('none');
+      handleFetchResult("Failed to fetch data. An error occurred: " + error.message, toast.error);
+    }
+  };
+
+  return (
+    <div>
+      <div className="scan-products-container">
+        <h1 className="mt-0 text-center">Barcode Information</h1>
+        <BarcodeInputForm value={barcodeInput} handleOnchange={setBarcodeInput} handleSubmit={handleBarcodeScanning} />
+      </div>
+
+      {/* Barcode Information */}
+      <div className="scan-products-container" style={{ display: showBarcodeInfo }}>
+        {/* Allergen information */}
+        <h1 className="mt-0 text-center">Allergen Information</h1>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <DetectionResult hasAllergen={hasAllergen} matchingAllergens={matchingAllergens} />
+        </div>
+        
+        {/* Barcode information */}
+        <h1 className="mt-0 text-center">Barcode Information</h1>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <BarcodeInformation barcodeResult={barcodeResult} productName={productName} barcodeIngredients={barcodeIngredients} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default ScanBarcode;
