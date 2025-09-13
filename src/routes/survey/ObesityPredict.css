@@ -1,18 +1,17 @@
 /* ====== Main Card Layout ====== */
 .obesity-card {
-  width: 2000px;
-  min-height: 799px;
-    margin: 30px auto;
+    width: 2100px;
+    min-height: 799px;
+    margin: -18px auto;
     padding: 30px;
-    background: #dec7ea !important;
-    border-radius: 16px;
-    /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); */
+    /* background: rgb(17 24 39 / var(--tw-text-opacity)); */
+    background: linear-gradient(44deg, #7B44FF 0%, #F26CBA 100%) !important ;
+    /* background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%); */
     font-family: "Segoe UI", sans-serif;
     align-items: center;
     justify-content: center;
     display: flex;
     flex-direction: column;
-    gap: 52px;
 }
 
 
@@ -22,6 +21,9 @@
     color: #333;
     font-size: xx-large;
     font-family: revert-layer;
+    /* background: rgba(255,255,255,0.2);
+    padding: 0.5rem 1rem;
+    border-radius: 1rem; */
 }
 
 /* ====== Progress Bar ====== */
@@ -87,47 +89,6 @@
   box-shadow: 0 0 4px rgba(76, 175, 80, 0.3);
 }
 
-/* ====== Scroll Hint ====== */
-.scroll-hint {
-  text-align: center;
-  font-size: 0.9rem;
-  color: #28a745;
-  margin: 10px 0;
-}
-
-/* ====== Buttons ====== */
-.scroll-top-btn-inline,
-.submit-btn {
-  display: inline-block;
-  padding: 10px 16px;
-  font-size: 1rem;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  margin-top: 10px;
-}
-
-.scroll-top-btn-inline {
-  background: #f0f0f0;
-  color: #333;
-  margin-right: 8px;
-}
-
-.scroll-top-btn-inline:hover {
-  background: #ddd;
-}
-
-.submit-btn {
-  background: #4CAF50;
-  color: white;
-}
-
-.submit-btn:hover {
-  background: #45a049;
-}
-
-/* ====== Scrollbar Styling ====== */
 .obesity-form::-webkit-scrollbar {
   width: 8px;
 }
@@ -154,22 +115,28 @@
 }
 
 .questions-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr); /* 2 equal columns */
-  gap: 20px 40px; /* vertical and horizontal gaps */
-  width: 100%;
-  margin-top: 20px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px 40px;
+    width: 100%;
+    margin-top: 20px;
 }
 
 .question-card {
-    background: white !important;
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    background: linear-gradient(135deg, #ffffff 0%, #f9f9f9 100%);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.1);
     display: flex;
     flex-direction: column;
     justify-content: center;
     width: 433px;
+}
+
+.question-card:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+  transition: all 0.2s ease-in-out;
 }
 
 .question-card label{
@@ -178,4 +145,34 @@
 
 .question-card input{
     color: black;
+}
+
+.question-group{
+  padding: 30px !important;
+}
+
+.group-heading {
+  display: inline-block;
+  background: rgba(255,255,255,0.2);
+  padding: 0.5rem 1rem;
+  border-radius: 1rem;
+  font-weight: bold;
+}
+
+
+
+.predict{
+    display: flex !important;
+    justify-content: end !important;
+}
+
+.predict-btn{
+    background: #4caf50;
+    border-radius: 8px;
+    font-size: medium;
+}
+
+.predict-btn:hover{
+    background: #4caf50;
+    box-shadow: #333;
 }

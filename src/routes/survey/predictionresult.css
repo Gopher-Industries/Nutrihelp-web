@@ -1,0 +1,148 @@
+.prediction-result-card{
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 54px;
+    border: 2px solid;
+    background-color: white !important;
+    height: fit-content;
+    padding: 50px;
+    margin-top: 50px;
+    border-radius:  15px;
+    transition: width 0.4s ease-in-out, height 0.4s ease-in-out;
+}
+.prediction-result-card h2{
+    font-size: x-large;
+}
+
+.result-info{
+    display: flex;
+    flex-direction: column;
+    font-size: medium;
+    gap: 10px;
+}
+
+.full{
+    min-height: 831px;
+    max-height: 1000px;
+    background: linear-gradient(44deg, #7B44FF 0%, #F26CBA 100%) !important;
+    display: flex;
+    justify-content: center;
+    overflow-y: auto;   /* ✅ vertical scroll when needed */
+    overflow-x: hidden; /* ✅ prevents sideways scroll */
+
+}
+
+.result-buttons{
+    display: flex;
+    gap: 30px;
+}
+
+.save-btton {
+    background-color: #7B44FF;
+    border-radius: 8px;
+    padding: 5px !important;
+    border: 2px solid;
+
+
+}
+
+.copy-btn{
+    background-color: #7B44FF;
+    border-radius: 8px;
+    padding: 5px !important;
+    border: 2px solid;
+
+
+}
+
+.back-btn{
+    
+    background-color: #7B44FF;
+    border-radius: 8px;
+    padding: 5px !important;
+    border: 2px solid;
+
+}
+
+.expand-section{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+.expand-btn{
+    color: black;
+    border: 2px solid;
+    width: 40px;
+    height: 40px;
+    border-radius: 100px;
+}
+
+.choice-buttons{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: black;
+    gap: 10px;
+    
+}
+
+.choice-buttons button{
+    color: black !important;
+    border: 1px solid;
+    border-radius: 15px;
+    background-color: #7B44FF;
+}
+
+.fitness-question p{
+    font-size: x-large;
+}
+
+.fitness-question{
+    font-size: large;
+}
+
+.no-journey{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.no-journey button{
+    color: black;
+    border: 1px solid;
+    border-radius: 15px;
+    background-color: #7B44FF;
+    width: fit-content;
+
+}
+
+.followup-questions{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    color: black;
+}
+
+.followup-questions p{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.followup-questions label{
+    color: black;
+}
+
+.followup-questions button{
+    width: fit-content;
+    display: flex;
+    border: 2px solid;
+    justify-content: end;
+}
