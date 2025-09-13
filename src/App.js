@@ -254,14 +254,7 @@ function App() {
             </AuthenticateRoute>
           }
         />
-        <Route
-          path="ScanBarcode"
-          element={
-            <AuthenticateRoute>
-              <ScanBarcode />
-            </AuthenticateRoute>
-          }
-        />
+        <Route path="ScanBarcode" element={<ScanBarcode />} />
       </Routes>
     </Router>
   );

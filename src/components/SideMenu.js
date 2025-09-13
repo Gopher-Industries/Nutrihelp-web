@@ -135,6 +135,7 @@ const SideMenu = ({ isOpen, toggleMenu }) => {
             </div>
 
             <Link to="/ScanProducts" onClick={toggleMenu}>Scan Products</Link>
+            <Link to="/ScanBarcode" onClick={toggleMenu}>Scan Barcode</Link>
             <Link to="/preferences" onClick={toggleMenu}>Allergies & Intolerances</Link>
             <Link to="/symptomassessment" onClick={toggleMenu}>Symptom Assessment</Link>
             <Link to="/healthtools" onClick={toggleMenu}>Health Tools</Link>

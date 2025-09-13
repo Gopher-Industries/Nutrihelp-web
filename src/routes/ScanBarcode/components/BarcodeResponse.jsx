@@ -1,25 +1,39 @@
-export const UserAllergenInformation = ({ userAllergen }) => {
+export const UserAllergenInformation = ({ isLoggedIn, userAllergen }) => {
+  if (!isLoggedIn) {
+    return;
+  }
+
   if (userAllergen.length > 0) {
     return (
       <>
-        <div className="text-center pt-2 px-3 mb-3" style={{ width: '80%', border: '2px solid #e0e0e0' }}>
-          <p style={{ fontWeight: "bold" }}>Allergen ingredients detected in your profile</p>
-          <p>{ userAllergen.join(", ")} </p>
+        <h1 className="mt-0 text-center">Allergen Information</h1>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}> 
+          <div className="text-center pt-2 px-3 mb-3" style={{ width: '80%', border: '2px solid #e0e0e0' }}>
+            <p style={{ fontWeight: "bold" }}>Allergen ingredients detected in your profile</p>
+            <p>{ userAllergen.join(", ")} </p>
+          </div>
         </div>
       </>
     )
   } else {
     return (
       <>
-        <div className="text-center pt-2 px-3 mb-3" style={{ width: '80%', border: '2px solid #e0e0e0' }}>
-          <p>You have not specified any allergen ingredients.</p>
+        <h1 className="mt-0 text-center">Allergen Information</h1>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}> 
+          <div className="text-center pt-2 px-3 mb-3" style={{ width: '80%', border: '2px solid #e0e0e0' }}>
+            <p>You have not specified any allergen ingredients.</p>
+          </div>
         </div>
       </>
     )
   } 
 }
 
-export const DetectionResult = ({ hasAllergen, matchingAllergens }) => {
+export const DetectionResult = ({ isLoggedIn, hasAllergen, matchingAllergens }) => {
+  if (!isLoggedIn) {
+    return;
+  }
+
   if (!hasAllergen) {
     return <p style={{ color: '#50C878' }}>Safe to use - no allergens detected</p>;
   } else {

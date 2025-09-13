@@ -88,15 +88,12 @@ function ScanBarcode() {
       {/* Barcode Information */}
       <div className="scan-products-container" style={{ display: showBarcodeInfo }}>
         {/* Allergen information */}
-        <h1 className="mt-0 text-center">Allergen Information</h1>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <UserAllergenInformation userAllergen={userAllergen} />
-        </div>
+        <UserAllergenInformation isLoggedIn={user_id != undefined} userAllergen={userAllergen} />
         
         {/* Barcode information */}
         <h1 className="mt-0 text-center">Barcode Information</h1>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <DetectionResult hasAllergen={hasAllergen} matchingAllergens={matchingAllergens} />
+          <DetectionResult isLoggedIn={user_id != undefined} hasAllergen={hasAllergen} matchingAllergens={matchingAllergens} />
         </div>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <BarcodeInformation barcodeResult={barcodeResult} productName={productName} barcodeIngredients={barcodeIngredients} />
