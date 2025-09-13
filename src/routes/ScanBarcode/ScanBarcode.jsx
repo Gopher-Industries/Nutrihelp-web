@@ -23,6 +23,27 @@ function BarcodeInputForm({ value, handleOnchange, handleSubmit } ) {
   )
 }
 
+function UserAllergenInformation({ userAllergen }) {
+  if (userAllergen.length > 0) {
+    return (
+      <>
+        <div className="text-center pt-2 px-3 mb-3" style={{ width: '80%', border: '2px solid #e0e0e0' }}>
+          <p style={{ fontWeight: "bold" }}>Allergen ingredients detected in your profile</p>
+          <p>{ userAllergen.join(", ")} </p>
+        </div>
+      </>
+    )
+  } else {
+    return (
+      <>
+        <div className="text-center pt-2 px-3 mb-3" style={{ width: '80%', border: '2px solid #e0e0e0' }}>
+          <p>You have not specified any allergen ingredients.</p>
+        </div>
+      </>
+    )
+  } 
+}
+
 function DetectionResult({ hasAllergen, matchingAllergens }) {
   if (!hasAllergen) {
     return <p style={{ color: '#50C878' }}>Safe to use - no allergens detected</p>;
@@ -44,26 +65,26 @@ function BarcodeInformation({ barcodeResult, productName, barcodeIngredients }) 
   return (
     <>
       <table cellPadding={10} style={{ width: '80%', fontSize: 16, border: '2px solid #e0e0e0'}}>
-      <tbody>
-        <tr>
-          <th>Code</th>
-          <td>{barcodeResult}</td>
-        </tr>
-        <tr>
-          <th>Product</th>
-          <td>{productName}</td>
-        </tr>
-        
-        <tr>
-          <th rowSpan={barcodeIngredients.length + 1}>Ingredients</th>
-        </tr>
-        {barcodeIngredients.map((ingredient, index) => (
-          <tr key={index}>
-            <td style={{ padding: 6, borderBottom: '1px solid #f0f0f0' }}>{index + 1}. {ingredient}</td>
+        <tbody>
+          <tr>
+            <th>Code</th>
+            <td>{barcodeResult}</td>
           </tr>
-        ))}
-      </tbody>
-    </table>
+          <tr>
+            <th>Product</th>
+            <td>{productName}</td>
+          </tr>
+          
+          <tr>
+            <th rowSpan={barcodeIngredients.length + 1}>Ingredients</th>
+          </tr>
+          {barcodeIngredients.map((ingredient, index) => (
+            <tr key={index}>
+              <td style={{ padding: 6, borderBottom: '1px solid #f0f0f0' }}>{index + 1}. {ingredient}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </>
   );
 }
@@ -84,6 +105,8 @@ function ScanBarcode() {
   // Scan result: allergen detection
   const [hasAllergen, setHasAllergen] = useState(false);
   const [matchingAllergens, setMatchingAllergens] = useState([]);
+  // Scan result: user's allergen information
+  const [userAllergen, setUserAllergen] = useState([]);
 
   const handleFetchResult = (message, toast_function) => {
     toast_function(message, {
@@ -123,6 +146,8 @@ function ScanBarcode() {
         setHasAllergen(data.detection_result.hasUserAllergen);
         setMatchingAllergens(data.detection_result.matchingAllergens);
 
+        setUserAllergen(data.user_allergen_ingredients);
+
         setShowBarcodeInfo('block');
         handleFetchResult("Get barcode data successful!", toast.success);
       } else {
@@ -140,7 +165,7 @@ function ScanBarcode() {
   return (
     <div>
       <div className="scan-products-container">
-        <h1 className="mt-0 text-center">Barcode Information</h1>
+        <h1 className="mt-0 text-center">Scan Barcode For Allergen Detection</h1>
         <BarcodeInputForm value={barcodeInput} handleOnchange={setBarcodeInput} handleSubmit={handleBarcodeScanning} />
       </div>
 
@@ -149,11 +174,14 @@ function ScanBarcode() {
         {/* Allergen information */}
         <h1 className="mt-0 text-center">Allergen Information</h1>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <DetectionResult hasAllergen={hasAllergen} matchingAllergens={matchingAllergens} />
+          <UserAllergenInformation userAllergen={userAllergen} />
         </div>
         
         {/* Barcode information */}
         <h1 className="mt-0 text-center">Barcode Information</h1>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <DetectionResult hasAllergen={hasAllergen} matchingAllergens={matchingAllergens} />
+        </div>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <BarcodeInformation barcodeResult={barcodeResult} productName={productName} barcodeIngredients={barcodeIngredients} />
         </div>
