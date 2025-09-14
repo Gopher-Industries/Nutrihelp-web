@@ -19,6 +19,27 @@ import "./SignUp.css";
 import FramerClient from "../../components/framer-client";
 import { UserIcon } from "lucide-react";
 
+const PASSWORD_REGEX =
+  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
+
+function checkStrength(password) {
+  if (!password) return { ok: false, score: 0, msg: "Password is required" };
+  const tests = [
+    /[a-z]/.test(password),
+    /[A-Z]/.test(password),
+    /\d/.test(password),
+    /[^A-Za-z0-9]/.test(password),
+    password.length >= 8,
+  ];
+  const score = tests.filter(Boolean).length;
+  return {
+    ok: PASSWORD_REGEX.test(password),
+    score,
+    msg: PASSWORD_REGEX.test(password)
+      ? "Password looks strong"
+      : "Must include uppercase, lowercase, number, special char, and be 8+ chars",
+  };
+}
 const API_BASE = "http://localhost";
 
 const SignUp = (props) => {
@@ -32,6 +53,11 @@ const SignUp = (props) => {
   });
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+  const strength = checkStrength(contact.password);
+  const confirmOk =
+  contact.confirmPassword.length === 0 ||
+  contact.confirmPassword === contact.password;
+
 
   const [phoneNumber, setPhoneNumber] = useState("");
   const { darkMode } = useDarkMode();
@@ -248,6 +274,16 @@ const SignUp = (props) => {
                     darkMode={darkMode}
                     required
                   />
+                  {/* Password strength indicator */}
+                  <div className="w-full h-1 bg-gray-200 rounded mt-1">
+                    <div
+                      className={`h-1 rounded ${strength.ok ? "bg-green-500" : "bg-red-500"}`}
+                      style={{ width: `${(strength.score / 5) * 100}%` }}
+                    />
+                  </div>
+                  <small className={strength.ok ? "text-green-600" : "text-red-600"}>
+                    {strength.msg}
+                  </small>
                 </div>
               </div>
 
@@ -261,6 +297,10 @@ const SignUp = (props) => {
                 darkMode={darkMode}
                 required
               />
+              {!confirmOk && (
+                  <small className="text-red-600">Passwords do not match</small>
+               )}
+
 
               {errorMsg && (
                 <p className="mt-2 text-red-600 font-medium">{errorMsg}</p>
@@ -268,7 +308,7 @@ const SignUp = (props) => {
 
               <button
                 type="submit"
-                disabled={loading}
+                disabled={loading || !strength.ok || !confirmOk}
                 className={`w-full rounded-md mt-4 text-2xl font-bold flex justify-center gap-3 items-center ${
                   darkMode
                     ? "bg-purple-700 hover:bg-purple-500"

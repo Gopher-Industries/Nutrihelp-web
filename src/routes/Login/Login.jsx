@@ -36,12 +36,12 @@ const Login = () => {
         },
       });
 
-      if (response.ok) {
+    if (response.ok) {
         const data = await response.json();
         const expirationTimeInMillis = isChecked ? 3600000 : 0;
         setCurrentUser(data.user, expirationTimeInMillis);
 
-        // Toast message
+    
         toast.success("💧 Welcome back! Don’t forget to check your meal plan & track your water intake!", {
           position: "top-right",
           autoClose: false, // stays until dismissed
@@ -144,28 +144,25 @@ const Login = () => {
               </div>
             </div>
 
-            <div className="options">
-              <div className="keep-logged-in ">
-                <div
-                  className={`checkbox-div ${isChecked ? "checked" : ""}`}
-                  onClick={handleToggleCheckbox}
-                >
-                  <span className="checkbox-indicator"></span>
+             <div className="options">
+              <div className="keep-logged-in">
+                  <input
+                    type="checkbox"
+                    id="keepLoggedIn"
+                    className="native-checkbox"
+                    checked={isChecked}
+                    onChange={handleToggleCheckbox}
+                  />
+                  <label htmlFor="keepLoggedIn" className="ml-2">Keep me logged in</label>
                 </div>
-                <label htmlFor="keepLoggedIn" className="ml-2">
-                  Keep me logged in
-                </label>
-              </div>
               <div
-                className={`forgot-password ${
-                  darkMode ? "text-purple-300" : "text-purple-800"
-                }`}
+                className={`forgot-password ${darkMode ? "text-purple-300" : "text-purple-800"}`}
                 onClick={handleForgotPasswordClick}
               >
                 Forgot password?
               </div>
             </div>
-            <button
+              <button
               className={`w-full rounded-full mb-6 text-2xl font-bold flex justify-center gap-3 items-center ${
                 darkMode
                   ? "bg-purple-700 hover:bg-purple-500"

@@ -126,75 +126,100 @@
 //     );
 // };
 
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState } from 'react';
 
 export const UserContext = createContext({
-    currentUser: null,
-    setCurrentUser: () => null,
-    logOut: () => null,
+  currentUser: null,
+  setCurrentUser: () => null, // (user, options?)
+  logOut: () => null,
 });
 
 export const UserProvider = ({ children }) => {
-    // Development mode - set to true to bypass authentication with mock user
-    const DEVELOPMENT_MODE = true;
+  // ⚠️ For real auth, set to false
+  const DEVELOPMENT_MODE = false;
 
-    // Mock user data for development mode
-    const mockUser = {
-        user_id: 1,
-        email: "s224384155@deakin.edu.au",
-        name: "Test User",
-        mfa_enabled: false
-    };
+  const mockUser = {
+    user_id: 1,
+    email: 's224384155@deakin.edu.au',
+    name: 'Test User',
+    mfa_enabled: false,
+  };
 
-    const [currentUser, setCurrentUser] = useState(() => {
-        // If in development mode, return mock user
-        if (DEVELOPMENT_MODE) {
-            return mockUser;
-        }
+  /**
+   * Read user from storage on boot:
+   * - Prefer localStorage (persistent) with expiration check
+   * - Fallback to sessionStorage (session-only)
+   * - If DEVELOPMENT_MODE, always return mockUser
+   */
+  const bootUser = () => {
+    if (DEVELOPMENT_MODE) return mockUser;
 
-        // get value of current user from localstorage
-        const storedUser = localStorage.getItem('user');
-        const storedExpirationTime = localStorage.getItem('expirationTime');
-
-        if (storedUser && storedExpirationTime) {
-            // Check if the expiration time is still valid
-            const expirationTime = JSON.parse(storedExpirationTime);
-            if (Date.now() > expirationTime) {
-                // If expired, clear the user data
-                localStorage.removeItem('user');
-                localStorage.removeItem('expirationTime');
-                return null;
-            }
-            return JSON.parse(storedUser);
-        }
-        return null;
-    });
-
-    const setUser = (user, expirationTimeInMillis) => {
-        if (user) {
-            // Set expiration time if the user is logged in
-            setCurrentUser(user);
-            const expirationTime = Date.now() + expirationTimeInMillis;
-            localStorage.setItem('user', JSON.stringify(user));
-            localStorage.setItem('expirationTime', JSON.stringify(expirationTime));
-        } else {
-            // Clear user and expiration time if logged out
-            localStorage.removeItem('user');
-            localStorage.removeItem('expirationTime');
-        }
-    };
-
-    const logOut = () => {
+    // 1) Try persistent user (localStorage)
+    const lsUser = localStorage.getItem('user');
+    const lsExp = localStorage.getItem('expirationTime');
+    if (lsUser) {
+      // If we have persistent user but no expiration => treat as expired
+      if (!lsExp) {
         localStorage.removeItem('user');
-        localStorage.removeItem('userExpireTime');
-        setCurrentUser(null);
-    };
+        return null;
+      }
+      const exp = Number(lsExp);
+      if (Number.isFinite(exp) && Date.now() < exp) {
+        return JSON.parse(lsUser);
+      }
+      // expired -> cleanup
+      localStorage.removeItem('user');
+      localStorage.removeItem('expirationTime');
+    }
 
-    const value = { currentUser, setCurrentUser: setUser, logOut };
+    // 2) Try session user (sessionStorage)
+    const ssUser = sessionStorage.getItem('user');
+    if (ssUser) return JSON.parse(ssUser);
 
-    return (
-        <UserContext.Provider value={value}>
-            {children}
-        </UserContext.Provider>
-    );
+    return null;
+  };
+
+  const [currentUser, setCurrentUserState] = useState(bootUser);
+
+  /**
+   * Set current user with options:
+   * - options.remember (boolean): true => localStorage, false => sessionStorage
+   * - options.ttlMs (number): only applies to localStorage (remember=true)
+   *   e.g. 30 days = 30 * 24 * 60 * 60 * 1000
+   */
+  const setCurrentUser = (user, options = { remember: false, ttlMs: 0 }) => {
+    // Clear both storages first to avoid mixing states
+    localStorage.removeItem('user');
+    localStorage.removeItem('expirationTime');
+    sessionStorage.removeItem('user');
+
+    if (!user) {
+      setCurrentUserState(null);
+      return;
+    }
+
+    setCurrentUserState(user);
+
+    if (options.remember) {
+      // Persistent user with expiration
+      const ttl = Math.max(0, Number(options.ttlMs || 0));
+      const exp = ttl > 0 ? Date.now() + ttl : Date.now() + 30 * 24 * 60 * 60 * 1000; 
+      localStorage.setItem('user', JSON.stringify(user));
+      localStorage.setItem('expirationTime', String(exp));
+    } else {
+      // Session-only user (no explicit expiration needed)
+      sessionStorage.setItem('user', JSON.stringify(user));
+    }
+  };
+
+  const logOut = () => {
+    localStorage.removeItem('user');
+    localStorage.removeItem('expirationTime'); 
+    sessionStorage.removeItem('user');
+    setCurrentUserState(null);
+  };
+
+  const value = { currentUser, setCurrentUser, logOut };
+
+  return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 };
