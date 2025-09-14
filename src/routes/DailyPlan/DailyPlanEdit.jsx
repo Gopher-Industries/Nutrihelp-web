@@ -287,7 +287,7 @@ export default function DailyPlanEdit() {
             {/* Add line */}
             <div className="dpe-addline">
               <button className="dpe-btn" onClick={() => addItem(meal)}>
-                + Add Item
+                Add Item
               </button>
             </div>
           </section>

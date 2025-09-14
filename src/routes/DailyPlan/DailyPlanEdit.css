@@ -212,3 +212,54 @@
   .dpe-grid { grid-template-columns: 1fr 1fr; }
   .dpe-grid > * { min-width: 0; }
 }
+.dpe-addline{
+  display:flex;
+  justify-content:flex-end;      /* keep it on the right */
+  margin: .5rem 0 1.5rem;
+}
+
+.dpe-addline .dpe-btn{
+  /* keep existing .dpe-btn look, then enhance only here */
+  display:inline-flex;
+  align-items:center;
+  gap:.5rem;
+
+  height:32px;
+  padding:0 .75rem;
+  border-radius:12px;
+
+  border:1px solid #e7e3ff;
+  background:#fff;
+  color:#5a47ff;
+  font-weight:600;
+  letter-spacing:.2px;
+
+  box-shadow:0 2px 8px rgba(90,71,255,.08);
+  transition:background .15s ease, border-color .15s ease, transform .06s ease, box-shadow .15s ease;
+}
+
+.dpe-addline .dpe-btn:hover{
+  background:#f7f5ff;
+  border-color:#cfc7ff;
+}
+
+.dpe-addline .dpe-btn:active{ transform:translateY(1px); }
+
+.dpe-addline .dpe-btn:focus-visible{
+  outline:2px solid #cfc7ff;
+  outline-offset:2px;
+}
+
+/* circular + icon (no JSX changes needed) */
+.dpe-addline .dpe-btn::before{
+  content:"+";
+  display:inline-grid;
+  place-items:center;
+  width:20px; height:20px;
+  border-radius:50%;
+  background:#efeaff;
+  color:#5a47ff;
+  font-weight:800;
+  font-size:13px;
+  line-height:1;
+}
