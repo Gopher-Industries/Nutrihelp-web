@@ -50,38 +50,43 @@ import UiTimer from "./routes/UiTimer/UiTimer"
 import Settings from "./routes/Settings/Settings"
 import HealthFAQ from "./routes/HealthFAQ/HealthFAQ";
 import AuthCallback from "./pages/AuthCallback";
-
+import DailyPlanEdit from "./routes/DailyPlan/DailyPlanEdit";
 
 function App() {
   const { currentUser } = useContext(UserContext);
-  
-  
-  // Initialize font size settings for elderly users
-  useEffect(() => {
-    initializeFontSize();
-  }, []);
 
   return (
     <Router>
       <MainNavbar />
       <ToastContainer />
       <Routes>
+        {/* Redirect root based on auth */}
         <Route
           path="/"
-          element={
-            currentUser ? <Navigate to="/home" /> : <Navigate to="/login" />
-          }
+          element={currentUser ? <Navigate to="/home" /> : <Navigate to="/login" />}
         />
+
+        {/* Public */}
         <Route path="/login" element={<Login />} />
-        <Route path="/" element={<Home />} />
         <Route path="/home" element={<Home />} />
         <Route path="/signUp" element={<SignUp />} />
         <Route path="/forgotPassword" element={<ForgotPassword />} />
         <Route path="/faq" element={<FAQ />} />
         <Route path="/leaderboard" element={<Leaderboard />} />
         <Route path="/survey" element={<ObesityPredictor />} />
+        <Route path="/recipe/:id" element={<RecipeDetail />} />
+        <Route path="/preferences" element={<FoodPreferences />} />
+        <Route path="/symptomassessment" element={<SymptomAssessment />} />
 
-        {/* Private Routes */}
+        {/* Protected */}
+        <Route
+          path="/daily-plan-edit"
+          element={
+            <AuthenticateRoute>
+              <DailyPlanEdit />
+            </AuthenticateRoute>
+          }
+        />
         <Route
           path="createRecipe"
           element={
@@ -98,7 +103,6 @@ function App() {
             </AuthenticateRoute>
           }
         />
-        {/* New route for category-specific results */}
         <Route
           path="searchRecipes/:category"
           element={
@@ -179,7 +183,6 @@ function App() {
             </AuthenticateRoute>
           }
         />
-        <Route path="/recipe/:id" element={<RecipeDetail />} />
         <Route
           path="Meal"
           element={
@@ -188,7 +191,6 @@ function App() {
             </AuthenticateRoute>
           }
         />
-        <Route path="/auth/callback" element={<AuthCallback />} />
         <Route
           path="nutrition-calculator"
           element={
@@ -197,21 +199,11 @@ function App() {
             </AuthenticateRoute>
           }
         />
-        <Route path="/preferences" element={<FoodPreferences />} />
-        <Route path="/symptomassessment" element={<SymptomAssessment />} />
         <Route
           path="healthnews"
           element={
             <AuthenticateRoute>
               <HealthNews />
-            </AuthenticateRoute>
-          }
-        />
-        <Route
-          path="healthnews/:id"
-          element={
-            <AuthenticateRoute>
-              <NewsDetail />
             </AuthenticateRoute>
           }
         />
@@ -239,14 +231,6 @@ function App() {
               <ShoppingList />
             </AuthenticateRoute>
           }
-        />
-        <Route
-         path="settings"
-         element={
-          <AuthenticateRoute>
-            <Settings />
-          </AuthenticateRoute>
-         }
         />
         <Route
           path="HealthFAQ"
