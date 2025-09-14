@@ -1,114 +1,189 @@
-.timer-container {
-    max-width: 600px;
-    margin: 20px auto;
-    padding: 20px;
-    text-align: center;
-    font-family: Arial, sans-serif;
+.recipe-timer-container {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: #f8f9fa;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  text-align: center;
 }
 
-h2 {
-    color: #333;
-    margin-bottom: 20px;
+.recipe-timer-container h2 {
+  color: #2d3436;
+  margin-bottom: 2rem;
+  font-weight: 600;
 }
 
-.recipe-section {
-    margin-bottom: 20px;
-    padding: 15px;
-    border: 1px solid #ddd;
+.recipe-selection {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #e0e0e0;
 }
 
-.recipe-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    justify-content: center;
-    margin: 15px 0;
+.recipe-selection h3 {
+  color: #636e72;
+  margin-bottom: 1rem;
+  font-weight: 500;
 }
 
-.recipe-item {
-    padding: 8px 12px;
-    border: 1px solid #ccc;
-    cursor: pointer;
-    background: #fff;
+.recipe-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
 }
 
-.recipe-item:hover {
-    background: #f0f0f0;
+.recipe-card {
+  background-color: white;
+  border-radius: 8px;
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
-.recipe-item.selected {
-    background: #e6f2ff;
-    border-color: #66b3ff;
+.recipe-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-.clear-btn {
-    background: transparent;
-    border: 1px solid #999;
-    padding: 5px 10px;
-    cursor: pointer;
-    margin-top: 10px;
+.recipe-card.selected {
+  border-color: #0984e3;
+  background-color: #f1f9ff;
+}
+
+.recipe-time {
+  display: block;
+  font-size: 0.85rem;
+  color: #0984e3;
+  margin-top: 0.5rem;
+}
+
+.clear-selection {
+  background-color: transparent;
+  color: #d63031;
+  border: 1px solid #d63031;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.clear-selection:hover {
+  background-color: #d63031;
+  color: white;
 }
 
 .timer-display {
-    padding: 15px;
-    border: 1px solid #ddd;
-    margin-bottom: 15px;
+  padding: 1.5rem;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
-.time-inputs,
-.time-values {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-    margin-bottom: 15px;
+.time-inputs, .time-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
 }
 
-.time-group {
-    text-align: center;
+.time-input-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 80px;
 }
 
-.time-group input {
-    width: 100px;
-    padding: 5px;
-    text-align: center;
-    margin-bottom: 5px;
+.time-input-group input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  text-align: center;
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
 }
 
-.time-value {
-    font-size: 1.5rem;
-    font-weight: bold;
-    padding: 0 10px;
+.time-input-group label {
+  font-size: 0.85rem;
+  color: #636e72;
+}
+
+.time-unit {
+  font-size: 2.5rem;
+  font-weight: 600;
+  color: #2d3436;
+  padding: 0.5rem 1rem;
+  position: relative;
+}
+
+.unit-label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: normal;
+  color: #636e72;
 }
 
 .separator {
-    font-size: 1.5rem;
-    align-self: center;
+  font-size: 2rem;
+  color: #b2bec3;
+  margin: 0 0.5rem;
 }
 
-.controls {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
+.timer-controls {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
 }
 
-.control-btn {
-    color: #333;
-    padding: 8px 16px;
-    border: 1px solid #ccc;
-    background: #fff;
-    cursor: pointer;
+.control-button {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 500;
 }
 
-.control-btn:hover {
-    background: #f0f0f0;
+.control-button:not(.reset) {
+  background-color: #0984e3;
+  color: white;
+}
+
+.control-button:not(.reset):hover {
+  background-color: #066bbf;
+}
+
+.control-button.reset {
+  background-color: #fdcb6e;
+  color: #2d3436;
+}
+
+.control-button.reset:hover {
+  background-color: #e6b655;
 }
 
 .animate {
-    animation: flash 0.5s;
+  animation: pulse 0.5s ease;
 }
 
-@keyframes flash {
-    50% {
-        color: #0066cc;
-    }
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); color: #0984e3; }
+  100% { transform: scale(1); }
+}
+
+@media (max-width: 600px) {
+  .recipe-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .time-unit {
+    font-size: 2rem;
+  }
 }

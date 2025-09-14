@@ -303,10 +303,16 @@ const Home = () => {
                     />
                   </div>
 
-                  <h4 className="font-bold text-2xl mt-5 text-gray-900 dark:text-gray-200">
+                  <h4
+                    id="no-bg"
+                    className="font-bold text-2xl mt-5 text-gray-900 dark:text-gray-200"
+                  >
                     {service.title}
                   </h4>
-                  <p className="mt-3 text-gray-600 dark:text-gray-400">
+                  <p
+                    id="no-bg"
+                    className="mt-3 text-gray-600 dark:text-gray-400"
+                  >
                     {service.description}
                   </p>
                 </div>
@@ -457,7 +463,7 @@ const Home = () => {
                 darkMode ? "bg-transparent" : "bg-white"
               }`}
             >
-              <div id="no-bg" className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div id="no-bg" className="flex flex-col gap-4">
                 <input
                   type="text"
                   name="name"

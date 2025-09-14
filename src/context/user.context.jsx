@@ -126,100 +126,158 @@
 //     );
 // };
 
-import React, { createContext, useState } from 'react';
+import React, {
+  createContext,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 export const UserContext = createContext({
   currentUser: null,
-  setCurrentUser: () => null, // (user, options?)
-  logOut: () => null,
+
+  // 1) setCurrentUser(user, ttlMs)      
+  // 2) setCurrentUser(user, { remember, ttlMs })  
+  setCurrentUser: (_user, _arg) => {},
+  logOut: () => {},
 });
 
-export const UserProvider = ({ children }) => {
-  // ⚠️ For real auth, set to false
-  const DEVELOPMENT_MODE = false;
+const KEYS = {
+  localUser: "user",           
+  localExpiry: "expirationTime", /
+  sessionUser: "user_session",   
+};
 
-  const mockUser = {
-    user_id: 1,
-    email: 's224384155@deakin.edu.au',
-    name: 'Test User',
-    mfa_enabled: false,
-  };
-
-  /**
-   * Read user from storage on boot:
-   * - Prefer localStorage (persistent) with expiration check
-   * - Fallback to sessionStorage (session-only)
-   * - If DEVELOPMENT_MODE, always return mockUser
-   */
-  const bootUser = () => {
-    if (DEVELOPMENT_MODE) return mockUser;
-
-    // 1) Try persistent user (localStorage)
-    const lsUser = localStorage.getItem('user');
-    const lsExp = localStorage.getItem('expirationTime');
-    if (lsUser) {
-      // If we have persistent user but no expiration => treat as expired
-      if (!lsExp) {
-        localStorage.removeItem('user');
-        return null;
-      }
-      const exp = Number(lsExp);
-      if (Number.isFinite(exp) && Date.now() < exp) {
-        return JSON.parse(lsUser);
-      }
-      // expired -> cleanup
-      localStorage.removeItem('user');
-      localStorage.removeItem('expirationTime');
+// helpers
+function readLocal() {
+  try {
+    const u = localStorage.getItem(KEYS.localUser);
+    const exp = localStorage.getItem(KEYS.localExpiry);
+    if (!u || !exp) return null;
+    const expiresAt = JSON.parse(exp);
+    if (typeof expiresAt === "number" && expiresAt > 0 && Date.now() > expiresAt) {
+      localStorage.removeItem(KEYS.localUser);
+      localStorage.removeItem(KEYS.localExpiry);
+      return null;
     }
-
-    // 2) Try session user (sessionStorage)
-    const ssUser = sessionStorage.getItem('user');
-    if (ssUser) return JSON.parse(ssUser);
-
+    return JSON.parse(u);
+  } catch {
     return null;
-  };
+  }
+}
 
-  const [currentUser, setCurrentUserState] = useState(bootUser);
+function readSession() {
+  try {
+    const u = sessionStorage.getItem(KEYS.sessionUser);
+    return u ? JSON.parse(u) : null;
+  } catch {
+    return null;
+  }
+}
+
+function writeLocal(user, expiresAt) {
+  localStorage.setItem(KEYS.localUser, JSON.stringify(user));
+  localStorage.setItem(KEYS.localExpiry, JSON.stringify(expiresAt || 0));
+  sessionStorage.removeItem(KEYS.sessionUser);
+}
+
+function writeSession(user) {
+  sessionStorage.setItem(KEYS.sessionUser, JSON.stringify(user));
+  localStorage.removeItem(KEYS.localUser);
+  localStorage.removeItem(KEYS.localExpiry);
+}
+
+function clearAll() {
+  localStorage.removeItem(KEYS.localUser);
+  localStorage.removeItem(KEYS.localExpiry);
+  sessionStorage.removeItem(KEYS.sessionUser);
+}
+
+export const UserProvider = ({ children }) => {
+  const [currentUser, setCurrentUserState] = useState(() => {
+    return readLocal() ?? readSession() ?? null;
+  });
+
+  const logoutTimerRef = useRef(null);
+  const scheduleLogout = useCallback((expiresAt) => {
+    if (logoutTimerRef.current) clearTimeout(logoutTimerRef.current);
+    if (typeof expiresAt === "number" && expiresAt > 0) {
+      const delay = Math.max(0, expiresAt - Date.now());
+      logoutTimerRef.current = setTimeout(() => {
+        clearAll();
+        setCurrentUserState(null);
+      }, delay);
+    }
+  }, []);
+
+  useEffect(() => {
+    const exp = localStorage.getItem(KEYS.localExpiry);
+    const expiresAt = exp ? JSON.parse(exp) : 0;
+    scheduleLogout(expiresAt);
+
+    const onStorage = () => {
+      const u = readLocal() ?? readSession();
+      setCurrentUserState(u);
+      const exp2 = localStorage.getItem(KEYS.localExpiry);
+      scheduleLogout(exp2 ? JSON.parse(exp2) : 0);
+    };
+    window.addEventListener("storage", onStorage);
+    return () => {
+      window.removeEventListener("storage", onStorage);
+      if (logoutTimerRef.current) clearTimeout(logoutTimerRef.current);
+    };
+  }, [scheduleLogout]);
 
   /**
-   * Set current user with options:
-   * - options.remember (boolean): true => localStorage, false => sessionStorage
-   * - options.ttlMs (number): only applies to localStorage (remember=true)
-   *   e.g. 30 days = 30 * 24 * 60 * 60 * 1000
+   * setCurrentUser(user, ttlOrOptions)
+   * - 传 number => master 的写法 (ttlMs)
+   * - 传 { remember, ttlMs } => feature 的写法
    */
-  const setCurrentUser = (user, options = { remember: false, ttlMs: 0 }) => {
-    // Clear both storages first to avoid mixing states
-    localStorage.removeItem('user');
-    localStorage.removeItem('expirationTime');
-    sessionStorage.removeItem('user');
+  const setCurrentUser = useCallback((user, ttlOrOptions = 0) => {
+    let useLocal = false;
+    let ttlMs = 0;
 
-    if (!user) {
-      setCurrentUserState(null);
-      return;
+    if (typeof ttlOrOptions === "number") {
+      ttlMs = Math.max(0, ttlOrOptions);
+      useLocal = ttlMs > 0;
+    } else if (typeof ttlOrOptions === "object" && ttlOrOptions !== null) {
+      const { remember = false, ttlMs: optTtl = 0 } = ttlOrOptions;
+      useLocal = remember;
+      ttlMs = Math.max(0, Number(optTtl || 0));
+      if (useLocal && ttlMs === 0) {
+        ttlMs = 30 * 24 * 60 * 60 * 1000;
+      }
     }
 
-    setCurrentUserState(user);
-
-    if (options.remember) {
-      // Persistent user with expiration
-      const ttl = Math.max(0, Number(options.ttlMs || 0));
-      const exp = ttl > 0 ? Date.now() + ttl : Date.now() + 30 * 24 * 60 * 60 * 1000; 
-      localStorage.setItem('user', JSON.stringify(user));
-      localStorage.setItem('expirationTime', String(exp));
+    if (user) {
+      setCurrentUserState(user);
+      if (useLocal) {
+        const expiresAt = Date.now() + ttlMs;
+        writeLocal(user, expiresAt);
+        scheduleLogout(expiresAt);
+      } else {
+        writeSession(user);
+        scheduleLogout(0);
+      }
     } else {
-      // Session-only user (no explicit expiration needed)
-      sessionStorage.setItem('user', JSON.stringify(user));
+      clearAll();
+      setCurrentUserState(null);
+      scheduleLogout(0);
     }
-  };
+  }, [scheduleLogout]);
 
-  const logOut = () => {
-    localStorage.removeItem('user');
-    localStorage.removeItem('expirationTime'); 
-    sessionStorage.removeItem('user');
+  const logOut = useCallback(() => {
+    clearAll();
     setCurrentUserState(null);
-  };
+    scheduleLogout(0);
+  }, [scheduleLogout]);
 
-  const value = { currentUser, setCurrentUser, logOut };
+  const value = useMemo(
+    () => ({ currentUser, setCurrentUser, logOut }),
+    [currentUser, setCurrentUser, logOut]
+  );
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 };
