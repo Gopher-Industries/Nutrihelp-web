@@ -49,6 +49,7 @@ import Leaderboard from "./routes/LeaderBoard/leaderBoard";
 import ObesityPredictor from "./routes/survey/ObesityPredictor";
 import UiTimer from "./routes/UiTimer/UiTimer";
 import Settings from "./routes/Settings/Settings";
+import Predictionresult from "./routes/survey/predictionresult";
 import HealthFAQ from "./routes/HealthFAQ/HealthFAQ";
 import ScanBarcode from "./routes/ScanBarcode/ScanBarcode";
 import AuthCallback from "./pages/AuthCallback";
@@ -85,6 +86,7 @@ function App() {
 
         <Route path="/leaderboard" element={<Leaderboard />} />
         <Route path="/survey" element={<ObesityPredictor />} />
+        <Route path="/survey/result" element= {<Predictionresult/>}/>
 
         {/* Private Routes */}
         <Route
