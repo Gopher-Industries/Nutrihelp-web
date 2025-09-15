@@ -49,16 +49,8 @@ import ObesityPredictor from "./routes/survey/ObesityPredictor";
 import UiTimer from "./routes/UiTimer/UiTimer"
 import Settings from "./routes/Settings/Settings"
 import HealthFAQ from "./routes/HealthFAQ/HealthFAQ";
-<<<<<<< Updated upstream
-import DailyPlanEdit from './routes/DailyPlan/DailyPlanEdit';
 import ScanBarcode from "./routes/ScanBarcode/ScanBarcode";
-=======
->>>>>>> Stashed changes
 import AuthCallback from "./pages/AuthCallback";
-import DailyPlanEdit from "./routes/DailyPlan/DailyPlanEdit";
-
-
-
 import DailyPlanEdit from './routes/DailyPlan/DailyPlanEdit';
 
 function App() {
