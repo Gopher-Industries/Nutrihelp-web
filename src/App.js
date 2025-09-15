@@ -49,8 +49,8 @@ import ObesityPredictor from "./routes/survey/ObesityPredictor";
 import UiTimer from "./routes/UiTimer/UiTimer"
 import Settings from "./routes/Settings/Settings"
 import HealthFAQ from "./routes/HealthFAQ/HealthFAQ";
+import ScanBarcode from "./routes/ScanBarcode/ScanBarcode";
 import AuthCallback from "./pages/AuthCallback";
-
 
 function App() {
   const { currentUser } = useContext(UserContext);
@@ -256,6 +256,7 @@ function App() {
             </AuthenticateRoute>
           }
         />
+        <Route path="ScanBarcode" element={<ScanBarcode />} />
       </Routes>
     </Router>
   );
