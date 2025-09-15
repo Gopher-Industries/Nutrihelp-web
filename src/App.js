@@ -51,6 +51,9 @@ import Settings from "./routes/Settings/Settings"
 import HealthFAQ from "./routes/HealthFAQ/HealthFAQ";
 import ScanBarcode from "./routes/ScanBarcode/ScanBarcode";
 import AuthCallback from "./pages/AuthCallback";
+
+
+
 import DailyPlanEdit from './routes/DailyPlan/DailyPlanEdit';
 
 function App() {
