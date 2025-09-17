@@ -54,7 +54,7 @@ import HealthFAQ from "./routes/HealthFAQ/HealthFAQ";
 import ScanBarcode from "./routes/ScanBarcode/ScanBarcode";
 import AuthCallback from "./pages/AuthCallback";
 import SMSVerification from "./routes/MFA/SMSVerification";
-
+import DailyPlanEdit from './routes/DailyPlan/DailyPlanEdit';
 
 function App() {
   const { currentUser } = useContext(UserContext);
@@ -89,6 +89,14 @@ function App() {
         <Route path="/survey/result" element= {<Predictionresult/>}/>
 
         {/* Private Routes */}
+        <Route
+          path="/daily-plan-edit"
+          element={
+            <AuthenticateRoute>
+              <DailyPlanEdit />
+            </AuthenticateRoute>
+          }
+        />
         <Route
           path="createRecipe"
           element={
