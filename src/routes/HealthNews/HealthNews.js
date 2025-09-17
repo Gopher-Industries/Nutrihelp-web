@@ -41,6 +41,9 @@ const HealthNews = () => {
   const [isLoadingDb, setIsLoadingDb] = useState(false);
   const [dbError, setDbError] = useState('');
   const [hasLoadedDb, setHasLoadedDb] = useState(false);
+  // Add pagination states for daily news
+  const [currentDbPage, setCurrentDbPage] = useState(1);
+  const [dbFavorites, setDbFavorites] = useState([]);
   const navigate = useNavigate();
 
   const sampleNews = [
@@ -241,6 +244,36 @@ const HealthNews = () => {
   const openArticleDetail = (article) => {
     if (!article?.id) return;
     navigate(`/healthnews/${article.id}`);
+  };
+
+  // Function to generate a random image URL using Picsum
+  const getRandomImage = () => {
+    const randomId = Math.floor(Math.random() * 1000) + 1;
+    const width = 400;
+    const height = 300;
+    return `https://picsum.photos/${width}/${height}?random=${randomId}`;
+  };
+
+  // Toggle favorite for database articles
+  const toggleDbFavorite = (articleId) => {
+    setDbFavorites(prevFavorites => {
+      if (prevFavorites.includes(articleId)) {
+        return prevFavorites.filter(id => id !== articleId);
+      } else {
+        return [...prevFavorites, articleId];
+      }
+    });
+  };
+
+  // Pagination logic for daily news
+  const dbItemsPerPage = 6;
+  const indexOfLastDbItem = currentDbPage * dbItemsPerPage;
+  const indexOfFirstDbItem = indexOfLastDbItem - dbItemsPerPage;
+  const currentDbItems = dbNews.slice(indexOfFirstDbItem, indexOfLastDbItem);
+  const totalDbPages = Math.ceil(dbNews.length / dbItemsPerPage);
+
+  const handleDbPageChange = (pageNumber) => {
+    setCurrentDbPage(pageNumber);
   };
 
   return (
@@ -553,40 +586,81 @@ const HealthNews = () => {
                   <p className="no-results-suggestion">The health_news table might be empty or not accessible.</p>
                 </div>
               ) : (
-                <div className="results-grid">
-                  {dbNews.map((article, index) => (
-                    <div key={article.id || index} className="test-result-card" onClick={() => openArticleDetail(article)} style={{ cursor: 'pointer' }}>
-                      <div className="result-card-header">
-                        <h5 className="result-title">{article.title || 'Untitled Article'}</h5>
-                        <span className="result-number">#{index + 1}</span>
-                      </div>
-                      <div className="result-content">
-                        <p className="result-text">
-                          {article.summary ? 
-                            (article.summary.length > 150 ? 
-                              `${article.summary.substring(0, 150)}...` : 
-                              article.summary
-                            ) : 
-                            'No summary available'
-                          }
-                        </p>
-                        {article.content && (
-                          <p className="result-content-full">
-                            {article.content.length > 200 ? 
-                              `${article.content.substring(0, 200)}...` : 
-                              article.content
+                <>
+                  <div className="results-grid">
+                    {currentDbItems.map((article, index) => (
+                      <div key={article.id || index} className="test-result-card">
+                        <div className="result-card-image">
+                          <img 
+                            src={article.image_url || getRandomImage()} 
+                            alt={article.title || 'Article image'}
+                            onError={(e) => {
+                              e.target.src = getRandomImage();
+                            }}
+                          />
+                        </div>
+                        <div className="result-card-header">
+                          <h5 className="result-title">{article.title || 'Untitled Article'}</h5>
+                          <div className="result-header-actions">
+                            <span className="result-number">#{indexOfFirstDbItem + index + 1}</span>
+                            <button 
+                              className="favorite-button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                toggleDbFavorite(article.id);
+                              }}
+                            >
+                              {dbFavorites.includes(article.id) ? (
+                                <FaHeart className="heart-icon filled" />
+                              ) : (
+                                <FaRegHeart className="heart-icon" />
+                              )}
+                            </button>
+                          </div>
+                        </div>
+                        <div className="result-content" onClick={() => openArticleDetail(article)} style={{ cursor: 'pointer' }}>
+                          <p className="result-text">
+                            {article.summary ? 
+                              (article.summary.length > 150 ? 
+                                `${article.summary.substring(0, 150)}...` : 
+                                article.summary
+                              ) : 
+                              'No summary available'
                             }
                           </p>
-                        )}
+                          {article.content && (
+                            <p className="result-content-full">
+                              {article.content.length > 200 ? 
+                                `${article.content.substring(0, 200)}...` : 
+                                article.content
+                              }
+                            </p>
+                          )}
+                        </div>
+                        <div className="result-footer">
+                          <span className="result-date">
+                            {article.created_at ? new Date(article.created_at).toLocaleDateString() : 'No date'}
+                          </span>
+                        </div>
                       </div>
-                      <div className="result-footer">
-                        <span className="result-date">
-                          {article.created_at ? new Date(article.created_at).toLocaleDateString() : 'No date'}
-                        </span>
-                      </div>
+                    ))}
+                  </div>
+                  
+                  {/* Pagination for daily news */}
+                  {totalDbPages > 1 && (
+                    <div className="pagination">
+                      {Array.from({ length: totalDbPages }, (_, index) => (
+                        <button
+                          key={index + 1}
+                          onClick={() => handleDbPageChange(index + 1)}
+                          className={`page-button ${currentDbPage === index + 1 ? 'active' : ''}`}
+                        >
+                          {index + 1}
+                        </button>
+                      ))}
                     </div>
-                  ))}
-                </div>
+                  )}
+                </>
               )}
             </div>
           )}
