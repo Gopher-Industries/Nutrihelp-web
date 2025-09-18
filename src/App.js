@@ -1,8 +1,7 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext } from "react";
 import "semantic-ui-css/semantic.min.css";
 import "./App.css";
-import { initializeFontSize } from "./utils/fontSizeManager";
-import "./styles/global-dark-mode.css";
+import SMSVerification from "./routes/MFA/SMSVerification";
 import {
   BrowserRouter as Router,
   Routes,
@@ -19,7 +18,7 @@ import SignUp from "./routes/SignUp/SignUp";
 import ForgotPassword from "./routes/ForgotPassword/ForgotPassword";
 import CreateRecipe from "./routes/CreateRecipe/CreateRecipe";
 import SearchRecipes from "./routes/SearchRecipes/SearchRecipes";
-import CategoryResults from "./routes/SearchRecipes/CategoryResults"; // 🆕
+import CategoryResults from "./routes/SearchRecipes/CategoryResults";  // 🆕
 import YourPreferences from "./routes/UI-Only-Pages/YourPreferences/pref-dis-health";
 import UserProfilePage from "./routes/UI-Only-Pages/UserProfilePage/userprofile";
 import Home from "./routes/Home/Home";
@@ -37,30 +36,11 @@ import MainNavbar from "./components/MainNavbar";
 import FAQ from "./routes/FAQ/faq";
 import NutritionCalculator from "./routes/UI-Only-Pages/NutritionCalculator/NutritionCalculator";
 import HealthNews from "./routes/HealthNews/HealthNews";
-import NewsDetail from "./routes/HealthNews/NewsDetail";
 import FoodPreferences from "./routes/FoodPreferences/FoodPreferences";
 import HealthTools from "./routes/HealthTools/HealthTools";
-import RecipeRating from "./routes/RecipeRating/RecipeRating";
-import ShoppingList from "./routes/UI-Only-Pages/ShoppingList/ShoppingList";
-import RecipeDetail from "./routes/RecipeRating/RecipeDetail";
-import SymptomAssessment from "./routes/SymptomAssessment/SymptomAssessment";
-import Leaderboard from "./routes/LeaderBoard/leaderBoard";
-import ObesityPredictor from "./routes/survey/ObesityPredictor";
-import Predictionresult from "./routes/survey/predictionresult";
-import UiTimer from "./routes/UiTimer/UiTimer"
-import Settings from "./routes/Settings/Settings"
-import HealthFAQ from "./routes/HealthFAQ/HealthFAQ";
-import ScanBarcode from "./routes/ScanBarcode/ScanBarcode";
-import AuthCallback from "./pages/AuthCallback";
-import DailyPlanEdit from './routes/DailyPlan/DailyPlanEdit';
+
 function App() {
   const { currentUser } = useContext(UserContext);
-  
-  
-  // Initialize font size settings for elderly users
-  useEffect(() => {
-    initializeFontSize();
-  }, []);
 
   return (
     <Router>
@@ -79,19 +59,12 @@ function App() {
         <Route path="/signUp" element={<SignUp />} />
         <Route path="/forgotPassword" element={<ForgotPassword />} />
         <Route path="/faq" element={<FAQ />} />
-        <Route path="/leaderboard" element={<Leaderboard />} />
-        <Route path="/survey" element={<ObesityPredictor />} />
-        <Route path="/survey/result" element= {<Predictionresult/>}/>
+        <Route path="/sms-verification" element={<SMSVerification />} />
+  
+
+        
 
         {/* Private Routes */}
-        <Route
-          path="/daily-plan-edit"
-          element={
-            <AuthenticateRoute>
-              <DailyPlanEdit />
-            </AuthenticateRoute>
-          }
-        />
         <Route
           path="createRecipe"
           element={
@@ -158,22 +131,6 @@ function App() {
           }
         />
         <Route
-          path="RecipeRating"
-          element={
-            <AuthenticateRoute>
-              <RecipeRating />
-            </AuthenticateRoute>
-          }
-        />
-        <Route
-          path="UiTimer"
-          element={
-            <AuthenticateRoute>
-              <UiTimer />
-            </AuthenticateRoute>
-          }
-        />
-        <Route
           path="menu"
           element={
             <AuthenticateRoute>
@@ -189,7 +146,6 @@ function App() {
             </AuthenticateRoute>
           }
         />
-        <Route path="/recipe/:id" element={<RecipeDetail />} />
         <Route
           path="Meal"
           element={
@@ -198,7 +154,6 @@ function App() {
             </AuthenticateRoute>
           }
         />
-        <Route path="/auth/callback" element={<AuthCallback />} />
         <Route
           path="nutrition-calculator"
           element={
@@ -208,20 +163,11 @@ function App() {
           }
         />
         <Route path="/preferences" element={<FoodPreferences />} />
-        <Route path="/symptomassessment" element={<SymptomAssessment />} />
         <Route
           path="healthnews"
           element={
             <AuthenticateRoute>
               <HealthNews />
-            </AuthenticateRoute>
-          }
-        />
-        <Route
-          path="healthnews/:id"
-          element={
-            <AuthenticateRoute>
-              <NewsDetail />
             </AuthenticateRoute>
           }
         />
@@ -240,33 +186,8 @@ function App() {
             <AuthenticateRoute>
               <HealthTools />
             </AuthenticateRoute>
-          }
+          } 
         />
-        <Route
-          path="shopping-list"
-          element={
-            <AuthenticateRoute>
-              <ShoppingList />
-            </AuthenticateRoute>
-          }
-        />
-        <Route
-         path="settings"
-         element={
-          <AuthenticateRoute>
-            <Settings />
-          </AuthenticateRoute>
-         }
-        />
-        <Route
-          path="HealthFAQ"
-          element={
-            <AuthenticateRoute>
-              <HealthFAQ />
-            </AuthenticateRoute>
-          }
-        />
-        <Route path="ScanBarcode" element={<ScanBarcode />} />
       </Routes>
     </Router>
   );
