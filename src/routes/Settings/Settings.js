@@ -4,6 +4,7 @@ import { useDarkMode } from '../../routes/DarkModeToggle/DarkModeContext';
 import { getFontSizeOptions, applyFontSize, getCurrentFontSize } from '../../utils/fontSizeManager';
 import { testVoiceSettings, saveVoiceSettings } from '../../utils/voiceSettingsManager';
 import { MoonIcon, SunIcon, Bell, Globe, Save, Volume2 } from "lucide-react";
+import notificationPreferencesApi from '../../services/notificationPreferencesApi';
 import './Settings.css';
 
 const Settings = () => {
@@ -30,6 +31,12 @@ const Settings = () => {
   });
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   
+  // API integration states
+  const [isLoadingFromAPI, setIsLoadingFromAPI] = useState(false);
+  const [isSavingToAPI, setIsSavingToAPI] = useState(false);
+  const [apiError, setApiError] = useState(null);
+  const [apiSuccess, setApiSuccess] = useState(null);
+  
   // Voice/Audio settings states
   const [voiceSettings, setVoiceSettings] = useState({
     enabled: true,
@@ -51,51 +58,119 @@ const Settings = () => {
 
   // Initialize settings
   useEffect(() => {
-    try {
-      const options = getFontSizeOptions();
-      setFontSizes(options);
-      
-      const currentSize = getCurrentFontSize();
-      if (options[currentSize]) {
-        setFontSize(currentSize);
-        applyFontSize(options[currentSize].size);
+    const initializeSettings = async () => {
+      try {
+        setIsLoadingFromAPI(true);
+        setApiError(null);
+        
+        // Initialize font size options
+        const options = getFontSizeOptions();
+        setFontSizes(options);
+        
+        const currentSize = getCurrentFontSize();
+        if (options[currentSize]) {
+          setFontSize(currentSize);
+          applyFontSize(options[currentSize].size);
+        }
+        
+        // Try to load settings from API first
+        try {
+          const apiPreferences = await notificationPreferencesApi.getAllUserPreferences();
+          
+          if (apiPreferences) {
+            // Set notification preferences from API
+            if (apiPreferences.notification_preferences) {
+              setNotifications(apiPreferences.notification_preferences);
+            }
+            
+            // Set language from API
+            if (apiPreferences.language) {
+              setLanguage(apiPreferences.language);
+            }
+            
+            // Set theme from API
+            if (apiPreferences.theme) {
+              const isDarkMode = apiPreferences.theme === 'dark';
+              setDarkMode(isDarkMode);
+              if (isDarkMode) {
+                document.body.classList.add('dark-mode');
+              } else {
+                document.body.classList.remove('dark-mode');
+              }
+            }
+            
+            // Set font size from API
+            if (apiPreferences.font_size) {
+              // Find matching font size option
+              const matchingSize = Object.keys(options).find(key => 
+                options[key].size === apiPreferences.font_size
+              );
+              if (matchingSize) {
+                setFontSize(matchingSize);
+                applyFontSize(apiPreferences.font_size);
+              }
+            }
+            
+            setApiSuccess('Settings loaded from cloud successfully');
+          }
+        } catch (apiError) {
+          console.error('Error loading settings from API:', apiError);
+          setApiError('Failed to load settings from cloud, using local settings');
+          
+          // Fallback to local storage
+          loadSettingsFromLocalStorage();
+        }
+        
+        // Load other settings from local storage (not handled by API yet)
+        const savedHighContrast = localStorage.getItem('highContrast') === 'true';
+        const savedShowFocusIndicators = localStorage.getItem('showFocusIndicators') === 'true';
+        const savedScreenReaderSupport = localStorage.getItem('screenReaderSupport') === 'true';
+        const savedRememberPreferences = localStorage.getItem('rememberPreferences') !== 'false';
+        const savedShowHelpfulTips = localStorage.getItem('showHelpfulTips') !== 'false';
+        const savedAutoSave = localStorage.getItem('autoSave') !== 'false';
+        const savedVoiceSettings = JSON.parse(localStorage.getItem('voiceSettings') || '{}');
+        
+        setHighContrast(savedHighContrast);
+        setShowFocusIndicators(savedShowFocusIndicators);
+        setScreenReaderSupport(savedScreenReaderSupport);
+        setRememberPreferences(savedRememberPreferences);
+        setShowHelpfulTips(savedShowHelpfulTips);
+        setAutoSave(savedAutoSave);
+        setVoiceSettings({ ...voiceSettings, ...savedVoiceSettings });
+        
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Error initializing settings:', error);
+        setApiError('Error initializing settings');
+        setIsLoading(false);
+      } finally {
+        setIsLoadingFromAPI(false);
       }
-      
-      // Load all saved settings
+    };
+    
+    initializeSettings();
+  }, []);
+
+  // Load settings from local storage (fallback function)
+  const loadSettingsFromLocalStorage = () => {
+    try {
       const savedGlobalDarkMode = localStorage.getItem('globalDarkMode') === 'true';
-      const savedHighContrast = localStorage.getItem('highContrast') === 'true';
-      const savedShowFocusIndicators = localStorage.getItem('showFocusIndicators') === 'true';
-      const savedScreenReaderSupport = localStorage.getItem('screenReaderSupport') === 'true';
-      const savedRememberPreferences = localStorage.getItem('rememberPreferences') !== 'false';
-      const savedShowHelpfulTips = localStorage.getItem('showHelpfulTips') !== 'false';
-      const savedAutoSave = localStorage.getItem('autoSave') !== 'false';
       const savedLanguage = localStorage.getItem('language') || 'en';
       const savedNotifications = JSON.parse(localStorage.getItem('notifications') || '{}');
-      const savedVoiceSettings = JSON.parse(localStorage.getItem('voiceSettings') || '{}');
       
       setDarkMode(savedGlobalDarkMode);
-      setHighContrast(savedHighContrast);
-      setShowFocusIndicators(savedShowFocusIndicators);
-      setScreenReaderSupport(savedScreenReaderSupport);
-      setRememberPreferences(savedRememberPreferences);
-      setShowHelpfulTips(savedShowHelpfulTips);
-      setAutoSave(savedAutoSave);
       setLanguage(savedLanguage);
       setNotifications({ ...notifications, ...savedNotifications });
-      setVoiceSettings({ ...voiceSettings, ...savedVoiceSettings });
       
       if (savedGlobalDarkMode) {
         document.body.classList.add('dark-mode');
       } else {
         document.body.classList.remove('dark-mode');
       }
-      
-      setIsLoading(false);
     } catch (error) {
-      console.error('Error initializing settings:', error);
-      setIsLoading(false);
+      console.error('Error loading settings from local storage:', error);
     }
-  }, []);
+  };
 
   // Auto-save functionality
   useEffect(() => {
@@ -145,12 +220,50 @@ const Settings = () => {
   };
 
   // Handle notification toggle
-  const handleNotificationToggle = (key) => {
-    setNotifications(prev => ({
-      ...prev,
-      [key]: !prev[key]
-    }));
+  const handleNotificationToggle = async (key) => {
+    console.log('🔧 Debug: handleNotificationToggle called with key:', key);
+    console.log('🔧 Debug: Current notifications:', notifications);
+    console.log('🔧 Debug: Current autoSave:', autoSave);
+    
+    const newNotifications = {
+      ...notifications,
+      [key]: !notifications[key]
+    };
+    
+    console.log('🔧 Debug: New notifications:', newNotifications);
+    
+    setNotifications(newNotifications);
     setHasUnsavedChanges(true);
+    
+    // Show immediate feedback
+    showSuccessMessage(`${key} notification ${newNotifications[key] ? 'enabled' : 'disabled'}`);
+    
+    // If auto-save is enabled, save to API immediately
+    if (autoSave) {
+      try {
+        setIsSavingToAPI(true);
+        setApiError(null);
+        
+        console.log('🔧 Debug: Attempting to save to API...');
+        const response = await notificationPreferencesApi.updateNotificationPreferences(newNotifications);
+        
+        if (response.success) {
+          setApiSuccess('Notification preferences saved to cloud');
+          setHasUnsavedChanges(false);
+          console.log('✅ Debug: API save successful');
+        } else {
+          setApiError(response.message || 'Failed to save notification preferences');
+          console.log('❌ Debug: API save failed:', response.message);
+        }
+      } catch (error) {
+        console.error('❌ Debug: Error saving notification preferences:', error);
+        setApiError('Failed to save to cloud, saved locally');
+      } finally {
+        setIsSavingToAPI(false);
+      }
+    } else {
+      console.log('🔧 Debug: Auto-save disabled, only saved locally');
+    }
   };
 
   // Handle language change
@@ -174,7 +287,47 @@ const Settings = () => {
   };
 
   // Save all settings
-  const saveSettings = () => {
+  const saveSettings = async () => {
+    try {
+      setIsSavingToAPI(true);
+      setApiError(null);
+      
+      // Save settings that are handled by API
+      const apiPreferences = {
+        notification_preferences: notifications,
+        language: language,
+        theme: darkMode ? 'dark' : 'light',
+        font_size: fontSizes[fontSize]?.size || '16px'
+      };
+      
+      // Try to save to API first
+      try {
+        const response = await notificationPreferencesApi.updateAllUserPreferences(apiPreferences);
+        
+        if (response.success) {
+          setApiSuccess('Settings saved to cloud successfully!');
+        } else {
+          setApiError(response.message || 'Failed to save some settings to cloud');
+        }
+      } catch (apiError) {
+        console.error('Error saving to API:', apiError);
+        setApiError('Failed to save to cloud, saved locally');
+      }
+      
+      // Always save to local storage as backup and for settings not handled by API
+      saveSettingsToLocalStorage();
+      
+    } catch (error) {
+      console.error('Error saving settings:', error);
+      setApiError('Error saving settings');
+      saveSettingsToLocalStorage();
+    } finally {
+      setIsSavingToAPI(false);
+    }
+  };
+
+  // Save settings to local storage
+  const saveSettingsToLocalStorage = () => {
     if (fontSize && fontSizes[fontSize]) {
       localStorage.setItem('fontSize', fontSizes[fontSize].size);
     }
@@ -187,6 +340,7 @@ const Settings = () => {
     localStorage.setItem('autoSave', autoSave);
     localStorage.setItem('language', language);
     localStorage.setItem('notifications', JSON.stringify(notifications));
+    localStorage.setItem('globalDarkMode', darkMode.toString());
     saveVoiceSettings(voiceSettings);
     
     // Apply accessibility settings
@@ -397,68 +551,143 @@ const Settings = () => {
       description: 'Manage your notification preferences',
       content: (
         <div className="notification-options">
-          <div className="checkbox-group">
-            <input 
-              type="checkbox" 
-              className="checkbox-input"
-              checked={notifications.mealReminders}
-              onChange={() => handleNotificationToggle('mealReminders')}
-            />
-            <div>
-              <div className="checkbox-label">Meal reminders</div>
-              <div className="checkbox-description">Get reminded about your scheduled meals</div>
+          <div className="notification-header">
+            <div className="notification-status">
+              <span className="status-indicator">
+                {Object.values(notifications).filter(Boolean).length} of {Object.keys(notifications).length} enabled
+              </span>
+            </div>
+            <div className="notification-actions">
+              <button 
+                className="action-btn enable-all"
+                onClick={() => {
+                  const allEnabled = Object.keys(notifications).reduce((acc, key) => {
+                    acc[key] = true;
+                    return acc;
+                  }, {});
+                  setNotifications(allEnabled);
+                  setHasUnsavedChanges(true);
+                  showSuccessMessage('All notifications enabled');
+                }}
+              >
+                Enable All
+              </button>
+              <button 
+                className="action-btn disable-all"
+                onClick={() => {
+                  const allDisabled = Object.keys(notifications).reduce((acc, key) => {
+                    acc[key] = false;
+                    return acc;
+                  }, {});
+                  setNotifications(allDisabled);
+                  setHasUnsavedChanges(true);
+                  showSuccessMessage('All notifications disabled');
+                }}
+              >
+                Disable All
+              </button>
             </div>
           </div>
           
-          <div className="checkbox-group">
-            <input 
-              type="checkbox" 
-              className="checkbox-input"
-              checked={notifications.waterReminders}
-              onChange={() => handleNotificationToggle('waterReminders')}
-            />
-            <div>
-              <div className="checkbox-label">Water intake reminders</div>
-              <div className="checkbox-description">Stay hydrated with regular water reminders</div>
+          <div className="notification-list">
+            <div className="checkbox-group" onClick={() => handleNotificationToggle('mealReminders')}>
+              <input 
+                type="checkbox" 
+                className="checkbox-input"
+                checked={notifications.mealReminders}
+                onChange={() => {}} // Handled by parent div click
+                readOnly
+              />
+              <div className="notification-content">
+                <div className="checkbox-label">
+                  <span className="notification-icon">🍽️</span>
+                  Meal reminders
+                </div>
+                <div className="checkbox-description">Get reminded about your scheduled meals</div>
+                <div className="notification-status-text">
+                  {notifications.mealReminders ? 'Enabled' : 'Disabled'}
+                </div>
+              </div>
             </div>
-          </div>
-          
-          <div className="checkbox-group">
-            <input 
-              type="checkbox" 
-              className="checkbox-input"
-              checked={notifications.healthTips}
-              onChange={() => handleNotificationToggle('healthTips')}
-            />
-            <div>
-              <div className="checkbox-label">Health tips</div>
-              <div className="checkbox-description">Receive daily health and nutrition tips</div>
+            
+            <div className="checkbox-group" onClick={() => handleNotificationToggle('waterReminders')}>
+              <input 
+                type="checkbox" 
+                className="checkbox-input"
+                checked={notifications.waterReminders}
+                onChange={() => {}} // Handled by parent div click
+                readOnly
+              />
+              <div className="notification-content">
+                <div className="checkbox-label">
+                  <span className="notification-icon">💧</span>
+                  Water intake reminders
+                </div>
+                <div className="checkbox-description">Stay hydrated with regular water reminders</div>
+                <div className="notification-status-text">
+                  {notifications.waterReminders ? 'Enabled' : 'Disabled'}
+                </div>
+              </div>
             </div>
-          </div>
-          
-          <div className="checkbox-group">
-            <input 
-              type="checkbox" 
-              className="checkbox-input"
-              checked={notifications.weeklyReports}
-              onChange={() => handleNotificationToggle('weeklyReports')}
-            />
-            <div>
-              <div className="checkbox-label">Weekly progress reports</div>
-              <div className="checkbox-description">Get weekly summaries of your health progress</div>
+            
+            <div className="checkbox-group" onClick={() => handleNotificationToggle('healthTips')}>
+              <input 
+                type="checkbox" 
+                className="checkbox-input"
+                checked={notifications.healthTips}
+                onChange={() => {}} // Handled by parent div click
+                readOnly
+              />
+              <div className="notification-content">
+                <div className="checkbox-label">
+                  <span className="notification-icon">💡</span>
+                  Health tips
+                </div>
+                <div className="checkbox-description">Receive daily health and nutrition tips</div>
+                <div className="notification-status-text">
+                  {notifications.healthTips ? 'Enabled' : 'Disabled'}
+                </div>
+              </div>
             </div>
-          </div>
-          
-          <div className="checkbox-group">
-            <input 
-              type="checkbox" 
-              className="checkbox-input"
-              checked={notifications.systemUpdates}
-              onChange={() => handleNotificationToggle('systemUpdates')}
-            />
-            <div>
-              <div className="checkbox-label">System updates</div>
-              <div className="checkbox-description">Receive notifications about app updates</div>
+            
+            <div className="checkbox-group" onClick={() => handleNotificationToggle('weeklyReports')}>
+              <input 
+                type="checkbox" 
+                className="checkbox-input"
+                checked={notifications.weeklyReports}
+                onChange={() => {}} // Handled by parent div click
+                readOnly
+              />
+              <div className="notification-content">
+                <div className="checkbox-label">
+                  <span className="notification-icon">📊</span>
+                  Weekly progress reports
+                </div>
+                <div className="checkbox-description">Get weekly summaries of your health progress</div>
+                <div className="notification-status-text">
+                  {notifications.weeklyReports ? 'Enabled' : 'Disabled'}
+                </div>
+              </div>
+            </div>
+            
+            <div className="checkbox-group" onClick={() => handleNotificationToggle('systemUpdates')}>
+              <input 
+                type="checkbox" 
+                className="checkbox-input"
+                checked={notifications.systemUpdates}
+                onChange={() => {}} // Handled by parent div click
+                readOnly
+              />
+              <div className="notification-content">
+                <div className="checkbox-label">
+                  <span className="notification-icon">🔔</span>
+                  System updates
+                </div>
+                <div className="checkbox-description">Receive notifications about app updates</div>
+                <div className="notification-status-text">
+                  {notifications.systemUpdates ? 'Enabled' : 'Disabled'}
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -668,7 +897,22 @@ const Settings = () => {
         </div>
 
         <div className="settings-content">
-          {/* Quick Actions section removed */}
+          {/* API Status Messages */}
+          {apiError && (
+            <div className="api-status-message api-error">
+              <span>⚠️ {apiError}</span>
+            </div>
+          )}
+          {apiSuccess && (
+            <div className="api-status-message api-success">
+              <span>✅ {apiSuccess}</span>
+            </div>
+          )}
+          {(isLoadingFromAPI || isSavingToAPI) && (
+            <div className="api-status-message api-loading">
+              <span>🔄 {isLoadingFromAPI ? 'Loading settings from cloud...' : 'Saving settings to cloud...'}</span>
+            </div>
+          )}
 
           {/* Settings Sections */}
           {allSections.map((section) => (
