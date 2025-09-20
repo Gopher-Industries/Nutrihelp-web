@@ -46,12 +46,15 @@ import RecipeDetail from "./routes/RecipeRating/RecipeDetail";
 import SymptomAssessment from "./routes/SymptomAssessment/SymptomAssessment";
 import Leaderboard from "./routes/LeaderBoard/leaderBoard";
 import ObesityPredictor from "./routes/survey/ObesityPredictor";
+import Predictionresult from "./routes/survey/predictionresult";
 import UiTimer from "./routes/UiTimer/UiTimer"
 import Settings from "./routes/Settings/Settings"
 import HealthFAQ from "./routes/HealthFAQ/HealthFAQ";
 import Community from "./routes/Community/Community";
 import PostDetail from "./routes/Community/PostDetail";
-
+import ScanBarcode from "./routes/ScanBarcode/ScanBarcode";
+import AuthCallback from "./pages/AuthCallback";
+import DailyPlanEdit from './routes/DailyPlan/DailyPlanEdit';
 
 function App() {
   const { currentUser } = useContext(UserContext);
@@ -83,8 +86,17 @@ function App() {
         <Route path="/community" element={<Community />} />
         <Route path="/community/post/:postId" element={<PostDetail />} />
         <Route path="/survey" element={<ObesityPredictor />} />
+        <Route path="/survey/result" element= {<Predictionresult/>}/>
 
         {/* Private Routes */}
+        <Route
+          path="/daily-plan-edit"
+          element={
+            <AuthenticateRoute>
+              <DailyPlanEdit />
+            </AuthenticateRoute>
+          }
+        />
         <Route
           path="createRecipe"
           element={
@@ -191,6 +203,7 @@ function App() {
             </AuthenticateRoute>
           }
         />
+        <Route path="/auth/callback" element={<AuthCallback />} />
         <Route
           path="nutrition-calculator"
           element={
@@ -258,6 +271,7 @@ function App() {
             </AuthenticateRoute>
           }
         />
+        <Route path="ScanBarcode" element={<ScanBarcode />} />
       </Routes>
     </Router>
   );

@@ -14,8 +14,35 @@ const NewsDetail = () => {
   const [article, setArticle] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [randomImage, setRandomImage] = useState(null);
+  const [imageError, setImageError] = useState(false);
+
+  // Function to generate a random image URL using Picsum
+  const getRandomImage = () => {
+    const randomId = Math.floor(Math.random() * 1000) + 1;
+    const width = 800;
+    const height = 600;
+    return `https://picsum.photos/${width}/${height}?random=${randomId}`;
+  };
+
+  // Function to handle image loading errors
+  const handleImageError = () => {
+    setImageError(true);
+    // Fallback to a different random image service or placeholder
+    const fallbackId = Math.floor(Math.random() * 100) + 1;
+    setRandomImage(`https://picsum.photos/800/600?random=${fallbackId}`);
+  };
+
+  // Function to refresh the random image
+  const refreshRandomImage = () => {
+    setImageError(false);
+    setRandomImage(getRandomImage());
+  };
 
   useEffect(() => {
+    // Set random image when component loads
+    setRandomImage(getRandomImage());
+
     const fetchArticle = async () => {
       if (!articleId) {
         setErrorMessage('Invalid article id.');
@@ -82,9 +109,24 @@ const NewsDetail = () => {
               )}
             </header>
 
-            {article.image_url && (
+            {(article.image_url || randomImage) && (
               <figure className="news-detail-figure">
-                <img src={article.image_url} alt={article.title || 'Article image'} />
+                <img 
+                  src={article.image_url || randomImage} 
+                  alt={article.title || 'Article image'} 
+                  onError={handleImageError}
+                />
+                {!article.image_url && (
+                  <div className="image-controls">
+                    <button 
+                      className="refresh-image-btn"
+                      onClick={refreshRandomImage}
+                      title="Generate new random image"
+                    >
+                      New Image
+                    </button>
+                  </div>
+                )}
               </figure>
             )}
 

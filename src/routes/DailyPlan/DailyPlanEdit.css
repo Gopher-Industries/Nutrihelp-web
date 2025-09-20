@@ -1,0 +1,265 @@
+/* DailyPlanEdit – SCOPED. Won’t leak into the rest of the app */
+.dpe {
+  --dpe-bg: #fbf8ff;
+  --dpe-surface: #ffffff;
+  --dpe-surface-2: #f3ecff;
+  --dpe-primary: #7b57e4;
+  --dpe-primary-2: #9a7ff3;
+  --dpe-text: #171717;
+  --dpe-muted: #6f6f6f;
+  --dpe-border: #e7ddff;
+  --dpe-shadow: 0 10px 26px rgba(76, 21, 155, .07);
+
+  color: var(--dpe-text);
+  background: var(--dpe-bg);
+}
+
+.dpe__wrap {
+  max-width: 1180px;
+  margin: 22px auto 80px;
+  padding: 0 16px;
+}
+
+/* Header card */
+.dpe-header {
+  background: linear-gradient(135deg,var(--dpe-primary),var(--dpe-primary-2));
+  color: #fff;
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: var(--dpe-shadow);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  align-items: center;
+}
+
+.dpe-header h3 {
+  margin: 0 0 8px;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: .2px;
+}
+
+.dpe-date {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.dpe-date input[type="date"],
+.dpe-date input[type="text"] {
+  background: #fff;
+  color: var(--dpe-text);
+  border: 1px solid rgba(255,255,255,.55);
+  border-radius: 12px;
+  padding: 10px 12px;
+  height: 40px;
+}
+
+.dpe-chipbtn {
+  background: #fff;
+  color: var(--dpe-text);
+  border: 1px solid rgba(255,255,255,.5);
+  border-radius: 10px;
+  height: 40px;
+  padding: 0 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform .08s ease, filter .15s ease;
+}
+.dpe-chipbtn:hover { filter: brightness(.98); }
+.dpe-chipbtn:active { transform: translateY(1px); }
+
+/* Action row */
+.dpe-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+.dpe-actions .dpe-btn {
+  background: var(--dpe-surface);
+  border: 1px solid var(--dpe-border);
+  border-radius: 12px;
+  height: 38px;
+  padding: 0 14px;
+  font-weight: 700;
+  color: var(--dpe-text);
+  box-shadow: var(--dpe-shadow);
+  cursor: pointer;
+  transition: filter .15s ease, transform .08s ease;
+}
+.dpe-actions .dpe-btn:hover { filter: brightness(.98); }
+.dpe-actions .dpe-btn:active { transform: translateY(1px); }
+
+/* Totals */
+.dpe-totals {
+  margin-top: 12px;
+  background: var(--dpe-surface);
+  border: 1px solid var(--dpe-border);
+  border-radius: 12px;
+  padding: 10px 12px;
+  box-shadow: var(--dpe-shadow);
+  color: var(--dpe-muted);
+  font-weight: 600;
+}
+
+/* Section title */
+.dpe-section {
+  margin-top: 22px;
+  font-weight: 800;
+}
+
+/* Row container */
+.dpe-row {
+  margin-top: 10px;
+  background: var(--dpe-surface);
+  border: 1px solid var(--dpe-border);
+  border-radius: 14px;
+  box-shadow: var(--dpe-shadow);
+  padding: 12px;
+}
+
+/* One-row layout: name | 5 numbers | meal chip | remove */
+.dpe-grid {
+  display: grid;
+  grid-template-columns:
+    minmax(320px,1fr)
+    88px 88px 88px 88px 88px
+    120px
+    92px;
+  gap: 10px;
+  align-items: center;
+}
+
+/* Inputs: black text, compact numbers */
+.dpe input[type="text"],
+.dpe input[type="number"] {
+  color: #111;
+  width: 100%;
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid var(--dpe-border);
+  background: var(--dpe-surface-2);
+  border-radius: 12px;
+  outline: none;
+}
+.dpe input[type="number"]::-webkit-outer-spin-button,
+.dpe input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.dpe input[type="number"] { appearance: textfield; }
+
+/* Meal chip */
+.dpe-meal {
+  background: var(--dpe-surface-2);
+  border: 1px solid var(--dpe-border);
+  border-radius: 100px;
+  height: 40px;
+  padding: 0 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: var(--dpe-text);
+  white-space: nowrap;
+}
+
+/* Remove button – always fully visible */
+.dpe-remove {
+  background: #fff;
+  color: #d44;
+  border: 1px solid #f2c7c7;
+  border-radius: 12px;
+  height: 40px;
+  padding: 0 14px;
+  box-shadow: var(--dpe-shadow);
+  cursor: pointer;
+  font-weight: 700;
+}
+.dpe-remove:hover { filter: brightness(.98); }
+
+/* "+ Add Item" floating right */
+.dpe-addline {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+.dpe-addline .dpe-btn {
+  background: var(--dpe-surface);
+  border: 1px solid var(--dpe-border);
+  border-radius: 12px;
+  height: 36px;
+  padding: 0 12px;
+  font-weight: 700;
+}
+
+.dpe-empty {
+  margin: 10px 0 0 6px;
+  color: var(--dpe-muted);
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .dpe-grid {
+    grid-template-columns:
+      minmax(220px,1fr)
+      80px 80px 80px 80px 80px
+      110px
+      92px;
+  }
+}
+@media (max-width: 900px) {
+  .dpe-grid { grid-template-columns: 1fr 1fr; }
+  .dpe-grid > * { min-width: 0; }
+}
+.dpe-addline{
+  display:flex;
+  justify-content:flex-end;      /* keep it on the right */
+  margin: .5rem 0 1.5rem;
+}
+
+.dpe-addline .dpe-btn{
+  /* keep existing .dpe-btn look, then enhance only here */
+  display:inline-flex;
+  align-items:center;
+  gap:.5rem;
+
+  height:32px;
+  padding:0 .75rem;
+  border-radius:12px;
+
+  border:1px solid #e7e3ff;
+  background:#fff;
+  color:#5a47ff;
+  font-weight:600;
+  letter-spacing:.2px;
+
+  box-shadow:0 2px 8px rgba(90,71,255,.08);
+  transition:background .15s ease, border-color .15s ease, transform .06s ease, box-shadow .15s ease;
+}
+
+.dpe-addline .dpe-btn:hover{
+  background:#f7f5ff;
+  border-color:#cfc7ff;
+}
+
+.dpe-addline .dpe-btn:active{ transform:translateY(1px); }
+
+.dpe-addline .dpe-btn:focus-visible{
+  outline:2px solid #cfc7ff;
+  outline-offset:2px;
+}
+
+/* circular + icon (no JSX changes needed) */
+.dpe-addline .dpe-btn::before{
+  content:"+";
+  display:inline-grid;
+  place-items:center;
+  width:20px; height:20px;
+  border-radius:50%;
+  background:#efeaff;
+  color:#5a47ff;
+  font-weight:800;
+  font-size:13px;
+  line-height:1;
+}

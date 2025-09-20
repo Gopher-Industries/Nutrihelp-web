@@ -1,5 +1,65 @@
 /* Settings Page Styles with Global Dark Mode Support */
 
+/* API Status Messages */
+.api-status-message {
+  margin: 15px 30px;
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  animation: slideIn 0.3s ease;
+}
+
+.api-status-message.api-success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.api-status-message.api-error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.api-status-message.api-loading {
+  background-color: #d1ecf1;
+  color: #0c5460;
+  border: 1px solid #bee5eb;
+}
+
+.dark-mode .api-status-message.api-success {
+  background-color: #1e4d2b;
+  color: #d4edda;
+  border-color: #2d5a3d;
+}
+
+.dark-mode .api-status-message.api-error {
+  background-color: #4d1e1e;
+  color: #f8d7da;
+  border-color: #5a2d2d;
+}
+
+.dark-mode .api-status-message.api-loading {
+  background-color: #1e3d4d;
+  color: #d1ecf1;
+  border-color: #2d4a5a;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .settings-page {
   min-height: 100vh;
   background-color: var(--background-color);
@@ -317,12 +377,65 @@
   border-radius: 10px;
   border: 1px solid var(--border-color);
   transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
 }
 
 .checkbox-group:hover {
   border-color: var(--primary-color);
   transform: translateY(-2px);
   box-shadow: var(--card-shadow-hover);
+}
+
+/* Enhanced notification checkbox groups */
+.notification-list .checkbox-group {
+  padding: 20px;
+  min-height: 100px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.notification-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.notification-icon {
+  font-size: 1.2rem;
+  margin-right: 8px;
+}
+
+.notification-status-text {
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 12px;
+  text-align: center;
+  width: fit-content;
+  transition: all 0.3s ease;
+}
+
+.notification-list .checkbox-group:has(.checkbox-input:checked) .notification-status-text {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.notification-list .checkbox-group:not(:has(.checkbox-input:checked)) .notification-status-text {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.dark-mode .notification-list .checkbox-group:has(.checkbox-input:checked) .notification-status-text {
+  background-color: #1e4d2b;
+  color: #d4edda;
+}
+
+.dark-mode .notification-list .checkbox-group:not(:has(.checkbox-input:checked)) .notification-status-text {
+  background-color: #4d1e1e;
+  color: #f8d7da;
 }
 
 .checkbox-input {
@@ -350,10 +463,73 @@
 
 /* Notification Options */
 .notification-options {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  display: flex;
+  flex-direction: column;
   gap: 20px;
   margin-bottom: 20px;
+}
+
+.notification-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background-color: var(--background-secondary);
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+}
+
+.notification-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.status-indicator {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.notification-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.action-btn {
+  padding: 8px 16px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background-color: var(--background-primary);
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.action-btn:hover {
+  background-color: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+  transform: translateY(-1px);
+}
+
+.action-btn.enable-all:hover {
+  background-color: #28a745;
+  border-color: #28a745;
+}
+
+.action-btn.disable-all:hover {
+  background-color: #dc3545;
+  border-color: #dc3545;
+}
+
+
+.notification-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 15px;
 }
 
 /* Language Options */

@@ -37,6 +37,7 @@ const SideMenu = ({ isOpen, toggleMenu }) => {
             <Link to="/home" onClick={toggleMenu}>Home</Link>
             <Link to="/dashboard" onClick={toggleMenu}>Menu</Link>
             <Link to="/Meal" onClick={toggleMenu}>Meal Planning</Link>
+            <Link to="/daily-plan-edit" onClick={toggleMenu}>Edit Daily Plan</Link>
             <Link to="/healthnews" onClick={toggleMenu}>Health News</Link>
             <Link to="/community" onClick={toggleMenu}>Community</Link>
             <Link to="/leaderboard" onClick={toggleMenu}>LeaderBoard</Link>
@@ -77,6 +78,7 @@ const SideMenu = ({ isOpen, toggleMenu }) => {
             </div>
 
             <Link to="/ScanProducts" onClick={toggleMenu}>Scan Products</Link>
+            <Link to="/ScanBarcode" onClick={toggleMenu}>Scan Barcode</Link>
             <Link to="/preferences" onClick={toggleMenu}>Allergies & Intolerances</Link>
             <Link to="/symptomassessment" onClick={toggleMenu}>Symptom Assessment</Link>
             <Link to="/healthtools" onClick={toggleMenu}>Health Tools</Link>
@@ -96,6 +98,7 @@ const SideMenu = ({ isOpen, toggleMenu }) => {
             <Link to="/home" onClick={toggleMenu}>Home</Link>
             <Link to="/dashboard" onClick={toggleMenu}>Menu</Link>
             <Link to="/Meal" onClick={toggleMenu}>Meal Planning</Link>
+            <Link to="/daily-plan-edit" onClick={toggleMenu}>Edit Daily Plan</Link>
             <Link to="/healthnews" onClick={toggleMenu}>Health News</Link>
             <Link to="/community" onClick={toggleMenu}>Community</Link>
             <Link to="/leaderboard" onClick={toggleMenu}>LeaderBoard</Link>
@@ -136,6 +139,7 @@ const SideMenu = ({ isOpen, toggleMenu }) => {
             </div>
 
             <Link to="/ScanProducts" onClick={toggleMenu}>Scan Products</Link>
+            <Link to="/ScanBarcode" onClick={toggleMenu}>Scan Barcode</Link>
             <Link to="/preferences" onClick={toggleMenu}>Allergies & Intolerances</Link>
             <Link to="/symptomassessment" onClick={toggleMenu}>Symptom Assessment</Link>
             <Link to="/healthtools" onClick={toggleMenu}>Health Tools</Link>

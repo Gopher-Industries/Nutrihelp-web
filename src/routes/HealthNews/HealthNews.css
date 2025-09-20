@@ -646,6 +646,21 @@
   .news-card {
     margin-bottom: 20px;
   }
+  
+  .results-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  
+  .result-header-actions {
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 5px;
+  }
+  
+  .test-result-card .favorite-button {
+    margin-left: 0;
+  }
 }
 
 @media (max-width: 480px) {
@@ -1038,8 +1053,28 @@
   background-color: var(--card-background-secondary);
   border: 1px solid var(--border-color);
   border-radius: 10px;
-  padding: 20px;
+  padding: 0;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.result-card-image {
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+}
+
+.result-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.test-result-card:hover .result-card-image img {
+  transform: scale(1.05);
 }
 
 .dark-mode .test-result-card {
@@ -1057,6 +1092,13 @@
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 15px;
+  padding: 20px 20px 0 20px;
+}
+
+.result-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .result-title {
@@ -1089,6 +1131,8 @@
 
 .result-content {
   margin-bottom: 15px;
+  padding: 0 20px;
+  flex: 1;
 }
 
 .result-text {
@@ -1119,6 +1163,7 @@
   align-items: center;
   font-size: 0.8rem;
   color: var(--text-muted);
+  padding: 0 20px 20px 20px;
 }
 
 .dark-mode .result-footer {
@@ -1131,6 +1176,38 @@
 
 .result-date {
   font-style: italic;
+}
+
+/* Favorite button styling for daily news */
+.test-result-card .favorite-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 50%;
+  transition: background-color 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 8px;
+}
+
+.test-result-card .favorite-button:hover {
+  background-color: var(--background-secondary);
+}
+
+.test-result-card .heart-icon {
+  font-size: 1rem;
+  color: var(--text-muted);
+  transition: color 0.3s ease;
+}
+
+.test-result-card .heart-icon.filled {
+  color: var(--error-color);
+}
+
+.test-result-card .favorite-button:hover .heart-icon {
+  color: var(--error-color);
 }
 
 .error-container {
