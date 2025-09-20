@@ -38,6 +38,7 @@ const SideMenu = ({ isOpen, toggleMenu }) => {
             <Link to="/dashboard" onClick={toggleMenu}>Menu</Link>
             <Link to="/Meal" onClick={toggleMenu}>Meal Planning</Link>
             <Link to="/healthnews" onClick={toggleMenu}>Health News</Link>
+            <Link to="/community" onClick={toggleMenu}>Community</Link>
             <Link to="/leaderboard" onClick={toggleMenu}>LeaderBoard</Link>
             <Link to="/HealthFAQ" onClick={toggleMenu}>HealthFAQ</Link>
 
@@ -96,6 +97,7 @@ const SideMenu = ({ isOpen, toggleMenu }) => {
             <Link to="/dashboard" onClick={toggleMenu}>Menu</Link>
             <Link to="/Meal" onClick={toggleMenu}>Meal Planning</Link>
             <Link to="/healthnews" onClick={toggleMenu}>Health News</Link>
+            <Link to="/community" onClick={toggleMenu}>Community</Link>
             <Link to="/leaderboard" onClick={toggleMenu}>LeaderBoard</Link>
 
             {/* Recipes Dropdown */}
