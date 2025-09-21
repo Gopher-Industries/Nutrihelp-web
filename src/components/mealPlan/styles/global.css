@@ -1,0 +1,531 @@
+/* styles/global.css */
+
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  font-size: medium;
+  padding: 0;
+  background-color: #f4f7fa;
+  color: #333;
+}
+
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+}
+
+.user-info {
+  font-size: 4cap;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 5px;
+  
+}
+
+.tag {
+  background-color: #dff0d8;
+  color: #0e0c0d;
+  padding: 5px 10px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+}
+
+.section {
+  margin-top: 30px;
+}
+
+.meal-card {
+  background-color: #e9e4e4;
+  padding: 15px;
+  margin-bottom: 15px;
+  border-radius: 10px;
+  box-shadow: 0 1px 3px rgba(71, 2, 2, 0.1);
+}
+
+.meal-title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.meal-actions {
+  display: flex;
+  justify-content: flex-start;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.tip-card {
+  background-color: #e9f5ff;
+  padding: 15px;
+  border-left: 4px solid #b61cc4;
+  margin-top: 10px;
+  border-radius: 5px;
+}
+.meal-details {
+  background-color: #f0dfdf;
+  padding: 10px;
+  border-left: 4px solid #888;
+  border-radius: 5px;
+  font-size: 0.9rem;
+}
+.details-wrapper {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: all 0.4s ease;
+}
+
+.details-wrapper.open {
+  max-height: 300px; /* adjust based on content */
+  opacity: 1;
+}
+
+.meal-details {
+  background-color: #f9f9f9;
+  padding: 10px;
+  border-left: 4px solid #888;
+  border-radius: 5px;
+  font-size: 0.9rem;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animated-tip {
+  opacity: 0;
+  animation: fadeUp 0.6s ease forwards;
+}
+
+.tip-card {
+  background-color: #e9f5ff;
+  padding: 15px;
+  border-left: 4px solid #49505518;
+  margin-top: 10px;
+  border-radius: 5px;
+  font-size: 0.95rem;
+}
+
+.meal-details {
+  background-color: #f9f9f9;
+  padding: 10px;
+  border-left: 4px solid #888;
+  border-radius: 5px;
+  font-size: 0.9rem;
+}
+
+.details-wrapper {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: all 0.4s ease;
+}
+
+.details-wrapper.open {
+  max-height: 300px; /* adjust based on content */
+  opacity: 1;
+}
+
+.meal-details {
+  background-color: #f9f9f9;
+  padding: 10px;
+  border-left: 4px solid #888;
+  border-radius: 5px;
+  font-size: 1rem;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animated-tip {
+  opacity: 0;
+  animation: fadeUp 0.6s ease forwards;
+}
+
+.tip-card {
+  background-color: #e9f5ff;
+  padding: 15px;
+  border-left: 4px solid #888;
+  border-left: 4px solid ;
+  margin-top: 10px;
+  border-radius: 5px;
+  font-size: 0.95rem;
+}
+
+/* --- Modal --- */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  width: 520px;
+  max-width: 92vw;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  animation: modalIn 0.2s ease-out;
+}
+
+@keyframes modalIn {
+  from {
+    transform: translateY(12px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.modal-header,
+.modal-footer {
+  padding: 14px 18px;
+  background: #f7f9fc;
+  border-bottom: 1px solid #e6e9ef;
+}
+
+.modal-header {
+  font-weight: 600;
+}
+.modal-body {
+  padding: 18px;
+}
+
+.form-row {
+  margin-bottom: 12px;
+}
+.form-row label {
+  display: block;
+  font-size: 0.92rem;
+  margin-bottom: 6px;
+  color: #9e2898;
+}
+.input,
+.checkboxes,
+.chips-input {
+  width: 100%;
+  font-size: 0.95rem;
+}
+
+.input,
+.chips-input {
+  padding: 10px 12px;
+  border: 1px solid #cfd7e3;
+  border-radius: 8px;
+  outline: none;
+  background: #fff;
+}
+
+.input:focus,
+.chips-input:focus {
+  border-color: #1eb84c;
+  box-shadow: 0 0 0 3px rgba(122, 90, 248, 0.15);
+}
+
+.checkbox-group {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 14px;
+}
+
+.btn {
+  padding: 9px 14px;
+  border-radius: 9px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  
+}
+
+.btn:hover {background: #1eb84c;}
+
+.btn-primary { 
+  background: #b527e0;
+  color: white;
+}
+.btn-ghost {
+  background: transparent;
+  color: #333;
+}
+.btn + .btn {
+  margin-left: 10px;
+}
+
+/* Tag styling tweak */
+.tag {
+  background-color: #eef7ed;
+  color: #1f7a3f;
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  border: 1px solid #d6e9d6;
+}
+
+.btn {
+  pointer-events: auto;
+}
+
+/* ---------- Nutrition Tips animations & layout ---------- */
+
+/* Bigger headline card */
+.large-tip {
+  font-size: 2rem;
+  border-left-color: #b527e0; /* purple accent */
+}
+
+/* Base tip card already exists in your CSS:
+.tip-card { background:#e9f5ff; padding:15px; border-left:4px solid #2196f3; margin-top:10px; border-radius:5px; }
+*/
+
+/* Grid for expanded list */
+.tips-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+  max-height: 0;
+  opacity:0;
+  overflow: hidden;
+  transition: max-height .5s ease, opacity .4s ease;
+  border-left-color: #b527e0;
+  
+}
+.tips-grid.open { max-height: 900px; opacity: 1; }
+
+/* Carousel wrapper */
+.tip-carousel {
+  position: relative;
+  margin-top: 12px;
+  padding: 12px;
+  background: #fffcff;
+  border: 1px solid #e5eefc;
+  border-radius: 10px;
+}
+.carousel-track {
+  min-height: 50px;
+  position: relative;
+  overflow: hidden;
+}
+.carousel-slide {
+  position: absolute; inset: 0;
+  display: flex; align-items: center;
+  animation: slideIn .5s ease forwards;
+}
+@keyframes slideIn {
+  from { transform: translateX(14px); opacity: 0; }
+  to   { transform: translateX(0);   opacity: 1; }
+}
+.carousel-controls { display: flex; gap: 6px; justify-content: flex-end; margin-top: 6px; }
+.btn.small { padding: 6px 10px; border-radius: 8px; }
+
+/* Staggered fade-up */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animated-tip { opacity: 0; animation: fadeUp .45s ease forwards; }
+
+/* Gentle pulse to draw attention on first card */
+@keyframes gentlePulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(219, 216, 219, 0); }
+  50%      { box-shadow: 0 0 0 6px rgba(255, 255, 255, 0.08); }
+}
+.large-tip { animation: fadeUp .5s ease forwards, gentlePulse 3s ease 1.2s 1; }
+
+/* Reduced-motion accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .animated-tip, .large-tip, .tips-grid { animation: none; transition: none; }
+  .carousel-slide { animation: none; }
+}
+
+/* ===== PantryPlanner (unique classes to avoid clashes) ===== */
+.pantry-card { border: 1px solid #e5e9f2; }
+.pantry-controls {
+  display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin: 10px 0 6px;
+}
+.pantry-label { display: flex; align-items: center; gap: 8px; font-weight: 500; }
+.pantry-input {
+  width: 90px; padding: 6px 8px; border: 1px solid #cfd7e3; border-radius: 8px;
+}
+.pantry-actions button { margin-right: 8px; }
+
+.pantry-list { list-style: none; padding: 0; margin: 8px 0 0; }
+.pantry-row { border-bottom: 1px dashed #e2e6ee; padding: 10px 6px; }
+.pantry-row:last-child { border-bottom: none; }
+
+.pantry-row-inner {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%;
+}
+
+.pantry-name { font-weight: 600; }
+.pantry-qty {
+  color: #4b5563; font-size: 0.92rem; background: #ececf1; padding: 3px 10px; border-radius: 8px;
+}
+
+.pantry-row.is-done .pantry-name { color: #9aa3af; text-decoration: line-through; }
+/* ===== PantryPlanner slide/collapse ===== */
+.pantry-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.pantry-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border: 1px solid #d8ddeb;
+  background: #b527e0;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+}
+.pantry-toggle:hover { background: #1b9736; }
+.pantry-toggle-icon {
+  display: inline-block;
+  transition: transform .25s ease;
+}
+.pantry-toggle.is-open .pantry-toggle-icon {
+  transform: rotate(180deg);
+}
+
+/* Sliding container */
+.pantry-slide {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height .45s ease, opacity .35s ease;
+}
+.pantry-slide.open {
+  max-height: 1200px; /* large enough for content */
+  opacity: 1;
+}
+.pantry-inner { padding-top: 10px; }
+
+/* (existing PantryPlanner styles kept; shown for context) */
+.pantry-card { border: 1px solid #e5e9f2; }
+.pantry-controls {
+  display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin: 10px 0 6px;
+}
+.pantry-label { display: flex; align-items: center; gap: 8px; font-weight: 500; }
+.pantry-input {
+  width: 90px; padding: 6px 8px; border: 1px solid #cfd7e3; border-radius: 8px;
+}
+.pantry-actions button { margin-right: 8px; }
+
+.pantry-list { list-style: none; padding: 0; margin: 8px 0 0; }
+.pantry-row { border-bottom: 1px dashed #e2e6ee; padding: 10px 6px; }
+.pantry-row:last-child { border-bottom: none; }
+
+.pantry-row-inner {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%;
+}
+.pantry-name { font-weight: 600; }
+.pantry-qty {
+  color: #4b5563; font-size: 0.92rem; background: #f3f6fb; padding: 3px 10px; border-radius: 8px;
+}
+.pantry-row.is-done .pantry-name { color: #9aa3af; text-decoration: line-through; }
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .pantry-slide { transition: none; }
+  .pantry-toggle-icon { transition: none; }
+}
+
+
+/* Optional helpers for recipe badges & table */
+.recipe-chip-row { display:flex; flex-wrap:wrap; gap:8px; margin:8px 0 14px; }
+.recipe-chip { background:#eef1fb; color:#a61bbe; padding:6px 10px; border: radius 999px; font-size:.85rem; }
+.recipe-nutrition table { width:100%; border-collapse:collapse; }
+.recipe-nutrition th, .recipe-nutrition td { border-bottom:1px solid #e6e9ef; padding:8px 6px; text-align:left; }
+
+
+/* ===== NutriSnapshot (dashboard) ===== */
+.ns-card { border: 1px solid #e6e9f2; }
+.ns-grid { display: grid; gap: 10px; margin-top: 10px; }
+.ns-row { display: grid; grid-template-columns: 160px 1fr 64px; gap: 10px; align-items: center; }
+.ns-label { color: #1f2937; }
+.ns-small { color: #6b7280; font-size: 0.9rem; margin-left: 6px; }
+.ns-bar { position: relative; height: 10px; background: #eef2ff; border-radius: 999px; overflow: hidden; }
+.ns-fill { position: absolute; top:0; left:0; bottom:0; background: #7a5af8; }
+.ns-goal { text-align: right; color: #374151; font-weight: 600; }
+.ns-note { margin-top: 10px; color: #64748b; font-size: 0.9rem; }
+
+/* ===== Hydration Tracker ===== */
+.water-card { border: 1px solid #e6e9f2; }
+.water-progress { position: relative; height: 12px; background: #e9f5ff; border-radius: 999px; overflow: hidden; margin: 8px 0 12px; }
+.water-fill { position: absolute; top:0; left:0; bottom:0; background: #0ea5e9; }
+.water-controls { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.water-status { font-weight: 700; color: #0f172a; }
+.water-buttons { display: flex; gap: 8px; }
+.water-buttons button {
+  background: #b527e0; color: #fff; padding: 6px 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;
+}
+.water-buttons button:hover { background: #1b9736; }
+
+
+/* Group for meal action buttons */
+.recipe-btns {
+  display: flex;
+  gap: 12px;       /* <-- space between buttons */
+  justify-content: flex-end;
+}
+
+.recipe-btns button {
+  background: #b527e0;
+  color: #fff;
+  padding: 6px 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s ease;
+}
+
+.recipe-btns button:hover {
+  background: #1b9736;
+}
+
+
