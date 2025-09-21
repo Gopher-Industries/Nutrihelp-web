@@ -173,14 +173,7 @@ function App() {
             </AuthenticateRoute>
           }
         />
-        <Route
-          path="recipe"
-          element={
-            <AuthenticateRoute>
-              <Recipe />
-            </AuthenticateRoute>
-          }
-        />
+        <Route path="recipe" element={<Recipe />} />
         <Route path="/recipe/:id" element={<RecipeDetail />} />
         <Route
           path="Meal"

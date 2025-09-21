@@ -30,6 +30,7 @@ function CreateRecipe() {
   const [instructions, setInstructions] = useState("");
   const [instruction, setInstruction] = useState([]);
   const [tableData, setRecipeTable] = useState([]);
+  console.log("🚀 ~ CreateRecipe ~ tableData:", tableData);
   const [showIngredients, setShowIngredients] = useState(true);
   //const [isEditing, setIsEditing] = useState("");
 
@@ -171,9 +172,16 @@ function CreateRecipe() {
             cuisine_id: cuisineId,
             preparation_time: preparationTime,
             total_servings: totalServings,
-            ingredient_id: ingredientId,
-            ingredient_quantity: ingredientQuantity,
-            instructions: instructions || "empty",
+            ingredients: tableData.map((item, index) => ({
+              id: index + 1,
+              name: item.ingredient,
+              ingredientCategory: item.ingredientCategory,
+              ingredientQuantity: item.ingredientQuantity,
+            })),
+            instructions: instruction.map((step, index) => ({
+              step_number: index + 1,
+              description: step,
+            })),
             image: base64Image,
           };
 
@@ -188,9 +196,16 @@ function CreateRecipe() {
           cuisine_id: cuisineId,
           preparation_time: preparationTime,
           total_servings: totalServings,
-          ingredient_id: ingredientId,
-          ingredient_quantity: ingredientQuantity,
-          instructions: instructions,
+          ingredients: tableData.map((item) => ({
+            id: index + 1,
+            name: item.ingredient,
+            ingredientCategory: item.ingredientCategory,
+            ingredientQuantity: item.ingredientQuantity,
+          })),
+          instructions: instruction.map((step, index) => ({
+            step_number: index + 1,
+            description: step,
+          })),
           image: "",
         };
 

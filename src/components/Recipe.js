@@ -71,6 +71,7 @@ function Recipe() {
               key={index}
               id="no-bg"
               className="bg-white shadow-lg rounded-lg overflow-hidden flex flex-col max-w-4/6 cursor-pointer"
+              onClick={() => (window.location.href = `/recipe/${item.id}`)}
             >
               <img
                 src={item.image}
