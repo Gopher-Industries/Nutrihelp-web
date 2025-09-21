@@ -91,7 +91,14 @@ function App() {
             </AuthenticateRoute>
           }
         />
-        <Route path="createRecipe" element={<CreateRecipe />} />
+        <Route
+          path="createRecipe"
+          element={
+            <AuthenticateRoute>
+              <CreateRecipe />
+            </AuthenticateRoute>
+          }
+        />
         <Route
           path="searchRecipes"
           element={
@@ -173,8 +180,22 @@ function App() {
             </AuthenticateRoute>
           }
         />
-        <Route path="recipe" element={<Recipe />} />
-        <Route path="/recipe/:id" element={<RecipeDetail />} />
+        <Route
+          path="recipe"
+          element={
+            <AuthenticateRoute>
+              <Recipe />
+            </AuthenticateRoute>
+          }
+        />
+        <Route
+          path="/recipe/:id"
+          element={
+            <AuthenticateRoute>
+              <RecipeDetail />
+            </AuthenticateRoute>
+          }
+        />
         <Route
           path="Meal"
           element={
