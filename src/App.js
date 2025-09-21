@@ -47,16 +47,15 @@ import SymptomAssessment from "./routes/SymptomAssessment/SymptomAssessment";
 import Leaderboard from "./routes/LeaderBoard/leaderBoard";
 import ObesityPredictor from "./routes/survey/ObesityPredictor";
 import Predictionresult from "./routes/survey/predictionresult";
-import UiTimer from "./routes/UiTimer/UiTimer"
-import Settings from "./routes/Settings/Settings"
+import UiTimer from "./routes/UiTimer/UiTimer";
+import Settings from "./routes/Settings/Settings";
 import HealthFAQ from "./routes/HealthFAQ/HealthFAQ";
 import ScanBarcode from "./routes/ScanBarcode/ScanBarcode";
 import AuthCallback from "./pages/AuthCallback";
-import DailyPlanEdit from './routes/DailyPlan/DailyPlanEdit';
+import DailyPlanEdit from "./routes/DailyPlan/DailyPlanEdit";
 function App() {
   const { currentUser } = useContext(UserContext);
-  
-  
+
   // Initialize font size settings for elderly users
   useEffect(() => {
     initializeFontSize();
@@ -81,7 +80,7 @@ function App() {
         <Route path="/faq" element={<FAQ />} />
         <Route path="/leaderboard" element={<Leaderboard />} />
         <Route path="/survey" element={<ObesityPredictor />} />
-        <Route path="/survey/result" element= {<Predictionresult/>}/>
+        <Route path="/survey/result" element={<Predictionresult />} />
 
         {/* Private Routes */}
         <Route
@@ -92,14 +91,7 @@ function App() {
             </AuthenticateRoute>
           }
         />
-        <Route
-          path="createRecipe"
-          element={
-            <AuthenticateRoute>
-              <CreateRecipe />
-            </AuthenticateRoute>
-          }
-        />
+        <Route path="createRecipe" element={<CreateRecipe />} />
         <Route
           path="searchRecipes"
           element={
@@ -181,14 +173,7 @@ function App() {
             </AuthenticateRoute>
           }
         />
-        <Route
-          path="recipe"
-          element={
-            <AuthenticateRoute>
-              <Recipe />
-            </AuthenticateRoute>
-          }
-        />
+        <Route path="recipe" element={<Recipe />} />
         <Route path="/recipe/:id" element={<RecipeDetail />} />
         <Route
           path="Meal"
@@ -251,12 +236,12 @@ function App() {
           }
         />
         <Route
-         path="settings"
-         element={
-          <AuthenticateRoute>
-            <Settings />
-          </AuthenticateRoute>
-         }
+          path="settings"
+          element={
+            <AuthenticateRoute>
+              <Settings />
+            </AuthenticateRoute>
+          }
         />
         <Route
           path="HealthFAQ"
