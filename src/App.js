@@ -53,6 +53,7 @@ import HealthFAQ from "./routes/HealthFAQ/HealthFAQ";
 import ScanBarcode from "./routes/ScanBarcode/ScanBarcode";
 import AuthCallback from "./pages/AuthCallback";
 import DailyPlanEdit from './routes/DailyPlan/DailyPlanEdit';
+import UserPreferences from "./components/mealPlan/NutritionPage";
 function App() {
   const { currentUser } = useContext(UserContext);
   
@@ -216,7 +217,8 @@ function App() {
               <HealthNews />
             </AuthenticateRoute>
           }
-        />
+          />
+         <Route path="/dietNutritios" element={<UserPreferences />} />
         <Route
           path="healthnews/:id"
           element={
