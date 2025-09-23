@@ -35,10 +35,23 @@ function SearchRecipes() {
   ];
 
   // Load recipes once
-  useEffect(() => {
+ /* useEffect(() => {
     fetchRecipes("defaultUser")
       .then(data => setRecipes(data.recipes || []))
       .catch(err => console.error(err));
+  }, []); */
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const { recipes } = await fetchRecipes("15"); // this user returns 200
+        setRecipes(recipes);
+        console.log("Recipes loaded:", recipes.length);
+      } catch (e) {
+        console.error(e);
+        setRecipes([]);
+      }
+    })();
   }, []);
 
   // Filter both categories *and* fetched recipes by the same searchTerm

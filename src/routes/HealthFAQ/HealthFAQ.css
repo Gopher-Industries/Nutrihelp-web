@@ -1,0 +1,134 @@
+.health-faq-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    color: #333;
+}
+
+.health-faq-container h2 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 10px;
+}
+
+.faq-intro {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #666;
+    font-style: italic;
+}
+
+.category-selector {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.category-selector button {
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+    color: #333;
+    padding: 10px 15px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.category-selector button:hover {
+    background-color: #e9ecef;
+}
+
+.category-selector button.active {
+    background-color: #4CAF50;
+    color: white;
+    border-color: #4CAF50;
+}
+
+.faq-list {
+    margin-bottom: 30px;
+}
+
+.faq-item {
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    overflow: hidden;
+}
+
+.faq-question {
+    padding: 15px 20px;
+    background-color: #f8f9fa;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background-color 0.2s ease;
+    position: relative;
+}
+
+.faq-question:hover {
+    background-color: #e9ecef;
+}
+
+.faq-question h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #2c3e50;
+    flex: 1;
+}
+
+.toggle-icon {
+    position: absolute;
+    transition: transform 0.3s ease;
+    font-size: 12px;
+    margin-left: 10px;
+    right: 0;
+}
+
+.toggle-icon.open {
+    transform: rotate(180deg);
+}
+
+.faq-answer {
+    padding: 20px;
+    background-color: white;
+    border-top: 1px solid #e0e0e0;
+    line-height: 1.6;
+    animation: fadeIn 0.3s ease;
+    display: block !important;
+    height: auto !important;
+    overflow: visible !important;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@media (max-width: 768px) {
+    .health-faq-container {
+        padding: 15px;
+    }
+
+    .category-selector {
+        flex-direction: column;
+    }
+
+    .category-selector button {
+        width: 100%;
+        margin: 5px 0;
+    }
+
+    .faq-question h3 {
+        font-size: 14px;
+    }
+}

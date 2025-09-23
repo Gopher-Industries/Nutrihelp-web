@@ -51,7 +51,9 @@ import UiTimer from "./routes/UiTimer/UiTimer"
 import Settings from "./routes/Settings/Settings"
 import HealthFAQ from "./routes/HealthFAQ/HealthFAQ";
 import FitnessRoadmap from './routes/survey/FitnessRoadmap';
-
+import ScanBarcode from "./routes/ScanBarcode/ScanBarcode";
+import AuthCallback from "./pages/AuthCallback";
+import DailyPlanEdit from './routes/DailyPlan/DailyPlanEdit';
 function App() {
   const { currentUser } = useContext(UserContext);
   
@@ -84,6 +86,14 @@ function App() {
         <Route path="/roadmap" element={<FitnessRoadmap />} />
 
         {/* Private Routes */}
+        <Route
+          path="/daily-plan-edit"
+          element={
+            <AuthenticateRoute>
+              <DailyPlanEdit />
+            </AuthenticateRoute>
+          }
+        />
         <Route
           path="createRecipe"
           element={
@@ -190,6 +200,7 @@ function App() {
             </AuthenticateRoute>
           }
         />
+        <Route path="/auth/callback" element={<AuthCallback />} />
         <Route
           path="nutrition-calculator"
           element={
@@ -257,6 +268,7 @@ function App() {
             </AuthenticateRoute>
           }
         />
+        <Route path="ScanBarcode" element={<ScanBarcode />} />
       </Routes>
     </Router>
   );
