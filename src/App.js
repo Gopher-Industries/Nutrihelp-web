@@ -50,9 +50,12 @@ import Predictionresult from "./routes/survey/predictionresult";
 import UiTimer from "./routes/UiTimer/UiTimer"
 import Settings from "./routes/Settings/Settings"
 import HealthFAQ from "./routes/HealthFAQ/HealthFAQ";
+import Community from "./routes/Community/Community";
+import PostDetail from "./routes/Community/PostDetail";
 import ScanBarcode from "./routes/ScanBarcode/ScanBarcode";
 import AuthCallback from "./pages/AuthCallback";
 import DailyPlanEdit from './routes/DailyPlan/DailyPlanEdit';
+
 function App() {
   const { currentUser } = useContext(UserContext);
   
@@ -80,6 +83,8 @@ function App() {
         <Route path="/forgotPassword" element={<ForgotPassword />} />
         <Route path="/faq" element={<FAQ />} />
         <Route path="/leaderboard" element={<Leaderboard />} />
+        <Route path="/community" element={<Community />} />
+        <Route path="/community/post/:postId" element={<PostDetail />} />
         <Route path="/survey" element={<ObesityPredictor />} />
         <Route path="/survey/result" element= {<Predictionresult/>}/>
 
