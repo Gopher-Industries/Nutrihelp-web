@@ -1,74 +1,3 @@
-// import React, { useEffect, useState, useRef } from 'react';
-// import { Link } from 'react-router-dom';
-// import html2pdf from 'html2pdf.js';
-// import './predictionresult.css'
-
-// export default function ObesityResult() {
-//   const [result, setResult] = useState(null);
-//   const resultRef = useRef(null);
-
-//   useEffect(() => {
-//     // ✅ Read result from localStorage
-//     const stored = localStorage.getItem('ObesityResult');
-//     if (stored) {
-//       const parsed = JSON.parse(stored);
-//       setResult(parsed.medical_report); // extract nested object
-//     }
-//   }, []);
-
-//   const handleDownloadPDF = () => {
-//     if (!resultRef.current) return;
-//     html2pdf().from(resultRef.current).save('Obesity_Report.pdf');
-//   };
-
-//   const handleCopyLink = () => {
-//     const url = window.location.href;
-//     navigator.clipboard.writeText(url).then(() => {
-//       alert('🔗 Link copied to clipboard!');
-//     });
-//   };
-
-//   return (
-//     <div className="full">
-//     <div className="prediction-result-card" ref={resultRef}>
-//       <h2>🎯 Your Health Report</h2>
-
-//       {result ? (
-//         <div className="result-info">
-//           <div className="result-item">
-//             <span className="result-label">⚖️ Obesity Level:</span>
-//             <span className="result-value">
-//               {result.obesity_prediction.obesity_level} ({(result.obesity_prediction.confidence * 100).toFixed(1)}% confidence)
-//             </span>
-//           </div>
-
-//           <div className="result-item">
-//             <span className="result-label">🩺 Diabetes Risk:</span>
-//             <span className="result-value">
-//               {result.diabetes_prediction.diabetes ? 'Positive' : 'Negative'} ({(result.diabetes_prediction.confidence * 100).toFixed(1)}% confidence)
-//             </span>
-//           </div>
-//         </div>
-//       ) : (
-//         <p>No result data available.</p>
-//       )}
-
-//       <div className="result-buttons">
-//         <button className="save-btton" onClick={handleDownloadPDF}>
-//           📄 Save as PDF
-//         </button>
-//         <button className="copy-btn" onClick={handleCopyLink}>
-//           🔗 Copy Share Link
-//         </button>
-//         <Link to="/survey">
-//           <button className="back-btn">← Back to Questionnaire</button>
-//         </Link>
-//       </div>
-//     </div>
-//     </div>
-//   );
-// }
-
 import React, { useEffect, useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import html2pdf from 'html2pdf.js';
@@ -104,57 +33,49 @@ export default function ObesityResult() {
 
   return (
     <div className="full">
-      <div className="prediction-result-card" ref={resultRef}>
-        <h2>🎯 Your Health Report</h2>
-
+      {/* <div className="prediction-result-card" ref={resultRef}> */}
+      <div className="prediction-heading">
+        🎯 Your Health Report
+      </div>
         {result ? (
           <div className="result-info">
-            <div className="result-item">
-              <span className="result-label">⚖️ Obesity Level:</span>
-              <span className="result-value">
-                {result.obesity_prediction.obesity_level} (
-                {(result.obesity_prediction.confidence * 100).toFixed(1)}% confidence)
-              </span>
-            </div>
+            <div className="outcome">
+                <div className="result-item">
+                <span className="result-label">⚖️ Obesity Level:</span>
+                <span className="result-value">
+                  {result.obesity_prediction.obesity_level} (
+                  {(result.obesity_prediction.confidence * 100).toFixed(1)}% confidence)
+                </span>
+              </div>
 
-            <div className="result-item">
-              <span className="result-label">🩺 Diabetes Risk:</span>
-              <span className="result-value">
-                {result.diabetes_prediction.diabetes ? 'Positive' : 'Negative'} (
-                {(result.diabetes_prediction.confidence * 100).toFixed(1)}% confidence)
-              </span>
+              <div className="result-item">
+                <span className="result-label">🩺 Diabetes Risk:</span>
+                <span className="result-value">
+                  {result.diabetes_prediction.diabetes ? 'Positive' : 'Negative'} (
+                  {(result.diabetes_prediction.confidence * 100).toFixed(1)}% confidence)
+                </span>
+              </div>
             </div>
+              <div className="result-buttons">
+                <button className="save-btton" onClick={handleDownloadPDF}>
+                  📄 Save as PDF
+                </button>
+                <button className="copy-btn" onClick={handleCopyLink}>
+                  🔗 Copy Share Link
+                </button>
+                <Link to="/survey">
+                  <button className="back-btn">← Back to Questionnaire</button>
+                </Link>
+              </div>
           </div>
         ) : (
           <p>No result data available.</p>
         )}
 
-        <div className="result-buttons">
-          <button className="save-btton" onClick={handleDownloadPDF}>
-            📄 Save as PDF
-          </button>
-          <button className="copy-btn" onClick={handleCopyLink}>
-            🔗 Copy Share Link
-          </button>
-          <Link to="/survey">
-            <button className="back-btn">← Back to Questionnaire</button>
-          </Link>
-        </div>
-
-        {/* ▼ Expandable Section */}
-        <div className="expand-section">
-          <button
-            className="expand-btn"
-            onClick={() => setIsExpanded(!isExpanded)}
-          >
-            {isExpanded ? '▲' : '▼'}
-          </button>
-
-          {isExpanded && (
             <div className="fitness-question">
               {fitnessChoice === null && (
                 <>
-                  <p>💪 Do you want to start your fitness journey?</p>
+                  💪 Do you want to start your fitness journey?
                   <div className="choice-buttons">
                     <button onClick={() => setFitnessChoice('yes')}>✅ Yes</button>
                     <button onClick={() => setFitnessChoice('no')}>❌ No</button>
@@ -181,7 +102,7 @@ export default function ObesityResult() {
                       <option>Both</option>
                     </select>
                   </label>
-                  <button className="start-btn">🚀 Start Journey</button>
+                  <button className="start-btn" onClick={() => navigate('/roadmap')}>🚀 Start Journey</button>
                 </div>
               )}
 
@@ -192,9 +113,7 @@ export default function ObesityResult() {
                 </div>
               )}
             </div>
-          )}
-        </div>
-      </div>
+       
     </div>
   );
 }

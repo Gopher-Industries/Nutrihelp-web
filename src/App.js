@@ -50,6 +50,7 @@ import Predictionresult from "./routes/survey/predictionresult";
 import UiTimer from "./routes/UiTimer/UiTimer"
 import Settings from "./routes/Settings/Settings"
 import HealthFAQ from "./routes/HealthFAQ/HealthFAQ";
+import FitnessRoadmap from './routes/survey/FitnessRoadmap';
 
 function App() {
   const { currentUser } = useContext(UserContext);
@@ -80,6 +81,7 @@ function App() {
         <Route path="/leaderboard" element={<Leaderboard />} />
         <Route path="/survey" element={<ObesityPredictor />} />
         <Route path="/survey/result" element= {<Predictionresult/>}/>
+        <Route path="/roadmap" element={<FitnessRoadmap />} />
 
         {/* Private Routes */}
         <Route
