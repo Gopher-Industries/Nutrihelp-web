@@ -39,7 +39,9 @@ const SideMenu = ({ isOpen, toggleMenu }) => {
             <Link to="/Meal" onClick={toggleMenu}>Meal Planning</Link>
             <Link to="/daily-plan-edit" onClick={toggleMenu}>Edit Daily Plan</Link>
             <Link to="/healthnews" onClick={toggleMenu}>Health News</Link>
-            <Link to="/leaderboard" onClick={toggleMenu}>LeaderBoard</Link>
+            <Link to="/survey" onClick={toggleMenu}>Fitness Roadmap</Link>
+            <Link to="/community" onClick={toggleMenu}>Community</Link>
+
             <Link to="/HealthFAQ" onClick={toggleMenu}>HealthFAQ</Link>
 
             {/* Recipes Dropdown */}
@@ -99,7 +101,8 @@ const SideMenu = ({ isOpen, toggleMenu }) => {
             <Link to="/Meal" onClick={toggleMenu}>Meal Planning</Link>
             <Link to="/daily-plan-edit" onClick={toggleMenu}>Edit Daily Plan</Link>
             <Link to="/healthnews" onClick={toggleMenu}>Health News</Link>
-            <Link to="/leaderboard" onClick={toggleMenu}>LeaderBoard</Link>
+            <Link to="/survey" onClick={toggleMenu}>Fitness Roadmap</Link>
+            <Link to="/community" onClick={toggleMenu}>Community</Link>
 
             {/* Recipes Dropdown */}
             <div className="dropdown">
