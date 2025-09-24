@@ -12,6 +12,49 @@ import "./Login.css";
 import FramerClient from "../../components/framer-client";
 import NutrihelpLogo from "./Nutrihelp_Logo.PNG";
 
+function startInactivityWatcher({ enabled, seconds = 30, onTimeout }) {
+  if (window.__idleInterval) {
+    clearInterval(window.__idleInterval);
+    window.__idleInterval = null;
+  }
+
+  const EVENTS = ["mousemove", "keydown", "click", "scroll", "touchstart"];
+  const KEY_LAST = "__idle:lastActivity";
+
+  const removeAll = (resetFn) => {
+    EVENTS.forEach((e) =>
+      window.removeEventListener(e, resetFn, { passive: true })
+    );
+  };
+
+  if (!enabled) {
+    localStorage.removeItem(KEY_LAST);
+    return;
+  }
+
+  const resetActivity = () => {
+    localStorage.setItem(KEY_LAST, String(Date.now()));
+  };
+
+  resetActivity();
+  EVENTS.forEach((e) =>
+    window.addEventListener(e, resetActivity, { passive: true })
+  );
+
+  window.__idleInterval = setInterval(() => {
+    const last = parseInt(localStorage.getItem(KEY_LAST) || "0", 10);
+    if (!last) return;
+    const idleMs = Date.now() - last;
+    if (idleMs >= seconds * 1000) {
+      clearInterval(window.__idleInterval);
+      window.__idleInterval = null;
+      removeAll(resetActivity);
+      localStorage.removeItem(KEY_LAST);
+      onTimeout?.();
+    }
+  }, 1000);
+}
+
 const Login = () => {
   const navigate = useNavigate();
   const { setCurrentUser } = useContext(UserContext);
@@ -44,6 +87,36 @@ const Login = () => {
         const expirationTimeInMillis = isChecked ? 3600000 : 0;
         setCurrentUser(data.user, expirationTimeInMillis);
 
+        startInactivityWatcher({
+          enabled: !isChecked,
+          seconds: 30,
+          onTimeout: async () => {
+            try {
+              await supabase.auth.signOut();
+            } finally {
+              setCurrentUser(null);
+              toast.info("⏱️ You were signed out due to 30s of inactivity.", {
+                position: "top-right",
+                autoClose: 5000,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: false,
+                hideProgressBar: false,
+                icon: false,
+                closeButton: false,
+                style: {
+                  background: "#111827",
+                  color: "#fff",
+                  borderRadius: "14px",
+                  boxShadow: "0 10px 25px rgba(0,0,0,0.25)",
+                  border: "1px solid rgba(255,255,255,0.08)",
+                  fontSize: "0.95rem",
+                },
+              });
+              navigate("/login");
+            }
+          },
+        });
         // Toast message
         toast.success(
           "💧 Welcome back! Don’t forget to check your meal plan & track your water intake!",
@@ -75,7 +148,7 @@ const Login = () => {
         const data = await response.json();
         setError(
           data.error ||
-            "Failed to sign in. Please check your credentials and try again."
+          "Failed to sign in. Please check your credentials and try again."
         );
       }
     } catch (error) {
@@ -130,9 +203,8 @@ const Login = () => {
               Email*
             </label>
             <input
-              className={`border-1 ${
-                darkMode && "bg-gray-700 text-white font-semibold"
-              }`}
+              className={`border-1 ${darkMode && "bg-gray-700 text-white font-semibold"
+                }`}
               name="email"
               type="text"
               placeholder="Enter Your Email"
@@ -145,9 +217,8 @@ const Login = () => {
               </label>
               <div className="password-field">
                 <input
-                  className={`border-1 ${
-                    darkMode && "bg-gray-700 text-white font-semibold"
-                  }`}
+                  className={`border-1 ${darkMode && "bg-gray-700 text-white font-semibold"
+                    }`}
                   id="password"
                   name="password"
                   type={showPassword ? "text" : "password"}
@@ -178,20 +249,18 @@ const Login = () => {
                 </label>
               </div>
               <div
-                className={`forgot-password ${
-                  darkMode ? "text-purple-300" : "text-purple-800"
-                }`}
+                className={`forgot-password ${darkMode ? "text-purple-300" : "text-purple-800"
+                  }`}
                 onClick={handleForgotPasswordClick}
               >
                 Forgot password?
               </div>
             </div>
             <button
-              className={`w-full rounded-full mb-6 text-2xl font-bold flex justify-center gap-3 items-center ${
-                darkMode
-                  ? "bg-purple-700 hover:bg-purple-500"
-                  : "bg-purple-400 text-gray-800 hover:bg-purple-700 hover:text-white"
-              }`}
+              className={`w-full rounded-full mb-6 text-2xl font-bold flex justify-center gap-3 items-center ${darkMode
+                ? "bg-purple-700 hover:bg-purple-500"
+                : "bg-purple-400 text-gray-800 hover:bg-purple-700 hover:text-white"
+                }`}
               onClick={handleSignIn}
             >
               <UserIcon size={24} />
@@ -201,11 +270,10 @@ const Login = () => {
             <p className="text-2xl font-semibold text-center mt-4 mb-4">Or</p>
 
             <button
-              className={`w-full rounded-full mb-6 text-2xl font-bold flex justify-center gap-3 items-center ${
-                darkMode
-                  ? "bg-green-700 hover:bg-green-500"
-                  : "bg-green-500 text-gray-800 hover:bg-green-700 hover:text-white"
-              }`}
+              className={`w-full rounded-full mb-6 text-2xl font-bold flex justify-center gap-3 items-center ${darkMode
+                ? "bg-green-700 hover:bg-green-500"
+                : "bg-green-500 text-gray-800 hover:bg-green-700 hover:text-white"
+                }`}
               onClick={handleGoogleSignIn}
             >
               <img
@@ -219,9 +287,8 @@ const Login = () => {
               Not registered yet?{" "}
               <Link
                 to="/signUp"
-                className={`${
-                  darkMode ? "text-purple-300" : "text-purple-800"
-                }`}
+                className={`${darkMode ? "text-purple-300" : "text-purple-800"
+                  }`}
               >
                 Create an Account
               </Link>

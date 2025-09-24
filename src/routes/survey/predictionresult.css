@@ -18,9 +18,27 @@
 
 .result-info{
     display: flex;
-    flex-direction: column;
-    font-size: medium;
-    gap: 10px;
+    background: rgba(255,255,255,0.2) !important;
+    padding: 0.5rem 1rem;
+    border-radius: 1rem;
+    font-weight: bolder;
+    font-size: x-large;
+    margin-top: 10px;
+    width: 90%;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.prediction-heading{
+    display: inline-block;
+    background: rgba(255,255,255,0.2) !important;
+    padding: 0.5rem 1rem;
+    border-radius: 1rem;
+    font-weight: bolder;
+    font-size: x-large;
+    width: 90%;
+    margin-top: 10px;
+    text-align: center;
 }
 
 .full{
@@ -28,14 +46,18 @@
     max-height: 1000px;
     background: linear-gradient(44deg, #7B44FF 0%, #F26CBA 100%) !important;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
     overflow-y: auto;   /* ✅ vertical scroll when needed */
     overflow-x: hidden; /* ✅ prevents sideways scroll */
+    gap: 30px;
 
 }
 
 .result-buttons{
     display: flex;
+    flex-direction: column;
     gap: 30px;
 }
 
@@ -103,7 +125,17 @@
 }
 
 .fitness-question{
-    font-size: large;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: rgba(255,255,255,0.2) !important;
+    padding: 0.5rem 1rem;
+    border-radius: 1rem;
+    font-weight: bolder;
+    font-size: x-large;
+    margin-top: 10px;
+    width: 90%;
 }
 
 .no-journey{
