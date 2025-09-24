@@ -37,26 +37,9 @@ import MainNavbar from "./components/MainNavbar";
 import FAQ from "./routes/FAQ/faq";
 import NutritionCalculator from "./routes/UI-Only-Pages/NutritionCalculator/NutritionCalculator";
 import HealthNews from "./routes/HealthNews/HealthNews";
-import NewsDetail from "./routes/HealthNews/NewsDetail";
 import FoodPreferences from "./routes/FoodPreferences/FoodPreferences";
 import HealthTools from "./routes/HealthTools/HealthTools";
-import RecipeRating from "./routes/RecipeRating/RecipeRating";
-import ShoppingList from "./routes/UI-Only-Pages/ShoppingList/ShoppingList";
-import RecipeDetail from "./routes/RecipeRating/RecipeDetail";
-import SymptomAssessment from "./routes/SymptomAssessment/SymptomAssessment";
-import Leaderboard from "./routes/LeaderBoard/leaderBoard";
-import ObesityPredictor from "./routes/survey/ObesityPredictor";
-import Predictionresult from "./routes/survey/predictionresult";
-import UiTimer from "./routes/UiTimer/UiTimer"
-import Settings from "./routes/Settings/Settings"
-import HealthFAQ from "./routes/HealthFAQ/HealthFAQ";
-import FitnessRoadmap from './routes/survey/FitnessRoadmap';
-import Community from "./routes/Community/Community";
-import PostDetail from "./routes/Community/PostDetail";
-import ScanBarcode from "./routes/ScanBarcode/ScanBarcode";
-import AuthCallback from "./pages/AuthCallback";
-import DailyPlanEdit from './routes/DailyPlan/DailyPlanEdit';
-
+import SMSVerification from "./routes/MFA/SMSVerification";
 
 function App() {
   const { currentUser } = useContext(UserContext);
@@ -78,12 +61,6 @@ function App() {
         <Route path="/signUp" element={<SignUp />} />
         <Route path="/forgotPassword" element={<ForgotPassword />} />
         <Route path="/faq" element={<FAQ />} />
-        <Route path="/leaderboard" element={<Leaderboard />} />
-        <Route path="/community" element={<Community />} />
-        <Route path="/community/post/:postId" element={<PostDetail />} />
-        <Route path="/survey" element={<ObesityPredictor />} />
-        <Route path="/survey/result" element= {<Predictionresult/>}/>
-        <Route path="/roadmap" element={<FitnessRoadmap />} />
         <Route path="/sms-verification" element={<SMSVerification />} />
 
 
