@@ -15,15 +15,19 @@
 }
 
 
-.heading_survey h2 {
-    text-align: center;
-    margin-bottom: 20px;
-    color: #333;
-    font-size: xx-large;
-    font-family: revert-layer;
-    /* background: rgba(255,255,255,0.2);
-    padding: 0.5rem 1rem;
-    border-radius: 1rem; */
+.heading_survey{
+  display: inline-block;
+  background: rgba(255,255,255,0.2) !important;
+  
+  color: black;
+  padding: 0.5rem 1rem;
+  border-radius: 1rem;
+  font-weight: bolder;
+  font-size: x-large;
+  width: 90%;
+  width: 90%;
+  margin-right: 172px;
+  text-align: center;
 }
 
 /* ====== Progress Bar ====== */
@@ -54,40 +58,7 @@
   color: #fff;
 }
 
-/* ====== Form Styling ====== */
-.obesity-form {
-  overflow-y: auto;
-  padding-right: 10px;
-  scroll-behavior: smooth;
-}
 
-.field-block {
-  margin-bottom: 18px;
-}
-
-.field-block label {
-  display: block;
-  font-weight: 600;
-  margin-bottom: 6px;
-  color: #444;
-}
-
-.field-block input,
-.field-block select {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 1rem;
-  outline: none;
-  transition: border-color 0.2s ease;
-}
-
-.field-block input:focus,
-.field-block select:focus {
-  border-color: #4CAF50;
-  box-shadow: 0 0 4px rgba(76, 175, 80, 0.3);
-}
 
 .obesity-form::-webkit-scrollbar {
   width: 8px;
@@ -102,18 +73,6 @@
   background-color: #f1f1f1;
 }
 
-.fullscreen-form {
-  height: 100vh; /* full viewport height */
-  width: 100vw;  /* full viewport width */
-  padding: 20px 40px;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start; /* align top */
-  align-items: center;
-  background: #f5f7fa; /* light background */
-  overflow-y: auto;
-}
-
 .questions-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -123,10 +82,12 @@
 }
 
 .question-card {
-    background: linear-gradient(135deg, #ffffff 0%, #f9f9f9 100%);
+    background: rgba(255, 255, 255, 0.108) !important;
+    color: black;
+    padding: 0.5rem 1rem;
     border-radius: 1rem;
-    padding: 1.5rem;
-    box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    font-weight: bolder;
+    font-size: x-large;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -141,10 +102,14 @@
 
 .question-card label{
     color: black;
+    font-weight: bolder;
+    font-size: x-large;
 }
 
 .question-card input{
     color: black;
+    font-weight: bolder;
+    font-size: x-large;
 }
 
 .question-group{

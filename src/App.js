@@ -50,6 +50,7 @@ import Predictionresult from "./routes/survey/predictionresult";
 import UiTimer from "./routes/UiTimer/UiTimer"
 import Settings from "./routes/Settings/Settings"
 import HealthFAQ from "./routes/HealthFAQ/HealthFAQ";
+import FitnessRoadmap from './routes/survey/FitnessRoadmap';
 import Community from "./routes/Community/Community";
 import PostDetail from "./routes/Community/PostDetail";
 import ScanBarcode from "./routes/ScanBarcode/ScanBarcode";
@@ -87,6 +88,7 @@ function App() {
         <Route path="/community/post/:postId" element={<PostDetail />} />
         <Route path="/survey" element={<ObesityPredictor />} />
         <Route path="/survey/result" element= {<Predictionresult/>}/>
+        <Route path="/roadmap" element={<FitnessRoadmap />} />
 
         {/* Private Routes */}
         <Route
