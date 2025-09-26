@@ -1,26 +1,36 @@
 import { Star } from "lucide-react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { getRecipes } from "../../routes/CreateRecipe/data/db/db";
+import { getRecipes, deleteRecipe } from "../../routes/CreateRecipe/data/db/db";
 
 export default function CreamySalad() {
   const rating = 3; // out of 5
   const [recipe, setRecipe] = useState(null);
-
+  const navigate = useNavigate(); // <-- Initialize useNavigate
   const { id } = useParams(); // <-- get ID from URL
 
   useEffect(() => {
     const fetchData = async () => {
       const data = await getRecipes();
-
-      // find the recipe that matches the id from URL
       const recipe = data.find((item) => String(item.id) === String(id));
-
-      setRecipe(recipe); // now recipes holds only the matching one
+      setRecipe(recipe);
     };
 
     fetchData();
-  }, [id]); // depend on id
+  }, [id]);
+
+  // New function to handle recipe deletion
+  // In CreamySalad.jsx
+
+  // Inside the handleDelete function
+  const handleDelete = async () => {
+    try {
+      await deleteRecipe(Number(id)); // Convert the ID to a number
+      navigate("/recipe");
+    } catch (error) {
+      console.error("Failed to delete recipe:", error);
+    }
+  };
 
   if (!recipe) return <p className="p-6">Loading...</p>;
 
@@ -200,22 +210,23 @@ export default function CreamySalad() {
                 <path
                   d="M13.7285 4.50652L15.4927 6.27069M14.8627 2.95236L10.0902 7.72486C9.84286 7.97056 9.67455 8.28453 9.60685 8.62652L9.16602 10.8332L11.3727 10.3915C11.7143 10.3232 12.0277 10.1557 12.2743 9.90902L17.0468 5.13652C17.1903 4.99311 17.304 4.82285 17.3816 4.63547C17.4593 4.44809 17.4992 4.24726 17.4992 4.04444C17.4992 3.84162 17.4593 3.64079 17.3816 3.45341C17.304 3.26603 17.1903 3.09577 17.0468 2.95236C16.9034 2.80894 16.7332 2.69518 16.5458 2.61756C16.3584 2.53995 16.1576 2.5 15.9548 2.5C15.7519 2.5 15.5511 2.53995 15.3637 2.61756C15.1764 2.69518 15.0061 2.80894 14.8627 2.95236Z"
                   stroke="white"
-                  stroke-width="1.66667"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
+                  strokeWidth="1.66667"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                 />
                 <path
-                  d="M15.833 12.4993V14.9993C15.833 15.4414 15.6574 15.8653 15.3449 16.1779C15.0323 16.4904 14.6084 16.666 14.1663 16.666H4.99967C4.55765 16.666 4.13372 16.4904 3.82116 16.1779C3.5086 15.8653 3.33301 15.4414 3.33301 14.9993V5.83268C3.33301 5.39065 3.5086 4.96673 3.82116 4.65417C4.13372 4.34161 4.55765 4.16602 4.99967 4.16602H7.49967"
+                  d="M15.833 12.4993V14.9993C15.833 15.4414 15.6574 15.8653 15.3449 16.1779C15.0323 16.4904 14.6084 16.666 14.1663 16.666H4.99967C4.55765 16.666 4.13372 16.4904 3.82116 16.1779C4.13372 16.4904 4.55765 16.666 4.99967 16.666H7.49967"
                   stroke="white"
-                  stroke-width="1.66667"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
+                  strokeWidth="1.66667"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                 />
               </svg>
             </button>
             <button
               id="no-bg"
               className="bg-purple-600 text-white px-3 py-1 rounded-full text-sm flex items-center gap-1 font-semibold"
+              onClick={handleDelete} // <-- Update this line
             >
               Delete
               <svg

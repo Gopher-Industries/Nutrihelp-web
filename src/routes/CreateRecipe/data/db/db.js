@@ -24,3 +24,16 @@ export const getRecipes = async () => {
   console.log("Fetched from IDB:", all); // Add this line
   return all;
 };
+
+export const deleteRecipe = async (id) => {
+  try {
+    const db = await initDB();
+    const tx = db.transaction("recipes", "readwrite");
+    const store = tx.objectStore("recipes");
+    await store.delete(id);
+    await tx.done;
+    console.log(`Recipe with ID ${id} deleted successfully.`);
+  } catch (error) {
+    console.error("Error deleting recipe:", error);
+  }
+};
