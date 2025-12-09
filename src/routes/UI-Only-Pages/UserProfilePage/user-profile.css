@@ -1,13 +1,14 @@
 .profile-page{
-  --bg: #f7f3ff;
-  --card: #fff;
-  --text: #1f1832;
-  --muted: #7b7692;
-  --line: #ece7f8;
-  --accent: #8a4de8;
-  --accent-2: #6a2ed6;
-  --danger: #e23a50;
-  --shadow: 0 14px 30px rgba(31, 24, 50, .08);
+  /* Using global variables with component-specific fallbacks */
+  --bg: var(--background-secondary, #f7f3ff);
+  --card: var(--card-background, #fff);
+  --text: var(--text-primary, #1f1832);
+  --muted: var(--text-muted, #7b7692);
+  --line: var(--border-color, #ece7f8);
+  --accent: var(--primary-color, #8a4de8);
+  --accent-2: var(--primary-hover, #6a2ed6);
+  --danger: var(--error-color, #e23a50);
+  --shadow: var(--card-shadow, 0 14px 30px rgba(31, 24, 50, .08));
 }
  
 * {

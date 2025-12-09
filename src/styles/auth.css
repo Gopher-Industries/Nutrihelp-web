@@ -47,7 +47,7 @@ figure {
 p:not(#no-bg) {
   margin-bottom: 0px;
   font-size: 15px;
-  color: #777;
+  color: var(--text-muted);
 }
 
 h2:not(#no-bg) {
@@ -55,13 +55,13 @@ h2:not(#no-bg) {
   margin: 0;
   padding: 0;
   font-weight: bold;
-  color: #222;
+  color: var(--text-primary);
   font-family: "Lato", sans-serif;
   font-size: 36px;
 }
 
 .main {
-  background: #f8f8f8;
+  background: var(--background-secondary);
   padding: 150px 0;
 }
 
@@ -72,8 +72,8 @@ h2:not(#no-bg) {
 body {
   font-size: 13px;
   line-height: 1.8;
-  color: var(--color2);
-  background: #f8f8f8;
+  color: var(--text-secondary);
+  background: var(--background-secondary);
   font-weight: 400;
   font-family: "Lato", sans-serif;
 }
@@ -166,24 +166,24 @@ figure {
 
 .sel {
   display: inline-block;
-  background: #ac82be;
-  color: #fff;
+  background: var(--button-background);
+  color: var(--button-text);
   border-bottom: none;
   border-right: none;
   width: auto;
   border-radius: 28px;
   padding: 10px 29px;
-  border-color: #ac82be;
+  border-color: var(--button-border);
   margin-top: 10px;
   cursor: cell;
 }
 
 .sel:hover {
-  background: rgb(140, 53, 227);
+  background: var(--button-hover);
 }
 
 .sel.selected {
-  background-color: rgb(140, 53, 227);
+  background-color: var(--button-hover);
 }
 
 .sel.selected::before {
@@ -193,14 +193,14 @@ figure {
 
 .optbuttons {
   display: inline-block;
-  background: #ac82be;
-  color: #fff;
+  background: var(--button-background);
+  color: var(--button-text);
   border-bottom: none;
   border-right: none;
   width: auto;
   border-radius: 28px;
   padding: 10px 29px;
-  border-color: #ac82be;
+  border-color: var(--button-border);
   margin-top: 10px;
   cursor: cell;
 }
@@ -232,10 +232,10 @@ figure {
   left: 0;
   right: 0;
   bottom: 0px;
-  background: #fff;
+  background: var(--card-background);
   transition: 0.4s;
   border-radius: 30px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--border-color);
 }
 
 .slider:before {
@@ -247,13 +247,13 @@ figure {
   left: 1.2px;
   top: 0;
   bottom: 0;
-  background-color: white;
-  box-shadow: 0 2px 5px #999999;
+  background-color: var(--card-background);
+  box-shadow: var(--card-shadow);
   transition: 0.4s;
 }
 
 input:not(#no-bg, #file-upload):checked + .slider {
-  background-color: #a654dd;
+  background-color: var(--primary-color);
   border: 1px solid transparent;
 }
 
@@ -262,11 +262,11 @@ input:not(#no-bg, #file-upload):checked + .slider:before {
 }
 
 .optbuttons:hover {
-  background: rgb(140, 53, 227);
+  background: var(--button-hover);
 }
 
 .optbuttons.selected {
-  background-color: rgb(140, 53, 227);
+  background-color: var(--button-hover);
   /* Highlighted background color */
 }
 
@@ -279,8 +279,8 @@ input:not(#no-bg, #file-upload):checked + .slider:before {
 
 .form-submit {
   display: inline-block;
-  background: #ac82be;
-  color: #fff;
+  background: var(--button-background);
+  color: var(--button-text);
   border-bottom: none;
   width: auto;
   padding: 15px 39px;
@@ -294,7 +294,7 @@ input:not(#no-bg, #file-upload):checked + .slider:before {
 }
 
 .form-submit:hover {
-  background: rgb(140, 53, 227);
+  background: var(--button-hover);
 }
 
 .btn:hover {

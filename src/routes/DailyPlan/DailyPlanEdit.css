@@ -1,14 +1,15 @@
-/* DailyPlanEdit – SCOPED. Won’t leak into the rest of the app */
+/* DailyPlanEdit – SCOPED. Won't leak into the rest of the app */
 .dpe {
-  --dpe-bg: #fbf8ff;
-  --dpe-surface: #ffffff;
-  --dpe-surface-2: #f3ecff;
-  --dpe-primary: #7b57e4;
-  --dpe-primary-2: #9a7ff3;
-  --dpe-text: #171717;
-  --dpe-muted: #6f6f6f;
-  --dpe-border: #e7ddff;
-  --dpe-shadow: 0 10px 26px rgba(76, 21, 155, .07);
+  /* Using global variables with component-specific fallbacks */
+  --dpe-bg: var(--background-secondary, #fbf8ff);
+  --dpe-surface: var(--card-background, #ffffff);
+  --dpe-surface-2: var(--card-background-secondary, #f3ecff);
+  --dpe-primary: var(--primary-color, #7b57e4);
+  --dpe-primary-2: var(--primary-hover, #9a7ff3);
+  --dpe-text: var(--text-primary, #171717);
+  --dpe-muted: var(--text-muted, #6f6f6f);
+  --dpe-border: var(--border-color, #e7ddff);
+  --dpe-shadow: var(--card-shadow, 0 10px 26px rgba(76, 21, 155, .07));
 
   color: var(--dpe-text);
   background: var(--dpe-bg);

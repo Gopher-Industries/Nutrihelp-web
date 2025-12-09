@@ -14,39 +14,39 @@
 }
 
 .api-status-message.api-success {
-  background-color: #d4edda;
-  color: #155724;
-  border: 1px solid #c3e6cb;
+  background-color: color-mix(in srgb, var(--success-color) 20%, var(--card-background));
+  color: var(--success-color);
+  border: 1px solid var(--success-color);
 }
 
 .api-status-message.api-error {
-  background-color: #f8d7da;
-  color: #721c24;
-  border: 1px solid #f5c6cb;
+  background-color: color-mix(in srgb, var(--error-color) 20%, var(--card-background));
+  color: var(--error-color);
+  border: 1px solid var(--error-color);
 }
 
 .api-status-message.api-loading {
-  background-color: #d1ecf1;
-  color: #0c5460;
-  border: 1px solid #bee5eb;
+  background-color: color-mix(in srgb, var(--info-color) 20%, var(--card-background));
+  color: var(--info-color);
+  border: 1px solid var(--info-color);
 }
 
 .dark-mode .api-status-message.api-success {
-  background-color: #1e4d2b;
-  color: #d4edda;
-  border-color: #2d5a3d;
+  background-color: color-mix(in srgb, var(--success-color) 25%, var(--card-background));
+  color: var(--success-color);
+  border-color: var(--success-color);
 }
 
 .dark-mode .api-status-message.api-error {
-  background-color: #4d1e1e;
-  color: #f8d7da;
-  border-color: #5a2d2d;
+  background-color: color-mix(in srgb, var(--error-color) 25%, var(--card-background));
+  color: var(--error-color);
+  border-color: var(--error-color);
 }
 
 .dark-mode .api-status-message.api-loading {
-  background-color: #1e3d4d;
-  color: #d1ecf1;
-  border-color: #2d4a5a;
+  background-color: color-mix(in srgb, var(--info-color) 25%, var(--card-background));
+  color: var(--info-color);
+  border-color: var(--info-color);
 }
 
 @keyframes slideIn {
@@ -69,7 +69,7 @@
 }
 
 .settings-container {
-  max-width: 800px;
+  max-width: 1500px;
   margin: 0 auto;
   background-color: var(--card-background);
   border-radius: 20px;
@@ -81,9 +81,8 @@
 .settings-header {
   background: var(--gradient-primary);
   color: var(--text-inverse);
-  padding: 30px;
+  padding: 10px;
   text-align: center;
-  position: relative;
 }
 
 .back-button {
@@ -110,8 +109,10 @@
 .settings-title {
   font-size: 2.5rem;
   font-weight: 700;
-  margin: 0;
+  margin: 0 !important;
+  padding: 0 !important;
   color: var(--text-inverse);
+  line-height: 1.2;
 }
 
 .settings-subtitle {
@@ -568,6 +569,7 @@
 }
 
 .language-flag {
+  color: var(--text-primary);
   font-size: 2rem;
   margin-bottom: 5px;
 }
