@@ -22,9 +22,7 @@ export const getFontSize = () => {
 export const getFontSizeOptions = () => {
   return {
     small: { size: '14px', label: 'Small' },
-    medium: { size: '16px', label: 'Medium' },
     large: { size: '18px', label: 'Large' },
-    extraLarge: { size: '20px', label: 'Extra Large' },
     veryLarge: { size: '24px', label: 'Very Large' }
   };
 };
