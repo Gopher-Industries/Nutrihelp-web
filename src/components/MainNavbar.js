@@ -1,104 +1,211 @@
-// import React, { useState } from "react";
-// import { useDarkMode } from "../routes/DarkModeToggle/DarkModeContext";
-// import DarkModeToggle from "../routes/DarkModeToggle/DarkModeToggle";
-// import "../styles/mainNavbar.css";
-// import SideMenu from "./SideMenu";
-// import { Link } from "react-router-dom";
-// import UserIcon from "./user-stroke-rounded.tsx";
-
-// const MainNavbar = () => {
-//   const [isOpen, setIsOpen] = useState(false);
-//   const { darkMode } = useDarkMode();
-
-//   const toggleMenu = () => setIsOpen(!isOpen);
- 
-//   return (
-//     <>
-//       <header className={`main-header ${darkMode ? "bg-[#333]" : ""}`}>
-//         <nav className="main-nav">
-//              <button className="hamburger" onClick={toggleMenu}>
-//               ☰
-//             </button>
-        
-         
-
-//           <div className="logo-container">
-//             <img src="/images/logo.png" alt="Website Logo" />
-//           </div>
-//           <div className="darkmode">
-//             <Link to="/userProfile" onClick={toggleMenu}><UserIcon width={40} height={30} color="#fff" /></Link>
-//           </div>
-          
-//         </nav>
-//       </header>
-
-//       <SideMenu isOpen={isOpen} toggleMenu={toggleMenu} />
-//     </>
-//   );
-// };
-
-// export default MainNavbar;
-
-import React, { useState, useEffect } from "react";
-import { useDarkMode } from "../routes/DarkModeToggle/DarkModeContext";
-import DarkModeToggle from "../routes/DarkModeToggle/DarkModeToggle";
-import "../styles/mainNavbar.css";
-import SideMenu from "./SideMenu";
+import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import { useDarkMode } from "../routes/DarkModeToggle/DarkModeContext";
+import "../styles/mainNavbar.css";
 import UserIcon from "./user-stroke-rounded.tsx";
-import { px } from "framer-motion";
+import SideMenu from "./SideMenu";
+
+const ChevronDownIcon = ({ size = 18 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true">
+    <path
+      d="M6 9l6 6 6-6"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+const BarcodeIcon = ({ size = 20 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true">
+    <path
+      d="M4 7v10M7 7v10M10 7v10M12 7v10M14 7v10M17 7v10M20 7v10"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+    />
+  </svg>
+);
 
 const MainNavbar = () => {
-  const [isOpen, setIsOpen] = useState(false);
   const { darkMode } = useDarkMode();
-
-  // New state to track scroll position
+  const [openMenu, setOpenMenu] = useState(null); // "more" | "settings" | "account" | null
   const [scrolled, setScrolled] = useState(false);
+  const navRef = useRef(null);
 
-  const toggleMenu = () => setIsOpen(!isOpen);
-
+  // close on outside click
   useEffect(() => {
-    const handleScroll = () => {
-      const offset = window.scrollY;
-      if (offset > 200) {
-        setScrolled(true);
-      } else {
-        setScrolled(false);
+    const onDocMouseDown = (e) => {
+      if (navRef.current && !navRef.current.contains(e.target)) {
+        setOpenMenu(null);
       }
     };
+    document.addEventListener("mousedown", onDocMouseDown);
+    return () => document.removeEventListener("mousedown", onDocMouseDown);
+  }, []);
 
+  // close on ESC
+  useEffect(() => {
+    const onKeyDown = (e) => {
+      if (e.key === "Escape") setOpenMenu(null);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, []);
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 200);
     window.addEventListener("scroll", handleScroll);
-
-    // Cleanup
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Hover/focus open. Blur closes only when focus leaves wrapper.
+  const menuHandlers = (name) => ({
+    onMouseEnter: () => setOpenMenu(name),
+    onMouseLeave: () => setOpenMenu((prev) => (prev === name ? null : prev)),
+    onFocus: () => setOpenMenu(name),
+    onBlur: (e) => {
+      if (!e.currentTarget.contains(e.relatedTarget)) {
+        setOpenMenu((prev) => (prev === name ? null : prev));
+      }
+    },
+  });
+
   return (
-    <>
-      <header
-        className={`main-header ${
-          darkMode ? "bg-[#333]" : ""
-        } ${scrolled ? "scrolled" : ""}`}
-      >
-        <nav className="main-nav">
-          <button className="hamburger" onClick={toggleMenu}>
-            ☰
-          </button>
+    <header
+      className={`main-header ${darkMode ? "dark-mode" : ""} ${
+        scrolled ? "scrolled" : ""
+      }`}
+    >
+      <nav className="main-nav main-nav-desktop" ref={navRef} aria-label="Main">
+        {/* Logo -> Home */}
+        <Link to="/home" className="nav-logo" aria-label="NutriHelp Home">
+          <img src="/images/logo.png" alt="NutriHelp logo" />
+        </Link>
 
-          <div className="logo-container">
-            <img src="/images/logo.png" alt="Website Logo" />
+        {/* Left */}
+        <div className="nav-left">
+          <Link to="/home" className="nav-link">
+            Home
+          </Link>
+
+          <Link to="/ScanProducts" className="nav-link nav-link-icon">
+            <span className="nav-icon" aria-hidden="true">
+              <BarcodeIcon />
+            </span>
+            Scan
+          </Link>
+
+          {/* MORE */}
+          <div className="nav-dropdown" {...menuHandlers("more")}>
+            <button
+              type="button"
+              className="nav-button"
+              aria-haspopup="true"
+              aria-expanded={openMenu === "more"}
+              aria-controls="menu-more"
+            >
+              More <span className="nav-icon"><ChevronDownIcon /></span>
+            </button>
+
+            {openMenu === "more" && (
+              <div id="menu-more" className="dropdown-panel mega-menu" role="menu">
+                <SideMenu onNavigate={() => setOpenMenu(null)} />
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Center search */}
+        <div className="nav-search" role="search">
+          <input
+            id="nutrihelp-search"
+            className="search-input"
+            type="search"
+            placeholder="Search"
+            aria-label="Search NutriHelp"
+          />
+          <span className="search-icon" aria-hidden="true">
+            🔍
+          </span>
+        </div>
+
+        {/* Right */}
+        <div className="nav-right">
+          {/* SETTINGS */}
+          <div className="nav-dropdown" {...menuHandlers("settings")}>
+            <button
+              type="button"
+              className="nav-button"
+              aria-haspopup="true"
+              aria-expanded={openMenu === "settings"}
+              aria-controls="menu-settings"
+            >
+              Settings <span className="nav-icon"><ChevronDownIcon /></span>
+            </button>
+
+            {openMenu === "settings" && (
+              <div id="menu-settings" className="dropdown-panel single-menu" role="menu">
+                <Link className="dropdown-item" role="menuitem" to="/settings#display" onClick={() => setOpenMenu(null)}>
+                  Display
+                </Link>
+                <Link className="dropdown-item" role="menuitem" to="/settings#font-size" onClick={() => setOpenMenu(null)}>
+                  Font Size
+                </Link>
+                <Link className="dropdown-item" role="menuitem" to="/settings#accessibility" onClick={() => setOpenMenu(null)}>
+                  Accessibility
+                </Link>
+                <Link className="dropdown-item" role="menuitem" to="/settings#notifications" onClick={() => setOpenMenu(null)}>
+                  Notifications
+                </Link>
+                <Link className="dropdown-item" role="menuitem" to="/settings#language" onClick={() => setOpenMenu(null)}>
+                  Language
+                </Link>
+                <Link className="dropdown-item" role="menuitem" to="/settings#voice-audio" onClick={() => setOpenMenu(null)}>
+                  Voice &amp; Audio
+                </Link>
+              </div>
+            )}
           </div>
 
-          <div className="darkmode">
-            <Link to="/userProfile" onClick={toggleMenu}>
-              <UserIcon width={40} height={30} color="#fff" />
-            </Link>
-          </div>
-        </nav>
-      </header>
+          {/* ACCOUNT */}
+          <div className="nav-dropdown" {...menuHandlers("account")}>
+            <button
+              type="button"
+              className="nav-button nav-account"
+              aria-haspopup="true"
+              aria-expanded={openMenu === "account"}
+              aria-controls="menu-account"
+            >
+              <span className="account-icon" aria-hidden="true">
+                <UserIcon width={22} height={22} color="currentColor" />
+              </span>
+              Account <span className="nav-icon"><ChevronDownIcon /></span>
+            </button>
 
-      <SideMenu isOpen={isOpen} toggleMenu={toggleMenu} />
-    </>
+            {openMenu === "account" && (
+              <div id="menu-account" className="dropdown-panel single-menu" role="menu">
+                <Link className="dropdown-item" role="menuitem" to="/userProfile" onClick={() => setOpenMenu(null)}>
+                  Profile
+                </Link>
+                <Link className="dropdown-item" role="menuitem" to="/dietaryRequirements" onClick={() => setOpenMenu(null)}>
+                  Dietary Preference
+                </Link>
+                <Link className="dropdown-item" role="menuitem" to="/preferences" onClick={() => setOpenMenu(null)}>
+                  Allergies &amp; Intolerances
+                </Link>
+                <Link className="dropdown-item" role="menuitem" to="/login" onClick={() => setOpenMenu(null)}>
+                  Log Out
+                </Link>
+              </div>
+            )}
+          </div>
+        </div>
+      </nav>
+    </header>
   );
 };
 
