@@ -115,10 +115,10 @@ const WeeklyMealPlan = () => {
       display: 'flex', flexDirection: 'column', alignItems: 'center',
       padding: '20px', fontFamily: 'Segoe UI, sans-serif', overflowX: 'hidden', width: '100%'
     }}>
-      <h2 style={{ color: '#2e7d32', textAlign: 'center' }}>Weekly Meal Plan</h2>
+      <h2 style={{ color: '#000000ff', textAlign: 'center' }}>Weekly Meal Plan</h2>
       <button
         onClick={() => exportMealPlanAsPDF('meal-plan-pdf')}
-        style={{ backgroundColor: '#2e7d32', color: 'white', border: 'none', padding: '10px 20px', margin: '20px 0', cursor: 'pointer', borderRadius: '5px', fontWeight: 'bold' }}
+        style={{ backgroundColor: '#005BBB', color: 'white', border: 'none', padding: '10px 20px', margin: '20px 0', cursor: 'pointer', borderRadius: '5px', fontWeight: 'bold' }}
       >
         Export as PDF
       </button>

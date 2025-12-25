@@ -57,6 +57,8 @@ import ScanBarcode from "./routes/ScanBarcode/ScanBarcode";
 import AuthCallback from "./pages/AuthCallback";
 import DailyPlanEdit from './routes/DailyPlan/DailyPlanEdit';
 
+import WeeklyMealPlanPage from './routes/Meal/WeeklyMealPlanPage';
+
 function App() {
   const { currentUser } = useContext(UserContext);
   
@@ -205,6 +207,9 @@ function App() {
             </AuthenticateRoute>
           }
         />
+
+        <Route path="/weekly-plan" element={<WeeklyMealPlanPage />} />
+        
         <Route path="/auth/callback" element={<AuthCallback />} />
         <Route
           path="nutrition-calculator"
