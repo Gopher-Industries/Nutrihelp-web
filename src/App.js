@@ -56,6 +56,7 @@ import PostDetail from "./routes/Community/PostDetail";
 import ScanBarcode from "./routes/ScanBarcode/ScanBarcode";
 import AuthCallback from "./pages/AuthCallback";
 import DailyPlanEdit from './routes/DailyPlan/DailyPlanEdit';
+import Scan from "./routes/ScanBarcode/Scan";
 
 function App() {
   const { currentUser } = useContext(UserContext);
@@ -274,6 +275,7 @@ function App() {
           }
         />
         <Route path="ScanBarcode" element={<ScanBarcode />} />
+        <Route path="Scan" element={<Scan />}/>
       </Routes>
     </Router>
   );
