@@ -81,7 +81,7 @@ function ScanBarcode() {
   return (
     <div>
       <div className="scan-products-container">
-        <h1 className="mt-0 text-center">Scan Barcode For Allergen Detection</h1>
+        <h1 className="mt-0 text-left">Enter Barcode Number</h1>
         <BarcodeInputForm value={barcodeInput} handleOnchange={setBarcodeInput} handleSubmit={handleBarcodeScanning} />
       </div>
 

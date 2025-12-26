@@ -1,9 +1,11 @@
+import { color } from "framer-motion";
+
 function BarcodeInputForm({ value, handleOnchange, handleSubmit } ) {
   return (
     <>
       <div>
         <div>
-          <label style={{ color: '#000000' }}>Barcode</label>
+          <label style={{ color: '#000000', fontsize:'1rem', padding:'1rem'}}>Barcode</label>
           <input
             placeholder="Enter barcode number. Ex: 3017624010701"
             value={value}
