@@ -9,10 +9,10 @@ display-flex,
   display: -webkit-flex;
 }
 
-input:not(#no-bg, #file-upload),
-select:not(#no-bg),
-textarea:not(#no-bg),
-select:not(#no-bg) {
+.container input:not(#no-bg, #file-upload),
+.container select:not(#no-bg),
+.container textarea:not(#no-bg),
+.container select:not(#no-bg) {
   border-radius: 20px;
   padding: 50px;
   outline: none;
@@ -23,7 +23,7 @@ select:not(#no-bg) {
   -ms-appearance: unset !important;
 }
 
-input:not(#no-bg, #file-upload)[type="checkbox"] {
+.container input:not(#no-bg, #file-upload)[type="checkbox"] {
   appearance: checkbox !important;
   -moz-appearance: checkbox !important;
   -webkit-appearance: checkbox !important;
@@ -219,7 +219,7 @@ figure {
   height: 25px;
 }
 
-.switch input:not(#no-bg, #file-upload) {
+.switch .container input:not(#no-bg, #file-upload) {
   opacity: 1;
   width: 0;
   height: 0;
@@ -252,12 +252,12 @@ figure {
   transition: 0.4s;
 }
 
-input:not(#no-bg, #file-upload):checked + .slider {
+.container input:not(#no-bg, #file-upload):checked + .slider {
   background-color: var(--primary-color);
   border: 1px solid transparent;
 }
 
-input:not(#no-bg, #file-upload):checked + .slider:before {
+.container input:not(#no-bg, #file-upload):checked + .slider:before {
   transform: translateX(1.8em);
 }
 
@@ -394,69 +394,69 @@ input:not(#no-bg, #file-upload):checked + .slider:before {
   margin-bottom: 0px;
 }
 
-input:not(#no-bg, #file-upload),
-select:not(#no-bg) {
+.container input:not(#no-bg, #file-upload),
+.container select:not(#no-bg) {
   width: 100%;
   display: block;
   border: none;
-  border: 0.5px solid #999 !important;
-  padding: 15px 20px !important;
-  border-radius: 50px !important;
+  border: 0.5px solid #999 ;
+  padding: 15px 20px ;
+  border-radius: 50px ;
   font-family: "Lato", sans-serif;
   box-sizing: border-box;
-  font-size: 14px !important;
-  font-weight: normal !important;
+  font-size: 14px ;
+  font-weight: normal ;
 }
 
-input:not(#no-bg, #file-upload)::-webkit-input:not(
+.container input:not(#no-bg, #file-upload)::-webkit-input:not(
     #no-bg,
     #file-upload
   )-placeholder {
   color: #999;
 }
 
-input:not(#no-bg, #file-upload)::-moz-placeholder {
+.container input:not(#no-bg, #file-upload)::-moz-placeholder {
   color: #999;
 }
 
-input:not(#no-bg, #file-upload):-ms-input:not(
+.container input:not(#no-bg, #file-upload):-ms-input:not(
     #no-bg,
     #file-upload
   )-placeholder {
   color: #999;
 }
 
-input:not(#no-bg, #file-upload):-moz-placeholder {
+.container input:not(#no-bg, #file-upload):-moz-placeholder {
   color: #999;
 }
 
-input:not(#no-bg, #file-upload):focus {
+.container input:not(#no-bg, #file-upload):focus {
   border-bottom: 1px solid #222;
 }
 
-input:not(#no-bg, #file-upload):focus::-webkit-input:not(
+.container input:not(#no-bg, #file-upload):focus::-webkit-input:not(
     #no-bg,
     #file-upload
   )-placeholder {
   color: #222;
 }
 
-input:not(#no-bg, #file-upload):focus::-moz-placeholder {
+.container input:not(#no-bg, #file-upload):focus::-moz-placeholder {
   color: #222;
 }
 
-input:not(#no-bg, #file-upload):focus:-ms-input:not(
+.container input:not(#no-bg, #file-upload):focus:-ms-input:not(
     #no-bg,
     #file-upload
   )-placeholder {
   color: #222;
 }
 
-input:not(#no-bg, #file-upload):focus:-moz-placeholder {
+.container input:not(#no-bg, #file-upload):focus:-moz-placeholder {
   color: #222;
 }
 
-input:not(#no-bg, #file-upload)[type="checkbox"]:not(old) {
+.container input:not(#no-bg, #file-upload)[type="checkbox"]:not(old) {
   width: 2em;
   margin: 0;
   padding: 0;
@@ -464,13 +464,13 @@ input:not(#no-bg, #file-upload)[type="checkbox"]:not(old) {
   display: none;
 }
 
-input:not(#no-bg, #file-upload)[type="checkbox"]:not(old) + label {
+.container input:not(#no-bg, #file-upload)[type="checkbox"]:not(old) + label {
   display: inline-block;
   line-height: 1.5em;
   margin-top: 6px;
 }
 
-input:not(#no-bg, #file-upload)[type="checkbox"]:not(old) + label > span {
+.container input:not(#no-bg, #file-upload)[type="checkbox"]:not(old) + label > span {
   display: inline-block;
   width: 13px;
   height: 13px;
@@ -491,7 +491,7 @@ input:not(#no-bg, #file-upload)[type="checkbox"]:not(old) + label > span {
   vertical-align: bottom;
 }
 
-input:not(#no-bg, #file-upload)[type="checkbox"]:not(old):checked
+.container input:not(#no-bg, #file-upload)[type="checkbox"]:not(old):checked
   + label
   > span {
   background-image: -moz-linear-gradient(white, white);
@@ -501,7 +501,7 @@ input:not(#no-bg, #file-upload)[type="checkbox"]:not(old):checked
   background-image: linear-gradient(white, white);
 }
 
-input:not(#no-bg, #file-upload)[type="checkbox"]:not(old):checked
+.container input:not(#no-bg, #file-upload)[type="checkbox"]:not(old):checked
   + label
   > span:before {
   content: "\f26b";
@@ -850,7 +850,7 @@ h4 {
   box-shadow: -4px 0 6px -4px rgba(0, 0, 0, 0.1);
 }
 
-h1:not(#no-bg) {
+.container h1:not(#no-bg) {
   font-family: "Montserrat", "sans-serif";
   margin-top: 40%;
 }
@@ -915,7 +915,7 @@ label {
   color: #333;
 }
 
-input:not(#no-bg, #file-upload) {
+.container input:not(#no-bg, #file-upload) {
   width: 100%;
   padding: 8px;
   margin-bottom: 10px;

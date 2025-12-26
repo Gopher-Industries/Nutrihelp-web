@@ -1,19 +1,19 @@
-a {
+.home-page a {
   text-decoration: none;
   color: #49b5e7;
 }
 
-a:hover {
+.home-page a:hover {
   color: #76c7ed;
   text-decoration: none;
 }
 
-h1:not(#no-bg),
-h2:not(#no-bg),
-h3,
-h4,
-h5,
-h6 {
+.home-page h1:not(#no-bg),
+.home-page h2:not(#no-bg),
+.home-page h3,
+.home-page h4,
+.home-page h5,
+.home-page h6 {
   font-family: "Montserrat", sans-serif;
 }
 
@@ -25,19 +25,19 @@ h6 {
   background-color: var(--hero1-background-color);
 }
 
-p:not(#no-bg) {
+.home-page p:not(#no-bg) {
   color: var(--text-color);
 }
 
-p.description {
+.home-page p.description {
   color: var(--text-color);
 }
 
-div:not(#no-bg) {
+.home-page div:not(#no-bg) {
   background-color: var(--background2-color);
 }
 
-h3 {
+.home-page h3 {
   color: var(--h3-color);
 }
 
@@ -554,7 +554,7 @@ h3 {
   margin-top: 70px;
 }
 
-label {
+.home-page label {
   color: var(--text-color);
 }
 
