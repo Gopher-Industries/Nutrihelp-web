@@ -38,16 +38,14 @@ function Scan() {
     {scanMethod === 'barcode' && (
         <ScanBarcode/>
     )}
-    <div className="miniGuide" style={{width:'900px', margin:'2rem auto'}}>
-        <div className="sideContainer"></div>
-        <div className="mainContainer">
-          <span className="guideHead"><b>How to use:</b></span>
-          <ul className="stepContainer">
-            <li className="steps"><b>Product Image:</b> Take a clear photo of the product and fill in the details.</li>
-            <li className="steps"><b>Barcode:</b> Type in the numbers shown below the barcode lines.</li>
-          </ul>
-        </div>
-      </div>
+    <div className="mainContainer" style={{width:'900px', margin:'2rem auto'}}>
+      <span className="guideHead"><b>How to use:</b></span>
+      <ul className="stepContainer">
+        <li className="steps"><b>Product Image:</b> Take a clear photo of the product and fill in the details.</li>
+        <li className="steps"><b>Barcode:</b> Type in the numbers shown below the barcode lines.</li>
+      </ul>
+    </div>
+
     </>
   );
 }
