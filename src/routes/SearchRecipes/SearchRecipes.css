@@ -52,7 +52,7 @@
   transition: background-color 0.3s, transform 0.2s;
 }
 .popular-chips button:hover {
-  background-color: #b52478;
+  background-color: #005BBB;
   transform: scale(1.05);
 }
 
