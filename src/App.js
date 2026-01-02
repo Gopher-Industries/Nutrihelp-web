@@ -3,12 +3,15 @@ import "semantic-ui-css/semantic.min.css";
 import "./App.css";
 import { initializeFontSize } from "./utils/fontSizeManager";
 import "./styles/global-dark-mode.css";
+
 import {
   BrowserRouter as Router,
   Routes,
   Route,
   Navigate,
+  useLocation
 } from "react-router-dom";
+
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -17,9 +20,11 @@ import { UserContext } from "./context/user.context";
 import Login from "./routes/Login/Login";
 import SignUp from "./routes/SignUp/SignUp";
 import ForgotPassword from "./routes/ForgotPassword/ForgotPassword";
+import ForgotPasswordVerify from "./routes/ForgotPassword/ForgotPasswordVerify";
+import ForgotPasswordReset from "./routes/ForgotPassword/ForgotPasswordReset";
 import CreateRecipe from "./routes/CreateRecipe/CreateRecipe";
 import SearchRecipes from "./routes/SearchRecipes/SearchRecipes";
-import CategoryResults from "./routes/SearchRecipes/CategoryResults"; // 🆕
+import CategoryResults from "./routes/SearchRecipes/CategoryResults";
 import YourPreferences from "./routes/UI-Only-Pages/YourPreferences/pref-dis-health";
 import UserProfilePage from "./routes/UI-Only-Pages/UserProfilePage/userprofile";
 import Home from "./routes/Home/Home";
@@ -47,29 +52,51 @@ import SymptomAssessment from "./routes/SymptomAssessment/SymptomAssessment";
 import Leaderboard from "./routes/LeaderBoard/leaderBoard";
 import ObesityPredictor from "./routes/survey/ObesityPredictor";
 import Predictionresult from "./routes/survey/predictionresult";
-import UiTimer from "./routes/UiTimer/UiTimer"
-import Settings from "./routes/Settings/Settings"
+import UiTimer from "./routes/UiTimer/UiTimer";
+import Settings from "./routes/Settings/Settings";
 import HealthFAQ from "./routes/HealthFAQ/HealthFAQ";
-import FitnessRoadmap from './routes/survey/FitnessRoadmap';
+import FitnessRoadmap from "./routes/survey/FitnessRoadmap";
 import Community from "./routes/Community/Community";
 import PostDetail from "./routes/Community/PostDetail";
 import ScanBarcode from "./routes/ScanBarcode/ScanBarcode";
 import AuthCallback from "./pages/AuthCallback";
-import DailyPlanEdit from './routes/DailyPlan/DailyPlanEdit';
+import DailyPlanEdit from "./routes/DailyPlan/DailyPlanEdit";
+
+/* -------------------------------
+   NAVBAR WRAPPER (HIDE ON ROUTES)
+-------------------------------- */
+function NavbarWrapper() {
+  const location = useLocation();
+
+  // Routes where navbar should NOT appear
+  const hideNavbarRoutes = [
+    "/login",
+    "/signUp",
+    "/forgotPassword",    // existing
+    "/forgot/verify",     // new verify page
+    "/forgot/reset",      // new reset page
+    "/MFAform"
+  ];
+
+  const shouldHideNavbar = hideNavbarRoutes.includes(location.pathname);
+
+  return !shouldHideNavbar ? <MainNavbar /> : null;
+}
 
 function App() {
   const { currentUser } = useContext(UserContext);
-  
-  
-  // Initialize font size settings for elderly users
+
   useEffect(() => {
     initializeFontSize();
   }, []);
 
   return (
     <Router>
-      <MainNavbar />
+      {/* Show navbar only on allowed pages */}
+      <NavbarWrapper />
+
       <ToastContainer />
+
       <Routes>
         <Route
           path="/"
@@ -77,20 +104,32 @@ function App() {
             currentUser ? <Navigate to="/home" /> : <Navigate to="/login" />
           }
         />
+
+        {/* PUBLIC ROUTES */}
         <Route path="/login" element={<Login />} />
-        <Route path="/" element={<Home />} />
-        <Route path="/home" element={<Home />} />
         <Route path="/signUp" element={<SignUp />} />
+
+        {/* Forgot password flow */}
+        {/* legacy route */}
         <Route path="/forgotPassword" element={<ForgotPassword />} />
+        {/* new multi-step flow routes */}
+        <Route path="/forgot" element={<ForgotPassword />} />
+        <Route path="/forgot/verify" element={<ForgotPasswordVerify />} />
+        <Route path="/forgot/reset" element={<ForgotPasswordReset />} />
+
+        <Route path="/MFAform" element={<MFAform />} />
+
+        <Route path="/home" element={<Home />} />
         <Route path="/faq" element={<FAQ />} />
         <Route path="/leaderboard" element={<Leaderboard />} />
         <Route path="/community" element={<Community />} />
         <Route path="/community/post/:postId" element={<PostDetail />} />
+
         <Route path="/survey" element={<ObesityPredictor />} />
-        <Route path="/survey/result" element= {<Predictionresult/>}/>
+        <Route path="/survey/result" element={<Predictionresult />} />
         <Route path="/roadmap" element={<FitnessRoadmap />} />
 
-        {/* Private Routes */}
+        {/* PRIVATE ROUTES */}
         <Route
           path="/daily-plan-edit"
           element={
@@ -99,6 +138,7 @@ function App() {
             </AuthenticateRoute>
           }
         />
+
         <Route
           path="createRecipe"
           element={
@@ -107,6 +147,7 @@ function App() {
             </AuthenticateRoute>
           }
         />
+
         <Route
           path="searchRecipes"
           element={
@@ -115,7 +156,7 @@ function App() {
             </AuthenticateRoute>
           }
         />
-        {/* New route for category-specific results */}
+
         <Route
           path="searchRecipes/:category"
           element={
@@ -124,6 +165,7 @@ function App() {
             </AuthenticateRoute>
           }
         />
+
         <Route
           path="yourPreferences"
           element={
@@ -132,6 +174,7 @@ function App() {
             </AuthenticateRoute>
           }
         />
+
         <Route
           path="userProfile"
           element={
@@ -140,6 +183,7 @@ function App() {
             </AuthenticateRoute>
           }
         />
+
         <Route
           path="Appointment"
           element={
@@ -148,6 +192,7 @@ function App() {
             </AuthenticateRoute>
           }
         />
+
         <Route
           path="dietaryRequirements"
           element={
@@ -156,6 +201,7 @@ function App() {
             </AuthenticateRoute>
           }
         />
+
         <Route
           path="ScanProducts"
           element={
@@ -164,6 +210,7 @@ function App() {
             </AuthenticateRoute>
           }
         />
+
         <Route
           path="RecipeRating"
           element={
@@ -172,6 +219,7 @@ function App() {
             </AuthenticateRoute>
           }
         />
+
         <Route
           path="UiTimer"
           element={
@@ -180,6 +228,7 @@ function App() {
             </AuthenticateRoute>
           }
         />
+
         <Route
           path="menu"
           element={
@@ -188,6 +237,7 @@ function App() {
             </AuthenticateRoute>
           }
         />
+
         <Route
           path="recipe"
           element={
@@ -196,16 +246,11 @@ function App() {
             </AuthenticateRoute>
           }
         />
+
         <Route path="/recipe/:id" element={<RecipeDetail />} />
-        <Route
-          path="Meal"
-          element={
-            <AuthenticateRoute>
-              <Meal />
-            </AuthenticateRoute>
-          }
-        />
+
         <Route path="/auth/callback" element={<AuthCallback />} />
+
         <Route
           path="nutrition-calculator"
           element={
@@ -214,8 +259,11 @@ function App() {
             </AuthenticateRoute>
           }
         />
+
         <Route path="/preferences" element={<FoodPreferences />} />
+
         <Route path="/symptomassessment" element={<SymptomAssessment />} />
+
         <Route
           path="healthnews"
           element={
@@ -224,6 +272,7 @@ function App() {
             </AuthenticateRoute>
           }
         />
+
         <Route
           path="healthnews/:id"
           element={
@@ -232,7 +281,7 @@ function App() {
             </AuthenticateRoute>
           }
         />
-        <Route path="MFAform" element={<MFAform />} />
+
         <Route
           path="dashboard"
           element={
@@ -241,6 +290,7 @@ function App() {
             </AuthenticateRoute>
           }
         />
+
         <Route
           path="HealthTools"
           element={
@@ -249,6 +299,7 @@ function App() {
             </AuthenticateRoute>
           }
         />
+
         <Route
           path="shopping-list"
           element={
@@ -257,14 +308,16 @@ function App() {
             </AuthenticateRoute>
           }
         />
+
         <Route
-         path="settings"
-         element={
-          <AuthenticateRoute>
-            <Settings />
-          </AuthenticateRoute>
-         }
+          path="settings"
+          element={
+            <AuthenticateRoute>
+              <Settings />
+            </AuthenticateRoute>
+          }
         />
+
         <Route
           path="HealthFAQ"
           element={
@@ -273,6 +326,7 @@ function App() {
             </AuthenticateRoute>
           }
         />
+
         <Route path="ScanBarcode" element={<ScanBarcode />} />
       </Routes>
     </Router>
