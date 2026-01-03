@@ -1,155 +1,52 @@
-import React, { useContext, useState, useEffect } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
-import { UserContext } from "../context/user.context";
 import "../styles/mainNavbar.css";
-import TextToSpeech from "./TextToSpeech/TextToSpeech";
-import VoiceNavigation from "./VoiceControl/VoiceNavigation";
 
-const SideMenu = ({ isOpen, toggleMenu }) => {
-  const { currentUser, logOut } = useContext(UserContext);
-
-  // Track which dropdown is open
-  const [openDropdown, setOpenDropdown] = useState(null);
-
-  useEffect(() => {
-    if (!isOpen) {
-      setOpenDropdown(null);
-    }
-  }, [isOpen]);
-
-  const toggleDropdown = (name) => {
-    setOpenDropdown(openDropdown === name ? null : name);
+const SideMenu = ({ onNavigate }) => {
+  const close = () => typeof onNavigate === "function" && onNavigate();
+  const scrollToContact = () => {
+    const el = document.getElementById("contact");
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   return (
-    <div className={`side-menu ${isOpen ? "open" : ""}`}>
-      {/* Close Button */}
-      <button 
-        className="close-button" 
-        onClick={toggleMenu} 
-        aria-label="Close menu"
-      >
-        &times; {/* This renders a nice cross */}
-      </button>
-      <div className="nav-links column">
-        {currentUser ? (
-          <>
-            <Link to="/home" onClick={toggleMenu}>Home</Link>
-            <Link to="/dashboard" onClick={toggleMenu}>Menu</Link>
-            <Link to="/Meal" onClick={toggleMenu}>Meal Planning</Link>
-            <Link to="/daily-plan-edit" onClick={toggleMenu}>Edit Daily Plan</Link>
-            <Link to="/healthnews" onClick={toggleMenu}>Health News</Link>
-            <Link to="/survey" onClick={toggleMenu}>Fitness Roadmap</Link>
-            <Link to="/community" onClick={toggleMenu}>Community</Link>
+    <div className="mega-menu-content" aria-label="More menu">
+      <div className="mega-col">
+        <div className="mega-title">Recipes</div>
+        <Link to="/createRecipe" className="mega-item" onClick={close}>Create Recipe</Link>
+        <Link to="/searchRecipes" className="mega-item" onClick={close}>Search Recipes</Link>
+        <Link to="/RecipeRating" className="mega-item" onClick={close}>Recipe Rating</Link>
+      </div>
 
-            <Link to="/HealthFAQ" onClick={toggleMenu}>HealthFAQ</Link>
+      <div className="mega-col">
+        <div className="mega-title">Meal Planning</div>
+        <Link to="/dashboard" className="mega-item" onClick={close}>Meal Details</Link>
+        <Link to="/Meal" className="mega-item" onClick={close}>Plan</Link>
+        {/* <Link to="/Meal" className="mega-item" onClick={close}>Weekly Meal</Link> */}
+        <Link to="/daily-plan-edit" className="mega-item" onClick={close}>Daily Meal</Link>
+      </div>
 
-            {/* Recipes Dropdown */}
-            <div className="dropdown">
-              <span
-                className="dropdown-toggle"
-                onClick={() => toggleDropdown("recipes")}
-              >
-                Recipes
-              </span>
-              {openDropdown === "recipes" && (
-                <div className="dropdown-content">
-                  <Link to="/CreateRecipe" onClick={toggleMenu}>Create Recipe</Link>
-                  <Link to="/SearchRecipes" onClick={toggleMenu}>Search Recipes</Link>
-                  <Link to="/RecipeRating" onClick={toggleMenu}>Recipe Rating</Link>
-                  <Link to="/UiTimer" onClick={toggleMenu}>UiTimer</Link>
-                </div>
-              )}
-            </div>
+      <div className="mega-col">
+        <div className="mega-title">Health</div>
+        <Link to="/HealthFAQ" className="mega-item" onClick={close}>Health FAQ</Link>
+        <Link to="/HealthTools" className="mega-item" onClick={close}>Health Tools</Link>
+        <Link to="/healthnews" className="mega-item" onClick={close}>Health News</Link>
+        <Link to="/symptomassessment" className="mega-item" onClick={close}>Symptom Assessment</Link>
+        <Link to="/survey" className="mega-item" onClick={close}>Fitness Roadmap</Link>
+      </div>
 
-            {/* User Dropdown */}
-            <div className="dropdown">
-              <span
-                className="dropdown-toggle"
-                onClick={() => toggleDropdown("user")}
-              >
-                User
-              </span>
-              {openDropdown === "user" && (
-                <div className="dropdown-content">
-                  <Link to="/DietaryRequirements" onClick={toggleMenu}>Dietary Preference</Link>
-                  <Link to="/userProfile" onClick={toggleMenu}>Profile</Link>
-                </div>
-              )}
-            </div>
+      <div className="mega-col">
+        <div className="mega-title">Resources</div>
+        <Link to="/faq" className="mega-item" onClick={close}>FAQ</Link>
+        <Link to="/UiTimer" className="mega-item" onClick={close}>Cooking Timer</Link>
+        <Link to="/Appointment" className="mega-item" onClick={close}>My Appointments</Link>
+        <Link to="/community" className="mega-item" onClick={close}>Community</Link>
+      </div>
 
-            <Link to="/ScanProducts" onClick={toggleMenu}>Scan Products</Link>
-            <Link to="/ScanBarcode" onClick={toggleMenu}>Scan Barcode</Link>
-            <Link to="/preferences" onClick={toggleMenu}>Allergies & Intolerances</Link>
-            <Link to="/symptomassessment" onClick={toggleMenu}>Symptom Assessment</Link>
-            <Link to="/healthtools" onClick={toggleMenu}>Health Tools</Link>
-            <Link to="/settings" onClick={toggleMenu}>Settings</Link>
-            <button onClick={() => { logOut(); toggleMenu(); }}>Log Out</button>
-            <TextToSpeech />
-            <VoiceNavigation />
-          </>
-        ) : (
-          <>
-            {/* <DarkModeToggle />
-            <Link to="/home" onClick={toggleMenu}>Home</Link>
-            <Link to="/login" onClick={toggleMenu}>Sign In</Link>
-            <Link to="/signUp" onClick={toggleMenu}>Create Account</Link>
-            <TextToSpeech />
-            <VoiceNavigation /> */}
-            <Link to="/home" onClick={toggleMenu}>Home</Link>
-            <Link to="/dashboard" onClick={toggleMenu}>Menu</Link>
-            <Link to="/Meal" onClick={toggleMenu}>Meal Planning</Link>
-            <Link to="/daily-plan-edit" onClick={toggleMenu}>Edit Daily Plan</Link>
-            <Link to="/healthnews" onClick={toggleMenu}>Health News</Link>
-            <Link to="/survey" onClick={toggleMenu}>Fitness Roadmap</Link>
-            <Link to="/community" onClick={toggleMenu}>Community</Link>
-
-            {/* Recipes Dropdown */}
-            <div className="dropdown">
-              <span
-                className="dropdown-toggle"
-                onClick={() => toggleDropdown("recipes")}
-              >
-                Recipes
-              </span>
-              {openDropdown === "recipes" && (
-                <div className="dropdown-content">
-                  <Link to="/CreateRecipe" onClick={toggleMenu}>Create Recipe</Link>
-                  <Link to="/SearchRecipes" onClick={toggleMenu}>Search Recipes</Link>
-                  <Link to="/RecipeRating" onClick={toggleMenu}>Recipe Rating</Link>
-                  <Link to="/UiTimer" onClick={toggleMenu}>UiTimer</Link>
-                  <Link to="/HealthFAQ" onClick={toggleMenu}>HealthFAQ</Link>
-                </div>
-              )}
-            </div>
-
-            {/* User Dropdown */}
-            <div className="dropdown">
-              <span
-                className="dropdown-toggle"
-                onClick={() => toggleDropdown("user")}
-              >
-                User
-              </span>
-              {openDropdown === "user" && (
-                <div className="dropdown-content">
-                  <Link to="/DietaryRequirements" onClick={toggleMenu}>Dietary Preference</Link>
-                  <Link to="/userProfile" onClick={toggleMenu}>Profile</Link>
-                </div>
-              )}
-            </div>
-
-            <Link to="/ScanProducts" onClick={toggleMenu}>Scan Products</Link>
-            <Link to="/ScanBarcode" onClick={toggleMenu}>Scan Barcode</Link>
-            <Link to="/preferences" onClick={toggleMenu}>Allergies & Intolerances</Link>
-            <Link to="/symptomassessment" onClick={toggleMenu}>Symptom Assessment</Link>
-            <Link to="/healthtools" onClick={toggleMenu}>Health Tools</Link>
-            <Link to="/settings" onClick={toggleMenu}>Settings</Link>
-            <button onClick={() => { logOut(); toggleMenu(); }}>Log Out</button>
-            <TextToSpeech />
-            <VoiceNavigation />
-          </>
-        )}
+      <div className="mega-footer">
+        <Link className="mega-contact" onClick={scrollToContact}>
+          Contact Us
+        </Link>
       </div>
     </div>
   );
