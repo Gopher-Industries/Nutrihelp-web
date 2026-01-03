@@ -1,5 +1,3 @@
-import { color } from "framer-motion";
-
 function BarcodeInputForm({ value, handleOnchange, handleSubmit } ) {
   return (
     <>
