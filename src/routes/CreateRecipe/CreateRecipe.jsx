@@ -336,7 +336,7 @@ function CreateRecipe() {
     <FramerClient>
       <div
         id="no-bg"
-        className="w-full flex justify-center items-center bg-purple-100"
+        className="w-full flex justify-center items-center bg-[#FFFEFE]"
       >
         <form
           onSubmit={sendDataToSupabase}
@@ -345,7 +345,7 @@ function CreateRecipe() {
         >
           <div
             id="no-bg"
-            className="w-full sm:w-[95%] md:w-[90%] lg:w-[85%] xl:w-[80%] max-w-[1400px] bg-[#FFFEFE] rounded-lg flex flex-col sm:flex-row"
+            className="w-full sm:w-[95%] md:w-[90%] lg:w-[85%] xl:w-[80%] max-w-[1400px] bg-[#FFFFFF] rounded-lg flex flex-col sm:flex-row  border border-[#005BBB]"
           >
             {/* Main Form Area - full width on mobile, constrained on larger screens */}
             <div
@@ -355,12 +355,12 @@ function CreateRecipe() {
               {/* Header - flex column on mobile, row on sm+ */}
               <div
                 id="no-bg"
-                className="flex flex-col sm:flex-row justify-between items-center mb-6 sm:mb-8 md:mb-10 lg:mb-12"
+                //className="flex flex-col bg-[#E8F1FF] sm:flex-row justify-between items-center mb-6 sm:mb-8 md:mb-10 lg:mb-12"
               >
                 <div id="no-bg" className="w-full flex justify-center">
                   <h1
                     id="no-bg"
-                    className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-medium text-center sm:text-left mb-4 sm:mb-0"
+                    className="font-[Arial] text-2xl sm:text-3xl md:text-4xl lg:text-5xl  font-medium text-center sm:text-left mb-4 sm:mb-0 text-[#1A1A1A]"
                   >
                     Create Recipe
                   </h1>
@@ -369,11 +369,11 @@ function CreateRecipe() {
               {/* Recipe Description Section */}
               <div
                 id="no-bg"
-                className="bg-blue-100 rounded-lg p-4 sm:p-6 mb-6 sm:mb-8"
+                className="bg-[#d8edfd] rounded-lg p-4 sm:p-6 mb-6 sm:mb-8  border border-[#005BBB]"
               >
                 <h2
                   id="no-bg"
-                  className="text-lg sm:text-xl md:text-2xl font-medium mb-4 sm:mb-6"
+                  className="font-[Arial] text-lg sm:text-xl md:text-2xl font-medium mb-4 sm:mb-6"
                 >
                   Recipe Description
                 </h2>
@@ -391,7 +391,7 @@ function CreateRecipe() {
                     >
                       <label
                         id="no-bg"
-                        className="text-sm sm:text-base md:text-lg"
+                        className="font-[Arial] text-lg sm:text-base md:text-lg "
                       >
                         Recipe Name
                       </label>
@@ -410,7 +410,7 @@ function CreateRecipe() {
                     >
                       <label
                         id="no-bg"
-                        className="text-sm sm:text-base md:text-lg"
+                        className="font-[Arial] text-sm sm:text-base md:text-lg"
                       >
                         Cuisine Type
                       </label>
@@ -430,7 +430,7 @@ function CreateRecipe() {
                   >
                     <label
                       id="no-bg"
-                      className="text-sm sm:text-base md:text-lg sm:mr-4"
+                      className="font-[Arial] text-sm sm:text-base md:text-lg sm:mr-4"
                     >
                       Add Image
                     </label>
@@ -449,7 +449,7 @@ function CreateRecipe() {
                     <label
                       htmlFor="file-upload"
                       id="no-bg"
-                      className="bg-[#005BBB] text-white px-4 sm:px-6 py-3 sm:py-6 rounded-full font-semibold text-sm sm:text-base cursor-pointer w-fit"
+                      className="font-[Arial] bg-[#005BBB] text-white px-4 sm:px-6 py-3 sm:py-6 rounded-full font-semibold text-sm sm:text-base cursor-pointer w-fit"
                     >
                       Upload
                     </label>
@@ -459,11 +459,11 @@ function CreateRecipe() {
               {/* Cooking Description Section */}
               <div
                 id="no-bg"
-                className="bg-blue-100 rounded-lg p-4 sm:p-6 mb-6 sm:mb-8"
+                className="bg-[#d8edfd] rounded-lg p-4 sm:p-6 mb-6 sm:mb-8  border border-[#005BBB]"
               >
                 <h2
                   id="no-bg"
-                  className="text-lg sm:text-xl md:text-2xl font-medium mb-4 sm:mb-6"
+                  className="font-[Arial] text-lg sm:text-xl md:text-2xl font-medium mb-4 sm:mb-6"
                 >
                   Cooking Description
                 </h2>
@@ -476,7 +476,7 @@ function CreateRecipe() {
                   >
                     <label
                       id="no-bg"
-                      className="text-sm sm:text-base md:text-lg"
+                      className="font-[Arial] text-lg sm:text-base md:text-lg"
                     >
                       Preparation Time
                     </label>
@@ -497,7 +497,7 @@ function CreateRecipe() {
                   >
                     <label
                       id="no-bg"
-                      className="text-sm sm:text-base md:text-lg"
+                      className="font-[Arial] text-sm sm:text-base md:text-lg"
                     >
                       Total Servings
                     </label>
@@ -517,12 +517,12 @@ function CreateRecipe() {
               {/* Ingredients Section */}
               <div
                 id="no-bg"
-                className="bg-blue-100 rounded-lg p-4 sm:p-6 mb-6 sm:mb-8"
+                className="bg-[#d8edfd] rounded-lg p-4 sm:p-6 mb-6 sm:mb-8  border border-[#005BBB]"
               >
                 <div className="w-full flex justify-between items-center">
                   <h2
                     id="no-bg"
-                    className="text-lg sm:text-xl md:text-2xl font-medium mb-4 sm:mb-6"
+                    className="font-[Arial] text-lg sm:text-xl md:text-2xl font-medium mb-4 sm:mb-6"
                   >
                     Ingredients
                   </h2>
@@ -552,7 +552,7 @@ function CreateRecipe() {
                       >
                         <label
                           id="no-bg"
-                          className="text-sm sm:text-base md:text-lg mb-1"
+                          className="font-[Arial] text-sm sm:text-base md:text-lg mb-1"
                         >
                           Category
                         </label>
@@ -583,7 +583,7 @@ function CreateRecipe() {
                       >
                         <label
                           id="no-bg"
-                          className="text-sm sm:text-base md:text-lg mb-2"
+                          className="font-[Arial] text-lg sm:text-base md:text-lg mb-2"
                         >
                           Ingredient Name
                         </label>
@@ -609,7 +609,7 @@ function CreateRecipe() {
                       >
                         <label
                           id="no-bg"
-                          className="text-sm sm:text-base md:text-lg mb-1"
+                          className="font-[Arial] text-lg sm:text-base md:text-lg mb-1"
                         >
                           Quantity
                         </label>
@@ -659,7 +659,7 @@ function CreateRecipe() {
                         <button
                           type="button"
                           id="no-bg"
-                          className="bg-[#005BBB] text-white px-4 sm:px-6 py-2 sm:py-3 rounded-full font-semibold text-sm sm:text-base"
+                          className="font-[Arial] bg-[#005BBB] text-white px-4 sm:px-6 py-2 sm:py-3 rounded-full font-semibold text-sm sm:text-base"
                           onClick={() => handelIngredientsInTable()}
                         >
                           Add
@@ -675,25 +675,25 @@ function CreateRecipe() {
                           <tr>
                             <th
                               id="no-bg"
-                              className="border border-gray-300 px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base"
+                              className="font-[Arial] border border-gray-300 px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base"
                             >
                               Category
                             </th>
                             <th
                               id="no-bg"
-                              className="border border-gray-300 px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base"
+                              className="font-[Arial] border border-gray-300 px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base"
                             >
                               Ingredient
                             </th>
                             <th
                               id="no-bg"
-                              className="border border-gray-300 px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base"
+                              className="font-[Arial] border border-gray-300 px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base"
                             >
                               Quantity
                             </th>
                             <th
                               id="no-bg"
-                              className="border border-gray-300 px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base"
+                              className="font-[Arial] border border-gray-300 px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base"
                             >
                               Actions
                             </th>
@@ -786,11 +786,11 @@ function CreateRecipe() {
               {/* Instructions Section */}
               <div
                 id="no-bg"
-                className="bg-blue-100 rounded-lg p-4 sm:p-6 mb-6 sm:mb-8 w-full"
+                className="bg-[#d8edfd] rounded-lg p-4 sm:p-6 mb-6 sm:mb-8 w-full  border border-[#005BBB]"
               >
                 <h2
                   id="no-bg"
-                  className="text-lg sm:text-xl md:text-2xl font-medium mb-4 sm:mb-6"
+                  className="font-[Arial] text-lg sm:text-xl md:text-2xl font-medium mb-4 sm:mb-6"
                 >
                   Instructions
                 </h2>
@@ -872,7 +872,7 @@ function CreateRecipe() {
                     <button
                       id="no-bg"
                       type="button"
-                      className="bg-[#005BBB] text-white px-4 sm:px-6 py-2 sm:py-3 rounded-full font-semibold text-sm sm:text-base"
+                      className="font-[Arial] bg-[#005BBB] text-white px-4 sm:px-6 py-2 sm:py-3 rounded-full font-semibold text-sm sm:text-base"
                       onClick={() => {
                         setInstruction((prev) => [...prev, instructions]);
                         setInstructions("");
@@ -952,7 +952,7 @@ function CreateRecipe() {
                   type="submit"
                   id="no-bg"
                   // disabled={!instructions.trim()}
-                  className="bg-[#005BBB] text-white w-full max-w-xs px-8 py-3 rounded-full font-semibold text-lg shadow-xl shadow-blue-800/50 hover:bg-blue-800 transition duration-300"
+                  className="font-[Arial] bg-[#005BBB] text-white w-full max-w-xs px-8 py-3 rounded-full font-semibold text-lg shadow-xl shadow-blue-800/50  hover:bg-[#003f8a] transition duration-300"
                   onClick={sendDataToSupabase}
                 >
                   Save  Recipe

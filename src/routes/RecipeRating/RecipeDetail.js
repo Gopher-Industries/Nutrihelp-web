@@ -7,20 +7,20 @@ export default function CreamySalad() {
   const rating = 3; // out of 5
   const [recipe, setRecipe] = useState(null);
 
-  const { id } = useParams(); // <-- get ID from URL
+  const { id } = useParams(); // <--- get ID from URL
 
   useEffect(() => {
     const fetchData = async () => {
       const data = await getRecipes();
 
-      // find the recipe that matches the id from URL
+      // find the recipe that matches the id best from URL
       const recipe = data.find((item) => String(item.id) === String(id));
 
-      setRecipe(recipe); // now recipes holds only the matching one
+      setRecipe(recipe); 
     };
 
     fetchData();
-  }, [id]); // depend on id
+  }, [id]); 
 
   if (!recipe) return <p className="p-6">Loading...</p>;
 

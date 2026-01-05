@@ -286,10 +286,25 @@ export default function SymptomAssessmentPage() {
           <img src="/images/symptom_assessment/symptom.png" alt="Health" className="hero-image" />
         </div>
       </div>
- 
+
+      {}
+        <div className="search-container">
+          <div className="search-inner">
+            <span className="input-icon">🔍</span>
+            <input
+              type="text"
+              placeholder="Search Symptoms ..."
+              className="search-input-field"
+            />
+            <span className="input-next-button" onClick={handleNext}>
+              Next
+            </span>
+          </div>
+        </div>
+
       {}
       <div className="form-section">
-        <h2>How are you feeling?</h2>
+        <h2>Describe how you are feeling?</h2>
         <div className="symptom-grid">
           {symptomsList.map((symptom) => (
             <label key={symptom} className="symptom-option">
@@ -302,21 +317,6 @@ export default function SymptomAssessmentPage() {
               <span className="symptom-label-text">{symptom}</span>
             </label>
           ))}
-        </div>
- 
-        {}
-        <div className="search-container">
-          <div className="search-inner">
-            <span className="input-icon">🔍</span>
-            <input
-              type="text"
-              placeholder="Search Symptoms"
-              className="search-input-field"
-            />
-            <span className="input-next-button" onClick={handleNext}>
-              Next
-            </span>
-          </div>
         </div>
       </div>
  
