@@ -1,100 +1,133 @@
-import { Auth } from "@supabase/auth-ui-react";
-import { ThemeSupa } from "@supabase/auth-ui-shared";
-import { supabase } from '../../supabaseClient';
-import { UserIcon } from "lucide-react";
-import React, { useContext, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify"; // Toast import
-import "react-toastify/dist/ReactToastify.css"; // Toast CSS
-import { UserContext } from "../../context/user.context";
-import { useDarkMode } from "../DarkModeToggle/DarkModeContext";
-import "./Login.css";
-import FramerClient from "../../components/framer-client";
-import NutrihelpLogo from "./Nutrihelp_Logo.PNG";
+"use client"
 
+import React, { useState, useContext } from "react"
+import { Eye, EyeOff, UserIcon } from "lucide-react"
+import loginImage from "../../images/Nutrihelp.jpg"
+import logoImage from "../../images/logos_black_icon.png"
+
+// ADDED IMPORTS (kept small & compatible with your existing UI)
+import { useNavigate } from "react-router-dom"
+import { toast } from "react-toastify"
+import "react-toastify/dist/ReactToastify.css"
+import { UserContext } from "../../context/user.context"
+import { useDarkMode } from "../DarkModeToggle/DarkModeContext"
+import { supabase } from "../../supabaseClient" // keep if present in your repo
+
+// Inactivity watcher copied from your old code (unchanged logic)
 function startInactivityWatcher({ enabled, seconds = 30, onTimeout }) {
   if (window.__idleInterval) {
-    clearInterval(window.__idleInterval);
-    window.__idleInterval = null;
+    clearInterval(window.__idleInterval)
+    window.__idleInterval = null
   }
 
-  const EVENTS = ["mousemove", "keydown", "click", "scroll", "touchstart"];
-  const KEY_LAST = "__idle:lastActivity";
+  const EVENTS = ["mousemove", "keydown", "click", "scroll", "touchstart"]
+  const KEY_LAST = "__idle:lastActivity"
 
-  const removeAll = (resetFn) => {
-    EVENTS.forEach((e) =>
-      window.removeEventListener(e, resetFn, { passive: true })
-    );
-  };
+  const removeAll = (resetFn) =>
+    EVENTS.forEach((e) => window.removeEventListener(e, resetFn, { passive: true }))
 
   if (!enabled) {
-    localStorage.removeItem(KEY_LAST);
-    return;
+    localStorage.removeItem(KEY_LAST)
+    return
   }
 
   const resetActivity = () => {
-    localStorage.setItem(KEY_LAST, String(Date.now()));
-  };
+    localStorage.setItem(KEY_LAST, String(Date.now()))
+  }
 
-  resetActivity();
-  EVENTS.forEach((e) =>
-    window.addEventListener(e, resetActivity, { passive: true })
-  );
+  resetActivity()
+  EVENTS.forEach((e) => window.addEventListener(e, resetActivity, { passive: true }))
 
   window.__idleInterval = setInterval(() => {
-    const last = parseInt(localStorage.getItem(KEY_LAST) || "0", 10);
-    if (!last) return;
-    const idleMs = Date.now() - last;
+    const last = parseInt(localStorage.getItem(KEY_LAST) || "0", 10)
+    if (!last) return
+    const idleMs = Date.now() - last
     if (idleMs >= seconds * 1000) {
-      clearInterval(window.__idleInterval);
-      window.__idleInterval = null;
-      removeAll(resetActivity);
-      localStorage.removeItem(KEY_LAST);
-      onTimeout?.();
+      clearInterval(window.__idleInterval)
+      window.__idleInterval = null
+      removeAll(resetActivity)
+      localStorage.removeItem(KEY_LAST)
+      onTimeout?.()
     }
-  }, 1000);
+  }, 1000)
 }
 
-const Login = () => {
-  const navigate = useNavigate();
-  const { setCurrentUser } = useContext(UserContext);
-  const [showPassword, setShowPassword] = useState(false);
-  const [contact, setContact] = useState({ email: "", password: "" });
-  const [error, setError] = useState("");
-  const [isChecked, setIsChecked] = useState(false);
-  const { darkMode } = useDarkMode();
+export default function Login() {
+  // Existing UI state (unchanged)
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [showPassword, setShowPassword] = useState(false)
+  const [rememberMe, setRememberMe] = useState(false)
+  const [errors, setErrors] = useState({ email: "", password: "" })
 
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-    setContact((prevValue) => ({ ...prevValue, [name]: value }));
-  };
+  // ADDED / MERGED logic state & context
+  const [loading, setLoading] = useState(false)
+  const { setCurrentUser } = useContext(UserContext)
+  const { darkMode } = useDarkMode()
+  const navigate = useNavigate()
+  const API_BASE = "http://localhost:80" // same as your old code
 
-  const { email, password } = contact;
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    return emailRegex.test(email)
+  }
 
-  const handleSignIn = async (e) => {
-    e.preventDefault();
+  // validateLogin preserved but now calls handleSignIn on success (instead of alert)
+  const validateLogin = async (e) => {
+    e.preventDefault()
+    let valid = true
+    const newErrors = { email: "", password: "" }
+
+    if (!validateEmail(email)) {
+      newErrors.email = "Enter valid email"
+      valid = false
+    }
+
+    if (password.trim() === "") {
+      newErrors.password = "Password required"
+      valid = false
+    }
+
+    setErrors(newErrors)
+
+    if (valid) {
+      // previously: alert("Login successful")
+      // now: perform the real sign-in flow (keeps UI intact)
+      await handleSignIn()
+    }
+  }
+
+  // sign-in flow merged from your old code (calls backend, sets context, starts watcher, toasts, navigates to MFA)
+  const handleSignIn = async () => {
+    setLoading(true)
     try {
-      const response = await fetch("http://localhost:80/api/login", {
+      const response = await fetch(`${API_BASE}/api/login`, {
         method: "POST",
         body: JSON.stringify({ email, password }),
         headers: {
           "Content-Type": "application/json",
         },
-      });
+      })
 
       if (response.ok) {
-        const data = await response.json();
-        const expirationTimeInMillis = isChecked ? 3600000 : 0;
-        setCurrentUser(data.user, expirationTimeInMillis);
+        const data = await response.json().catch(() => ({}))
+        const expirationTimeInMillis = rememberMe ? 3600000 : 0
+        if (typeof setCurrentUser === "function") {
+          // old code passed expiration; keep same signature
+          setCurrentUser(data.user, expirationTimeInMillis)
+        }
 
+        // start inactivity watcher (only when user did NOT check rememberMe)
         startInactivityWatcher({
-          enabled: !isChecked,
-          seconds: 30,
+          enabled: !rememberMe,
+          seconds: 30, // same short test-time as old code
           onTimeout: async () => {
             try {
-              await supabase.auth.signOut();
+              if (supabase?.auth?.signOut) {
+                await supabase.auth.signOut()
+              }
             } finally {
-              setCurrentUser(null);
+              if (typeof setCurrentUser === "function") setCurrentUser(null)
               toast.info("⏱️ You were signed out due to 30s of inactivity.", {
                 position: "top-right",
                 autoClose: 5000,
@@ -112,51 +145,61 @@ const Login = () => {
                   border: "1px solid rgba(255,255,255,0.08)",
                   fontSize: "0.95rem",
                 },
-              });
-              navigate("/login");
+              })
+              navigate("/login")
             }
           },
-        });
-        // Toast message
+        })
+
+        // show welcome toast (keeps old message & behavior)
         toast.success(
           "💧 Welcome back! Don’t forget to check your meal plan & track your water intake!",
           {
             position: "top-right",
-            autoClose: false, // stays until dismissed
+            autoClose: false,
             closeOnClick: true,
             pauseOnHover: true,
             draggable: true,
             hideProgressBar: false,
-            theme: "colored", // makes it vibrant
+            theme: "colored",
             style: {
               fontSize: "1.1rem",
               fontWeight: "bold",
               padding: "1.2rem",
               borderRadius: "10px",
               boxShadow: "0px 4px 12px rgba(0,0,0,0.1)",
-              backgroundColor: "#d1f0ff", // optional custom color
+              backgroundColor: "#d1f0ff",
               color: "#0d47a1",
             },
           }
-        );
+        )
 
-        // Delay navigation so toast shows first
+        // small delay then navigate to MFA (old used 300ms)
         setTimeout(() => {
-          navigate("/MFAform", { state: { email, password } });
-        }, 300);
+          navigate("/MFAform", { state: { email, password } })
+        }, 300)
       } else {
-        const data = await response.json();
-        setError(
+        // parse error and show inline + toast (keeps UI visible)
+        const data = await response.json().catch(() => ({}))
+        const errMsg =
           data.error ||
+          data.message ||
           "Failed to sign in. Please check your credentials and try again."
-        );
+        setErrors((prev) => ({ ...prev, email: "" }))
+        toast.error(errMsg, { position: "top-right", autoClose: 4000 })
+        setErrors((prev) => ({ ...prev, password: errMsg }))
       }
     } catch (error) {
-      console.error("Error signing in:", error.message);
-      setError("Failed to sign in. An error occurred.");
+      console.error("Error signing in:", error)
+      const msg = "Failed to sign in. An error occurred."
+      toast.error(msg, { position: "top-right", autoClose: 4000 })
+      setErrors((prev) => ({ ...prev, password: msg }))
+    } finally {
+      setLoading(false)
     }
-  };
+  }
 
+  // keep Google sign-in logic from old code (unchanged)
   const handleGoogleSignIn = async () => {
     try {
       await supabase.auth.signInWithOAuth({
@@ -165,146 +208,398 @@ const Login = () => {
           redirectTo: `${window.location.origin}/auth/callback?next=/home`,
           queryParams: { access_type: "offline", prompt: "consent" },
         },
-      });
+      })
     } catch (err) {
-      console.error("Google sign-in error:", err);
-      toast.error("Google sign-in failed. Please try again.");
+      console.error("Google sign-in error:", err)
+      toast.error("Google sign-in failed. Please try again.")
     }
-  };
-
-  const handleToggleCheckbox = () => {
-    setIsChecked(!isChecked);
-  };
+  }
 
   const handleForgotPasswordClick = () => {
-    navigate("/forgotPassword");
-  };
+    navigate("/forgotPassword")
+  }
+
+  // UI (unchanged structure) — small tweak: show loading text on the submit button if loading
+  const styles = {
+    container: {
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      minHeight: "100vh",
+      backgroundColor: "#f5f5f5",
+      padding: "20px",
+      fontFamily: '"Poppins", sans-serif',
+    },
+    cardWrapper: {
+      display: "flex",
+      width: "100%",
+      backgroundColor: "white",
+      borderRadius: "28px",
+      overflow: "hidden",
+      boxShadow: "0 8px 35px rgba(0,0,0,0.18)",
+      maxWidth: "1200px",
+      animation: "fadeSlide 0.35s ease",
+      height: "auto",
+    },
+    cardImage: {
+      width: "40%",
+      minHeight: "400px",
+    },
+    cardImageImg: {
+      width: "100%",
+      height: "100%",
+      objectFit: "cover",
+    },
+    cardForm: {
+      width: "60%",
+      padding: "45px 55px",
+      overflowY: "auto",
+    },
+    logoBlock: {
+      textAlign: "center",
+      marginBottom: "14px",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    logo: {
+      width: "50px",
+      marginBottom: "18px",
+    },
+    brandTitle: {
+      fontSize: "22px",
+      fontWeight: 600,
+      margin: 0,
+    },
+    heading: {
+      fontSize: "26px",
+      marginBottom: "12px",
+      fontWeight: 600,
+      margin: "0 0 12px 0",
+      textAlign: "center",
+    },
+    subtitle: {
+      marginBottom: "22px",
+      fontSize: "15px",
+      color: "#555",
+    },
+    field: {
+      marginBottom: "14px",
+    },
+    label: {
+      fontSize: "14px",
+      fontWeight: 600,
+      marginBottom: "5px",
+      display: "block",
+      color: "#000",
+    },
+    input: {
+      width: "100%",
+      padding: "12px 16px",
+      borderRadius: "8px",
+      border: "2px solid black",
+      fontSize: "15px",
+      fontFamily: "inherit",
+      boxSizing: "border-box",
+      backgroundColor: "transparent",
+      color: "#000",
+    },
+    passwordWrap: {
+      position: "relative",
+      width: "100%",
+    },
+    passwordInput: {
+      width: "100%",
+      padding: "12px 50px 12px 16px",
+      borderRadius: "8px",
+      border: "2px solid black",
+      fontSize: "15px",
+      fontFamily: "inherit",
+      boxSizing: "border-box",
+      backgroundColor: "transparent",
+      color: "#000",
+    },
+    passwordToggle: {
+      position: "absolute",
+      right: "12px",
+      top: "50%",
+      transform: "translateY(-50%)",
+      minWidth: "36px",
+      minHeight: "36px",
+      backgroundColor: "transparent",
+      borderRadius: "50%",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      cursor: "pointer",
+      border: "none",
+      padding: "0",
+      color: "#666",
+      transition: "all 0.2s ease",
+    },
+    checkboxInput: {
+      width: "18px",
+      height: "18px",
+      cursor: "pointer",
+      accentColor: "#000",
+      display: "inline-block",
+      marginTop: "1px",
+    },
+    error: {
+      fontSize: "12px",
+      color: "#ff0000",
+      marginTop: "3px",
+      margin: "3px 0 0 0",
+    },
+    rememberRow: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      margin: "10px 0 14px 0",
+      flexWrap: "wrap",
+      gap: "10px",
+    },
+    rememberCheck: {
+      display: "flex",
+      alignItems: "center",
+      gap: "10px",
+      cursor: "pointer",
+      fontSize: "14px",
+      color: "#000",
+      lineHeight: "1",
+      userSelect: "none",
+      paddingTop: "5px",
+    },
+
+    forgotLink: {
+      fontSize: "14px",
+      color: "black",
+      textDecoration: "none",
+      cursor: "pointer",
+    },
+    mainBtn: {
+      width: "100%",
+      padding: "12px",
+      backgroundColor: "black",
+      color: "white",
+      borderRadius: "8px",
+      border: "none",
+      cursor: "pointer",
+      fontSize: "15px",
+      fontWeight: 600,
+      marginBottom: "14px",
+      fontFamily: "inherit",
+      transition: "all 0.2s ease",
+    },
+    switchText: {
+      marginBottom: "20px",
+      fontSize: "14px",
+    },
+    switchLink: {
+      color: "black",
+      textDecoration: "underline",
+      cursor: "pointer",
+      fontWeight: 600,
+    },
+    divider: {
+      textAlign: "center",
+      margin: "8px 0 18px 0",
+      position: "relative",
+      fontSize: "14px",
+    },
+    dividerLine: {
+      content: '""',
+      position: "absolute",
+      width: "42%",
+      height: "1px",
+      backgroundColor: "#ccc",
+      top: "50%",
+    },
+    socialBox: {
+      display: "flex",
+      gap: "15px",
+    },
+    socialBtn: {
+      flex: 1,
+      padding: "12px",
+      borderRadius: "8px",
+      border: "1px solid black",
+      backgroundColor: "white",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      gap: "6px",
+      cursor: "pointer",
+      fontSize: "14px",
+      fontWeight: 600,
+      fontFamily: "inherit",
+      transition: "all 0.3s ease",
+      minHeight: "48px",
+    },
+  }
 
   return (
-    <FramerClient>
-      <div className={`w-screen h-screen ${darkMode && "bg-[#555555]"}`}>
-        <div className="h-auto w-[70%] flex flex-col md:flex-row justify-center items-center mt-24 ml-auto mr-auto shadow-2xl border-none rounded-2xl overflow-hidden p-[20px]">
-          <div className="w-[100%]">
-            <img
-              src={NutrihelpLogo}
-              alt="Nutrihelp Logo"
-              className="rounded-xl w-[500px] mx-auto"
-            />
-            <h2
-              className={`font-bold text-4xl mt-4 ${darkMode && "text-white"}`}
-            >
-              LOG IN
-            </h2>
-            <p className="text-lg text-center text-gray-500">
-              Enter your email and password to sign in!
-            </p>
-            {error && <p className="error-message">{error}</p>}
-            <label htmlFor="email" className="input-label">
-              Email*
-            </label>
-            <input
-              className={`border-1 ${darkMode && "bg-gray-700 text-white font-semibold"
-                }`}
-              name="email"
-              type="text"
-              placeholder="Enter Your Email"
-              onChange={handleChange}
-              value={email}
-            />
-            <div>
-              <label htmlFor="password" className="input-label">
-                Password*
-              </label>
-              <div className="password-field">
-                <input
-                  className={`border-1 ${darkMode && "bg-gray-700 text-white font-semibold"
-                    }`}
-                  id="password"
-                  name="password"
-                  type={showPassword ? "text" : "password"}
-                  placeholder="Min. 8 characters"
-                  onChange={handleChange}
-                  value={password}
-                />
-                <span
-                  className="eye-icon tts-ignore cursor-pointer"
-                  aria-hidden="true"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? "🙈" : "👁️"}
-                </span>
-              </div>
-            </div>
+    <div style={styles.container}>
+      <style>{`
+        @keyframes fadeSlide {
+          from { opacity: 0; transform: translateY(15px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
 
-            <div className="options">
-              <div className="keep-logged-in ">
-                <div
-                  className={`checkbox-div ${isChecked ? "checked" : ""}`}
-                  onClick={handleToggleCheckbox}
-                >
-                  <span className="checkbox-indicator"></span>
-                </div>
-                <label htmlFor="keepLoggedIn" className="ml-2">
-                  Keep me logged in
-                </label>
-              </div>
-              <div
-                className={`forgot-password ${darkMode ? "text-purple-300" : "text-purple-800"
-                  }`}
-                onClick={handleForgotPasswordClick}
-              >
-                Forgot password?
-              </div>
-            </div>
-            <button
-              className={`w-full rounded-full mb-6 text-2xl font-bold flex justify-center gap-3 items-center ${darkMode
-                ? "bg-purple-700 hover:bg-purple-500"
-                : "bg-purple-400 text-gray-800 hover:bg-purple-700 hover:text-white"
-                }`}
-              onClick={handleSignIn}
-            >
-              <UserIcon size={24} />
-              Sign In
-            </button>
+        input::placeholder {
+          color: #888;
+          opacity: 1;
+          font-weight: 400;
+        }
 
-            <p className="text-2xl font-semibold text-center mt-4 mb-4">Or</p>
+        input:focus {
+          outline: none;
+          border-color: #333;
+          background-color: rgba(0,0,0,0.02);
+        }
 
-            <button
-              className={`w-full rounded-full mb-6 text-2xl font-bold flex justify-center gap-3 items-center ${darkMode
-                ? "bg-green-700 hover:bg-green-500"
-                : "bg-green-500 text-gray-800 hover:bg-green-700 hover:text-white"
-                }`}
-              onClick={handleGoogleSignIn}
-            >
-              <img
-                src="https://static.vecteezy.com/system/resources/previews/022/613/027/non_2x/google-icon-logo-symbol-free-png.png"
-                className="w-[25px]"
-              />
-              Sign In With Google
-            </button>
+        /* REAL RESPONSIVE FIX */
+        @media (max-width: 768px) {
+          .card-wrapper {
+            flex-direction: column !important;
+            min-height: auto !important;
+          }
+          .card-image, 
+          .card-form {
+            width: 100% !important;
+          }
+          .card-image {
+            height: 240px !important;
+          }
+          .card-form {
+            padding: 30px 24px !important;
+          }
+        }
 
-            <p className={`signup-link mb-5`}>
-              Not registered yet?{" "}
-              <Link
-                to="/signUp"
-                className={`${darkMode ? "text-purple-300" : "text-purple-800"
-                  }`}
-              >
-                Create an Account
-              </Link>
-            </p>
+        @media (max-width: 480px) {
+          .card-image { height: 180px !important; }
+          .card-form { padding: 24px 16px !important; }
+        }
+      `}</style>
+
+      <div style={styles.cardWrapper} className="card-wrapper">
+        <div style={styles.cardImage} className="card-image">
+          <img src={loginImage} style={styles.cardImageImg} alt="NutriHelp" />
+        </div>
+
+        <div style={styles.cardForm} className="card-form">
+          <div style={styles.logoBlock}>
+            <img src={logoImage} alt="Logo" style={styles.logo} />
+            <h2 style={styles.brandTitle}>NutriHelp</h2>
           </div>
-          <div className="flex flex-col justify-center items-center m-auto">
-            <img
-              src="https://cdni.iconscout.com/illustration/premium/thumb/woman-watching-food-menu-while-checkout-order-using-application-illustration-download-in-svg-png-gif-file-formats--online-service-mobile-app-pack-e-commerce-shopping-illustrations-10107922.png"
-              alt="Nutrihelp Logo 2"
-              className=""
-            />
+
+          <h1 style={styles.heading}>Welcome Back</h1>
+          <p style={styles.subtitle}>Login to continue your personalized nutrition insights and wellness tracking.</p>
+
+          <form onSubmit={validateLogin}>
+            <div style={styles.field}>
+              <label style={styles.label}>Email</label>
+              <input type="email" style={styles.input}
+                value={email} onChange={(e) => setEmail(e.target.value)}
+                placeholder="Enter your email address"
+              />
+              {errors.email && <p style={styles.error}>{errors.email}</p>}
+            </div>
+
+            <div style={styles.field}>
+              <label style={styles.label}>Password</label>
+              <div style={styles.passwordWrap}>
+                <input
+                  type={showPassword ? "text" : "password"}
+                  style={styles.passwordInput}
+                  className="password-input"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Enter your password"
+                />
+
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  style={styles.passwordToggle}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+              </div>
+
+              {errors.password && <p style={styles.error}>{errors.password}</p>}
+            </div>
+
+            <div style={styles.rememberRow}>
+              <label style={styles.rememberCheck}>
+                <input
+                  type="checkbox"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                  style={styles.checkboxInput}
+                />
+                Remember Me
+              </label>
+
+              <a style={styles.forgotLink} onClick={handleForgotPasswordClick}>
+                Forgot Password?
+              </a>
+            </div>
+
+            <button type="submit" style={styles.mainBtn}>
+              {loading ? "Signing in..." : "Sign In"}
+            </button>
+          </form>
+
+          <p style={styles.switchText}>
+            Don't have an account?
+            <a style={styles.switchLink} href="#signup"> Create Account</a>
+          </p>
+
+          <div style={styles.divider}>
+            <span style={{ backgroundColor: "white", padding: "0 8px", position: "relative", zIndex: 1 }}>
+              or
+            </span>
+            <div style={{ ...styles.dividerLine, left: 0 }} />
+            <div style={{ ...styles.dividerLine, right: 0 }} />
+          </div>
+
+          {/* Social Buttons */}
+          <div style={styles.socialBox}>
+            <button style={styles.socialBtn} className="social-btn" onClick={handleGoogleSignIn}>
+              <span style={{ fontSize: "18px" }}>
+                <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="24" height="24" viewBox="0 0 48 48">
+                  <path
+                    fill="#FFC107"
+                    d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"
+                  ></path>
+                  <path
+                    fill="#FF3D00"
+                    d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"
+                  ></path>
+                  <path
+                    fill="#4CAF50"
+                    d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"
+                  ></path>
+                  <path
+                    fill="#1976D2"
+                    d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"
+                  ></path>
+                </svg>
+              </span>
+            </button>
+            <button style={styles.socialBtn} className="social-btn">
+              <span style={{ fontSize: "18px" }}>
+                <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="24" height="24" viewBox="0 0 50 50">
+                  <path d="M 44.527344 34.75 C 43.449219 37.144531 42.929688 38.214844 41.542969 40.328125 C 39.601563 43.28125 36.863281 46.96875 33.480469 46.992188 C 30.46875 47.019531 29.691406 45.027344 25.601563 45.0625 C 21.515625 45.082031 20.664063 47.03125 17.648438 47 C 14.261719 46.96875 11.671875 43.648438 9.730469 40.699219 C 4.300781 32.429688 3.726563 22.734375 7.082031 17.578125 C 9.457031 13.921875 13.210938 11.773438 16.738281 11.773438 C 20.332031 11.773438 22.589844 13.746094 25.558594 13.746094 C 28.441406 13.746094 30.195313 11.769531 34.351563 11.769531 C 37.492188 11.769531 40.8125 13.480469 43.1875 16.433594 C 35.421875 20.691406 36.683594 31.78125 44.527344 34.75 Z M 31.195313 8.46875 C 32.707031 6.527344 33.855469 3.789063 33.4375 1 C 30.972656 1.167969 28.089844 2.742188 26.40625 4.78125 C 24.878906 6.640625 23.613281 9.398438 24.105469 12.066406 C 26.796875 12.152344 29.582031 10.546875 31.195313 8.46875 Z"></path>
+                </svg>
+              </span>
+            </button>
           </div>
         </div>
       </div>
-    </FramerClient>
-  );
-};
-
-export default Login;
+    </div>
+  )
+}
