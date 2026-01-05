@@ -1,5 +1,5 @@
 .recipe-card {
-  border: 1px solid #eaeaea;
+  border: 1px solid #3498db;
   border-radius: 12px;
   padding: 20px;
   background: white;
@@ -84,7 +84,7 @@
 }
 
 .star.filled {
-  color: #f39c12;
+  color: #f3a322;
 }
 
 .star.half-filled {
@@ -97,13 +97,13 @@
   left: 0;
   width: 50%;
   overflow: hidden;
-  color: #f39c12;
+  color: #f3a322;
 }
 
 .rating-value {
   margin-left: 8px;
   font-weight: 600;
-  color: #f39c12;
+  color: #f3a322;
 }
 
 .tag-group {
@@ -143,6 +143,6 @@
 }
 
 .view-recipe-btn:hover {
-  background: #219653;
+  background: #005BBB;
   transform: translateY(-2px);
 }

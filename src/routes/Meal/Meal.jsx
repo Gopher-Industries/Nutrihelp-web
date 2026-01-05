@@ -8,7 +8,10 @@ import { exportMealPlanAsPDF } from "./PDFExport";
 import PersonalizedPlanForm from "./PersonalizedPlanForm";
 import PersonalizedWeeklyPlan from "./PersonalizedWeeklyPlan";
 
+import { useNavigate } from "react-router-dom";
+
 const Meal = () => {
+  const navigate = useNavigate();
   const [selectedItems, setSelectedItems] = useState([]);
   const [totalNutrition, setTotalNutrition] = useState({
     calories: 0,
@@ -25,7 +28,7 @@ const Meal = () => {
   const [showPopup, setShowPopup] = useState(true);
 
   // Weekly and personalized plan toggles
-  const [showWeeklyPlan, setShowWeeklyPlan] = useState(true);
+
   const [showPersonalized, setShowPersonalized] = useState(false);
   const [personalFilters, setPersonalFilters] = useState(null);
 
@@ -216,39 +219,56 @@ const Meal = () => {
       style={{
         display: "flex",
         alignItems: "center",
-        gap: 12,
+        justifyContent: "space-between",
+        cursor: "pointer",
+        marginTop: 20,
+        padding: "10px 0",
         cursor: "pointer",
         marginTop: 12,
+        padding: "8px 0",
+        borderBottom: "1px solid #f3f4f6" 
       }}
       onClick={toggle}
     >
-      <h3 className="heading" style={{ margin: 0 }}>
+      <h3 
+        className="heading" 
+        style={{ 
+          margin: 0, 
+          marginLeft: 0,      
+          width: "120px",     
+          flexShrink: 0,        
+          color: "#333333",     
+          position: "relative", 
+          zIndex: 1,
+          display: "block"      
+        }}
+      >
         {title}
       </h3>
-      <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-        <span
-          style={{
-            fontSize: 12,
-            padding: "2px 8px",
-            borderRadius: 999,
-            background: "#eef2ff",
-            color: "#3730a3",
-          }}
-        >
+
+      <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+        <span style={{
+          fontSize: 12, padding: "4px 10px", borderRadius: 999,
+          background: "#eef2ff", color: "#3730a3", whiteSpace: "nowrap"
+        }}>
           {totalCount} items
         </span>
-        <span
-          style={{
-            fontSize: 12,
-            padding: "2px 8px",
-            borderRadius: 999,
-            background: selectedCount > 0 ? "#ecfdf5" : "#f3f4f6",
-            color: selectedCount > 0 ? "#065f46" : "#374151",
-          }}
-        >
+        <span style={{
+          fontSize: 12, padding: "4px 10px", borderRadius: 999,
+          background: selectedCount > 0 ? "#E8F1FF" : "#f3f4f6",
+          color: selectedCount > 0 ? "#005BBB" : "#374151",
+          whiteSpace: "nowrap"
+        }}>
           {selectedCount} selected
         </span>
-        <span style={{ marginLeft: "auto", fontSize: 12, color: "#6b7280" }}>
+        
+        <span style={{ 
+          fontSize: 12, 
+          color: "#6b7280", 
+          fontStyle: "italic",
+          minWidth: "100px",
+          textAlign: "right"
+        }}>
           {show ? "Tap to collapse" : "Tap to expand"}
         </span>
       </div>
@@ -263,8 +283,8 @@ const Meal = () => {
         position: "absolute",
         top: 8,
         right: 8,
-        background: "rgba(16,185,129,0.95)",
-        color: "white",
+        background: "rgba(232, 241, 255, 0.95)",
+        color: "black",
         fontSize: 12,
         padding: "2px 6px",
         borderRadius: 8,
@@ -316,11 +336,10 @@ const Meal = () => {
         <header
           style={{
             width: "100%",
-            background: "linear-gradient(135deg, #a543c2ff 0%, #ffffff 100%)",
+            background: "transparent",
             borderRadius: "16px",
             padding: "20px",
             margin: "8px 0 16px 0",
-            boxShadow: "0 2px 12px rgba(0,0,0,0.06)",
           }}
         >
           <div style={{ maxWidth: "900px", margin: "0 auto", textAlign: "center" }}>
@@ -334,10 +353,9 @@ const Meal = () => {
         <div
           style={{
             width: "100%",
-            background: "#d397e6ff",
+            background: "transparent",
             borderRadius: "16px",
             padding: "16px",
-            boxShadow: "0 2px 12px rgba(0,0,0,0.06)",
             marginBottom: "20px",
           }}
         >
@@ -558,67 +576,32 @@ const Meal = () => {
 
             <Link className="link" to="/nutrition-calculator">
               <button className="viewplan">
-                <h3>Go to Nutrition Calculator</h3>
+                Go to Nutrition Calculator
               </button>
             </Link>
 
             <Link className="link" to="/dashboard" state={{ selectedItems, totalNutrition }}>
               <button className="viewplan">
-                <h3>View Meal Plan</h3>
-              </button>
-            </Link>
-
-            <Link className="link" to="/shopping-list" state={{ selectedItems, totalNutrition }}>
-              <button className="viewplan">
-                <h3>🛒 Shopping List</h3>
+                View Meal Plan
               </button>
             </Link>
 
             {/* Weekly plan */}
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginTop: "24px" }}>
-              <button
-                className="toggle-weekly-btn"
-                onClick={() => setShowWeeklyPlan(!showWeeklyPlan)}
-                style={{ 
-                  width: "100%", 
-                  padding: "12px 16px", 
-                  borderRadius: "12px" 
-                }}
-              >
-                {showWeeklyPlan ? "Hide Weekly Meal Plan" : "Show Weekly Meal Plan"}
+            <div className="link" onClick={() => navigate("/weekly-plan")} style={{ cursor: 'pointer' }}>
+              <button className="viewplan">
+                View Full Weekly Meal Plan
               </button>
-
-              {showWeeklyPlan && (
-                <div
-                  id="weekly-meal-plan-container"
-                  className="weekly-container"
-                  style={{
-                    width: "100%",
-                    marginTop: "16px",
-                    background: "#fff",
-                    borderRadius: "12px",
-                    padding: "16px",
-                    boxShadow: "0 2px 12px rgba(0,0,0,0.06)",
-                  }}
-                >
-                  <h2 className="weekly-plan-title" style={{ textAlign: "center", marginTop: 0 }}>
-                    🌱 Weekly Meal Plan 🌱
-                  </h2>
-                  <WeeklyMealPlan />
-                  <div style={{ textAlign: "center", marginTop: "20px" }}>
-                    <button
-                      className="export-btn"
-                      onClick={() => exportMealPlanAsPDF("weekly-meal-plan-container")}
-                    >
-                      Export Weekly Plan as PDF
-                    </button>
-                  </div>
-                </div>
-              )}
             </div>
+
+            <Link className="link" to="/shopping-list" state={{ selectedItems, totalNutrition }}>
+              <button className="viewplan">
+                🛒 Shopping List
+              </button>
+            </Link>
+
           </div>
         </div>
-      </div>
+      </div>     
     </div>
   );
 };

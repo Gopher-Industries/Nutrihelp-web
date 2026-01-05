@@ -35,7 +35,7 @@ function FeedbackPopup({ rating, tags, onClose }) {
     <div className="feedback-popup-overlay" onClick={onClose}>
       <div className="feedback-popup" onClick={(e) => e.stopPropagation()}>
         <div className="popup-header">
-          <h3>Suggestions for recipe optimization</h3>
+          <h3>Suggestions for recipe optimization ..</h3>
           <button className="close-btn" onClick={onClose}>×</button>
         </div>
         <div className="popup-body">

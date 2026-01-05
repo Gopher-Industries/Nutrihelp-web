@@ -13,7 +13,7 @@ function RecipeCardList({ recipes, onRecipeClick }) {
           />
         ))
       ) : (
-        <p>No recipes found.</p>
+        <p> </p>
       )}
     </div>
   );

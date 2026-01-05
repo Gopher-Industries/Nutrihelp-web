@@ -1,67 +1,92 @@
-.cards-container {
-  display: flex;
-  margin: 20px;
-}
-
 .menucard {
-  max-width: 250px;
-  min-width: 250px;
-  height: 450px;
-  margin: 10px;
-  margin-right: 30px;
-  padding: 12px;
-  border-radius: 10px;
+  flex: 0 0 320px; 
+  height: 480px;
+  margin: 10px 5px;
+  padding: 15px;
+  border-radius: 15px;
   display: flex;
   flex-direction: column;
   background: #fff;
-  overflow: hidden;
-  box-shadow: 0px 0px 7px 5px rgba(232, 147, 207, 0.66);
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+}
+
+.menucard:hover {
+  transform: translateY(-5px);
 }
 
 .menucard-image {
   width: 100%;
-  height: 160px;
-  border-radius: 34px;
+  height: 180px;
+  border-radius: 20px; 
   object-fit: cover;
-  box-shadow: -1px 6px 10px -3px rgba(0, 0, 0, 0.52);
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .menucard-body {
-  height: 220px;
-  overflow: hidden;
+  flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  margin-top: 15px;
+  min-height: 0; 
+  overflow: hidden; 
 }
 
 .menucard-body h5 {
-  margin: 10px;
-  text-align: center;
+  margin: 0 0 10px 0;
+  text-align: left; 
   font-weight: bold;
-  font-size: 16px;
+  font-size: 18px;
 }
 
 .menucard-body p {
-  overflow-y: auto;
-  flex-grow: 1;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #666;
   margin: 0;
+  max-height: 90px; 
+  overflow-y: auto; 
+  padding-right: 5px;
+}
+
+.menucard-body p::-webkit-scrollbar {
+  width: 4px;
+}
+
+.menucard-body p::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 4px;
+}
+
+.menucard-body p::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
+
+.menucard-body p:hover {
+  position: relative;
+  z-index: 10;
 }
 
 .menucard-footer {
+  margin-top: auto; 
+  padding-top: 15px;
   text-align: center;
-  padding: 5px;
+  flex-shrink: 0; 
 }
 
-.menucard-footer a {
+.recipe-link {
   display: inline-block;
-  padding: 8px 16px;
-  background-color: #e893cf;
-  color: white;
+  padding: 8px 25px;
+  background-color: #E8F1FF; 
+  color: #005BBB;
+  border: 1px solid #005BBB;
   text-decoration: none;
   border-radius: 20px;
+  font-size: 14px;
+  transition: all 0.3s;
 }
 
-.menucard-footer a:hover {
-  background-color: #f7e3d9;
-  color: #000000;
+.recipe-link:hover {
+  background-color: #005BBB;
+  color: white;
 }

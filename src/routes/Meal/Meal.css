@@ -40,7 +40,8 @@ border-radius: 10px;
 
 .food-item {
 background: white;
-width: 160px;
+width: calc(33.33% - 20px); 
+min-width: 220px;
 border-radius: 12px;
 padding: 10px;
 box-shadow: 0px 0px 10px rgba(174, 174, 192, 0.2);
@@ -105,7 +106,7 @@ text-align: center;
 }
 
 .viewplan:hover {
-background-color: #8531ce;
+background-color: #00458e;
 }
 
 h3{
@@ -113,9 +114,9 @@ margin-left: 30px; font-size: 20px;
 }
 
 .selected {
-border: 2px solid #8531ce;
-background-color: #f1e7ff;
-box-shadow: 0px 0px 12px rgba(133, 49, 206, 0.3);
+  border: 2px solid #005BBB;            
+  background-color: #E8F1FF;             
+  box-shadow: 0px 0px 12px rgba(0, 91, 187, 0.3); 
 }
 
 .meal-title {
@@ -136,12 +137,13 @@ color: white;
 }
 
 .meal-header {
-background: linear-gradient(-45deg, #a349e4, #e073ff, #a349e4, #d98aff);
-background-size: 400% 400%;
-animation: gradientShift 8s ease infinite;
-padding: 20px;
-color: white;
+background-color: #005BBB !important; 
+background-image: none !important;    
+animation: none !important;           
+color: white !important;              
+padding: 15px !important;
 text-align: center;
+border-radius: 8px;
 position: relative;
 }
 
@@ -173,7 +175,7 @@ position: relative;
 
 /* Toggle Weekly Plan Button */
 .toggle-weekly-btn {
-  background: var(--gradient-primary);
+  background: #005BBB;
   color: var(--button-text);
   border: none;
   padding: 12px 28px;
@@ -184,9 +186,10 @@ position: relative;
   box-shadow: var(--card-shadow);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
+
 .toggle-weekly-btn:hover {
+  background: #00458e;              
   transform: translateY(-2px);
-  box-shadow: var(--card-shadow-hover);
 }
 
 /* Export Button */
@@ -217,9 +220,9 @@ position: relative;
   margin: 20px auto 10px;
   padding: 20px 22px;
   border-radius: 16px;
-  background: #ffffff;              /* solid white for strong contrast */
-  color: #111;                      /* high contrast text */
-  border: 1px solid #c3a3f0;        /* subtle purple border to match theme */
+  background: #ffffff;            
+  color: #111;                    
+  border: 1px solid #005BBB;        
   box-shadow: 0 8px 22px rgba(0, 0, 0, 0.06);
 }
 
@@ -250,9 +253,8 @@ position: relative;
 
 .personalize-input {
   appearance: none;
-  background: #faf8ff;              /* very light purple so text pops */
+  background: #E8F1FF;            
   color: #111;
-  border: 1px solid #bda6e8;
   border-radius: 12px;
   padding: 10px 12px;
   outline: none;
@@ -260,8 +262,8 @@ position: relative;
 }
 
 .personalize-input:focus {
-  border-color: #7a57d1;
-  box-shadow: 0 0 0 3px rgba(122, 87, 209, 0.18);
+  border-color: #005BBB;
+  box-shadow: 0 0 0 3px rgba(232,241,255,0.18);
 }
 
 .chip-row {
@@ -271,9 +273,9 @@ position: relative;
 }
 
 .chip {
-  background: #f3edff;
-  color: #1f1a3d;
-  border: 1px solid #bda6e8;
+  background: #E8F1FF;
+  color: #000000 !important;
+  border: 1px solid #005BBB;
   border-radius: 999px;
   padding: 8px 14px;
   font-weight: 600;
@@ -283,12 +285,12 @@ position: relative;
 
 .chip:hover {
   transform: translateY(-1px);
-  border-color: #7a57d1;
+  border-color: #00458e;
 }
 
 .chip--active {
-  background: linear-gradient(135deg, #7a57d1, #5b7cfa);
-  color: #fff;
+  background: #005BBB;
+  color: #fff !important;
   border-color: transparent;
 }
 
@@ -299,7 +301,7 @@ position: relative;
 }
 
 .viewplan {
-  background-color: purple;     
+  background-color: #005BBB;     
   color: white;                
   padding: 10px 20px;          
   border: none;                
@@ -311,26 +313,26 @@ position: relative;
 
 /* Solid primary button (keeps your gradient vibe but with readable text) */
 .btn-primary-solid {
-  background: linear-gradient(135deg, #2e7d32, #43a047);
+  background: linear-gradient(135deg, #005BBB, #005BBB);
   color: #fff;
   border: none;
   padding: 12px 20px;
   border-radius: 12px;
   font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 6px 18px rgba(67, 160, 71, 0.25);
+  box-shadow: 0 6px 18px rgba(67, 95, 160, 0.25);
   transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
 }
 
 .btn-primary-solid:hover {
   transform: translateY(-1px);
   filter: brightness(1.03);
-  box-shadow: 0 10px 24px rgba(67, 160, 71, 0.35);
+  box-shadow: 0 10px 24px rgba(67, 95, 160, 0.25);
 }
 
 /* Make sure meal headers remain readable (you asked earlier) */
 .meal-header {
-  color: #1b5e20 !important;
+  color: #ffffff !important;
   font-weight: 700 !important;
 }
 
@@ -465,9 +467,9 @@ position: relative;
 }
 
 .food-item.selected {
-  border-color: var(--primary-color);
-  background-color: var(--primary-light);
-  box-shadow: 0 0 20px rgba(168, 47, 234, 0.2);
+  border-color: #005BBB;              
+  background-color: #E8F1FF;          
+  box-shadow: 0 0 20px rgba(0, 91, 187, 0.3);  
 }
 
 .dark-mode .food-item.selected {
