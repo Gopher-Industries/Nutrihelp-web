@@ -2,9 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Plus,  X,  Trash, Check, Edit2, Save} from 'lucide-react';
 import './ShoppingList.css';
+// import { shoppingListApi } from '../../../services/shoppingListApi'; // Uncomment when ready
+// import { useAuth } from '../../../context/AuthContext'; // For user authentication
 
-const ShoppingList = () => {
+const ShoppingListv2 = () => {
     const location = useLocation();
+    // const { user } = useAuth(); // Uncomment to get current user
     const [shoppingItems, setShoppingItems] = useState([]);
     const [newItem, setNewItem] = useState('');
     const [newQuantity, setNewQuantity] = useState('1');
@@ -17,36 +20,45 @@ const ShoppingList = () => {
     const [editQuantity, setEditQuantity] = useState('');
     const [editUnit, setEditUnit] = useState('');
     const [editCategory, setEditCategory] = useState('');
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     // Function to generate shopping list from meal plan
-    const generateShoppingListFromMealPlan = (selectedItems) => {
+    const generateShoppingListFromMealPlan = async (selectedItems) => {
         if (!selectedItems || selectedItems.length === 0) return [];
         
         const mealPlanItems = [];
         
-        selectedItems.forEach(item => {
-            // Generate corresponding shopping list items based on ingredient names
-            const ingredients = getIngredientsForMeal(item.name, item.mealType);
+        // TODO: Replace with actual API call when backend is ready
+        // Example: const ingredients = await shoppingListApi.fetchRecipeIngredients(item.name);
+        
+        for (const item of selectedItems) {
+            // For now, use local function. Later, fetch from API
+            const ingredients = await getIngredientsForMeal(item.name, item.mealType);
             ingredients.forEach(ingredient => {
                 mealPlanItems.push({
-                    id: Date.now() + Math.random() + Math.random(),
+                    // id will be assigned by database
                     name: ingredient.name,
                     quantity: ingredient.quantity,
                     unit: ingredient.unit,
                     category: ingredient.category,
                     checked: false,
-                    createdAt: new Date().toISOString(),
                     fromMealPlan: true,
                     mealType: item.mealType
                 });
             });
-        });
+        }
         
         return mealPlanItems;
     };
 
     // Get required ingredients based on meal name
-    const getIngredientsForMeal = (mealName, mealType) => {
+    // TODO: Replace with API call to fetch from database
+    const getIngredientsForMeal = async (mealName, mealType) => {
+        // When backend is ready, replace with:
+        // return await shoppingListApi.fetchRecipeIngredients(mealName);
+        
+        // Temporary: Using hardcoded data
         const ingredientsMap = {
             'Oatmeal': [
                 { name: 'Oats', quantity: 1, unit: 'cup', category: 'pantry' },
@@ -114,59 +126,116 @@ const ShoppingList = () => {
         return ingredientsMap[mealName] || [];
     };
 
-    // Load shopping list from localStorage
+    // Load shopping list from database (or localStorage as fallback)
     useEffect(() => {
-        const savedItems = localStorage.getItem('shoppingList');
-        let items = savedItems ? JSON.parse(savedItems) : [];
+        const loadShoppingList = async () => {
+            try {
+                setLoading(true);
+                setError(null);
+                
+                // TODO: Replace with actual API call when backend is ready
+                // const items = await shoppingListApi.fetchItems(user.id);
+                
+                // Temporary: Use localStorage
+                const savedItems = localStorage.getItem('shoppingList');
+                let items = savedItems ? JSON.parse(savedItems) : [];
+                
+                // Check if there's data passed from meal plan page
+                if (location.state && location.state.selectedItems) {
+                    const mealPlanItems = await generateShoppingListFromMealPlan(location.state.selectedItems);
+                    
+                    // TODO: When using backend, save to database instead
+                    // await shoppingListApi.addMultipleItems(user.id, mealPlanItems);
+                    
+                    // Merge existing items with meal plan items, avoid duplicates
+                    const existingNames = items.map(item => item.name.toLowerCase());
+                    const newItems = mealPlanItems.filter(item => 
+                        !existingNames.includes(item.name.toLowerCase())
+                    );
+                    
+                    items = [...items, ...newItems];
+                }
+                
+                setShoppingItems(items);
+            } catch (err) {
+                console.error('Error loading shopping list:', err);
+                setError('Failed to load shopping list. Please try again.');
+            } finally {
+                setLoading(false);
+            }
+        };
         
-        // Check if there's data passed from meal plan page
-        if (location.state && location.state.selectedItems) {
-            const mealPlanItems = generateShoppingListFromMealPlan(location.state.selectedItems);
-            
-            // Merge existing items with meal plan items, avoid duplicates
-            const existingNames = items.map(item => item.name.toLowerCase());
-            const newItems = mealPlanItems.filter(item => 
-                !existingNames.includes(item.name.toLowerCase())
-            );
-            
-            items = [...items, ...newItems];
-        }
-        
-        setShoppingItems(items);
+        loadShoppingList();
     }, [location.state]);
 
-    // Save shopping list to localStorage
+    // Save shopping list to database (or localStorage as fallback)
     useEffect(() => {
+        // Skip saving on initial load
+        if (loading) return;
+        
+        // TODO: Implement debounced API calls to save changes
+        // For now, use localStorage
         localStorage.setItem('shoppingList', JSON.stringify(shoppingItems));
-    }, [shoppingItems]);
+    }, [shoppingItems, loading]);
 
-    const addItem = () => {
+    const addItem = async () => {
         if (newItem.trim()) {
-            const item = {
-                id: Date.now() + Math.random(),
-                name: newItem.trim(),
-                quantity: parseInt(newQuantity) || 1,
-                unit: newUnit,
-                category: newCategory,
-                checked: false,
-                createdAt: new Date().toISOString()
-            };
-            setShoppingItems([...shoppingItems, item]);
-            setNewItem('');
-            setNewQuantity('1');
-            setNewUnit('piece');
-            setNewCategory('vegetable');
+            try {
+                const item = {
+                    name: newItem.trim(),
+                    quantity: parseInt(newQuantity) || 1,
+                    unit: newUnit,
+                    category: newCategory,
+                    checked: false,
+                    createdAt: new Date().toISOString()
+                };
+                
+                // TODO: Replace with API call when backend is ready
+                // const savedItem = await shoppingListApi.addItem(user.id, item);
+                // setShoppingItems([...shoppingItems, savedItem]);
+                
+                // Temporary: Use local ID and update state
+                const itemWithId = { ...item, id: Date.now() + Math.random() };
+                setShoppingItems([...shoppingItems, itemWithId]);
+                
+                // Reset form
+                setNewItem('');
+                setNewQuantity('1');
+                setNewUnit('piece');
+                setNewCategory('vegetable');
+            } catch (err) {
+                console.error('Error adding item:', err);
+                setError('Failed to add item. Please try again.');
+            }
         }
     };
 
-    const removeItem = (id) => {
-        setShoppingItems(shoppingItems.filter(item => item.id !== id));
+    const removeItem = async (id) => {
+        try {
+            // TODO: Replace with API call when backend is ready
+            // await shoppingListApi.deleteItem(id);
+            
+            setShoppingItems(shoppingItems.filter(item => item.id !== id));
+        } catch (err) {
+            console.error('Error removing item:', err);
+            setError('Failed to remove item. Please try again.');
+        }
     };
 
-    const toggleItem = (id) => {
-        setShoppingItems(shoppingItems.map(item => 
-            item.id === id ? { ...item, checked: !item.checked } : item
-        ));
+    const toggleItem = async (id) => {
+        try {
+            const item = shoppingItems.find(item => item.id === id);
+            
+            // TODO: Replace with API call when backend is ready
+            // await shoppingListApi.updateItem(id, { checked: !item.checked });
+            
+            setShoppingItems(shoppingItems.map(item => 
+                item.id === id ? { ...item, checked: !item.checked } : item
+            ));
+        } catch (err) {
+            console.error('Error toggling item:', err);
+            setError('Failed to update item. Please try again.');
+        }
     };
 
     const startEdit = (item) => {
@@ -177,19 +246,36 @@ const ShoppingList = () => {
         setEditCategory(item.category);
     };
 
-    const saveEdit = () => {
+    const saveEdit = async () => {
         if (!editName.trim()) {
             alert('Item name cannot be empty.');
             return;
         }
-        setShoppingItems(shoppingItems.map(item => 
-            item.id === editingId ? { ...item, name: editName, quantity: parseInt(editQuantity) || 1, unit: editUnit, category: editCategory } : item
-        ));
-        setEditingId(null);
-        setEditName('');
-        setEditQuantity('');
-        setEditUnit('');
-        setEditCategory('');
+        
+        try {
+            const updates = {
+                name: editName,
+                quantity: parseInt(editQuantity) || 1,
+                unit: editUnit,
+                category: editCategory
+            };
+            
+            // TODO: Replace with API call when backend is ready
+            // await shoppingListApi.updateItem(editingId, updates);
+            
+            setShoppingItems(shoppingItems.map(item => 
+                item.id === editingId ? { ...item, ...updates } : item
+            ));
+            
+            setEditingId(null);
+            setEditName('');
+            setEditQuantity('');
+            setEditUnit('');
+            setEditCategory('');
+        } catch (err) {
+            console.error('Error saving edit:', err);
+            setError('Failed to save changes. Please try again.');
+        }
     };
 
     const cancelEdit = () => {
@@ -200,16 +286,56 @@ const ShoppingList = () => {
         setEditCategory('');
     };
 
-    const clearAll = () => {
-        setShoppingItems([]);
+    const clearAll = async () => {
+        try {
+            // TODO: Replace with API call when backend is ready
+            // const itemIds = shoppingItems.map(item => item.id);
+            // await shoppingListApi.deleteMultipleItems(itemIds);
+            
+            setShoppingItems([]);
+        } catch (err) {
+            console.error('Error clearing all items:', err);
+            setError('Failed to clear items. Please try again.');
+        }
     };
 
-    const markAllAsPurchased = () => {
-        setShoppingItems(shoppingItems.map(item => ({ ...item, checked: true })));
+    const clearMealPlanItems = async () => {
+        try {
+            // TODO: Replace with API call when backend is ready
+            // const mealPlanItemIds = shoppingItems.filter(item => item.fromMealPlan).map(item => item.id);
+            // await shoppingListApi.deleteMultipleItems(mealPlanItemIds);
+            
+            setShoppingItems(shoppingItems.filter(item => !item.fromMealPlan));
+        } catch (err) {
+            console.error('Error clearing meal plan items:', err);
+            setError('Failed to clear meal plan items. Please try again.');
+        }
     };
 
-    const markAllAsUnpurchased = () => {
-        setShoppingItems(shoppingItems.map(item => ({ ...item, checked: false })));
+    const markAllAsPurchased = async () => {
+        try {
+            // TODO: Replace with API call when backend is ready
+            // const updates = shoppingItems.map(item => ({ id: item.id, checked: true }));
+            // await shoppingListApi.updateMultipleItems(updates);
+            
+            setShoppingItems(shoppingItems.map(item => ({ ...item, checked: true })));
+        } catch (err) {
+            console.error('Error marking items as purchased:', err);
+            setError('Failed to update items. Please try again.');
+        }
+    };
+
+    const markAllAsUnpurchased = async () => {
+        try {
+            // TODO: Replace with API call when backend is ready
+            // const updates = shoppingItems.map(item => ({ id: item.id, checked: false }));
+            // await shoppingListApi.updateMultipleItems(updates);
+            
+            setShoppingItems(shoppingItems.map(item => ({ ...item, checked: false })));
+        } catch (err) {
+            console.error('Error marking items as unpurchased:', err);
+            setError('Failed to update items. Please try again.');
+        }
     };
 
     const getFilteredItems = () => {
@@ -244,18 +370,43 @@ const ShoppingList = () => {
     ];
 
     const filteredItems = getFilteredItems();
+    const mealPlanCount = shoppingItems.filter(item => item.fromMealPlan).length;
 
     return (
         <div className="shopping-list-page">
             <header className="shopping-list-header">
-                <h1>Shopping List</h1>
-                {/* Back to meal planning */}
-                <Link to="/Meal" className="back-button">
-                    ← Back to Meal Planning
-                </Link>
+                <h1>Shopping List v2 (Backend Ready)</h1>
             </header>
 
             <div className="shopping-list-container">
+                {/* Error message */}
+                {error && (
+                    <div className="error-message" style={{
+                        padding: '15px',
+                        marginBottom: '20px',
+                        backgroundColor: '#fee',
+                        border: '1px solid #fcc',
+                        borderRadius: '8px',
+                        color: '#c00'
+                    }}>
+                        {error}
+                        <button 
+                            onClick={() => setError(null)}
+                            style={{ float: 'right', background: 'none', border: 'none', cursor: 'pointer', fontSize: '18px' }}
+                        >
+                            ✕
+                        </button>
+                    </div>
+                )}
+
+                {/* Loading state */}
+                {loading ? (
+                    <div style={{ textAlign: 'center', padding: '60px', color: '#666' }}>
+                        <div style={{ fontSize: '48px', marginBottom: '20px' }}>⏳</div>
+                        <p style={{ fontSize: '18px' }}>Loading your shopping list...</p>
+                    </div>
+                ) : (
+                    <>
                 {/* Search and filter section */}
                 <div className="filter-controls-container">
                     <div className="filter-controls-grid">
@@ -344,11 +495,16 @@ const ShoppingList = () => {
                         <h2>Shopping Items</h2>
                         <div className="action-buttons-slist">
                             <button onClick={markAllAsPurchased} className="mark-all-btn" title="Mark all items as purchased">
-                                Mark All Purchased
+                                ✅ Mark All Purchased
                             </button>
-                            <button onClick={markAllAsUnpurchased} className="clear-btn" title="Mark all items as unpurchased">
-                                Mark All Unpurchased
+                            <button onClick={markAllAsUnpurchased} className="mark-all-btn" title="Mark all items as unpurchased">
+                                ⏳ Mark All Unpurchased
                             </button>
+                            {mealPlanCount > 0 && (
+                                <button onClick={clearMealPlanItems} className="clear-meal-plan-btn">
+                                    Clear Meal Plan Items
+                                </button>
+                            )}
                             <button onClick={clearAll} className="clear-all-btn">
                                 Clear All
                             </button>
@@ -369,13 +525,13 @@ const ShoppingList = () => {
                                     <div key={item.id} className={`shopping-item ${item.checked ? 'checked' : ''}`}>
                                         {editingId === item.id ? (
                                             <div className="edit-mode-container">
-                                                <div className="add-item-form">
+                                                <div className="edit-inputs-grid">
                                                     <input
                                                         type="text"
                                                         value={editName}
                                                         onChange={(e) => setEditName(e.target.value)}
                                                         placeholder="Item name"
-                                                        className="item-input"
+                                                        className="edit-name-input"
                                                     />
                                                     <input
                                                         type="number"
@@ -383,12 +539,12 @@ const ShoppingList = () => {
                                                         value={editQuantity}
                                                         onChange={(e) => setEditQuantity(e.target.value)}
                                                         placeholder="Quantity"
-                                                        className="quantity-input"
+                                                        className="quantity-edit"
                                                     />
                                                     <select
                                                         value={editUnit}
                                                         onChange={(e) => setEditUnit(e.target.value)}
-                                                        className="unit-select"
+                                                        className="unit-edit"
                                                     >
                                                         {units.map(unit => (
                                                             <option key={unit.value} value={unit.value}>
@@ -399,7 +555,7 @@ const ShoppingList = () => {
                                                     <select
                                                         value={editCategory}
                                                         onChange={(e) => setEditCategory(e.target.value)}
-                                                        className="category-select"
+                                                        className="category-edit"
                                                     >
                                                         {categories.map(category => (
                                                             <option key={category.id} value={category.id}>
@@ -440,16 +596,20 @@ const ShoppingList = () => {
                                             </div>
                                             <div className="item-info">
                                                 <span className="item-name">
-                                                    {item.name} :
+                                                    {item.name}
+                                                    {item.fromMealPlan && (
+                                                        <span className="meal-plan-badge">
+                                                            {item.mealType}
+                                                        </span>
+                                                    )}
                                                     {item.checked && (
                                                         <span className="purchased-badge">
-                                                            Purchased
+                                                            ✅ Purchased
                                                         </span>
                                                     )}
                                                 </span>
                                                 <span className="item-category" style={{ color: category?.color }}>
-                                                    <span>{item.quantity}</span>
-                                                    <span>{item.unit}</span>
+                                                    {item.quantity} {item.unit} - {category?.name}
                                                 </span>
                                             </div>
                                             <div className="item-action-buttons">
@@ -477,9 +637,17 @@ const ShoppingList = () => {
                     )}
                 </div>
 
+                {/* Back to meal planning */}
+                <div className="back-section">
+                    <Link to="/Meal" className="back-button">
+                        ← Back to Meal Planning
+                    </Link>
+                </div>
+                </>
+                )}
             </div>
         </div>
     );
 };
 
-export default ShoppingList; 
+export default ShoppingListv2;
