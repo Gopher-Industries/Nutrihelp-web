@@ -277,7 +277,7 @@ const ShoppingList = () => {
                             </select>
                         </div>
 
-                        <div className="filter-control-group">
+                        <div className="fiilter-control-group">
                             <button
                                 onClick={() => setShowAddForm(!showAddForm)}
                                 className={`toggle-add-form-btn ${showAddForm ? 'cancel' : 'add'}`}
