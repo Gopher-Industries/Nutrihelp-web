@@ -83,6 +83,8 @@ function NavbarWrapper() {
   return !shouldHideNavbar ? <MainNavbar /> : null;
 }
 
+import WeeklyMealPlanPage from './routes/Meal/WeeklyMealPlanPage';
+
 function App() {
   const { currentUser } = useContext(UserContext);
 
@@ -248,6 +250,17 @@ function App() {
         />
 
         <Route path="/recipe/:id" element={<RecipeDetail />} />
+        <Route
+          path="Meal"
+          element={
+            <AuthenticateRoute>
+              <Meal />
+            </AuthenticateRoute>
+          }
+        />
+
+        <Route path="/weekly-plan" element={<WeeklyMealPlanPage />} />
+        
 
         <Route path="/auth/callback" element={<AuthCallback />} />
 
