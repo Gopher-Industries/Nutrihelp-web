@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import './HealthTools.css';
 
-
 function WaterTracker({ recommendedWater }) {
   const [cupsDrank, setCupsDrank] = useState(0);
   const cupSize = 250;
@@ -33,19 +32,16 @@ function HealthTools() {
   const [foodWeightPounds, setFoodWeightPounds] = useState('');
   const [foodWeightGrams, setFoodWeightGrams] = useState(null);
 
-  function calculateProteinIntake(bodyWeight) {
-    const proteinPerKg = 0.9;
-    return bodyWeight * proteinPerKg;
+  function calculateProteinIntake(weight) {
+    return weight * 0.9;
   }
 
-  function calculateWaterIntake(bodyWeight) {
-    const waterPerKg = 35;
-    return bodyWeight * waterPerKg;
+  function calculateWaterIntake(weight) {
+    return weight * 35;
   }
 
-  function calculateCalorieIntake(bodyWeight) {
-    const caloriesPerKg = 30;
-    return bodyWeight * caloriesPerKg;
+  function calculateCalorieIntake(weight) {
+    return weight * 30;
   }
 
   const handleCalculate = () => {
@@ -66,57 +62,54 @@ function HealthTools() {
 
   return (
     <div className="container">
-      <h1>Health Calculator Tools</h1>
-      <div className="card">
-        <input
-          type="number"
-          value={bodyWeight}
-          onChange={(e) => setBodyWeight(e.target.value)}
-          className="input-field"
-          placeholder="Enter body weight in Kilograms"
-        />
-        <button className="primary-button" onClick={handleCalculate}>
-          Calculate
-        </button>
-      </div>
-      {recommendedProtein && (
+      <h1>Health Tool Calculator</h1>
+
+      {/* Row: Body Weight + Pounds Converter */}
+      <div className="flex-row">
         <div className="card">
-          <h3>Recommended Protein Intake</h3>
-          <p className="result-text">{recommendedProtein} grams</p>
+          <h3>Macro Calculator</h3>
+          <input
+            type="number"
+            value={bodyWeight}
+            onChange={(e) => setBodyWeight(e.target.value)}
+            className="input-field"
+            placeholder="Enter body weight in Kilograms ..."
+          />
+          <button className="primary-button" onClick={handleCalculate}>
+            Calculate
+          </button>
+          {recommendedProtein && (
+            <p className="result-text">Protein: {recommendedProtein} g</p>
+          )}
+          {recommendedWater && (
+            <p className="result-text">Water: {recommendedWater} ml</p>
+          )}
+          {recommendedCalories && (
+            <p className="result-text">Calories: {recommendedCalories} cal</p>
+          )}
+          {recommendedWater && (
+            <WaterTracker recommendedWater={parseFloat(recommendedWater)} />
+          )}
         </div>
-      )}
-      {recommendedWater && (
+
         <div className="card">
-          <h3>Recommended Water Intake</h3>
-          <p className="result-text">{recommendedWater} ml</p>
+          <h3>Pounds to Kilogram Converter</h3>
+          <input
+            type="number"
+            value={foodWeightPounds}
+            onChange={(e) => setFoodWeightPounds(e.target.value)}
+            className="input-field"
+            placeholder="Enter pounds to be converted ..."
+          />
+          <button className="primary-button" onClick={handleConvertFoodWeight}>
+            Convert
+          </button>
+          {foodWeightGrams && (
+            <p className="result-text">
+              {foodWeightPounds} lbs = {foodWeightGrams} kg
+            </p>
+          )}
         </div>
-      )}
-      {recommendedCalories && (
-        <div className="card">
-          <h3>Recommended Caloric Intake</h3>
-          <p className="result-text">{recommendedCalories} calories</p>
-        </div>
-      )}
-      {recommendedWater && (
-        <WaterTracker recommendedWater={parseFloat(recommendedWater)} />
-      )}
-      <div className="card">
-        <h3>Convert Pounds to Kilograms</h3>
-        <input
-          type="number"
-          value={foodWeightPounds}
-          onChange={(e) => setFoodWeightPounds(e.target.value)}
-          className="input-field"
-          placeholder="Enter pounds"
-        />
-        <button className="primary-button" onClick={handleConvertFoodWeight}>
-          Convert
-        </button>
-        {foodWeightGrams && (
-          <p className="result-text">
-            {foodWeightPounds} lbs = {foodWeightGrams} kg
-          </p>
-        )}
       </div>
     </div>
   );
