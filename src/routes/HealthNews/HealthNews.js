@@ -339,9 +339,10 @@ const HealthNews = () => {
         </div>
 
         <div className="search-container">
+        <span className="input-icon">🔍</span>
           <input
             type="text"
-            placeholder="Enter to search news"
+            placeholder="Enter to search news ..."
             value={searchQuery}
             onChange={handleSearch}
             className="search-input"
@@ -441,7 +442,7 @@ const HealthNews = () => {
             <div className="search-input-wrapper">
               <input
                 type="text"
-                placeholder="Enter keywords (e.g., nutrition, diet, health)..."
+                placeholder="Enter keywords ... (e.g., diet, nutrition, health, well-being)"
                 value={apiSearchQuery}
                 onChange={(e) => setApiSearchQuery(e.target.value)}
                 className="test-search-input"

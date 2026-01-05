@@ -16,17 +16,25 @@
   color: var(--text-primary);
 }
 
+
 /* Header Section */
 .news-header {
-  text-align: center;
-  margin-bottom: 30px;
-  padding: 20px 40px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #a82fea 100%);
-  border-radius: 15px;
+  position: relative;                 
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 2px 48px;                 
+  margin: 12px 0 24px 8px;            
+
+  background: linear-gradient(135deg, #667eea 0%, #005BBB 50%, #005BBB 100%);
+  border-radius: 25px;               
+
   color: white;
-  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.2);
-  position: relative;
-  overflow: hidden;
+  box-shadow: 0 8px 18px rgba(0, 91, 187, 0.25);
+
+  z-index: 10;
+  text-align: left;
 }
 
 .news-header::before {
@@ -321,7 +329,7 @@
 
 .read-more {
   padding: 8px 20px;
-  background: var(--gradient-primary);
+  background: #005BBB;
   color: var(--button-text);
   border: none;
   border-radius: 20px;
@@ -628,10 +636,20 @@
   .search-container {
     flex-direction: column;
   }
-  
+
   .search-input {
     min-width: 100%;
   }
+
+  .search-container.input-icon {
+  position: absolute;
+  right: 16px;           
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 18px;       
+  color: #ffff;
+  pointer-events: none; 
+}
   
   .filter-container {
     flex-direction: column;
@@ -880,7 +898,7 @@
 
 .test-badge {
   display: inline-block;
-  background: var(--gradient-primary);
+  background: #005BBB;
   color: white;
   padding: 5px 15px;
   border-radius: 20px;
@@ -938,7 +956,7 @@
 
 .dark-mode .test-search-input {
   background-color: var(--input-background);
-  color: var(--input-text);
+  color: var(--input-background);
   border-color: var(--input-border);
 }
 
@@ -954,7 +972,7 @@
 
 .test-search-button {
   padding: 12px 25px;
-  background: var(--gradient-primary);
+  background: #005BBB;
   color: var(--button-text);
   border: none;
   border-radius: 25px;
@@ -1115,8 +1133,8 @@
 }
 
 .result-number {
-  background-color: var(--primary-light);
-  color: var(--primary-dark);
+  background-color: #005BBB;
+  color: var(--border-color);
   padding: 4px 8px;
   border-radius: 12px;
   font-size: 0.8rem;

@@ -50,14 +50,14 @@
 }
 
 .recipe-card.selected {
-  border-color: #0984e3;
+  border-color: #005BBB;
   background-color: #f1f9ff;
 }
 
 .recipe-time {
   display: block;
   font-size: 0.85rem;
-  color: #0984e3;
+  color: #005BBB;
   margin-top: 0.5rem;
 }
 
@@ -151,12 +151,12 @@
 }
 
 .control-button:not(.reset) {
-  background-color: #0984e3;
+  background-color: #005BBB;
   color: white;
 }
 
 .control-button:not(.reset):hover {
-  background-color: #066bbf;
+  background-color: #005BBB;
 }
 
 .control-button.reset {
@@ -174,7 +174,7 @@
 
 @keyframes pulse {
   0% { transform: scale(1); }
-  50% { transform: scale(1.1); color: #0984e3; }
+  50% { transform: scale(1.1); color: #005BBB; }
   100% { transform: scale(1); }
 }
 
