@@ -155,7 +155,7 @@
   color: #b2bec3;
   margin: 0 0.5rem;
 }
-/* AdjustTime Patameters */
+/* AdjustTime Parameters */
 .adjustTimeParameters{
   display: grid;
   width: 60%;
@@ -227,7 +227,7 @@
   animation: pulse 0.5s ease;
 }
 
-/* setps styling */
+/* steps styling */
 .mainContainer{
   display: flex;
   justify-content: start;

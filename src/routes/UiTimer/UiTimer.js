@@ -328,7 +328,7 @@ function RecipeTimer() {
         <span className="guideHead">How to use:</span>
         <ul className="stepContainer">
           <li className="steps">Choose a quick timer or adjust using +/- button or edit by clicking.</li>
-          <li className="steps">Press the green Start button to beign.</li>
+          <li className="steps">Press the green Start button to begin.</li>
           <li className="steps">Press Reset to start over.</li>
         </ul>
       </div>

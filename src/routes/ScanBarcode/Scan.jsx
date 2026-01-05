@@ -1,4 +1,4 @@
-import React, { useState, useContext, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
 import ScanBarcode from './ScanBarcode';
 import ScanProducts from '../UI-Only-Pages/ScanProducts/ScanProducts';
 import '../UI-Only-Pages/ScanProducts/ScanProducts.css';
