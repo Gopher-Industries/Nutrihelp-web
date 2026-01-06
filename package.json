@@ -19,7 +19,7 @@
     "antd": "^5.19.1",
     "axios": "^1.7.9",
     "dompurify": "^3.1.0",
-    "firebase": "11.0.0",
+    "firebase": "^11.0.0",
     "framer-motion": "^12.5.0",
     "html2pdf.js": "^0.10.3",
     "jspdf": "^3.0.4",
