@@ -24,7 +24,6 @@ const MotivationalPopup = ({ onClose }) => {
     const [image, setImage] = useState("");
 
     useEffect(() => {
-
         setQuote(quotes[Math.floor(Math.random() * quotes.length)]);
         setImage(images[Math.floor(Math.random() * images.length)]);
 
@@ -39,6 +38,7 @@ const MotivationalPopup = ({ onClose }) => {
         <div className="popup-overlay">
             <div className="popup-container">
                 <div className="popup-image" style={{ backgroundImage: `url(${image})` }}></div>
+                
                 <div className="popup-text">{quote}</div>
             </div>
         </div>

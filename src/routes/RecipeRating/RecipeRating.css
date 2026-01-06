@@ -11,14 +11,43 @@
 }
 
 .page-header h1 {
-    font-size: 2.2rem;
-    color: #2c3e50;
-    margin-bottom: 8px;
+  position: relative;
+  display: inline-flex;               
+  align-items: center;
+  justify-content: center;
+
+  padding: 13px 56px;                 
+  margin: inherit;                      
+
+  background: linear-gradient(135deg, #667eea 0%, #005BBB 50%, #005BBB 100%);
+  border-radius: 25px;               
+
+  font-size: 2.2rem;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+
+  color: #ffffff;
+  text-align: center;
+
+  box-shadow: 0 8px 18px rgba(0, 91, 187, 0.25);
 }
 
+.page-header h1::after {
+  content: '';
+  position: absolute;
+  bottom: 10px;                
+  left: 50%;
+  transform: translateX(-50%);
+  width: 35%;                 
+  height: 2px;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 2px;
+}
+
+
 .page-header p {
-    font-size: 1.1rem;
-    color: #7f8c8d;
+    font-size: 20px;
+    color: #5A5A5A;
 }
 
 .recipe-container {

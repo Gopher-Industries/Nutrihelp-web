@@ -36,7 +36,7 @@
   }
    
   .get-started-btn {
-    background-color: #a78bfa;
+    background-color: #005BBB;
     color: white;
     font-size: 1.1rem;      
     font-weight: 700;        
@@ -50,7 +50,7 @@
    
    
   .get-started-btn:hover {
-    background-color: #8b6ae0 !important;
+    background-color: #003f8a !important;
   }
    
   .hero-image {
@@ -68,9 +68,9 @@
    
   .form-section h2 {
     text-align: center;
-    font-size: 1.8rem;    
-    font-weight: 600;    
-    margin-bottom: 1.5rem;
+    font-size: 1.35rem;  
+    font-weight: 700;
+    margin-bottom: 1.5rem !important;
     color: #000;          
   }
    
@@ -90,15 +90,19 @@
     align-items: center;
     justify-content: center;
     text-align: center;
-    background-color: mediumpurple !important;
+    background-color: #005BBB;
     border: 1px solid #ddd;
-    border-radius: 0.5rem;
+    border-radius: 1rem;
     padding: 1rem;
     font-size: 1rem;
     font-weight: 600;
     height: 110px;
     cursor: pointer;
     transition: all 0.2s ease;
+  }
+
+  .symptom-option:hover {
+    transform: translateY(-4px);
   }
    
   .custom-checkbox {
@@ -107,7 +111,7 @@
     width: 22px;
     height: 22px;
     border-radius: 4px;
-    border: 2px solid #ccc;
+    border: 2px solid #FFFFFF ;
     background-color: #fff;
     display: grid;
     place-content: center;
@@ -117,8 +121,8 @@
   }
    
   .custom-checkbox:checked {
-    background-color: #2563eb;    
-    border-color: #2563eb;
+    background-color: #1B873E;    
+    border-color: #1B873E;
   }
    
   .custom-checkbox:checked::before {
@@ -128,6 +132,7 @@
     font-weight: bold;
     line-height: 1;
   }
+  
    
    
   .symptom-label-text {
@@ -136,11 +141,11 @@
   }
    
   .symptom-option input:checked + .symptom-label-text {
-    color: #2563eb;
+    color: #fff;
   }
    
   .symptom-option input:checked ~ .symptom-label-text {
-    border: 2px solid #2563eb;
+    border: 2px solid #fff;
     padding: 0.5rem;
     border-radius: 6px;
   }
@@ -157,7 +162,7 @@
   .search-box {
     display: flex;
     align-items: center;
-    background-color: #f6ebff;
+    background-color: #FFFFFF;
     border-radius: 999px;      
     max-width: 800px;
     width: 100%;
@@ -168,7 +173,7 @@
    
   .search-icon {
     font-size: 1.6rem;
-    color: #aaa;              
+    color: #FFFFFF ;              
     padding: 0.75rem 0rem 0.75rem 1rem;
   }
    
@@ -177,7 +182,7 @@
     flex: 1;
     border: none;
     outline: none;
-    background-color: #f6ebff !important;
+    background-color:  #ffffff !important;
     font-size: 1.5rem !important;
     color: #555;
     padding: 0.9rem 0.5rem;
@@ -187,7 +192,7 @@
   }
    
   .search-button {
-    background-color: #a78bfa;  
+    background-color: #005BBB;  
     color: white;
     font-weight: 700;
     font-size: 1rem;
@@ -201,7 +206,7 @@
   }
    
   .search-button:hover {
-    background-color: #8b6ae0;
+    background-color: #003f8a;
   }
    
   .search-container {
@@ -209,6 +214,7 @@
     max-width: 900px !important;
     display: flex;
     justify-content: center;
+    margin: 2.5rem auto 0;
   }
    
   .search-inner {
@@ -220,7 +226,7 @@
     width: 100%;
     padding: 0.9rem 5rem 0.9rem 2.8rem !important;
     border-radius: 999px;
-    border: 1px solid #ccc;
+    border: 1px solid #FFFFFF ;
     background-color: #f6ebff;
     font-size: 1.1rem;
     color: #555;
@@ -231,7 +237,7 @@
    
   .input-icon {
     position: absolute;
-    left: 1rem;
+    right: 22%;
     top: 50%;
     transform: translateY(-50%);
     font-size: 1.5rem;
@@ -249,7 +255,7 @@
     align-items: center;
     justify-content: center;
     padding: 0 1.2rem !important;
-    background-color: #a78bfa;
+    background-color: #005BBB;
     color: white;
     font-size: 1rem;
     font-weight: bold;
@@ -266,7 +272,7 @@
   }
    
   .input-next-button:hover {
-    background-color: #8b6ae0;
+    background-color: #003f8a;
   }
    
    

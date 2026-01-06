@@ -15,7 +15,7 @@
 .create-recipe-form {
   position: relative;
   width: 60%;
-  background-color: #fff;
+  background-color: #ffffff;
   border-radius: 15px;
   padding: 5% 10%;
   text-align: center;
@@ -70,7 +70,7 @@
 }
 
 .button-primary {
-  background-color: #a82fea !important;
+  background-color: #ffffff !important;
   color: #fff !important;
   border-radius: 50px; /* Curvy corners */
 }
@@ -121,6 +121,6 @@
   padding-top: 12px;
   padding-bottom: 12px;
   text-align: center;
-  background-color: #a82fea;
+  background-color: #ffffff;
   color: white;
 }

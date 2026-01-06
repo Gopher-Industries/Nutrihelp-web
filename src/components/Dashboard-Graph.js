@@ -1,53 +1,87 @@
-import { Bar, BarChart, CartesianGrid, Legend, Rectangle, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-
-import { useState } from "react";
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Legend,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+  Rectangle,
+} from "recharts";
 
 function DashboardGraph(props) {
+  const {
+    totalNutritionCalorie,
+    totalNutritionProtiens,
+    totalNutritionFats,
+    totalNutritionVitamins,
+    totalNutritionSodium,
+  } = props;
 
-    const { totalNutritionCalorie, totalNutritionProtiens, totalNutritionFats, totalNutritionVitamins, totalNutritionSodium } = props;
+  const nutrition_data = [
+    { name: "Calories", data_value: totalNutritionCalorie },
+    { name: "Proteins", data_value: totalNutritionProtiens },
+    { name: "Fats", data_value: totalNutritionFats },
+    { name: "Vitamins", data_value: totalNutritionVitamins },
+    { name: "Sodium", data_value: totalNutritionSodium },
+  ];
 
-    const nutrition_data = [
-        { name: 'Calories', data_value: totalNutritionCalorie },
-        { name: 'Proteins', data_value: totalNutritionProtiens },
-        { name: 'Fats', data_value: totalNutritionFats },
-        { name: 'Vitamins', data_value: totalNutritionVitamins },
-        { name: 'Sodium', data_value: totalNutritionSodium }
-    ];
+  return (
+    <div style={{ width: "100%", paddingTop: "20px" }}>
+      {/* Title */}
+      <h3 style={{
+        textAlign: "center",
+        color: "#005BBB",
+        fontSize: "24px",
+        fontWeight: "800",
+        marginBottom: "20px",
+        marginTop: "0"
+      }}>
+        Daily Nutrition Summary
+      </h3>
 
-    return (
-        <>
-        <br />
-        <br />
+      <div style={{ width: "100%", height: 360 }}>
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart
+            data={nutrition_data}
+            layout="vertical"
+            margin={{ top: 10, right: 24, left: 40, bottom: 10 }}
+          >
+            {/* Grid lines */}
+            <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
 
-                <BarChart
-                    width={400}
-                    height={400}
-                    data={nutrition_data}
-                    margin={{
-                        top: 10,
-                        right: 30,
-                        left: 20,
-                        bottom: 5,
-                    }}
-                >
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    <Bar dataKey="data_value" fill="#8884d8" activeBar={<Rectangle fill="pink" stroke="blue" />} />
-                </BarChart>
+            <XAxis
+              type="number"
+              axisLine={true}
+              tickLine={true}
+              stroke="#666"
+            />
 
+            <YAxis
+              type="category"
+              dataKey="name"
+              axisLine={true}
+              tickLine={true}
+              stroke="#666"
+            />
 
-            {/* <div>
-                <p>{props.totalNutritionCalorie}</p>
-                <p>{props.totalNutritionProtiens}</p>
-                <p>{props.totalNutritionFats}</p>
-                <p>{props.totalNutritionVitamins}</p>
-                <p>{props.totalNutritionSodium}</p>
-            </div> */}
-        </>
-    )
+            <Tooltip />
+            
+            <Legend />
+
+            <Bar
+              dataKey="data_value"
+              fill="#005BBB"
+              barSize={18}
+              radius={[0, 8, 8, 0]}
+              activeBar={<Rectangle fill="#0047A3" stroke="#005BBB" />}
+            />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+    </div>
+  );
 }
 
 export default DashboardGraph;
