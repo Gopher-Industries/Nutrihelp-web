@@ -10,7 +10,7 @@ testing purposes.
 1. **Install Node.js**: Download and install the latest version from [https://nodejs.org/en/download/](https://nodejs.org/en/download/).
 2. **Install dependencies**:
 ``` 
-npm install
+npm install  
 ```
 3. **Run the project:**
 ```
