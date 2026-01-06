@@ -91,7 +91,7 @@ export default function MFAform() {
     setLoading(true)
     try {
       const mfa_token = code
-      const resp = await fetch("http://localhost:80/api/login/mfa", {
+      const resp = await fetch("http://localhost:5000/api/login/mfa", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password, mfa_token }),
@@ -137,7 +137,7 @@ export default function MFAform() {
 
     try {
       // call your resend endpoint (adjust path if backend differs)
-      const resp = await fetch("http://localhost:80/api/login/resend-mfa", {
+      const resp = await fetch("http://localhost:5000/api/login/resend-mfa", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),

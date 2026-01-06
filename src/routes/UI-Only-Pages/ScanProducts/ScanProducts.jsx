@@ -30,7 +30,7 @@ function ScanProducts() {
       formData.append('image', uploadedImage);
 
       // Make POST request to backend API
-      const response = await fetch('http://localhost:80/api/imageClassification', {
+      const response = await fetch('http://localhost:5000/api/imageClassification', {
         method: 'POST',
         body: formData,
       });

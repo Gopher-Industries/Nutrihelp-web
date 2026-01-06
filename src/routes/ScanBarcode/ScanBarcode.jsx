@@ -9,11 +9,11 @@ import { UserAllergenInformation, DetectionResult, BarcodeInformation } from "./
 function ScanBarcode() {
   const { currentUser } = useContext(UserContext);
   const user_id = currentUser?.user_id;
-  
+
   // Access user_id from the context
   const [barcodeInput, setBarcodeInput] = useState('');
   const [showBarcodeInfo, setShowBarcodeInfo] = useState('none');
-  
+
   // Scan result: barcode information
   const [barcodeResult, setBarcodeResult] = useState('');
   const [productName, setProductName] = useState('');
@@ -45,7 +45,7 @@ function ScanBarcode() {
     e.preventDefault();
 
     try {
-      const response = await fetch(`http://localhost:80/api/barcode?code=${barcodeInput}`, {
+      const response = await fetch(`http://localhost:5000/api/barcode?code=${barcodeInput}`, {
         method: "POST",
         body: JSON.stringify({ user_id }),
         headers: {
@@ -89,7 +89,7 @@ function ScanBarcode() {
       <div className="scan-products-container" style={{ display: showBarcodeInfo }}>
         {/* Allergen information */}
         <UserAllergenInformation isLoggedIn={user_id != undefined} userAllergen={userAllergen} />
-        
+
         {/* Barcode information */}
         <h1 className="mt-0 text-center">Barcode Information</h1>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>

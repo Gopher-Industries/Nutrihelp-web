@@ -65,7 +65,7 @@ export default function Login() {
   const { setCurrentUser } = useContext(UserContext)
   const { darkMode } = useDarkMode()
   const navigate = useNavigate()
-  const API_BASE = "http://localhost:80" // same as your old code
+  const API_BASE = "http://localhost:5000" // same as your old code
 
   const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/

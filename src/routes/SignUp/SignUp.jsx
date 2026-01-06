@@ -24,7 +24,7 @@ export default function SignUp() {
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
-  const API_BASE = "http://localhost"; 
+  const API_BASE = "http://localhost:5000";
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
