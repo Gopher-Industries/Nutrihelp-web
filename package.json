@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "set NODE_OPTIONS=--openssl-legacy-provider && react-scripts start",
+    "start": "react-scripts start",
     "build": "react-scripts build"
   },
   "keywords": [],
@@ -16,12 +16,13 @@
     "@supabase/auth-ui-react": "^0.4.7",
     "@supabase/auth-ui-shared": "^0.1.8",
     "@supabase/supabase-js": "^2.57.4",
-    "antd": "^5.22.3",
+    "antd": "^5.19.1",
     "axios": "^1.7.9",
+    "dompurify": "^3.1.0",
     "firebase": "^10.6.0",
     "framer-motion": "^12.5.0",
     "html2pdf.js": "^0.10.3",
-    "jspdf": "^3.0.1",
+    "jspdf": "^3.0.4",
     "jspdf-autotable": "^5.0.2",
     "lucide-react": "^0.483.0",
     "react": "^18.2.0",
@@ -52,8 +53,11 @@
     ]
   },
   "devDependencies": {
-    "@types/react": "^19.1.9",
-    "eslint": "^7.32.0",
+    "@types/dompurify": "^3.0.5",
+    "@types/react": "^18.2.0",
+    "eslint": "^8.57.0",
+    "eslint-plugin-security": "^3.0.0",
+    "msw": "^2.2.13",
     "tailwindcss": "3"
   }
 }
