@@ -117,21 +117,163 @@
     }
 }
 
-@media (max-width: 768px) {
+/* Responsive Design */
+
+/* Large Tablets and Small Desktops (max-width: 1024px) */
+@media (max-width: 1024px) {
     .health-faq-container {
-        padding: 15px;
+        max-width: 95%;
+        padding: 18px;
+    }
+
+    .health-faq-container .health-faq-title {
+        font-size: 2.4rem;
     }
 
     .category-selector {
-        flex-direction: column;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
     }
 
     .category-selector button {
-        width: 100%;
-        margin: 5px 0;
+        font-size: 1.2rem;
+        padding: 10px 12px;
+    }
+}
+
+/* Tablets (max-width: 768px) */
+@media (max-width: 768px) {
+    .health-faq-container {
+        margin-top: 60px;
+        padding: 15px;
+    }
+
+    .health-faq-container .health-faq-title {
+        font-size: 2rem;
+        margin-bottom: 15px;
+    }
+
+    .category-selector {
+        grid-template-columns: 1fr 1fr;
+        margin: 20px 0;
+        padding: 8px;
+        gap: 8px;
+    }
+
+    .category-selector button {
+        font-size: 1.1rem;
+        padding: 10px 12px;
+    }
+
+    .faq-list {
+        margin-bottom: 25px;
+    }
+
+    .faq-item {
+        margin-bottom: 8px;
+    }
+
+    .faq-question {
+        padding: 12px 15px;
     }
 
     .faq-question h3 {
         font-size: 14px;
+    }
+
+    .toggle-icon {
+        font-size: 11px;
+    }
+
+    .faq-health-answer {
+        padding: 15px;
+        line-height: 1.5;
+    }
+}
+
+/* Mobile Phones (max-width: 480px) */
+@media (max-width: 480px) {
+    .health-faq-container {
+        margin-top: 50px;
+        padding: 12px;
+    }
+
+    .health-faq-container .health-faq-title {
+        font-size: 1.6rem;
+        margin-bottom: 12px;
+    }
+
+    .category-selector {
+        grid-template-columns: 1fr;
+        margin: 15px 0;
+        padding: 8px;
+        gap: 6px;
+    }
+
+    .category-selector button {
+        font-size: 1rem;
+        padding: 10px;
+        width: 100%;
+    }
+
+    .faq-list {
+        margin-bottom: 20px;
+    }
+
+    .faq-item {
+        margin-bottom: 6px;
+        border-radius: 3px;
+    }
+
+    .faq-question {
+        padding: 10px 12px;
+    }
+
+    .faq-question h3 {
+        font-size: 13px;
+    }
+
+    .toggle-icon {
+        font-size: 10px;
+        margin-right: 0.5rem;
+    }
+
+    .faq-health-answer {
+        padding: 12px;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+}
+
+/* Extra Small Phones (max-width: 360px) */
+@media (max-width: 360px) {
+    .health-faq-container {
+        padding: 10px;
+    }
+
+    .health-faq-container .health-faq-title {
+        font-size: 1.4rem;
+    }
+
+    .category-selector {
+        padding: 6px;
+    }
+
+    .category-selector button {
+        font-size: 0.9rem;
+        padding: 8px;
+    }
+
+    .faq-question {
+        padding: 8px 10px;
+    }
+
+    .faq-question h3 {
+        font-size: 12px;
+    }
+
+    .faq-health-answer {
+        padding: 10px;
+        font-size: 13px;
     }
 }
