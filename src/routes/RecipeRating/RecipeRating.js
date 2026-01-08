@@ -107,13 +107,22 @@ function RecipeRating() {
             rating: 1.8,
             prepTime: 15,
             calories: 150,
+        },
+        {
+            id: 12,
+            title: 'Berry Yogurt Crunch Bowl',
+            description: 'Greek yogurt topped with fresh mixed berries, chia seeds, and a light granola crunch for a fast, balanced snack',
+            tags: ['Low sugar', 'High Protein', 'High Fiber'],
+            rating: 4.4,
+            prepTime: 5,
+            calories: 300,
         }
     ]);
 
     return (
         <div className="recipe-rating-container">
             <header className="page-header">
-                <h1>Recipe rating</h1>
+                <h1>Recipe Rating</h1>
                 <p>Discover the healthy recipes that best suit your taste and needs</p>
             </header>
 

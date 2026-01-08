@@ -336,7 +336,7 @@ function CreateRecipe() {
     <FramerClient>
       <div
         id="no-bg"
-        className="w-full flex justify-center items-center bg-purple-100"
+        className="w-full flex justify-center items-center bg-[#FFFEFE]"
       >
         <form
           onSubmit={sendDataToSupabase}
@@ -345,7 +345,7 @@ function CreateRecipe() {
         >
           <div
             id="no-bg"
-            className="w-full sm:w-[95%] md:w-[90%] lg:w-[85%] xl:w-[80%] max-w-[1400px] bg-[#FFFEFE] rounded-lg flex flex-col sm:flex-row"
+            className="w-full sm:w-[95%] md:w-[90%] lg:w-[85%] xl:w-[80%] max-w-[1400px] bg-[#FFFFFF] rounded-lg flex flex-col sm:flex-row  border border-[#005BBB]"
           >
             {/* Main Form Area - full width on mobile, constrained on larger screens */}
             <div
@@ -355,12 +355,12 @@ function CreateRecipe() {
               {/* Header - flex column on mobile, row on sm+ */}
               <div
                 id="no-bg"
-                className="flex flex-col sm:flex-row justify-between items-center mb-6 sm:mb-8 md:mb-10 lg:mb-12"
+                //className="flex flex-col bg-[#E8F1FF] sm:flex-row justify-between items-center mb-6 sm:mb-8 md:mb-10 lg:mb-12"
               >
                 <div id="no-bg" className="w-full flex justify-center">
                   <h1
                     id="no-bg"
-                    className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-medium text-center sm:text-left mb-4 sm:mb-0"
+                    className="font-[Arial] text-2xl sm:text-3xl md:text-4xl lg:text-5xl  font-medium text-center sm:text-left mb-4 sm:mb-0 text-[#1A1A1A]"
                   >
                     Create Recipe
                   </h1>
@@ -369,17 +369,17 @@ function CreateRecipe() {
               {/* Recipe Description Section */}
               <div
                 id="no-bg"
-                className="bg-purple-100 rounded-lg p-4 sm:p-6 mb-6 sm:mb-8"
+                className="bg-[#d8edfd] rounded-lg p-4 sm:p-6 mb-6 sm:mb-8  border border-[#005BBB]"
               >
                 <h2
                   id="no-bg"
-                  className="text-lg sm:text-xl md:text-2xl font-medium mb-4 sm:mb-6"
+                  className="font-[Arial] text-lg sm:text-xl md:text-2xl font-medium mb-4 sm:mb-6"
                 >
                   Recipe Description
                 </h2>
                 <div
                   id="no-bg"
-                  className="flex flex-col sm:flex-row gap-4 sm:gap-6 md:gap-8"
+                  className="flex flex-col gap-6 w-full"
                 >
                   <div
                     id="no-bg"
@@ -387,17 +387,17 @@ function CreateRecipe() {
                   >
                     <div
                       id="no-bg"
-                      className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-0 w-2/3"
+                      className="flex flex-col w-full gap-2"
                     >
                       <label
                         id="no-bg"
-                        className="w-full sm:w-1/3 text-sm sm:text-base md:text-lg"
+                        className="font-[Arial] text-lg sm:text-base md:text-lg "
                       >
                         Recipe Name
                       </label>
                       <input
                         id="no-bg"
-                        className="w-full sm:w-2/3 rounded-xl h-10 sm:h-12 border border-gray-400 px-4"
+                        className="w-full rounded-xl h-10 sm:h-12 border border-gray-400 px-4"
                         placeholder="Enter Recipe Name"
                         value={recipeName}
                         onChange={(e) => handleRecipeNameChange(e.target.value)}
@@ -406,17 +406,17 @@ function CreateRecipe() {
 
                     <div
                       id="no-bg"
-                      className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-0 w-2/3"
+                       className="flex flex-col w-full gap-2"
                     >
                       <label
                         id="no-bg"
-                        className="w-full sm:w-1/3 text-sm sm:text-base md:text-lg"
+                        className="font-[Arial] text-sm sm:text-base md:text-lg"
                       >
                         Cuisine Type
                       </label>
                       <input
                         id="no-bg"
-                        className="w-full sm:w-2/3 rounded-xl h-10 sm:h-12 border border-gray-400 px-4"
+                        className="w-full rounded-xl h-10 sm:h-12 border border-gray-400 px-4"
                         placeholder="Enter Cuisine Type"
                         value={cuisine}
                         onChange={(e) => handleCuisineChange(e.target.value)}
@@ -426,11 +426,11 @@ function CreateRecipe() {
 
                   <div
                     id="no-bg"
-                    className="flex flex-col sm:flex-row sm:items-center justify-between sm:justify-end gap-4 sm:gap-6 sm:w-1/3"
+                    className="flex flex-col w-full gap-3 mt-2"
                   >
                     <label
                       id="no-bg"
-                      className="text-sm sm:text-base md:text-lg sm:mr-4"
+                      className="font-[Arial] text-sm sm:text-base md:text-lg sm:mr-4"
                     >
                       Add Image
                     </label>
@@ -449,7 +449,7 @@ function CreateRecipe() {
                     <label
                       htmlFor="file-upload"
                       id="no-bg"
-                      className="bg-[#BA49E7] text-white px-4 sm:px-6 py-3 sm:py-4 rounded-full font-semibold text-sm sm:text-base cursor-pointer"
+                      className="font-[Arial] bg-[#005BBB] text-white px-4 sm:px-6 py-3 sm:py-6 rounded-full font-semibold text-sm sm:text-base cursor-pointer w-fit"
                     >
                       Upload
                     </label>
@@ -459,29 +459,31 @@ function CreateRecipe() {
               {/* Cooking Description Section */}
               <div
                 id="no-bg"
-                className="bg-purple-100 rounded-lg p-4 sm:p-6 mb-6 sm:mb-8"
+                className="bg-[#d8edfd] rounded-lg p-4 sm:p-6 mb-6 sm:mb-8  border border-[#005BBB]"
               >
                 <h2
                   id="no-bg"
-                  className="text-lg sm:text-xl md:text-2xl font-medium mb-4 sm:mb-6"
+                  className="font-[Arial] text-lg sm:text-xl md:text-2xl font-medium mb-4 sm:mb-6"
                 >
                   Cooking Description
                 </h2>
-                <div id="no-bg" className="flex flex-col gap-4 sm:gap-6 w-full">
+                <div id="no-bg" 
+                className="flex flex-col gap-6 w-full"
+                >
                   <div
                     id="no-bg"
-                    className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-0 w-1/2"
+                    className="flex flex-col w-full gap-2"
                   >
                     <label
                       id="no-bg"
-                      className="w-full sm:w-1/3 text-sm sm:text-base md:text-lg"
+                      className="font-[Arial] text-lg sm:text-base md:text-lg"
                     >
                       Preparation Time
                     </label>
                     <input
                       id="no-bg"
-                      className="w-full sm:w-2/3 rounded-xl h-10 sm:h-12 border border-gray-400 px-4"
-                      placeholder="Enter Preparation Time"
+                       className="w-full rounded-xl h-10 sm:h-12 border border-gray-400 px-4"
+                      placeholder="e.g.,   30 minutes"
                       value={preparationTime}
                       onChange={(e) =>
                         handlePreparationTimeChange(e.target.value)
@@ -491,18 +493,18 @@ function CreateRecipe() {
 
                   <div
                     id="no-bg"
-                    className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-0 w-1/2"
+                    className="flex flex-col w-full gap-2"
                   >
                     <label
                       id="no-bg"
-                      className="w-full sm:w-1/3 text-sm sm:text-base md:text-lg"
+                      className="font-[Arial] text-sm sm:text-base md:text-lg"
                     >
                       Total Servings
                     </label>
                     <input
                       id="no-bg"
-                      className="w-full sm:w-2/3 rounded-xl h-10 sm:h-12 border border-gray-400 px-4"
-                      placeholder="Enter Total Servings"
+                      className="w-full rounded-xl h-10 sm:h-12 border border-gray-400 px-4"
+                      placeholder="e.g.,  2 servings"
                       value={totalServings}
                       onChange={(e) =>
                         handleTotalServingsChanges(e.target.value)
@@ -515,12 +517,12 @@ function CreateRecipe() {
               {/* Ingredients Section */}
               <div
                 id="no-bg"
-                className="bg-purple-100 rounded-lg p-4 sm:p-6 mb-6 sm:mb-8"
+                className="bg-[#d8edfd] rounded-lg p-4 sm:p-6 mb-6 sm:mb-8  border border-[#005BBB]"
               >
                 <div className="w-full flex justify-between items-center">
                   <h2
                     id="no-bg"
-                    className="text-lg sm:text-xl md:text-2xl font-medium mb-4 sm:mb-6"
+                    className="font-[Arial] text-lg sm:text-xl md:text-2xl font-medium mb-4 sm:mb-6"
                   >
                     Ingredients
                   </h2>
@@ -542,15 +544,15 @@ function CreateRecipe() {
                   <FramerClient>
                     <div
                       id="no-bg"
-                      className="flex flex-col sm:flex-row gap-4 sm:gap-6 mb-4 sm:mb-6"
+                     className="flex flex-col sm:flex-row sm:items-start gap-4 sm:gap-6 mb-4 sm:mb-6"
                     >
                       <div
                         id="no-bg"
-                        className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-0 sm:w-1/2"
+                        className="flex flex-col w-1/2"
                       >
                         <label
                           id="no-bg"
-                          className="w-full sm:w-1/3 text-sm sm:text-base md:text-lg"
+                          className="font-[Arial] text-sm sm:text-base md:text-lg mb-1"
                         >
                           Category
                         </label>
@@ -577,18 +579,18 @@ function CreateRecipe() {
 
                       <div
                         id="no-bg"
-                        className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-0 sm:w-1/2"
+                        className="flex flex-col w-1/2"
                       >
                         <label
                           id="no-bg"
-                          className="w-full sm:w-1/3 text-sm sm:text-base md:text-lg"
+                          className="font-[Arial] text-lg sm:text-base md:text-lg mb-2"
                         >
-                          Ingredient
+                          Ingredient Name
                         </label>
                         <input
                           id="no-bg"
-                          className="w-full sm:w-2/3 rounded-xl h-10 sm:h-12 border border-gray-400 px-4"
-                          placeholder="Enter Ingredient"
+                          className="w-full sm:w-2/3 rounded-xl h-10 sm:h-12 border border-gray-400 px-4 bg-white"
+                          placeholder="e.g.,  Tomato"
                           value={ingredient}
                           onChange={(e) =>
                             handleIngredientChange(e.target.value)
@@ -599,23 +601,23 @@ function CreateRecipe() {
 
                     <div
                       id="no-bg"
-                      className="flex flex-col sm:flex-row gap-4 sm:gap-6 mb-6 sm:mb-8 w-full"
+                      className="flex flex-col gap-4 sm:gap-6 mb-6 sm:mb-8 w-full"
                     >
                       <div
                         id="no-bg"
-                        className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-0 sm:w-1/2"
+                        className="flex flex-col w-full sm:w-1/2"
                       >
                         <label
                           id="no-bg"
-                          className="w-full sm:w-1/3 text-sm sm:text-base md:text-lg"
+                          className="font-[Arial] text-lg sm:text-base md:text-lg mb-1"
                         >
                           Quantity
                         </label>
-                        <div className="flex items-center w-full sm:w-2/3">
+                        <div className="flex items-center w-full sm:w-2/3 space-x-2">
                           <input
                             id="no-bg"
                             //list="units"
-                            className="w-full sm:w-2/3 rounded-xl h-10 sm:h-12 border border-gray-400 px-4 bg-white"
+                            className="w-2/3 rounded-xl h-10 sm:h-12 border border-gray-400 px-4 bg-white"
                             defaultValue=""
                             value={ingredientQuantity}
                             onChange={(e) =>
@@ -652,12 +654,12 @@ function CreateRecipe() {
 
                       <div
                         id="no-bg"
-                        className="flex items-center justify-end sm:justify-end sm:w-1/2"
+                        className="flex items-center justify-start sm:justify-start sm:w-1/2"
                       >
                         <button
                           type="button"
                           id="no-bg"
-                          className="bg-[#BA49E7] text-white px-4 sm:px-6 py-2 sm:py-3 rounded-full font-semibold text-sm sm:text-base"
+                          className="font-[Arial] bg-[#005BBB] text-white px-4 sm:px-6 py-2 sm:py-3 rounded-full font-semibold text-sm sm:text-base"
                           onClick={() => handelIngredientsInTable()}
                         >
                           Add
@@ -669,29 +671,29 @@ function CreateRecipe() {
                         id="no-bg"
                         className="min-w-full border border-gray-300"
                       >
-                        <thead id="no-bg" className="bg-[#6F42C1] text-white">
+                        <thead id="no-bg" className="bg-[#005BBB] text-white">
                           <tr>
                             <th
                               id="no-bg"
-                              className="border border-gray-300 px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base"
+                              className="font-[Arial] border border-gray-300 px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base"
                             >
                               Category
                             </th>
                             <th
                               id="no-bg"
-                              className="border border-gray-300 px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base"
+                              className="font-[Arial] border border-gray-300 px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base"
                             >
                               Ingredient
                             </th>
                             <th
                               id="no-bg"
-                              className="border border-gray-300 px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base"
+                              className="font-[Arial] border border-gray-300 px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base"
                             >
                               Quantity
                             </th>
                             <th
                               id="no-bg"
-                              className="border border-gray-300 px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base"
+                              className="font-[Arial] border border-gray-300 px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base"
                             >
                               Actions
                             </th>
@@ -784,11 +786,11 @@ function CreateRecipe() {
               {/* Instructions Section */}
               <div
                 id="no-bg"
-                className="bg-purple-100 rounded-lg p-4 sm:p-6 mb-6 sm:mb-8 w-full"
+                className="bg-[#d8edfd] rounded-lg p-4 sm:p-6 mb-6 sm:mb-8 w-full  border border-[#005BBB]"
               >
                 <h2
                   id="no-bg"
-                  className="text-lg sm:text-xl md:text-2xl font-medium mb-4 sm:mb-6"
+                  className="font-[Arial] text-lg sm:text-xl md:text-2xl font-medium mb-4 sm:mb-6"
                 >
                   Instructions
                 </h2>
@@ -800,11 +802,11 @@ function CreateRecipe() {
                           id="no-bg"
                           className="w-full flex flex-col justify-start sm:flex-row mb-4 sm:mb-6"
                         >
-                          <div id="no-bg" className="w-full sm:w-1/4">
+                          <div id="no-bg" className="w-full sm:w-1/6">
                             <button
                               type="button"
                               id="no-bg"
-                              className="w-full bg-[#6F42C1] text-white py-2 sm:py-3 px-4 font-semibold text-sm sm:text-base"
+                              className="w-full bg-[#005BBB] text-white py-2 sm:py-3 px-4 font-semibold text-sm sm:text-base"
                             >
                               Step {index + 1}:
                             </button>
@@ -844,13 +846,13 @@ function CreateRecipe() {
                 <FramerClient>
                   <div
                     id="no-bg"
-                    className="flex flex-col sm:flex-row gap-2 sm:gap-0 mb-4 sm:mb-6  w-full justify-center items-center"
+                    className="w-full flex flex-col justify-start sm:flex-row mb-4 sm:mb-6"
                   >
-                    <div id="no-bg" className="w-full sm:w-1/4">
+                    <div id="no-bg" className="w-full sm:w-1/6">
                       <button
                         type="button"
                         id="no-bg"
-                        className="w-full bg-[#6F42C1] text-white py-2 sm:py-3 px-4 font-semibold text-sm sm:text-base"
+                        className="w-full bg-[#005BBB] text-white py-2 sm:py-3 px-4 font-semibold text-sm sm:text-base"
                       >
                         Step {instruction.length + 1}:
                       </button>
@@ -864,11 +866,13 @@ function CreateRecipe() {
                     />
                   </div>
 
-                  <div id="no-bg" className="flex justify-end">
+                  <div id="no-bg" 
+                  className="flex items-center justify-start sm:justify-start sm:w-1/2"
+                  >
                     <button
                       id="no-bg"
                       type="button"
-                      className="bg-[#BA49E7] text-white px-4 sm:px-6 py-2 sm:py-3 rounded-full font-semibold text-sm sm:text-base"
+                      className="font-[Arial] bg-[#005BBB] text-white px-4 sm:px-6 py-2 sm:py-3 rounded-full font-semibold text-sm sm:text-base"
                       onClick={() => {
                         setInstruction((prev) => [...prev, instructions]);
                         setInstructions("");
@@ -948,10 +952,10 @@ function CreateRecipe() {
                   type="submit"
                   id="no-bg"
                   // disabled={!instructions.trim()}
-                  className="bg-[#4CAF50] text-white px-8 sm:px-12 py-3 sm:py-4 rounded-full font-semibold text-lg sm:text-xl md:text-2xl w-full sm:w-auto"
+                  className="font-[Arial] bg-[#005BBB] text-white w-full max-w-xs px-8 py-3 rounded-full font-semibold text-lg shadow-xl shadow-blue-800/50  hover:bg-[#003f8a] transition duration-300"
                   onClick={sendDataToSupabase}
                 >
-                  Create Recipe
+                  Save  Recipe
                 </button>
               </div>
             </div>
