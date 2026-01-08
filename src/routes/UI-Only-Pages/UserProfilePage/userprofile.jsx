@@ -249,6 +249,29 @@ const getRadioInnerStyles = (checked) => ({
     const [hoveredButton, setHoveredButton] = useState(null)
     const fileRef = useRef(null)
 
+      // PREFILL FORM FROM LOCALSTORAGE
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user_session");
+
+    console.log("storedUser:", storedUser); // DEBUG
+
+    if (storedUser) {
+      try {
+        const user = JSON.parse(storedUser);
+
+        console.log("parsed user:", user); // DEBUG
+
+        setForm((prev) => ({
+          ...prev,
+          email: user.email || "",
+        }));
+      } catch (err) {
+        console.error("user_session parse error", err);
+      }
+    }
+  }, []);
+
+
     useEffect(() => {
       const handleResize = () => setWidth(window.innerWidth)
       window.addEventListener("resize", handleResize)
