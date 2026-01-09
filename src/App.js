@@ -35,6 +35,7 @@ import Recipe from "./components/Recipe";
 import Appointment from "./routes/UI-Only-Pages/Appointment/Appointment";
 import newMenu from "./routes/NewMenu/newMenu";
 import Meal from "./routes/Meal/Meal";
+import Scan from "./routes/ScanBarcode/Scan.jsx"
 import MFAform from "./routes/MFA/MFAform";
 import Dashboard from "./routes/NewMenu/Dashboard";
 import AuthenticateRoute from "./routes/AuthenticateRoute/AuthenticateRoute";
@@ -130,7 +131,8 @@ function App() {
         <Route path="/survey" element={<ObesityPredictor />} />
         <Route path="/survey/result" element={<Predictionresult />} />
         <Route path="/roadmap" element={<FitnessRoadmap />} />
-
+        <Route path="/Scan" element={<Scan />} />
+        <Route path="/Meal" element={<Meal />} />
         {/* PRIVATE ROUTES */}
         <Route
           path="/daily-plan-edit"
@@ -341,6 +343,7 @@ function App() {
         />
 
         <Route path="ScanBarcode" element={<ScanBarcode />} />
+        <Route path="Scan" element={<Scan />}/>
       </Routes>
     </Router>
   );

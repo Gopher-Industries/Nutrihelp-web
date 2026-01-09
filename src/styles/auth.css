@@ -9,10 +9,10 @@ display-flex,
   display: -webkit-flex;
 }
 
-input:not(#no-bg, #file-upload),
-select:not(#no-bg),
-textarea:not(#no-bg),
-select:not(#no-bg) {
+.container input:not(#no-bg, #file-upload),
+.container select:not(#no-bg),
+.container textarea:not(#no-bg),
+.container select:not(#no-bg) {
   border-radius: 20px;
   padding: 50px;
   outline: none;
@@ -23,7 +23,7 @@ select:not(#no-bg) {
   -ms-appearance: unset !important;
 }
 
-input:not(#no-bg, #file-upload)[type="checkbox"] {
+.container input:not(#no-bg, #file-upload)[type="checkbox"] {
   appearance: checkbox !important;
   -moz-appearance: checkbox !important;
   -webkit-appearance: checkbox !important;
@@ -47,7 +47,7 @@ figure {
 p:not(#no-bg) {
   margin-bottom: 0px;
   font-size: 15px;
-  color: #777;
+  color: var(--text-muted);
 }
 
 h2:not(#no-bg) {
@@ -55,13 +55,13 @@ h2:not(#no-bg) {
   margin: 0;
   padding: 0;
   font-weight: bold;
-  color: #222;
+  color: var(--text-primary);
   font-family: "Lato", sans-serif;
   font-size: 36px;
 }
 
 .main {
-  background: #f8f8f8;
+  background: var(--background-secondary);
   padding: 150px 0;
 }
 
@@ -72,8 +72,8 @@ h2:not(#no-bg) {
 body {
   font-size: 13px;
   line-height: 1.8;
-  color: var(--color2);
-  background: #f8f8f8;
+  color: var(--text-secondary);
+  background: var(--background-secondary);
   font-weight: 400;
   font-family: "Lato", sans-serif;
 }
@@ -166,24 +166,24 @@ figure {
 
 .sel {
   display: inline-block;
-  background: #ac82be;
-  color: #fff;
+  background: var(--button-background);
+  color: var(--button-text);
   border-bottom: none;
   border-right: none;
   width: auto;
   border-radius: 28px;
   padding: 10px 29px;
-  border-color: #ac82be;
+  border-color: var(--button-border);
   margin-top: 10px;
   cursor: cell;
 }
 
 .sel:hover {
-  background: rgb(140, 53, 227);
+  background: var(--button-hover);
 }
 
 .sel.selected {
-  background-color: rgb(140, 53, 227);
+  background-color: var(--button-hover);
 }
 
 .sel.selected::before {
@@ -193,14 +193,14 @@ figure {
 
 .optbuttons {
   display: inline-block;
-  background: #ac82be;
-  color: #fff;
+  background: var(--button-background);
+  color: var(--button-text);
   border-bottom: none;
   border-right: none;
   width: auto;
   border-radius: 28px;
   padding: 10px 29px;
-  border-color: #ac82be;
+  border-color: var(--button-border);
   margin-top: 10px;
   cursor: cell;
 }
@@ -219,7 +219,7 @@ figure {
   height: 25px;
 }
 
-.switch input:not(#no-bg, #file-upload) {
+.switch .container input:not(#no-bg, #file-upload) {
   opacity: 1;
   width: 0;
   height: 0;
@@ -232,10 +232,10 @@ figure {
   left: 0;
   right: 0;
   bottom: 0px;
-  background: #fff;
+  background: var(--card-background);
   transition: 0.4s;
   border-radius: 30px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--border-color);
 }
 
 .slider:before {
@@ -247,26 +247,26 @@ figure {
   left: 1.2px;
   top: 0;
   bottom: 0;
-  background-color: white;
-  box-shadow: 0 2px 5px #999999;
+  background-color: var(--card-background);
+  box-shadow: var(--card-shadow);
   transition: 0.4s;
 }
 
-input:not(#no-bg, #file-upload):checked + .slider {
-  background-color: #a654dd;
+.container input:not(#no-bg, #file-upload):checked + .slider {
+  background-color: var(--primary-color);
   border: 1px solid transparent;
 }
 
-input:not(#no-bg, #file-upload):checked + .slider:before {
+.container input:not(#no-bg, #file-upload):checked + .slider:before {
   transform: translateX(1.8em);
 }
 
 .optbuttons:hover {
-  background: rgb(140, 53, 227);
+  background: var(--button-hover);
 }
 
 .optbuttons.selected {
-  background-color: rgb(140, 53, 227);
+  background-color: var(--button-hover);
   /* Highlighted background color */
 }
 
@@ -279,8 +279,8 @@ input:not(#no-bg, #file-upload):checked + .slider:before {
 
 .form-submit {
   display: inline-block;
-  background: #ac82be;
-  color: #fff;
+  background: var(--button-background);
+  color: var(--button-text);
   border-bottom: none;
   width: auto;
   padding: 15px 39px;
@@ -294,7 +294,7 @@ input:not(#no-bg, #file-upload):checked + .slider:before {
 }
 
 .form-submit:hover {
-  background: rgb(140, 53, 227);
+  background: var(--button-hover);
 }
 
 .btn:hover {
@@ -394,69 +394,69 @@ input:not(#no-bg, #file-upload):checked + .slider:before {
   margin-bottom: 0px;
 }
 
-input:not(#no-bg, #file-upload),
-select:not(#no-bg) {
+.container input:not(#no-bg, #file-upload),
+.container select:not(#no-bg) {
   width: 100%;
   display: block;
   border: none;
-  border: 0.5px solid #999 !important;
-  padding: 15px 20px !important;
-  border-radius: 50px !important;
+  border: 0.5px solid #999 ;
+  padding: 15px 20px ;
+  border-radius: 50px ;
   font-family: "Lato", sans-serif;
   box-sizing: border-box;
-  font-size: 14px !important;
-  font-weight: normal !important;
+  font-size: 14px ;
+  font-weight: normal ;
 }
 
-input:not(#no-bg, #file-upload)::-webkit-input:not(
+.container input:not(#no-bg, #file-upload)::-webkit-input:not(
     #no-bg,
     #file-upload
   )-placeholder {
   color: #999;
 }
 
-input:not(#no-bg, #file-upload)::-moz-placeholder {
+.container input:not(#no-bg, #file-upload)::-moz-placeholder {
   color: #999;
 }
 
-input:not(#no-bg, #file-upload):-ms-input:not(
+.container input:not(#no-bg, #file-upload):-ms-input:not(
     #no-bg,
     #file-upload
   )-placeholder {
   color: #999;
 }
 
-input:not(#no-bg, #file-upload):-moz-placeholder {
+.container input:not(#no-bg, #file-upload):-moz-placeholder {
   color: #999;
 }
 
-input:not(#no-bg, #file-upload):focus {
+.container input:not(#no-bg, #file-upload):focus {
   border-bottom: 1px solid #222;
 }
 
-input:not(#no-bg, #file-upload):focus::-webkit-input:not(
+.container input:not(#no-bg, #file-upload):focus::-webkit-input:not(
     #no-bg,
     #file-upload
   )-placeholder {
   color: #222;
 }
 
-input:not(#no-bg, #file-upload):focus::-moz-placeholder {
+.container input:not(#no-bg, #file-upload):focus::-moz-placeholder {
   color: #222;
 }
 
-input:not(#no-bg, #file-upload):focus:-ms-input:not(
+.container input:not(#no-bg, #file-upload):focus:-ms-input:not(
     #no-bg,
     #file-upload
   )-placeholder {
   color: #222;
 }
 
-input:not(#no-bg, #file-upload):focus:-moz-placeholder {
+.container input:not(#no-bg, #file-upload):focus:-moz-placeholder {
   color: #222;
 }
 
-input:not(#no-bg, #file-upload)[type="checkbox"]:not(old) {
+.container input:not(#no-bg, #file-upload)[type="checkbox"]:not(old) {
   width: 2em;
   margin: 0;
   padding: 0;
@@ -464,13 +464,13 @@ input:not(#no-bg, #file-upload)[type="checkbox"]:not(old) {
   display: none;
 }
 
-input:not(#no-bg, #file-upload)[type="checkbox"]:not(old) + label {
+.container input:not(#no-bg, #file-upload)[type="checkbox"]:not(old) + label {
   display: inline-block;
   line-height: 1.5em;
   margin-top: 6px;
 }
 
-input:not(#no-bg, #file-upload)[type="checkbox"]:not(old) + label > span {
+.container input:not(#no-bg, #file-upload)[type="checkbox"]:not(old) + label > span {
   display: inline-block;
   width: 13px;
   height: 13px;
@@ -491,7 +491,7 @@ input:not(#no-bg, #file-upload)[type="checkbox"]:not(old) + label > span {
   vertical-align: bottom;
 }
 
-input:not(#no-bg, #file-upload)[type="checkbox"]:not(old):checked
+.container input:not(#no-bg, #file-upload)[type="checkbox"]:not(old):checked
   + label
   > span {
   background-image: -moz-linear-gradient(white, white);
@@ -501,7 +501,7 @@ input:not(#no-bg, #file-upload)[type="checkbox"]:not(old):checked
   background-image: linear-gradient(white, white);
 }
 
-input:not(#no-bg, #file-upload)[type="checkbox"]:not(old):checked
+.container input:not(#no-bg, #file-upload)[type="checkbox"]:not(old):checked
   + label
   > span:before {
   content: "\f26b";
@@ -850,7 +850,7 @@ h4 {
   box-shadow: -4px 0 6px -4px rgba(0, 0, 0, 0.1);
 }
 
-h1:not(#no-bg) {
+.container h1:not(#no-bg) {
   font-family: "Montserrat", "sans-serif";
   margin-top: 40%;
 }
@@ -915,7 +915,7 @@ label {
   color: #333;
 }
 
-input:not(#no-bg, #file-upload) {
+.container input:not(#no-bg, #file-upload) {
   width: 100%;
   padding: 8px;
   margin-bottom: 10px;

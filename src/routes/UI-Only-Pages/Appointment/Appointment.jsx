@@ -1,313 +1,500 @@
-import React, { useState } from "react";
-import "./appointment.css";
- 
-export default function Appointment() {
-  const [inputType, setInputType] = useState("text");
-  const [showDropDown, setShowDropDown] = useState(false);
-  const [provider, setProvider] = useState("Health Care Providers");
-  const [showModal, setShowModal] = useState(false);
-  const [selectedAppointment, setSelectedAppointment] = useState(null);
- 
-  const [showCancelConfirm, setShowCancelConfirm] = useState(false);
-  const [appointmentToCancel, setAppointmentToCancel] = useState(null);
- 
-  const [filterStatus, setFilterStatus] = useState("Scheduled");
- 
+import React, { useState } from 'react';
+import { Calendar, Clock, Plus, X, Edit2, Trash2, Bell, MapPin, User, Phone, Check } from 'lucide-react';
+import './appointment.css';
+
+// Move component definitions outside to prevent re-creation on each render
+const InputField = ({ label, type = 'text', value, onChange, placeholder, required = false }) => (
+  <div className="input-field">
+    <label className="input-label">
+      {label} {required && <span className="required-indicator">*</span>}
+    </label>
+    <input
+      type={type}
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      placeholder={placeholder}
+      className="input-control"
+    />
+  </div>
+);
+
+const SelectField = ({ label, value, onChange, options, required = false }) => (
+  <div className="input-field">
+    <label className="input-label">
+      {label} {required && <span className="required-indicator">*</span>}
+    </label>
+    <select
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      className="select-control"
+    >
+      <option value="">Select...</option>
+      {options.map(opt => (
+        <option key={typeof opt === 'string' ? opt : opt.value} value={typeof opt === 'string' ? opt : opt.value}>
+          {typeof opt === 'string' ? opt : opt.label}
+        </option>
+      ))}
+    </select>
+  </div>
+);
+
+const TextArea = ({ label, value, onChange, placeholder }) => (
+  <div className="input-field">
+    <label className="input-label">
+      {label}
+    </label>
+    <textarea
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      placeholder={placeholder}
+      rows={4}
+      className="textarea-control"
+    />
+  </div>
+);
+
+export default function AppointmentsManager() {
   const [appointments, setAppointments] = useState([
     {
       id: 1,
-      provider: "Regis HealthCare",
-      date: "14 March 2025",
-      status: "Scheduled",
+      title: 'Dr. Smith - Annual Checkup',
+      doctor: 'Dr. Robert Smith',
+      type: 'General Checkup',
+      date: '2024-12-05',
+      time: '10:00',
+      location: 'Main Street Medical Center',
+      address: '123 Main St, Suite 200',
+      phone: '(555) 123-4567',
+      notes: 'Bring insurance card and list of current medications',
+      reminder: '1-day'
     },
     {
       id: 2,
-      provider: "Bluecross",
-      date: "08 March 2025",
-      status: "Completed",
-    },
-    {
-      id: 3,
-      provider: "Arcare Aged Care",
-      date: "04 March 2025",
-      status: "Cancelled",
-    },
+      title: 'Dr. Johnson - Eye Exam',
+      doctor: 'Dr. Sarah Johnson',
+      type: 'Eye Examination',
+      date: '2024-12-10',
+      time: '14:30',
+      location: 'Vision Care Clinic',
+      address: '456 Oak Avenue',
+      phone: '(555) 987-6543',
+      notes: 'Remember to bring current glasses',
+      reminder: '1-hour'
+    }
   ]);
- 
-  const filteredAppointments = appointments.filter(
-    (appt) => appt.status === filterStatus
-  );
- 
-  const handleFocus = () => setInputType("date");
-  const handleBlur = () => setInputType("text");
- 
-  const handleDateChange = (e) => {
-    const newDate = new Date(e.target.value).toLocaleDateString("en-GB", {
-      day: "2-digit",
-      month: "long",
-      year: "numeric",
-    });
- 
-    const updatedAppointments = appointments.map((appt) =>
-      appt.id === selectedAppointment.id ? { ...appt, date: newDate } : appt
-    );
- 
-    setAppointments(updatedAppointments);
-    setShowModal(false);
-    setSelectedAppointment(null);
-  };
- 
-  const providers = [
-    "Regis HealthCare",
-    "Atility Aged Care",
-    "Arcare Aged Care",
-    "Bluecross",
-    "McKenzine Group",
+
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [editingId, setEditingId] = useState(null);
+  const [viewFilter, setViewFilter] = useState('upcoming');
+
+  const [formData, setFormData] = useState({
+    title: '',
+    doctor: '',
+    type: '',
+    date: '',
+    time: '',
+    location: '',
+    address: '',
+    phone: '',
+    notes: '',
+    reminder: '1-day'
+  });
+
+  const appointmentTypes = [
+    'General Checkup',
+    'Dental',
+    'Eye Examination',
+    'Cardiology',
+    'Dermatology',
+    'Physical Therapy',
+    'Blood Test',
+    'X-Ray/Imaging',
+    'Specialist Consultation',
+    'Follow-up Visit',
+    'Other'
   ];
- 
+
+  const reminderOptions = [
+    { value: '1-week', label: '1 Week Before' },
+    { value: '1-day', label: '1 Day Before' },
+    { value: '1-hour', label: '1 Hour Before' },
+    { value: '30-min', label: '30 Minutes Before' }
+  ];
+
+  const resetForm = () => {
+    setFormData({
+      title: '',
+      doctor: '',
+      type: '',
+      date: '',
+      time: '',
+      location: '',
+      address: '',
+      phone: '',
+      notes: '',
+      reminder: '1-day'
+    });
+    setEditingId(null);
+    setShowAddForm(false);
+  };
+
+  const handleSubmit = () => {
+    if (!formData.title || !formData.date || !formData.time) {
+      alert('Please fill in at least the appointment title, date, and time.');
+      return;
+    }
+
+    if (editingId) {
+      setAppointments(appointments.map(apt => 
+        apt.id === editingId ? { ...formData, id: editingId } : apt
+      ));
+    } else {
+      setAppointments([...appointments, { ...formData, id: Date.now() }]);
+    }
+    resetForm();
+  };
+
+  const handleEdit = (appointment) => {
+    setFormData(appointment);
+    setEditingId(appointment.id);
+    setShowAddForm(true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleDelete = (id) => {
+    if (window.confirm('Are you sure you want to delete this appointment?')) {
+      setAppointments(appointments.filter(apt => apt.id !== id));
+    }
+  };
+
+  const sortedAppointments = [...appointments].sort((a, b) => {
+    const dateA = new Date(`${a.date}T${a.time}`);
+    const dateB = new Date(`${b.date}T${b.time}`);
+    return dateA - dateB;
+  });
+
+  const now = new Date();
+  const filteredAppointments = sortedAppointments.filter(apt => {
+    const aptDate = new Date(`${apt.date}T${apt.time}`);
+    if (viewFilter === 'upcoming') return aptDate >= now;
+    if (viewFilter === 'past') return aptDate < now;
+    return true;
+  });
+
+  const formatDate = (dateStr) => {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+  };
+
+  const formatTime = (timeStr) => {
+    const [hours, minutes] = timeStr.split(':');
+    const hour = parseInt(hours);
+    const ampm = hour >= 12 ? 'PM' : 'AM';
+    const displayHour = hour % 12 || 12;
+    return `${displayHour}:${minutes} ${ampm}`;
+  };
+
   return (
-    <div className="userProfile-container py-4 px-3">
-      <div className="userProfile-section bg-white shadow-sm rounded p-4">
-        <div className="appointment-header-wrapper text-center">
-          <h1 className="appointment-title">Appointment Management</h1>
-        </div>
- 
-        {/* Form Row */}
-        <div className="form-row-wrapper d-flex flex-wrap align-items-center justify-content-between gap-3 px-3 mb-4">
-          <div className="flex-grow-1">
-            <div className="user-date-input-container">
-              <input
-                type="date"
-                className="user-textbox-n form-control shadow-sm rounded-pill"
-                placeholder="dd-mm-yyyy"
-                id="date"
-              />
-            </div>
+    <div className="appointments-container">
+      <div className="appointments-wrapper">
+        {/* Header */}
+        <div className="appointments-header">
+          <div className="header-title-section">
+            <Calendar size={36} color="#005BBB" className="header-icon" />
+            <h1 className="appointments-title">
+              My Appointments
+            </h1>
           </div>
- 
-          <div className="flex-grow-1 position-relative provider-dropdown-box">
-            <div
-              className="d-flex justify-content-between align-items-center bg-light shadow-sm rounded-pill px-4 py-2 pointer"
-              onClick={() => setShowDropDown(!showDropDown)}
-            >
-              <p className="mb-0 text-dark fw-semibold">{provider}</p>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="dropdown-icon"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                width="20"
-                height="20"
+        </div>
+
+        {/* Filter Tabs */}
+        <div className="filter-tabs">
+          <div className="tab-section">
+            {[
+              { value: 'upcoming', label: 'Upcoming'},
+              { value: 'past', label: 'Past'},
+              { value: 'all', label: 'All'}
+            ].map(filter => (
+              <button
+                key={filter.value}
+                onClick={() => setViewFilter(filter.value)}
+                className={`filter-tab ${viewFilter === filter.value ? 'active' : ''}`}
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={1.5}
-                  d="m19.5 8.25-7.5 7.5-7.5-7.5"
-                />
-              </svg>
-            </div>
- 
-            {showDropDown && (
-              <div className="providers position-absolute w-100 mt-2 z-3">
-                {providers.map((pro, key) => (
-                  <div
-                    key={key}
-                    className="d-flex justify-content-between align-items-center py-2 px-3 border-bottom hover-bg-light pointer"
-                    onClick={() => {
-                      setProvider(pro);
-                      setShowDropDown(false);
-                    }}
-                  >
-                    <p className="mb-0 fw-medium">{pro}</p>
-                  </div>
-                ))}
-              </div>
-            )}
+              {filter.label}
+              </button>
+            ))}
           </div>
- 
-          <div className="d-flex align-items-center">
-            <button className="btn btn-success btn-search shadow-sm d-flex align-items-center justify-content-center gap-2 rounded-pill px-4 py-2">
-              Search
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="18"
-                height="18"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={1.5}
-                  d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3"
-                />
-              </svg>
-            </button>
-          </div>
-        </div>
- 
-        {/* Appointments Header with Filter Buttons */}
-        <div className="appointments-header d-flex justify-content-between align-items-center flex-wrap gap-3 mt-5 pt-5 pt-4 px-3 mb-4">
-          <h3 className="section-title mb-0">Appointments</h3>
-          <div className="filter-buttons d-flex gap-2">
-            <button
-              className={`status-filter-btn ${
-                filterStatus === "Scheduled" ? "active" : ""
-              }`}
-              onClick={() => setFilterStatus("Scheduled")}
-            >
-              Scheduled
-            </button>
-            <button
-              className={`status-filter-btn ${
-                filterStatus === "Completed" ? "active" : ""
-              }`}
-              onClick={() => setFilterStatus("Completed")}
-            >
-              Completed
-            </button>
-            <button
-              className={`status-filter-btn ${
-                filterStatus === "Cancelled" ? "active" : ""
-              }`}
-              onClick={() => setFilterStatus("Cancelled")}
-            >
-              Cancelled
-            </button>
-          </div>
-        </div>
- 
-        {/* Appointments List */}
-        {filteredAppointments.map((appt) => (
-          <div
-            key={appt.id}
-            className="appointment-card shadow-sm rounded p-3 mb-3 d-flex justify-content-between align-items-center"
+          <button
+            onClick={() => setShowAddForm(!showAddForm)}
+            className="btn-add-appointment"
           >
-            <div>
-              <h5 className="mb-1">{appt.provider}</h5>
-              <p className="mb-1 text-muted">{appt.date}</p>
-              <span className={`status-badge ${appt.status.toLowerCase()}`}>
-                {appt.status}
-              </span>
-            </div>
-            <div className="appointment-actions">
-              {appt.status === "Scheduled" && (
-                <button
-                  className="btn-reminder shadow-sm"
-                  onClick={() =>
-                    alert(`Reminder set for ${appt.date} at ${appt.provider}`)
-                  }
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="alert-icon"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    width="20"
-                    height="20"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0M3.124 7.5A8.969 8.969 0 0 1 5.292 3m13.416 0a8.969 8.969 0 0 1 2.168 4.5"
-                    />
-                  </svg>
-                  Reminder
-                </button>
-              )}
-              <button
-                className="btn-reschedule"
-                disabled={appt.status !== "Scheduled"}
-                onClick={() => {
-                  setSelectedAppointment(appt);
-                  setShowModal(true);
-                }}
-              >
-                Reschedule
-              </button>
-              <button
-                className="btn-cancel"
-                disabled={appt.status !== "Scheduled"}
-                onClick={() => {
-                  setAppointmentToCancel(appt);
-                  setShowCancelConfirm(true);
-                }}
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
- 
-      {/* Reschedule Modal */}
-      {showModal && (
-        <div className="modal-overlay">
-          <div className="modal-box">
-            <label htmlFor="rescheduleDate" className="modal-label">
-              Select New Date
-            </label>
-            <div className="custom-date-wrapper mt-4">
-              <input
-                type="date"
-                className="fixed-date-input"
-                placeholder="dd-mm-yyyy"
-                onChange={handleDateChange}
+            {showAddForm ? <X size={24} /> : <Plus size={24} />}
+            {showAddForm ? 'Cancel' : 'Add Appointment'}
+          </button>
+        </div>
+
+        {/* Add/Edit Form */}
+        {showAddForm && (
+          <div className="form-container">
+            <h2 className="form-title">
+              {editingId ? 'Edit Appointment' : 'Add New Appointment'}
+            </h2>
+
+            <div className="form-grid">
+              <InputField
+                label="Appointment Title"
+                value={formData.title}
+                onChange={(val) => setFormData({ ...formData, title: val })}
+                placeholder="e.g., Dr. Smith - Annual Checkup"
+                required
+              />
+              
+              <InputField
+                label="Doctor's Name"
+                value={formData.doctor}
+                onChange={(val) => setFormData({ ...formData, doctor: val })}
+                placeholder="e.g., Dr. Robert Smith"
               />
             </div>
-            <div className="d-flex justify-content-center mt-3">
+
+            <SelectField
+              label="Appointment Type"
+              value={formData.type}
+              onChange={(val) => setFormData({ ...formData, type: val })}
+              options={appointmentTypes}
+            />
+
+            <div className="form-grid-narrow">
+              <InputField
+                label="Date"
+                type="date"
+                value={formData.date}
+                onChange={(val) => setFormData({ ...formData, date: val })}
+                required
+              />
+              
+              <InputField
+                label="Time"
+                type="time"
+                value={formData.time}
+                onChange={(val) => setFormData({ ...formData, time: val })}
+                required
+              />
+            </div>
+
+            <InputField
+              label="Location/Clinic Name"
+              value={formData.location}
+              onChange={(val) => setFormData({ ...formData, location: val })}
+              placeholder="e.g., Main Street Medical Center"
+            />
+
+            <InputField
+              label="Address"
+              value={formData.address}
+              onChange={(val) => setFormData({ ...formData, address: val })}
+              placeholder="e.g., 123 Main St, Suite 200"
+            />
+
+            <InputField
+              label="Phone Number"
+              type="tel"
+              value={formData.phone}
+              onChange={(val) => setFormData({ ...formData, phone: val })}
+              placeholder="e.g., (555) 123-4567"
+            />
+
+            <SelectField
+              label="Reminder"
+              value={formData.reminder}
+              onChange={(val) => setFormData({ ...formData, reminder: val })}
+              options={reminderOptions}
+            />
+
+            <TextArea
+              label="Notes"
+              value={formData.notes}
+              onChange={(val) => setFormData({ ...formData, notes: val })}
+              placeholder="Any special instructions or things to remember..."
+            />
+
+            <div className="form-actions">
               <button
-                className="btn btn-secondary px-4 py-2"
-                onClick={() => setShowModal(false)}
+                onClick={handleSubmit}
+                className="btn-primary"
+              >
+                <Check size={24} />
+                {editingId ? 'Update Appointment' : 'Save Appointment'}
+              </button>
+
+              <button
+                onClick={resetForm}
+                className="btn-cancel"
               >
                 Cancel
               </button>
             </div>
           </div>
-        </div>
-      )}
- 
-      {/* Cancel Confirmation Modal */}
-      {showCancelConfirm && (
-        <div className="modal-overlay">
-          <div className="modal-box text-center">
-            <h4 className="mb-4">
-              Are you sure you want to cancel this appointment?
-            </h4>
-            <div className="cancel-btn-wrapper">
-              <button
-                className="btn cancel-btn btn-danger"
-                onClick={() => {
-                  const updated = appointments.map((appt) =>
-                    appt.id === appointmentToCancel.id
-                      ? { ...appt, status: "Cancelled" }
-                      : appt
-                  );
-                  setAppointments(updated);
-                  setAppointmentToCancel(null);
-                  setShowCancelConfirm(false);
-                }}
-              >
-                Yes, Cancel
-              </button>
-              <button
-                className="btn cancel-btn btn-secondary"
-                onClick={() => {
-                  setAppointmentToCancel(null);
-                  setShowCancelConfirm(false);
-                }}
-              >
-                No
-              </button>
-            </div>
+        )}
+
+
+        {/* Appointments List */}
+        {filteredAppointments.length === 0 ? (
+          <div className="empty-state">
+            <Calendar size={64} color="#D0D0D0" className="empty-state-icon" />
+            <h3 className="empty-state-title">
+              No {viewFilter !== 'all' ? viewFilter : ''} appointments
+            </h3>
+            <p className="empty-state-text">
+              {viewFilter === 'upcoming' ? 'You have no upcoming appointments scheduled.' : 
+               viewFilter === 'past' ? 'No past appointments to show.' :
+               'Click "Add Appointment" to schedule your first appointment.'}
+            </p>
           </div>
-        </div>
-      )}
+        ) : (
+          <div className="appointments-list">
+            {filteredAppointments.map(apt => {
+              const isPast = new Date(`${apt.date}T${apt.time}`) < now;
+              
+              return (
+                <div
+                  key={apt.id}
+                  className={`appointment-card ${isPast ? 'past' : ''}`}
+                >
+                  <div className="appointment-header">
+                    <div className="appointment-title-section">
+                      <h3 className="appointment-title">
+                        {apt.title}
+                      </h3>
+                      {apt.type && (
+                        <div className="appointment-type-badge">
+                          {apt.type}
+                        </div>
+                      )}
+                    </div>
+                    
+                    <div className="appointment-actions">
+                      <button
+                        onClick={() => handleEdit(apt)}
+                        className="btn-edit"
+                      >
+                        <Edit2 size={18} />
+                        Edit
+                      </button>
+                      
+                      <button
+                        onClick={() => handleDelete(apt.id)}
+                        className="btn-delete"
+                      >
+                        <Trash2 size={18} />
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="appointment-details">
+                    <div className="detail-item">
+                      <Calendar size={24} color="#005BBB" className="detail-icon" />
+                      <div>
+                        <div className="detail-label">
+                          Date
+                        </div>
+                        <div className="detail-value">
+                          {formatDate(apt.date)}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="detail-item">
+                      <Clock size={24} color="#005BBB" className="detail-icon" />
+                      <div>
+                        <div className="detail-label">
+                          Time
+                        </div>
+                        <div className="detail-value">
+                          {formatTime(apt.time)}
+                        </div>
+                      </div>
+                    </div>
+
+                    {apt.doctor && (
+                      <div className="detail-item">
+                        <User size={24} color="#005BBB" className="detail-icon" />
+                        <div>
+                          <div className="detail-label">
+                            Doctor
+                          </div>
+                          <div className="detail-value">
+                            {apt.doctor}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {apt.location && (
+                      <div className="detail-item">
+                        <MapPin size={24} color="#005BBB" className="detail-icon" />
+                        <div>
+                          <div className="detail-label">
+                            Location
+                          </div>
+                          <div className="detail-value">
+                            {apt.location}
+                          </div>
+                          {apt.address && (
+                            <div className="detail-subvalue">
+                              {apt.address}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {apt.phone && (
+                      <div className="detail-item">
+                        <Phone size={24} color="#005BBB" className="detail-icon" />
+                        <div>
+                          <div className="detail-label">
+                            Phone
+                          </div>
+                          <div className="detail-value">
+                            {apt.phone}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {apt.reminder && (
+                      <div className="detail-item">
+                        <Bell size={24} color="#005BBB" className="detail-icon" />
+                        <div>
+                          <div className="detail-label">
+                            Reminder
+                          </div>
+                          <div className="detail-value">
+                            {reminderOptions.find(r => r.value === apt.reminder)?.label || apt.reminder}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {apt.notes && (
+                    <div className="appointment-notes">
+                      <div className="notes-label">
+                        Notes:
+                      </div>
+                      <div className="notes-text">
+                        {apt.notes}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
- 

@@ -53,7 +53,7 @@ export const DetectionResult = ({ isLoggedIn, hasAllergen, matchingAllergens }) 
 export const BarcodeInformation = ({ barcodeResult, productName, barcodeIngredients }) => {
   return (
     <>
-      <table cellPadding={10} style={{ width: '80%', fontSize: 16, border: '2px solid #e0e0e0'}}>
+      <table cellPadding={10} style={{ width: '80%', fontSize: '1.2rem', margin: '1rem',}}>
         <tbody>
           <tr>
             <th>Code</th>

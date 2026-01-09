@@ -1,40 +1,43 @@
+/* Health FAQ specific styles - inherits base FAQ styles from JSX import */
+
 .health-faq-container {
-    max-width: 800px;
-    margin: 0 auto;
+    margin-top: 80px;
+    max-width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
     padding: 20px;
-    font-family: Arial, sans-serif;
-    color: #333;
+    font-family: "Arial", sans-serif;
 }
 
-.health-faq-container h2 {
-    text-align: center;
-    color: #2c3e50;
-    margin-bottom: 10px;
-}
-
-.faq-intro {
-    text-align: center;
-    margin-bottom: 30px;
-    color: #666;
-    font-style: italic;
+.health-faq-container .health-faq-title {
+    font-size: 2.8rem;
+    text-align: left;
+    margin-bottom: 20px;
+    color: #327da8; /* Deep blue for title */
+    font-weight: bold;
 }
 
 .category-selector {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
     justify-content: center;
-    margin-bottom: 30px;
+    margin: 25px 0px;
+    padding: 10px 10px;
+    background-color: #f8f9fa;
+    border: 2px solid rgb(213, 213, 213);
+    border-radius: 8px;
     flex-wrap: wrap;
     gap: 10px;
 }
 
 .category-selector button {
-    background-color: #f8f9fa;
-    border: 1px solid #ddd;
+    font-size: 1.3rem;
     color: #333;
     padding: 10px 15px;
     cursor: pointer;
-    border-radius: 4px;
+    border-radius: 6px;
     transition: all 0.3s ease;
+    border: 2px solid rgb(213, 213, 213);
 }
 
 .category-selector button:hover {
@@ -85,7 +88,7 @@
     position: absolute;
     transition: transform 0.3s ease;
     font-size: 12px;
-    margin-left: 10px;
+    margin-right: 1rem;
     right: 0;
 }
 
@@ -93,7 +96,7 @@
     transform: rotate(180deg);
 }
 
-.faq-answer {
+.faq-health-answer {
     padding: 20px;
     background-color: white;
     border-top: 1px solid #e0e0e0;
