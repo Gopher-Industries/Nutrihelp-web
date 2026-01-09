@@ -68,20 +68,25 @@ import DailyPlanEdit from "./routes/DailyPlan/DailyPlanEdit";
 function NavbarWrapper() {
   const location = useLocation();
 
-  // Routes where navbar should NOT appear
   const hideNavbarRoutes = [
     "/login",
-    "/signUp",
-    "/forgotPassword",    // existing
-    "/forgot/verify",     // new verify page
-    "/forgot/reset",      // new reset page
-    "/MFAform"
+    "/signup",
+    "/forgot",
+    "/forgotpassword",
+    "/forgot/verify",
+    "/forgot/reset",
+    "/mfaform",
   ];
 
-  const shouldHideNavbar = hideNavbarRoutes.includes(location.pathname);
+  const currentPath = location.pathname.toLowerCase();
 
-  return !shouldHideNavbar ? <MainNavbar /> : null;
+  const shouldHideNavbar = hideNavbarRoutes.some((route) =>
+    currentPath.startsWith(route)
+  );
+
+  return shouldHideNavbar ? null : <MainNavbar />;
 }
+
 
 function App() {
   const { currentUser } = useContext(UserContext);
@@ -107,7 +112,7 @@ function App() {
 
         {/* PUBLIC ROUTES */}
         <Route path="/login" element={<Login />} />
-        <Route path="/signUp" element={<SignUp />} />
+        <Route path="/signup" element={<SignUp />} />
 
         {/* Forgot password flow */}
         {/* legacy route */}
