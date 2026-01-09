@@ -343,12 +343,14 @@ May Not need it but can be added for asthetics
   min-height: 100px;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   gap: 10px;
 }
 
 .notification-content {
   flex: 1;
   display: flex;
+  width: 100%;
   justify-content: space-between;
   gap: 8px;
 }
@@ -782,9 +784,107 @@ May Not need it but can be added for asthetics
 }
 
 /* Responsive Design */
-@media (max-width: 768px) {
+
+/* Large Tablets and Small Desktops (max-width: 1200px) */
+@media (max-width: 1200px) {
+  .settings-container {
+    max-width: 95%;
+  }
+
+  .settings-content {
+    padding: 30px;
+  }
+
+  .settings-section {
+    padding: 25px;
+    margin-bottom: 30px;
+  }
+
+  .user-preferences {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .font-size-options {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Tablets (max-width: 992px) */
+@media (max-width: 992px) {
   .settings-page {
     padding: 15px;
+  }
+
+  .settings-container {
+    max-width: 100%;
+    border-radius: 15px;
+  }
+
+  .settings-content {
+    padding: 25px;
+  }
+
+  .settings-section {
+    padding: 20px;
+    margin-bottom: 25px;
+  }
+
+  .settings-title {
+    font-size: 1.75rem !important;
+    padding: 15px !important;
+  }
+
+  .section-title {
+    font-size: 1.1rem !important;
+  }
+
+  .font-size-options {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .user-preferences {
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+  }
+
+  .theme-mode-selector {
+    gap: 10px;
+  }
+
+  .mode-button {
+    padding: 10px 15px;
+    font-size: 13px;
+  }
+
+  .notification-header {
+    flex-direction: column;
+    gap: 15px;
+    align-items: stretch;
+  }
+
+  .notification-actions {
+    justify-content: center;
+  }
+
+  .settings-footer {
+    gap: 15px;
+    margin-top: 30px;
+    padding-top: 25px;
+  }
+
+  .cancel-btn,
+  .save-settings-btn {
+    width: 160px;
+    height: 48px;
+    font-size: 1rem;
+    padding: 12px 25px;
+  }
+}
+
+@media (max-width: 768px) {
+  .settings-page {
+    padding: 10px;
   }
   
   .settings-content {
@@ -792,11 +892,28 @@ May Not need it but can be added for asthetics
   }
   
   .settings-header {
-    padding: 20px;
+    padding: 15px;
   }
   
   .settings-title {
-    font-size: 3rem;
+    font-size: 1.5rem !important;
+    padding: 10px !important;
+  }
+
+  .section-title {
+    font-size: 1rem !important;
+    gap: 8px;
+  }
+
+  .section-description {
+    font-size: 0.9rem;
+    margin-bottom: 20px;
+  }
+
+  .settings-section {
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 12px;
   }
   
   .back-button {
@@ -804,31 +921,122 @@ May Not need it but can be added for asthetics
     margin-bottom: 20px;
     align-self: flex-start;
   }
-  
-  /* Quick actions responsive styles removed */
+
+  .theme-mode-selector {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .mode-button {
+    padding: 8px 12px;
+    font-size: 12px;
+    gap: 6px;
+  }
+
+  .mode-button svg {
+    width: 16px;
+    height: 16px;
+  }
   
   .font-size-options {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .font-size-option {
+    padding: 12px;
+    font-size: 14px !important;
+  }
+
+  .font-size-label {
+    font-size: 14px !important;
+  }
+
+  .font-size-preview-container {
+    padding: 15px;
+    margin-top: 15px;
   }
   
   .accessibility-options {
     grid-template-columns: 1fr;
   }
+
+  .checkbox-group {
+    padding: 12px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .notification-list .checkbox-group {
+    padding: 15px;
+    min-height: auto;
+  }
+
+  .notification-content {
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+  }
   
   .notification-options {
     grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .notification-header {
+    padding: 12px 15px;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .notification-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .action-btn {
+    flex: 1;
+    text-align: center;
+    padding: 8px 12px;
+    font-size: 0.8rem;
   }
   
   .language-options {
     grid-template-columns: repeat(2, 1fr);
   }
+
+  .language-dropdown {
+    padding: 10px 14px;
+    font-size: 14px;
+  }
   
   .voice-options {
     grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .slider-group {
+    padding: 0;
+  }
+
+  .slider-label {
+    font-size: 14px;
+    margin-bottom: 12px;
+  }
+
+  .voice-test-section {
+    padding: 15px;
+  }
+
+  .test-voice-btn {
+    padding: 10px 20px;
+    font-size: 0.9rem;
   }
   
   .user-preferences {
     grid-template-columns: 1fr;
+    gap: 15px;
   }
   
   .preference-options {
@@ -837,27 +1045,72 @@ May Not need it but can be added for asthetics
   
   .settings-footer {
     flex-direction: column;
-    gap: 10px;
+    gap: 12px;
+    margin-top: 25px;
+    padding-top: 20px;
   }
   
   .cancel-btn,
   .save-settings-btn {
     width: 100%;
-    height: 50px;
+    height: 48px;
+    font-size: 1rem;
+  }
+
+  .api-status-message {
+    margin: 10px 15px;
+    padding: 10px 15px;
+    font-size: 0.85rem;
+  }
+
+  .settings-success-message {
+    top: 10px;
+    right: 10px;
+    left: 10px;
+    padding: 12px 20px;
+    font-size: 0.9rem;
   }
 }
 
 @media (max-width: 480px) {
+  .settings-page {
+    padding: 8px;
+  }
+
+  .settings-container {
+    border-radius: 10px;
+  }
+
+  .settings-header {
+    padding: 12px;
+  }
+
   .settings-title {
-    font-size: 1.8rem;
+    font-size: 1.25rem !important;
+    padding: 8px !important;
   }
   
   .section-title {
-    font-size: 1.5rem;
+    font-size: 0.95rem !important;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .section-description {
+    font-size: 0.85rem;
+    margin-bottom: 15px;
+    line-height: 1.5;
+  }
+
+  .settings-content {
+    padding: 15px;
   }
   
   .settings-section {
-    padding: 20px;
+    padding: 12px;
+    margin-bottom: 15px;
+    border-radius: 10px;
   }
   
   .dark-mode-toggle {
@@ -865,12 +1118,204 @@ May Not need it but can be added for asthetics
     gap: 15px;
     text-align: center;
   }
+
+  .theme-mode-selector {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .mode-button {
+    padding: 10px 15px;
+    font-size: 13px;
+    justify-content: center;
+  }
+
+  .font-size-options {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .font-size-option {
+    padding: 10px;
+    font-size: 13px !important;
+  }
+
+  .font-size-label {
+    font-size: 13px !important;
+  }
+
+  .font-size-preview {
+    font-size: 1rem;
+    margin-top: 5px;
+  }
+
+  .font-size-preview-container {
+    padding: 12px;
+  }
+
+  .preview-title {
+    font-size: 0.95rem;
+    margin-bottom: 10px;
+  }
+
+  .checkbox-group {
+    padding: 10px;
+  }
+
+  .checkbox-label {
+    font-size: 0.9rem;
+  }
+
+  .checkbox-description {
+    font-size: 0.8rem;
+  }
+
+  .checkbox-input {
+    width: 18px;
+    height: 18px;
+  }
+
+  .notification-list .checkbox-group {
+    padding: 12px;
+  }
+
+  .notification-icon {
+    font-size: 1rem;
+  }
+
+  .notification-header {
+    padding: 10px 12px;
+  }
+
+  .action-btn {
+    padding: 6px 10px;
+    font-size: 0.75rem;
+  }
   
   .language-options {
     grid-template-columns: 1fr;
   }
-  
-  /* Quick actions small screen styles removed */
+
+  .language-dropdown {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+
+  .voice-test-section {
+    padding: 12px;
+  }
+
+  .test-voice-btn {
+    padding: 10px 18px;
+    font-size: 0.85rem;
+    gap: 6px;
+  }
+
+  .test-description {
+    font-size: 0.8rem;
+  }
+
+  .slider-label {
+    font-size: 13px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
+
+  .settings-footer {
+    gap: 10px;
+    margin-top: 20px;
+    padding-top: 15px;
+  }
+
+  .cancel-btn,
+  .save-settings-btn {
+    height: 45px;
+    font-size: 0.95rem;
+    border-radius: 20px;
+    padding: 12px 20px;
+  }
+
+  .api-status-message {
+    margin: 8px 10px;
+    padding: 8px 12px;
+    font-size: 0.8rem;
+    gap: 8px;
+  }
+
+  .loading-spinner {
+    width: 40px;
+    height: 40px;
+  }
+
+  .loading-content {
+    min-height: 200px;
+  }
+
+  .error-content {
+    padding: 25px;
+  }
+
+  .refresh-btn {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+  }
+}
+
+/* Extra Small Phones (max-width: 360px) */
+@media (max-width: 360px) {
+  .settings-page {
+    padding: 5px;
+  }
+
+  .settings-title {
+    font-size: 1.1rem !important;
+  }
+
+  .section-title {
+    font-size: 0.9rem !important;
+  }
+
+  .settings-content {
+    padding: 10px;
+  }
+
+  .settings-section {
+    padding: 10px;
+  }
+
+  .mode-button {
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+
+  .font-size-option {
+    padding: 8px;
+  }
+
+  .checkbox-group {
+    padding: 8px;
+  }
+
+  .notification-actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .action-btn {
+    width: 100%;
+  }
+
+  .cancel-btn,
+  .save-settings-btn {
+    height: 42px;
+    font-size: 0.9rem;
+  }
+
+  .settings-success-message {
+    padding: 10px 15px;
+    font-size: 0.85rem;
+  }
 }
 
 /* Accessibility Enhancements */
