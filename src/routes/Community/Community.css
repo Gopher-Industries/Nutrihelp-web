@@ -17,9 +17,13 @@
 
 .cm-root {
   min-height: 100vh;
-  background: var(--cm-bg);
-  color: var(--cm-text);
-  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+  background: #ffffff;
+  padding: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.community-page.dark-mode {
+  background: #1a202c;
 }
 
 /* Topbar */

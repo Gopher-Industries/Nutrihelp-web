@@ -66,15 +66,7 @@ img {
   width: 950px;
 }
 
-:root {
-  --background-color: white;
-  --text-color: black;
-}
-
-.dark-mode {
-  --background-color: rgb(85, 85, 85);
-  --text-color: white;
-}
+/* Duplicate variable definitions removed - now using global-dark-mode.css */
 
 .App-logo {
   height: 40vmin;
@@ -88,18 +80,18 @@ img {
 }
 
 .App-header {
-  background-color: #282c34;
+  background-color: var(--nav-background);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
-  color: white;
+  color: var(--nav-text);
 }
 
 .App-link {
-  color: #61dafb;
+  color: var(--info-color);
   justify-content: center;
 }
 

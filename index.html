@@ -1,76 +1,259 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
-      <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
-      rel="stylesheet"
-    />
 
-    />
-    <link rel="stylesheet" href="style.css" />
-    <title>Sign In Page | Nutrihelp</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
 
-    <link rel="icon" href="favicon.ico" type="image/x-icon" />
-    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
-  </head>
+    <link rel="stylesheet" href="./src/styles/style.css" />
 
-  <body>
-    <div class="container" id="container">
-      <div class="form-container sign-up">
-        <form>
-          <h1>Create Account</h1>
-          <div class="social-icons">
-            <a href="#" class="icon"
-              ><i class="fa-brands fa-google-plus-g"></i
-            ></a>
-            <a href="#" class="icon"><i class="fa-brands fa-facebook-f"></i></a>
-          </div>
-          <span>or use your email for registeration</span>
-          <input type="text" placeholder="Name" />
-          <input type="email" placeholder="Email" />
-          <input type="password" placeholder="Password" />
-          <button>Sign Up</button>
-        </form>
-      </div>
-      <div class="form-container sign-in">
-        <form>
-          <h1>Sign In</h1>
-          <div class="social-icons">
-            <a href="#" class="icon"
-              ><i class="fa-brands fa-google-plus-g"></i
-            ></a>
-            <a href="#" class="icon"><i class="fa-brands fa-facebook-f"></i></a>
-          </div>
-          <span>or use your email password</span>
-          <input type="email" placeholder="Email" />
-          <input type="password" placeholder="Password" />
-          <a href="#">Forget Your Password? </a>
-          <button>Sign In</button>
-        </form>
-      </div>
-      <div class="toggle-container">
-        <div class="toggle">
-          <div class="toggle-panel toggle-left">
-            <h1>Welcome Back!</h1>
-            <p>Enter your personal details to use all of site features</p>
-            <button class="hidden" id="login">Sign In</button>
-          </div>
-          <div class="toggle-panel toggle-right">
-            <h1>NutriHelp</h1>
-            <p>
-              Register with your personal details to use all of site features
-            </p>
-            <button class="hidden" id="register">Sign Up</button>
-          </div>
+    <title>NutriHelp</title>
+</head>
+
+<body>
+
+    <!-- SIGNUP CARD -->
+    <div class="card-wrapper animate" id="signupCard">
+
+        <div class="card-image">
+            <img src="./src/images/Nutrihelp.jpg" />
         </div>
-      </div>
+
+        <div class="card-form">
+
+            <div class="logo-block">
+                <img src="./src/images/logos_black_icon.png" class="logo" />
+                <h2 class="brand-title">NutriHelp</h2>
+            </div>
+
+            <h1>Create Your NutriHelp Account</h1>
+            <p class="subtitle">
+                Start your personalized health journey with smart nutrition insights,
+                symptom guidance, and daily wellness tracking.
+            </p>
+
+            <div class="row-2">
+                <div class="field">
+                    <label>First Name</label>
+                    <input type="text" id="fName" />
+                    <p class="error" id="errFname"></p>
+                </div>
+
+                <div class="field">
+                    <label>Last Name</label>
+                    <input type="text" id="lName" />
+                    <p class="error" id="errLname"></p>
+                </div>
+            </div>
+
+            <div class="row-2">
+                <div class="field">
+                    <label>Email</label>
+                    <input type="email" id="signupEmail" />
+                    <p class="error" id="errEmail"></p>
+                </div>
+
+                <div class="field">
+                    <label>Password</label>
+                    <div class="password-wrap">
+                        <input type="password" id="signupPassword" />
+                        <i class="fa-solid fa-eye" onclick="togglePassword('signupPassword', this)"></i>
+                    </div>
+                    <p class="error" id="errPass"></p>
+                </div>
+            </div>
+
+            <div class="row-2">
+                <div class="field">
+                    <label>Phone Number</label>
+                    <input type="text" id="signupNumber" />
+                    <p class="error" id="errNumber"></p>
+                </div>
+
+                <div class="field">
+                    <label>Confirm Password</label>
+                    <div class="password-wrap">
+                        <input type="password" id="signupConfirm" />
+                        <i class="fa-solid fa-eye" onclick="togglePassword('signupConfirm', this)"></i>
+                    </div>
+                    <p class="error" id="errCpass"></p>
+                </div>
+            </div>
+
+            <button class="main-btn" onclick="validateSignup()">Create Account</button>
+
+            <p class="switch">
+                Already have an account?
+                <a href="#" onclick="switchCard('login')">Login</a>
+            </p>
+
+            <div class="divider">or</div>
+
+            <div class="social-box">
+                <button class="social-btn"><i class="fa-brands fa-google"></i> Google</button>
+                <button class="social-btn"><i class="fa-brands fa-apple"></i> Apple</button>
+            </div>
+        </div>
     </div>
 
-    <script src="script.js"></script>
-  </body>
+
+    <!-- LOGIN CARD -->
+    <div class="card-wrapper hidden animate" id="loginCard">
+
+        <div class="card-image">
+            <img src="./src/images/Nutrihelp.jpg" />
+        </div>
+
+        <div class="card-form">
+
+            <div class="logo-block">
+                <img src="./src/images/logos_black_icon.png" class="logo" />
+                <h2 class="brand-title">NutriHelp</h2>
+            </div>
+
+            <h1>Welcome Back</h1>
+            <p class="subtitle">
+                Login to continue your personalized nutrition insights and wellness tracking.
+            </p>
+
+            <div class="field">
+                <label>Email</label>
+                <input type="email" id="loginEmail" />
+                <p class="error" id="errLoginEmail"></p>
+            </div>
+
+            <div class="field">
+                <label>Password</label>
+                <div class="password-wrap">
+                    <input type="password" id="loginPassword" />
+                    <i class="fa-solid fa-eye" onclick="togglePassword('loginPassword', this)"></i>
+                </div>
+                <p class="error" id="errLoginPass"></p>
+            </div>
+
+            <div class="remember-row">
+                <label class="remember-check">
+                    <input type="checkbox" />
+                    Remember Me
+                </label>
+                <a class="forgot-link" href="#">Forgot Password?</a>
+            </div>
+
+            <button class="main-btn" onclick="validateLogin()">Sign In</button>
+
+            <p class="switch">
+                Don’t have an account?
+                <a href="#" onclick="switchCard('signup')">Create Account</a>
+            </p>
+
+            <div class="divider">or</div>
+
+            <div class="social-box">
+                <button class="social-btn"><i class="fa-brands fa-google"></i> Google</button>
+                <button class="social-btn"><i class="fa-brands fa-apple"></i> Apple</button>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- JS -->
+    <script>
+        function switchCard(type) {
+            const signup = document.getElementById("signupCard");
+            const login = document.getElementById("loginCard");
+
+            signup.classList.add("hidden");
+            login.classList.add("hidden");
+
+            if (type === "login") {
+                login.classList.remove("hidden");
+                login.classList.add("fadeIn");
+            } else {
+                signup.classList.remove("hidden");
+                signup.classList.add("fadeIn");
+            }
+        }
+
+        function togglePassword(id, icon) {
+            const input = document.getElementById(id);
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.replace("fa-eye", "fa-eye-slash");
+            } else {
+                input.type = "password";
+                icon.classList.replace("fa-eye-slash", "fa-eye");
+            }
+        }
+
+        function validateSignup() {
+            let valid = true;
+
+            const fname = document.getElementById("fName");
+            const lname = document.getElementById("lName");
+            const email = document.getElementById("signupEmail");
+            const pass = document.getElementById("signupPassword");
+            const cpass = document.getElementById("signupConfirm");
+            const num = document.getElementById("signupNumber");
+
+            if (fname.value.trim() === "") {
+                document.getElementById("errFname").innerText = "First name required";
+                valid = false;
+            } else document.getElementById("errFname").innerText = "";
+
+            if (lname.value.trim() === "") {
+                document.getElementById("errLname").innerText = "Last name required";
+                valid = false;
+            } else document.getElementById("errLname").innerText = "";
+
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email.value)) {
+                document.getElementById("errEmail").innerText = "Enter valid email";
+                valid = false;
+            } else document.getElementById("errEmail").innerText = "";
+
+            if (pass.value.length < 6) {
+                document.getElementById("errPass").innerText = "Minimum 6 characters";
+                valid = false;
+            } else document.getElementById("errPass").innerText = "";
+
+            if (cpass.value !== pass.value) {
+                document.getElementById("errCpass").innerText = "Passwords do not match";
+                valid = false;
+            } else document.getElementById("errCpass").innerText = "";
+
+            if (!/^[0-9]+$/.test(num.value)) {
+                document.getElementById("errNumber").innerText = "Numbers only";
+                valid = false;
+            } else document.getElementById("errNumber").innerText = "";
+
+            if (valid) alert("Signup successful");
+        }
+
+        function validateLogin() {
+            let valid = true;
+
+            const email = document.getElementById("loginEmail");
+            const pass = document.getElementById("loginPassword");
+
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email.value)) {
+                document.getElementById("errLoginEmail").innerText = "Enter valid email";
+                valid = false;
+            } else document.getElementById("errLoginEmail").innerText = "";
+
+            if (pass.value.trim() === "") {
+                document.getElementById("errLoginPass").innerText = "Password required";
+                valid = false;
+            } else document.getElementById("errLoginPass").innerText = "";
+
+            if (valid) alert("Login successful");
+        }
+    </script>
+
+</body>
+
 </html>

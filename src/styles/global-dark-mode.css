@@ -3,52 +3,52 @@
 /* CSS Variables for Light Mode */
 :root {
   /* Primary Colors */
-  --primary-color: #a82fea;
-  --primary-hover: #6d34e0;
-  --primary-light: #e9d5ff;
-  --primary-dark: #7c3aed;
+  --primary-color: #005BBB;
+  --primary-hover: #004A99;
+  --primary-light: #E8F1FF;
+  --primary-dark: #003D7A;
   
   /* Background Colors */
-  --background-color: #ffffff;
-  --background-secondary: #f8fafc;
-  --background-tertiary: #f1f5f9;
+  --background-color: #FFFFFF;
+  --background-secondary: #FAFAFA;
+  --background-tertiary: #F5F5F5;
   
   /* Card and Container Colors */
-  --card-background: #ffffff;
-  --card-background-secondary: #f8fafc;
-  --container-background: #ffffff;
+  --card-background: #FFFFFF;
+  --card-background-secondary: #FAFAFA;
+  --container-background: #FFFFFF;
   
   /* Text Colors */
-  --text-primary: #2d3748;
-  --text-secondary: #4a5568;
-  --text-muted: #718096;
-  --text-inverse: #ffffff;
+  --text-primary: #1A1A1A;
+  --text-secondary: #5A5A5A;
+  --text-muted: #7A7A7A;
+  --text-inverse: #FFFFFF;
   
   /* Border Colors */
-  --border-color: #e2e8f0;
-  --border-color-secondary: #cbd5e0;
-  --border-color-focus: #a82fea;
+  --border-color: #969595;
+  --border-color-secondary: #D0D0D0;
+  --border-color-focus: #005BBB;
   
   /* Input Colors */
-  --input-background: #ffffff;
-  --input-border: #e2e8f0;
-  --input-border-focus: #a82fea;
-  --input-text: #2d3748;
-  --input-placeholder: #a0aec0;
+  --input-background: #FFFFFF;
+  --input-border: #D0D0D0;
+  --input-border-focus: #005BBB;
+  --input-text: #1A1A1A;
+  --input-placeholder: #9A9A9A;
   
   /* Button Colors */
-  --button-background: #a82fea;
-  --button-background-secondary: #f1f5f9;
-  --button-text: #ffffff;
-  --button-text-secondary: #4a5568;
-  --button-border: #a82fea;
-  --button-hover: #6d34e0;
+  --button-background: #005BBB;
+  --button-background-secondary: #F5F5F5;
+  --button-text: #FFFFFF;
+  --button-text-secondary: #1A1A1A;
+  --button-border: #005BBB;
+  --button-hover: #004A99;
   
   /* Navigation Colors */
-  --nav-background: #8d5cf6;
-  --nav-text: #ffffff;
-  --nav-hover: rgba(255, 255, 255, 0.1);
-  --nav-active: rgba(255, 255, 255, 0.2);
+  --nav-background: #005BBB;
+  --nav-text: #FFFFFF;
+  --nav-hover: rgba(255, 255, 255, 0.15);
+  --nav-active: rgba(255, 255, 255, 0.25);
   
   /* Shadow Colors */
   --card-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
@@ -56,95 +56,92 @@
   --dropdown-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   
   /* Status Colors */
-  --success-color: #48bb78;
-  --warning-color: #ed8936;
-  --error-color: #f56565;
-  --info-color: #4299e1;
+  --success-color: #1B873E;
+  --warning-color: #CC8A00;
+  --error-color: #CC0000;
+  --info-color: #005BBB;
   
   /* Overlay Colors */
   --overlay-background: rgba(0, 0, 0, 0.5);
-  --modal-background: #ffffff;
+  --modal-background: #FFFFFF;
   
   /* Gradient Colors */
-  --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-  --gradient-nav: linear-gradient(44deg, #7B44FF 0%, #F26CBA 100%);
+  --gradient-primary: linear-gradient(135deg, #005BBB 0%, #003D7A 100%);
+  --gradient-secondary: linear-gradient(135deg, #0070DD 0%, #005BBB 100%);
+  --gradient-nav: linear-gradient(44deg, #005BBB 0%, #0070DD 100%);
 }
 
 /* CSS Variables for Dark Mode */
 .dark-mode {
   /* Primary Colors */
-  --primary-color: #a82fea;
-  --primary-hover: #6d34e0;
-  --primary-light: #2d1b69;
-  --primary-dark: #7c3aed;
+  --primary-color: #3399FF;
+  --primary-hover: #5BAEFF;
+  --primary-light: #1A2F4A;
+  --primary-dark: #2277DD;
   
   /* Background Colors */
-  --background-color: #1a1a1a;
-  --background-secondary: #2d2d2e;
-  --background-tertiary: #3a3a3b;
+  --background-color: #0F1419;
+  --background-secondary: #1A1F26;
+  --background-tertiary: #252B33;
   
   /* Card and Container Colors */
-  --card-background: #2d2d2e;
-  --card-background-secondary: #3a3a3b;
-  --container-background: #2d2d2e;
+  --card-background: #1A1F26;
+  --card-background-secondary: #252B33;
+  --container-background: #1A1F26;
   
   /* Text Colors */
-  --text-primary: #ffffff;
-  --text-secondary: #e2e8f0;
-  --text-muted: #a0aec0;
-  --text-inverse: #2d3748;
+  --text-primary: #E8E8E8;
+  --text-secondary: #B8B8B8;
+  --text-muted: #888888;
+  --text-inverse: #1A1A1A;
   
   /* Border Colors */
-  --border-color: #4a5568;
-  --border-color-secondary: #2d3748;
-  --border-color-focus: #a82fea;
+  --border-color: #3A4048;
+  --border-color-secondary: #2A3038;
+  --border-color-focus: #3399FF;
   
   /* Input Colors */
-  --input-background: #2d2d2e;
-  --input-border: #4a5568;
-  --input-border-focus: #a82fea;
-  --input-text: #ffffff;
-  --input-placeholder: #718096;
+  --input-background: #1A1F26;
+  --input-border: #3A4048;
+  --input-border-focus: #3399FF;
+  --input-text: #E8E8E8;
+  --input-placeholder: #6A6A6A;
   
   /* Button Colors */
-  --button-background: #a82fea;
-  --button-background-secondary: #3a3a3b;
-  --button-text: #ffffff;
-  --button-text-secondary: #e2e8f0;
-  --button-border: #a82fea;
-  --button-hover: #6d34e0;
+  --button-background: #3399FF;
+  --button-background-secondary: #252B33;
+  --button-text: #FFFFFF;
+  --button-text-secondary: #E8E8E8;
+  --button-border: #3399FF;
+  --button-hover: #5BAEFF;
   
   /* Navigation Colors */
-  --nav-background: #2D3748;
-  --nav-text: #ffffff;
-  --nav-hover: rgba(255, 255, 255, 0.1);
-  --nav-active: rgba(255, 255, 255, 0.2);
+  --nav-background: #1A2838;
+  --nav-text: #E8E8E8;
+  --nav-hover: rgba(51, 153, 255, 0.15);
+  --nav-active: rgba(51, 153, 255, 0.25);
   
   /* Shadow Colors */
-  --card-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px 0 rgba(0, 0, 0, 0.2);
-  --card-shadow-hover: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
-  --dropdown-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+  --card-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.4), 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --card-shadow-hover: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+  --dropdown-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
   
   /* Status Colors */
-  --success-color: #48bb78;
-  --warning-color: #ed8936;
-  --error-color: #f56565;
-  --info-color: #4299e1;
+  --success-color: #2EAA55;
+  --warning-color: #F5A623;
+  --error-color: #FF4444;
+  --info-color: #3399FF;
   
   /* Overlay Colors */
-  --overlay-background: rgba(0, 0, 0, 0.7);
-  --modal-background: #2d2d2e;
+  --overlay-background: rgba(0, 0, 0, 0.75);
+  --modal-background: #1A1F26;
   
   /* Gradient Colors */
-  --gradient-primary: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
-  --gradient-secondary: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
-  --gradient-nav: linear-gradient(44deg, #2d3748 0%, #1a202c 100%);
-}
-
-/* Global Dark Mode Styles */
-.dark-mode {
-  /* Base Elements */
+  --gradient-primary: linear-gradient(135deg, #2277DD 0%, #1A5AAA 100%);
+  --gradient-secondary: linear-gradient(135deg, #3399FF 0%, #2277DD 100%);
+  --gradient-nav: linear-gradient(44deg, #1A2838 0%, #2A3848 100%);
+  
+  /* Base Element Styles */
   color: var(--text-primary);
   background-color: var(--background-color);
 }
@@ -361,3 +358,74 @@
     --border-color: #000000;
   }
 }
+
+/* ========================================
+   UTILITY CLASSES
+   Use these for quick styling without inline styles
+   ======================================== */
+
+/* Text Color Utilities */
+.text-primary { color: var(--text-primary) !important; }
+.text-secondary { color: var(--text-secondary) !important; }
+.text-muted { color: var(--text-muted) !important; }
+.text-inverse { color: var(--text-inverse) !important; }
+.text-primary-color { color: var(--primary-color) !important; }
+.text-success { color: var(--success-color) !important; }
+.text-warning { color: var(--warning-color) !important; }
+.text-error { color: var(--error-color) !important; }
+.text-info { color: var(--info-color) !important; }
+
+/* Background Color Utilities */
+.bg-primary { background-color: var(--background-color) !important; }
+.bg-secondary { background-color: var(--background-secondary) !important; }
+.bg-tertiary { background-color: var(--background-tertiary) !important; }
+.bg-card { background-color: var(--card-background) !important; }
+.bg-primary-color { background-color: var(--primary-color) !important; }
+.bg-success { background-color: var(--success-color) !important; }
+.bg-warning { background-color: var(--warning-color) !important; }
+.bg-error { background-color: var(--error-color) !important; }
+.bg-info { background-color: var(--info-color) !important; }
+
+/* Border Color Utilities */
+.border-color { border-color: var(--border-color) !important; }
+.border-primary { border-color: var(--primary-color) !important; }
+.border-success { border-color: var(--success-color) !important; }
+.border-error { border-color: var(--error-color) !important; }
+.border-info { border-color: var(--info-color) !important; }
+
+/* Button Style Utilities */
+.btn-primary {
+  background-color: var(--button-background) !important;
+  color: var(--button-text) !important;
+  border-color: var(--button-border) !important;
+}
+
+.btn-primary:hover {
+  background-color: var(--button-hover) !important;
+}
+
+.btn-secondary {
+  background-color: var(--button-background-secondary) !important;
+  color: var(--button-text-secondary) !important;
+  border-color: var(--border-color) !important;
+}
+
+.btn-success {
+  background-color: var(--success-color) !important;
+  color: var(--text-inverse) !important;
+}
+
+.btn-error {
+  background-color: var(--error-color) !important;
+  color: var(--text-inverse) !important;
+}
+
+.btn-info {
+  background-color: var(--info-color) !important;
+  color: var(--text-inverse) !important;
+}
+
+/* Shadow Utilities */
+.shadow-card { box-shadow: var(--card-shadow) !important; }
+.shadow-card-hover { box-shadow: var(--card-shadow-hover) !important; }
+.shadow-dropdown { box-shadow: var(--dropdown-shadow) !important; }

@@ -249,6 +249,53 @@ const getRadioInnerStyles = (checked) => ({
     const [hoveredButton, setHoveredButton] = useState(null)
     const fileRef = useRef(null)
 
+  useEffect(() => {
+  const fetchProfile = async () => {
+    try {
+      const sessionRaw = localStorage.getItem("user_session")
+      const token = localStorage.getItem("jwt_token")
+
+      if (!sessionRaw || !token) {
+        console.warn("JWT token missing")
+        return
+      }
+
+      const session = JSON.parse(sessionRaw)
+
+      const res = await fetch("http://localhost:80/api/profile", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      })
+
+      if (!res.ok) {
+        console.error("Profile fetch failed", res.status)
+        return
+      }
+
+      const data = await res.json()
+      const profile = Array.isArray(data) ? data[0] : data
+
+      setForm((prev) => ({
+        ...prev,
+        firstName: profile.first_name || "",
+        lastName: profile.last_name || "",
+        email: profile.email || session.email,
+        phone: profile.contact_number || "",
+        goals: profile.goals ? [profile.goals] : [],
+        avatar: profile.image_url ? { url: profile.image_url } : null,
+      }))
+
+    } catch (err) {
+      console.error("Profile fetch error:", err)
+    }
+  }
+
+  fetchProfile()
+}, [])
+
     useEffect(() => {
       const handleResize = () => setWidth(window.innerWidth)
       window.addEventListener("resize", handleResize)
