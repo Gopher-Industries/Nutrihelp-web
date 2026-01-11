@@ -35,12 +35,6 @@ function SearchRecipes() {
   ];
 
   // Load recipes once
- /* useEffect(() => {
-    fetchRecipes("defaultUser")
-      .then(data => setRecipes(data.recipes || []))
-      .catch(err => console.error(err));
-  }, []); */
-
   useEffect(() => {
     (async () => {
       try {
@@ -55,10 +49,10 @@ function SearchRecipes() {
   }, []);
 
   // Filter both categories *and* fetched recipes by the same searchTerm
-  const filteredCategories = categories.filter(c =>
+  const filteredCategories = categories.filter((c) =>
     c.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
-  const filteredRecipes = recipes.filter(r =>
+  const filteredRecipes = recipes.filter((r) =>
     r.recipe_name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -73,34 +67,30 @@ function SearchRecipes() {
 
   return (
     <div className="search-recipes-page">
-      <h1 className="main-title">Recipes</h1>
+      <div className="search-header">
+        <h1 className="main-title">Recipes</h1>
 
-      <div className="search-bar">
-        <input
-          type="text"
-          placeholder="Search categories or recipes…"
-          className="search-input"
-          value={searchTerm}
-          onChange={e => setSearchTerm(e.target.value)}
-        />
-      </div>
-
-      <div className="section">
-        <h2 className="section-title">Popular Recipes</h2>
-        <div className="popular-chips">
-          {["Indian", "Italian", "Desserts"].map(tag => (
-            <button key={tag} onClick={() => setSearchTerm(tag)}>{tag}</button>
-          ))}
+        <div className="search-bar">
+          <input
+            type="text"
+            placeholder="Search categories or recipes..."
+            className="search-input"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
         </div>
       </div>
-
 
       <div className="section">
         <h2 className="section-title">Top Categories</h2>
         <div className="categories-grid">
           {filteredCategories.length ? (
-            filteredCategories.map(cat => (
-              <Link to={`/searchRecipes/${cat.name}`} key={cat.name} className="category-card">
+            filteredCategories.map((cat) => (
+              <Link
+                to={`/searchRecipes/${cat.name}`}
+                key={cat.name}
+                className="category-card"
+              >
                 <img src={cat.img} alt={cat.name} />
                 <h3>{cat.name}</h3>
               </Link>
@@ -110,16 +100,9 @@ function SearchRecipes() {
           )}
         </div>
       </div>
-      
-      <button className="search-button" onClick={() => { /* optional extra logic */ }}>
-        Search
-      </button>
 
       <div className="recipes-list">
-        <RecipeCardList
-          recipes={filteredRecipes}
-          onRecipeClick={handleRecipeClick}
-        />
+        <RecipeCardList recipes={filteredRecipes} onRecipeClick={handleRecipeClick} />
       </div>
 
       {isModalOpen && selectedRecipe && (

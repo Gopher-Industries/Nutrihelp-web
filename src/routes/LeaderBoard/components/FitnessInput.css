@@ -25,16 +25,16 @@
 }
 
 /* Label and inputs */
-label:not(#no-bg) {
+.fitness-form-container label:not(#no-bg) {
   display: block;
   margin-bottom: 15px;
   font-weight: 300;
   color: white; /* Dark text for readability */
 }
 
-input:not(#no-bg),
-select,
-textarea {
+.fitness-form-container input:not(#no-bg),
+.fitness-form-container select,
+.fitness-form-container textarea {
   width: 100%;
   padding: 10px;
   margin-top: 5px;
@@ -46,7 +46,7 @@ textarea {
 }
 
 /* Textarea */
-textarea {
+.fitness-form-container textarea {
   resize: vertical;
   min-height: 80px;
 }
@@ -75,9 +75,9 @@ textarea {
 }
 
 /* Border around inputs when focused */
-input:focus,
-select:focus,
-textarea:focus {
+.fitness-form-container input:focus,
+.fitness-form-container select:focus,
+.fitness-form-container textarea:focus {
   border-color: #ba49e7; /* Purple border when focused */
   outline: none;
 }

@@ -1,37 +1,41 @@
 .recipe-timer-container {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  max-width: 800px;
+  max-width: 1000px;
   margin: 2rem auto;
   padding: 2rem;
-  background-color: #f8f9fa;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   text-align: center;
 }
 
 .recipe-timer-container h2 {
   color: #2d3436;
-  margin-bottom: 2rem;
-  font-weight: 600;
+  margin-bottom: 3rem !important;
+  font-weight: 600 !important;
+  font-size: 2.5rem !important;
 }
 
 .recipe-selection {
-  margin-bottom: 2rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 1px solid #e0e0e0;
+  margin-top: 2rem;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(123, 123, 123, 0.5);
 }
 
 .recipe-selection h3 {
-  color: #636e72;
+  color: #000000;
   margin-bottom: 1rem;
   font-weight: 500;
+  padding: 10px;
 }
 
 .recipe-grid {
   display: grid;
+  width: calc(100% - 20%);
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 1rem;
+  gap: 2rem;
+  margin: 0 auto;
   margin-bottom: 1.5rem;
+  justify-content: center;
+  align-items: center;
 }
 
 .recipe-card {
@@ -41,7 +45,7 @@
   cursor: pointer;
   transition: all 0.3s ease;
   border: 2px solid transparent;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+ box-shadow: 0 2px 8px rgba(123, 123, 123, 0.5);
 }
 
 .recipe-card:hover {
@@ -50,15 +54,18 @@
 }
 
 .recipe-card.selected {
-  border-color: #0984e3;
+  border-color: #005BBB;
   background-color: #f1f9ff;
+}
+
+.recipe-card.selected .recipe-time {
+  color: #0984e3;
 }
 
 .recipe-time {
   display: block;
   font-size: 0.85rem;
-  color: #0984e3;
-  margin-top: 0.5rem;
+  color: #040404;
 }
 
 .clear-selection {
@@ -80,7 +87,7 @@
   padding: 1.5rem;
   background-color: white;
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 8px rgba(123, 123, 123, 0.5);
 }
 
 .time-inputs, .time-display {
@@ -91,26 +98,41 @@
   margin-bottom: 1.5rem;
 }
 
-.time-input-group {
+.recipe-timer-container .time-input-group {
   display: flex;
   flex-direction: column;
   align-items: center;
   width: 80px;
 }
 
-.time-input-group input {
-  width: 100%;
-  padding: 0.75rem;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  text-align: center;
-  font-size: 1.2rem;
-  margin-bottom: 0.5rem;
+.recipe-timer-container .time-input-group .uiTimerInput {
+  font-size: 2.5rem;
+  font-weight: 600;
+  color: #2d3436;
+  padding: 0.5rem 1rem;
+  position: relative;
 }
 
-.time-input-group label {
+.recipe-timer-container .time-input-group .uiTimerInput:empty:before {
+  content: attr(data-placeholder);
+  color: #000000;
+}
+
+.recipe-timer-container .time-input-group .uiTimerInput:focus {
+  outline: 2px solid #0984e3;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.recipe-timer-container .time-input-group label {
   font-size: 0.85rem;
-  color: #636e72;
+  color: #000000 !important;
+}
+
+.separator {
+  font-size: 2rem;
+  color: #b2bec3;
+  margin: 0 0.5rem;
 }
 
 .time-unit {
@@ -133,6 +155,37 @@
   color: #b2bec3;
   margin: 0 0.5rem;
 }
+/* AdjustTime Parameters */
+.adjustTimeParameters{
+  display: grid;
+  width: 60%;
+  justify-content: center;
+  justify-items: center;
+  gap: 1rem;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  margin: 2rem auto;
+}
+
+.adjustTimebtns{
+  font-size: 18px;
+  color: #005BBB;
+  width: 100px;
+  height: 100px;
+  border: 4px solid #005BBB;
+  border-radius: 50%;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.adjustTimebtns:hover {
+  background-color: #005BBB;
+  color: #ffffff;
+  transform: scale(1.05);
+}
 
 .timer-controls {
   display: flex;
@@ -151,30 +204,59 @@
 }
 
 .control-button:not(.reset) {
-  background-color: #0984e3;
+  background-color: #00AD38;
   color: white;
 }
 
 .control-button:not(.reset):hover {
-  background-color: #066bbf;
+  background-color: #019630;
 }
 
 .control-button.reset {
-  background-color: #fdcb6e;
-  color: #2d3436;
+  background-color: #ffffff;
+  border: 4px solid #005BBB;
+  color: #005BBB;
 }
 
 .control-button.reset:hover {
-  background-color: #e6b655;
+  background-color: #005BBB;
+  color: #ffffff;
 }
 
 .animate {
   animation: pulse 0.5s ease;
 }
 
+/* steps styling */
+.mainContainer{
+  display: flex;
+  justify-content: start;
+  flex-direction: column;
+  margin-top: 2rem;
+  padding: 1rem;
+  background-color: #E8F1FF;
+  box-shadow: 0 2px 8px rgba(0, 47, 149, 0.5);
+  border-left: 6px solid #005BBB;
+  border-radius: 8px;
+}
+.guideHead{
+  display: block;
+  text-align: left;
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin-left: 2rem;
+}
+.stepContainer{
+  list-style: disc;
+  font-size: 1.3rem;
+  width: 70%;
+  text-align: left;
+  margin: 0 auto;
+}
+
 @keyframes pulse {
   0% { transform: scale(1); }
-  50% { transform: scale(1.1); color: #0984e3; }
+  50% { transform: scale(1.1); color: #005BBB; }
   100% { transform: scale(1); }
 }
 

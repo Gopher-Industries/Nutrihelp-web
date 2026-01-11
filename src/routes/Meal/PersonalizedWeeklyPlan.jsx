@@ -112,7 +112,7 @@ export default function PersonalizedWeeklyPlan({ filters, showExport = true }) {
           <button
             onClick={() => exportMealPlanAsPDF('personalized-meal-plan')}
             style={{
-              backgroundColor: '#2e7d32', color: 'white', border: 'none',
+              backgroundColor: '#005BBB', color: 'white', border: 'none',
               padding: '10px 20px', margin: '10px 0', cursor: 'pointer',
               borderRadius: '5px', fontWeight: 'bold'
             }}

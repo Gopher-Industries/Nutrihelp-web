@@ -1,12 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { useLocation, Link } from 'react-router-dom';
-import { Grid, GridColumn, GridRow } from 'semantic-ui-react';
-import DashboardGraph from '../../components/Dashboard-Graph';
-import Card from './MenuCard';
-import './MenuCard.css';
-import imageMapping from './importImages.js';
-import WaterTracker from '../../components/WaterTracker';
-
+import React, { useState, useEffect } from "react";
+import { useLocation, Link } from "react-router-dom";
+import DashboardGraph from "../../components/Dashboard-Graph";
+import Card from "./MenuCard";
+import "./MenuCard.css";
+import "./Menustyles.css";
+import imageMapping from "./importImages.js";
+import WaterTracker from "../../components/WaterTracker";
 
 const Dashboard = () => {
   const location = useLocation();
@@ -19,53 +18,33 @@ const Dashboard = () => {
     sodium: 0,
   };
 
-
-  const [activeTab, setActiveTab] = useState('breakfast');
+  const [activeTab, setActiveTab] = useState("breakfast");
   const [groupedItems, setGroupedItems] = useState({
     breakfast: [],
     lunch: [],
-    dinner: []
+    dinner: [],
   });
 
   useEffect(() => {
-    const newGroupedItems = {
-      breakfast: selectedItems.filter(item => item.mealType === 'breakfast'),
-      lunch: selectedItems.filter(item => item.mealType === 'lunch'),
-      dinner: selectedItems.filter(item => item.mealType === 'dinner'),
-    };
-    setGroupedItems(newGroupedItems);
+    setGroupedItems({
+      breakfast: selectedItems.filter((i) => i.mealType === "breakfast"),
+      lunch: selectedItems.filter((i) => i.mealType === "lunch"),
+      dinner: selectedItems.filter((i) => i.mealType === "dinner"),
+    });
   }, [selectedItems]);
-
 
   const renderMealItems = (mealType) => {
     const items = groupedItems[mealType];
-
-    if (!items || items.length === 0) {
-      return <div>No items available</div>;
-    }
+    if (!items || items.length === 0) return <div className="no-items">No items available</div>;
 
     return (
       <div className="cards-container">
-        {items.map((item, index) => (
-          <Card key={index} item={item} imageMapping={imageMapping}/>
+        {items.map((item, idx) => (
+          <Card key={idx} item={item} imageMapping={imageMapping} />
         ))}
       </div>
     );
   };
-
-
-
-  const menuGraphComponent = () => (
-    <div className="nutrition-summary">
-      <DashboardGraph
-        totalNutritionCalorie={totalNutrition.calories}
-        totalNutritionProtiens={totalNutrition.proteins}
-        totalNutritionFats={totalNutrition.fats}
-        totalNutritionVitamins={totalNutrition.vitamins}
-        totalNutritionSodium={totalNutrition.sodium}
-      />
-    </div>
-  );
 
   return (
     <main>
@@ -73,50 +52,77 @@ const Dashboard = () => {
         <div className="Title">
           <h2>MENU</h2>
         </div>
+
         <Link to="/appointment" className="button-link">
           <button className="appointment-btn">Book an Appointment</button>
         </Link>
 
-        <div className="daySelctionText">
-          <h3>Today</h3>
+        <div style={{ height: 16 }} />
+
+        {/* Row 1: Today aligned to the middle (Lunch) column, width matches the meal pane only */}
+        <div className="today-row">
+          <div className="today-align-grid">
+            <div />
+            <div className="today-text">Today</div>
+            <div />
+          </div>
+          <div className="today-row-spacer" />
         </div>
 
+        {/* Row 2: Meals (tabs+cards) + Water (same height as tabs+cards, NOT including Today) */}
+        <div className="meal-water-row">
+          <div className="meal-pane">
+            <nav className="meal-nav-tabs" role="tablist" aria-label="Meal tabs">
+              <button
+                type="button"
+                className={`nav-tab-btn ${activeTab === "breakfast" ? "active" : ""}`}
+                onClick={() => setActiveTab("breakfast")}
+                aria-selected={activeTab === "breakfast"}
+              >
+                Breakfast
+              </button>
 
-        {/* Tabs Navigation */}
-        <nav>
-          <a
-            className={`breakfast-btn ${activeTab === 'breakfast' ? 'active' : ''}`}
-            onClick={() => setActiveTab('breakfast')}
-          >
-            Breakfast
-          </a>
-          <a
-            className={`lunch-btn ${activeTab === 'lunch' ? 'active' : ''}`}
-            onClick={() => setActiveTab('lunch')}
-          >
-            Lunch
-          </a>
-          <a
-            className={`dinner-btn ${activeTab === 'dinner' ? 'active' : ''}`}
-            onClick={() => setActiveTab('dinner')}
-          >
-            Dinner
-          </a>
-          <div className="tab-underline"></div>
-        </nav>
+              <button
+                type="button"
+                className={`nav-tab-btn ${activeTab === "lunch" ? "active" : ""}`}
+                onClick={() => setActiveTab("lunch")}
+                aria-selected={activeTab === "lunch"}
+              >
+                Lunch
+              </button>
 
+              <button
+                type="button"
+                className={`nav-tab-btn ${activeTab === "dinner" ? "active" : ""}`}
+                onClick={() => setActiveTab("dinner")}
+                aria-selected={activeTab === "dinner"}
+              >
+                Dinner
+              </button>
+            </nav>
 
-        <div className="dashboard-grid">
-          <div className="menu-grid-box">
-            {renderMealItems(activeTab)}
+            <div className="meal-scroll-wrapper">{renderMealItems(activeTab)}</div>
+          </div>
+
+          {/* Water card: no extra wrapper card, and stretched to match meal-pane height */}
+          <div className="water-panel">
+            <div className="water-fill">
+              <WaterTracker />
+            </div>
           </div>
         </div>
 
-        <div className="dashboard-graph">
-          {menuGraphComponent()}
-        </div>
-        <div className="dashboard-water-tracker">
-          <WaterTracker />
+        {/* Graph area: keep content, but NO shadow card outer frame */}
+        <div className="dashboard-graph-section">
+          <div className="nutrition-summary">
+            <DashboardGraph
+              totalNutritionCalorie={totalNutrition.calories}
+              totalNutritionProtiens={totalNutrition.proteins}
+              totalNutritionFats={totalNutrition.fats}
+              totalNutritionVitamins={totalNutrition.vitamins}
+              totalNutritionSodium={totalNutrition.sodium}
+            />
+          </div>
         </div>
       </div>
     </main>
