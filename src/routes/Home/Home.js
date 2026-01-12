@@ -118,6 +118,10 @@ const Home = () => {
     if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
+  const onAssistant = () => {
+    navigate(currentUser ? "/chat" : "/login");
+  };
+
   return (
     <FramerClient>
       <main className={`home ${darkMode ? "home-dark" : ""}`}>
@@ -445,7 +449,7 @@ const Home = () => {
           className="assistant-btn"
           aria-label="Open assistant"
           type="button"
-          onClick={() => alert("Assistant coming soon 👋")}
+          onClick={onAssistant}
         >
           <Bot size={26} aria-hidden="true" />
           <span>Assistant</span>
