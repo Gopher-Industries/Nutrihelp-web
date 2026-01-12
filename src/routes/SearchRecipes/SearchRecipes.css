@@ -2,7 +2,7 @@
 .search-recipes-page {
   min-height: 100vh;
   font-family: Arial, sans-serif;
-  background-color: #ffff;
+  background-color: var(--background-color);
   padding: 40px 20px;
   text-align: center;
 }
@@ -25,17 +25,17 @@
   padding: 13px 56px;                 
   margin: 0 auto 40px auto;   
 
-  background: linear-gradient(135deg, #667eea 0%, #005BBB 50%, #005BBB 100%);
+  background: var(--gradient-accent);
   border-radius: 25px;               
 
   font-size: 2.2rem;
   font-weight: 700;
   letter-spacing: 0.4px;
 
-  color: #ffffff;
+  color: var(--text-inverse);
   text-align: center;
 
-  box-shadow: 0 8px 18px rgba(0, 91, 187, 0.25);
+  box-shadow: var(--box-shadow-medium);
 }
 
 .main-title::after {
@@ -63,18 +63,20 @@
   padding: 12px 45px 12px 15px; /* make right padding enough for icon */
   border: none;
   border-radius: 30px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  box-shadow: var(--card-shadow);
   font-size: 1rem;
   outline: none;
   display: block;
   box-sizing: border-box;
+  background-color: var(--card-background);
+  color: var(--input-text);
 }
 
 /* Section Titles */
 .section-title {
   font-size: 1.5rem;
   margin: 40px 0 20px;
-  color: #333;
+  color: var(--text-heading);
 }
 
 /* Popular Recipe “Chips” */
@@ -85,7 +87,7 @@
 }
 .popular-chips button {
   background-color: var(--search-recipe-button-background-color);
-  color: #fff;
+  color: var(--text-inverse);
   border: none;
   border-radius: 20px;
   padding: 8px 16px;
@@ -94,7 +96,7 @@
   transition: background-color 0.3s, transform 0.2s;
 }
 .popular-chips button:hover {
-  background-color: #005BBB;
+  background-color: var(--button-background);
   transform: scale(1.05);
 }
 
@@ -107,16 +109,17 @@
   max-width: 1000px;
 }
 .category-card {
-  background: #fff;
+  background: var(--card-background);
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  box-shadow: var(--card-shadow);
   transition: transform 0.3s, box-shadow 0.3s;
   cursor: pointer;
+  border: 1px solid var(--border-color);
 }
 .category-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  box-shadow: var(--card-shadow-hover);
 }
 .category-card img {
   width: 100%;
@@ -126,12 +129,12 @@
 .category-card h3 {
   margin: 12px 0;
   font-size: 1rem;
-  color: #333;
+  color: var(--text-heading);
 }
 
 /* No-results text */
 .no-results {
-  color: #777;
+  color: var(--text-muted);
   font-style: italic;
 }
 
@@ -140,7 +143,7 @@
   margin-top: 30px;
   padding: 12px 48px;
   background-color: var(--search-recipe-button-background-color);
-  color: #fff;
+  color: var(--text-inverse);
   font-size: 1.1rem;
   border: none;
   border-radius: 50px;
@@ -148,7 +151,7 @@
   transition: background-color 0.3s;
 }
 .search-button:hover {
-  background-color: #b52478;
+  background-color: var(--button-hover);
 }
 
 /* Recipe List (unchanged) */

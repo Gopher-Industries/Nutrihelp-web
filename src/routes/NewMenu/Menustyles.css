@@ -1,7 +1,7 @@
 * { box-sizing: border-box; }
 
 body {
-  background-color: #f8e7ff;
+  background-color: var(--background-color);
   margin-top: 90px;
   padding: 0;
   font-family: sans-serif;
@@ -22,6 +22,7 @@ body {
   font-weight: 800;
   font-size: 22px;
   margin-top: 10px;
+  color: var(--text-primary);
 }
 
 /* ==== Appointment Button Link ==== */
@@ -56,7 +57,7 @@ body {
   text-align: center;    
   font-size: 18px;
   font-weight: 700;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .today-row-spacer {}
@@ -85,10 +86,10 @@ body {
   gap: 12px;  
   padding: 8px;
   border-radius: 16px;
-  background: white;  
-  border: 2px solid #F0F0F0;
+  background: var(--card-background);  
+  border: 2px solid var(--border-color);
   margin: 0 0 14px 0;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--card-shadow);
 }
 
 /* Inactive tab button */
@@ -101,24 +102,24 @@ body {
   border-radius: 12px;
   cursor: pointer;
   transition: all 0.2s ease;
-  color: #666;
+  color: var(--text-secondary);
   text-align: center;
   font-weight: 600;
 }
 
 /* Hover effect */
 .nav-tab-btn:hover {
-  background: #F8F9FA;
-  color: #005BBB;
-  border-color: #E8F1FF;
+  background: var(--background-hover);
+  color: var(--primary-color);
+  border-color: var(--border-color);
 }
 
 /* Active tab button */
 .nav-tab-btn.active {
-  background: #005BBB;
-  color: #fff;
+  background: var(--primary-color);
+  color: var(--text-inverse);
   font-weight: 700;
-  border-color: #005BBB;
+  border-color: var(--primary-color);
   box-shadow: 0 4px 8px rgba(0, 91, 187, 0.2);
 }
 
@@ -131,7 +132,7 @@ body {
 
 .meal-scroll-wrapper::-webkit-scrollbar { height: 6px; }
 .meal-scroll-wrapper::-webkit-scrollbar-thumb {
-  background: #ccc;
+  background: var(--border-color);
   border-radius: 10px;
 }
 
@@ -149,7 +150,7 @@ body {
   align-items: center;
   justify-content: center;
   min-height: 200px;
-  color: #999;
+  color: var(--text-muted);
   font-size: 16px;
   font-style: italic;
   text-align: center;
@@ -195,8 +196,8 @@ body {
   position: absolute;
   right: 20px;
   top: 20px;
-  background-color: #005BBB;
-  color: white;
+  background-color: var(--primary-color);
+  color: var(--text-inverse);
   border: none;
   border-radius: 50px;
   padding: 15px 30px;
@@ -205,7 +206,7 @@ body {
 }
 
 .appointment-btn:hover {
-  background-color: #004494;
+  background-color: var(--primary-dark);
 }
 
 /* Responsive */

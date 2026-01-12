@@ -8,10 +8,10 @@
   .preferences-container {
       width: 80%;
       margin: 0 auto;
-      background-color:  #f7ebfb;
+      background-color: var(--background-secondary);
       padding: 20px;
       border-radius: 10px;
-      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.05);
+      box-shadow: var(--card-shadow);
       margin: 5%;
     }
     
@@ -41,9 +41,9 @@
       flex-direction: column;
       align-items: flex-start;
       padding: 0px;
-      background-color: #fff;
+      background-color: var(--card-background);
       border-radius: 10px;
-      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.05);
+      box-shadow: var(--card-shadow);
     }
     
     .form-group {
@@ -54,6 +54,7 @@
     
     .form-group h3 {
       margin-bottom: 10px;
+      color: var(--text-primary);
     }
     
     .selpre {
@@ -61,12 +62,13 @@
       align-items: center;
       justify-content: space-between;
       width: 100%;
-      background-color: #e0e0e0;
+      background-color: var(--input-background);
       border: none;
       border-radius: 5px;
       padding: 10px 15px;
       margin-bottom: 5px;
       cursor: pointer;
+      color: var(--text-primary);
     }
     
     .close-icon {
@@ -82,8 +84,8 @@
     }
     
     .btn-pre {
-      background-color: #4caf50;
-      color: #fff;
+      background-color: var(--success-color);
+      color: var(--text-inverse);
       border: none;
       border-radius: 5px;
       padding: 10px 20px;
@@ -91,7 +93,7 @@
     }
     
     .btn-pre:hover {
-      background-color: #45a049;
+      background-color: var(--success-dark);
     }
     
     .buttonre {
@@ -101,8 +103,8 @@
     }
     
     .btn-redo {
-      background-color: #f44336;
-      color: #fff;
+      background-color: var(--error-color);
+      color: var(--text-inverse);
       border: none;
       border-radius: 5px;
       padding: 10px 20px;
@@ -110,13 +112,13 @@
     }
     
     .btn-redo:hover {
-      background-color: #da190b;
+      background-color: var(--error-dark);
     }
     
     .select h4 {
       text-align: center;
       margin-bottom : 10px;
-      
+      color: var(--text-primary);
     }
     
     .mainpre +.pref-img {
@@ -133,46 +135,48 @@
       width: 100%;
       display: block;
       border: none;
-      border-bottom: 1px solid #999;
+      border-bottom: 1px solid var(--text-muted);
       padding: 6px 30px;
       font-family: 'Lato', sans-serif;
       box-sizing: border-box;
+      background-color: var(--input-background);
+      color: var(--text-primary);
     }
     
     .search-bar::-webkit-input-placeholder {
-      color: #999;
+      color: var(--text-muted);
     }
     
     .search-bar::-moz-placeholder {
-      color: #999;
+      color: var(--text-muted);
     }
     
     .search-bar:-ms-input-placeholder {
-      color: #999;
+      color: var(--text-muted);
     }
     
     .search-bar:-moz-placeholder {
-      color: #999;
+      color: var(--text-muted);
     }
     
     .search-bar:focus {
-      border-bottom: 1px solid #222;
+      border-bottom: 1px solid var(--text-primary);
     }
     
     .search-bar:focus::-webkit-input-placeholder {
-      color: #222;
+      color: var(--text-primary);
     }
     
     .search-bar:focus::-moz-placeholder {
-      color: #222;
+      color: var(--text-primary);
     }
     
     .search-bar:focus:-ms-input-placeholder {
-      color: #222;
+      color: var(--text-primary);
     }
     
     .search-bar:focus:-moz-placeholder {
-      color: #222;
+      color: var(--text-primary);
     }
   
   .buttonpre.btn-pre,
@@ -188,9 +192,10 @@
     padding: 5px 10px 5px 5px; /* add padding-right to the right */
     margin: 5px;
     border-radius: 5px;
-    background-color: #F8E7FF;
+    background-color: var(--background-secondary);
     position: relative;
     cursor: pointer;
+    color: var(--text-primary);
   }
   
   .selected-option::before {

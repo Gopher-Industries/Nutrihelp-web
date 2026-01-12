@@ -5,15 +5,13 @@
   width: 100%;
   z-index: 1000;
   padding: 12px 16px;
-  /* background-color: var(--nav-background); */
-  background-color: #fafafa;
+  background-color: var(--nav-background);
   transition: background-color 0.25s ease-in-out;
   box-shadow: var(--card-shadow);
 }
 
 .main-header.scrolled {
-  /* background: var(--gradient-nav); */
-  background: #fafafa;
+  background: var(--nav-background);
   backdrop-filter: blur(8px);
   box-shadow: var(--card-shadow-hover);
 }
@@ -94,7 +92,7 @@
   padding: 0 44px 0 16px;
   border-radius: 999px;
   border: 1px solid var(--border-color);
-  background: #f5f2f7;
+  background: var(--input-background);
   color: var(--text-primary);
   font-size: 16px;
   outline: none;
@@ -123,7 +121,7 @@
   position: absolute;
   top: 100%;
   right: 0;
-  background: #fafafa;
+  background: var(--card-background);
   border: 1px solid var(--border-color);
   box-shadow: var(--dropdown-shadow);
   border-radius: 18px;
@@ -163,7 +161,7 @@
   left: 0;
   min-width: 1100px;
   padding: 18px 18px 12px 18px;
-  background: #fafafa;
+  background: var(--card-background);
 }
 
 .mega-menu-content {
@@ -181,7 +179,7 @@
 .mega-title {
   font-size: 18px;
   font-weight: 500;
-  color: #005BBB;
+  color: var(--primary-color);
   padding-bottom: 6px;
   border-bottom: 1px solid var(--border-color);
 }
@@ -210,7 +208,7 @@
   font-size: 18px;
   font-weight: 700;
   text-decoration: none;
-  color: #005BBB;
+  color: var(--primary-color);
 }
 
 /* Focus */
@@ -221,8 +219,9 @@
 }
 
 /* Dark mode dropdown */
-.dark-mode .dropdown-panel {
-  background: #2d3748;
+.dark-mode .dropdown-panel,
+.dark-mode .mega-menu {
+  background: var(--card-background);
   border-color: var(--border-color);
 }
 
@@ -233,4 +232,14 @@
 .dark-mode .nav-link,
 .dark-mode .nav-button {
   color: var(--text-primary);
+}
+
+.dark-mode .main-header {
+  background-color: var(--nav-background);
+}
+
+.dark-mode .search-input {
+  background: var(--input-background);
+  color: var(--text-primary);
+  border-color: var(--border-color);
 }

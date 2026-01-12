@@ -5,7 +5,7 @@
     margin: -18px auto;
     padding: 30px;
     /* background: rgb(17 24 39 / var(--tw-text-opacity)); */
-    background: linear-gradient(44deg, #7B44FF 0%, #F26CBA 100%) !important ;
+    background: var(--gradient-primary, linear-gradient(44deg, #7B44FF 0%, #F26CBA 100%)) !important ;
     /* background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%); */
     font-family: "Segoe UI", sans-serif;
     align-items: center;
@@ -17,9 +17,9 @@
 
 .heading_survey{
   display: inline-block;
-  background: rgba(255,255,255,0.2) !important;
+  background: var(--glass-background, rgba(255,255,255,0.2)) !important;
   
-  color: black;
+  color: var(--text-primary);
   padding: 0.5rem 1rem;
   border-radius: 1rem;
   font-weight: bolder;
@@ -34,7 +34,7 @@
 .progress-bar-container {
   position: relative;
   height: 24px;
-  background-color: #f1f1f1;
+  background-color: var(--background-secondary);
   border-radius: 12px;
   overflow: hidden;
   margin-bottom: 20px;
@@ -42,7 +42,7 @@
 
 .progress-bar {
   height: 100%;
-  background: linear-gradient(90deg, #4CAF50, #45a049);
+  background: var(--gradient-success, linear-gradient(90deg, #4CAF50, #45a049));
   border-radius: 12px;
   transition: width 0.3s ease-in-out;
 }
@@ -55,7 +55,7 @@
   line-height: 24px;
   font-size: 0.85rem;
   font-weight: bold;
-  color: #fff;
+  color: var(--button-text);
 }
 
 
@@ -70,7 +70,7 @@
 }
 
 .obesity-form::-webkit-scrollbar-track {
-  background-color: #f1f1f1;
+  background-color: var(--background-secondary);
 }
 
 .questions-grid {
@@ -82,8 +82,8 @@
 }
 
 .question-card {
-    background: rgba(255, 255, 255, 0.108) !important;
-    color: black;
+    background: var(--glass-background, rgba(255, 255, 255, 0.108)) !important;
+    color: var(--text-primary);
     padding: 0.5rem 1rem;
     border-radius: 1rem;
     font-weight: bolder;
@@ -96,20 +96,21 @@
 
 .question-card:hover {
   transform: scale(1.02);
-  box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+  box-shadow: var(--card-shadow);
   transition: all 0.2s ease-in-out;
 }
 
 .question-card label{
-    color: black;
+    color: var(--text-primary);
     font-weight: bolder;
     font-size: x-large;
 }
 
 .question-card input{
-    color: black;
+    color: var(--text-primary);
     font-weight: bolder;
     font-size: x-large;
+    background-color: var(--input-background);
 }
 
 .question-group{
@@ -118,10 +119,11 @@
 
 .group-heading {
   display: inline-block;
-  background: rgba(255,255,255,0.2);
+  background: var(--glass-background, rgba(255,255,255,0.2));
   padding: 0.5rem 1rem;
   border-radius: 1rem;
   font-weight: bold;
+  color: var(--text-primary);
 }
 
 
@@ -132,12 +134,13 @@
 }
 
 .predict-btn{
-    background: #4caf50;
+    background: var(--success-color);
     border-radius: 8px;
     font-size: medium;
+    color: var(--button-text);
 }
 
 .predict-btn:hover{
-    background: #4caf50;
-    box-shadow: #333;
+    background: var(--success-color);
+    box-shadow: var(--card-shadow);
 }

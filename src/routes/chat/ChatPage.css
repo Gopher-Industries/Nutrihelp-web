@@ -1,5 +1,5 @@
 .chat-page {
-    background: linear-gradient(135deg, #ece4f7, #f8f3fc);
+    background: var(--chat-bg);
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -10,16 +10,16 @@
   }
   
   .chat-header {
-    background: #6c49b8;
+    background: var(--chat-header-bg);
     width: 80%;
     padding: 15px;
     border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--card-shadow);
     margin-bottom: 20px;
   }
   
   .chat-header h2 {
-    color: #fff;
+    color: var(--text-inverse);
     text-align: center;
     font-size: 2rem;
     margin: 0;
@@ -27,9 +27,9 @@
   }
   
   .conversation-container {
-    background: #fff;
+    background: var(--card-background);
     border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--card-shadow);
     width: 80%;
     height: 60vh;
     overflow-y: auto;
@@ -48,14 +48,14 @@
   
   .message.user {
     align-self: flex-end;
-    background-color: #e1d9f5;
-    color: #5b3d9a;
+    background-color: var(--chat-user-bg);
+    color: var(--chat-user-text);
   }
   
   .message.bot {
     align-self: flex-start;
-    background-color: #f4ebff;
-    color: #6c49b8;
+    background-color: var(--chat-bot-bg);
+    color: var(--chat-bot-text);
   }
   
   .input-container {
@@ -66,17 +66,19 @@
   }
   
   .input-container .ant-input {
-    border: 2px solid #d0c1e9;
+    border: 2px solid var(--border-color);
     border-radius: 8px;
     padding: 10px;
     font-size: 16px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    box-shadow: var(--card-shadow);
     flex: 1;
+    background-color: var(--input-background);
+    color: var(--input-text);
   }
   
   .input-container .ant-btn {
-    background: #6c49b8;
-    color: #fff;
+    background: var(--button-background);
+    color: var(--button-text);
     border-radius: 8px;
     font-size: 16px;
     padding: 10px 20px;
@@ -84,10 +86,10 @@
   }
   
   .input-container .ant-btn:hover {
-    background: #5b3d9a;
+    background: var(--button-hover);
   }
   
   .input-container .ant-btn:focus {
-    box-shadow: 0 4px 10px rgba(140, 94, 216, 0.5);
+    box-shadow: 0 4px 10px rgba(51, 153, 255, 0.5);
   }
   
