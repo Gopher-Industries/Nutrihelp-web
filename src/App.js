@@ -58,6 +58,7 @@ import Settings from "./routes/Settings/Settings";
 import HealthFAQ from "./routes/HealthFAQ/HealthFAQ";
 import FitnessRoadmap from "./routes/survey/FitnessRoadmap";
 import Community from "./routes/Community/Community";
+import ChatPage from "./routes/chat/ChatPage";
 import PostDetail from "./routes/Community/PostDetail";
 import ScanBarcode from "./routes/ScanBarcode/ScanBarcode";
 import AuthCallback from "./pages/AuthCallback";
@@ -130,6 +131,7 @@ function App() {
         <Route path="/faq" element={<FAQ />} />
         <Route path="/leaderboard" element={<Leaderboard />} />
         <Route path="/community" element={<Community />} />
+        <Route path="/chat" element={<ChatPage />} />
         <Route path="/community/post/:postId" element={<PostDetail />} />
 
         <Route path="/survey" element={<ObesityPredictor />} />
