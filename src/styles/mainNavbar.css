@@ -73,6 +73,7 @@
 .nav-button:hover {
   background: var(--background-secondary);
   border-color: var(--border-color);
+  color: var(--text-primary);
 }
 
 .nav-icon {
@@ -153,6 +154,7 @@
 .dropdown-item:hover {
   background: var(--background-secondary);
   border-color: var(--border-color);
+  color: var(--text-primary);
 }
 
 /* Mega menu */

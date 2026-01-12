@@ -102,7 +102,7 @@ textarea:focus {
 /* == Hero == */
 .home-hero {
   padding: 78px 0;
-  background: linear-gradient(135deg, var(--primary-light), var(--background-color));
+  background: linear-gradient(135deg, var(--accent-color), var(--background-color));
 }
 
 .home-hero-inner {
