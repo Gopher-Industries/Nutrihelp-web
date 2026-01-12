@@ -36,6 +36,7 @@
 /* Sidebar */
 .dpe-sidebar {
   width: 340px;
+  min-width: 300px;
   flex-shrink: 0;
 }
 
@@ -51,7 +52,8 @@
 .dpe-card-title {
   text-align: center;
   color: var(--dpe-text-light);
-  font-size: 14px;
+  font-size: clamp(0.75rem, 2.5vw, 0.875rem);
+  line-height: 1.3;
   margin-bottom: 15px;
   font-weight: 500;
 }
@@ -60,20 +62,22 @@
 .dpe-date-nav {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   margin-bottom: 20px;
 }
 
 .dpe-nav-btn {
   background: var(--dpe-primary-light);
   border: 1px solid var(--dpe-primary);
-  padding: 8px 12px;
+  padding: 6px 8px;
   border-radius: 12px;
   cursor: pointer;
-  font-size: 13px;
+  font-size: 0.6875rem;
   color: #475569;
   font-weight: 700;
   transition: background 0.15s ease, color 0.15s ease, transform 0.06s ease;
+  white-space: nowrap;
+  flex: 0 0 55px;
 }
 .dpe-nav-btn:hover {
   background: var(--dpe-primary);
@@ -88,12 +92,13 @@
   text-align: center !important;
   border: 1px solid var(--dpe-border) !important;
   background: #ffffff !important; 
-  padding: 10px !important;
+  padding: 6px 8px !important;
   border-radius: 15px !important;
+  font-size: 0.75rem !important;
   font-weight: 700 !important;
   color: var(--dpe-text) !important;
   outline: none !important;
-  width: auto ;  
+  min-width: 0 !important;
 }
 .dpe-date-input:focus {
   border-color: var(--dpe-primary) !important;
@@ -114,6 +119,7 @@
   border: none;
   padding: 14px;
   border-radius: 16px;
+  font-size: 1rem;
   font-weight: 800;
   cursor: pointer;
   transition: opacity 0.2s, transform 0.06s;
@@ -131,7 +137,7 @@
   color: var(--dpe-text-medium);
   padding: 10px;
   border-radius: 14px;
-  font-size: 14px;
+  font-size: 0.875rem;
   cursor: pointer;
   font-weight: 600;
   transition: background 0.15s ease;
@@ -147,7 +153,7 @@
   color: var(--dpe-text-medium);
   padding: 10px;
   border-radius: 14px;
-  font-size: 14px;
+  font-size: 0.875rem;
   cursor: pointer;
   font-weight: 600;
   transition: background 0.15s ease;
@@ -158,10 +164,12 @@
 
 /* Nutrition summary */
 .dpe-summary-title {
-  font-size: 20px;
+  font-size: clamp(1rem, 4vw, 1.25rem);
+  line-height: 1.3;
   margin-bottom: 25px;
   color: var(--dpe-text);
   font-weight: 800;
+  text-align: center;
 }
 
 .dpe-summary-item {
@@ -169,7 +177,7 @@
   justify-content: space-between;
   margin-bottom: 20px;
   color: var(--dpe-text-medium);
-  font-size: 15px;
+  font-size: 0.9375rem;
   border-bottom: 1px solid var(--dpe-border-light);
   padding-bottom: 12px;
 }
@@ -196,7 +204,8 @@
 }
 
 .dpe-meal-header h2 {
-  font-size: 26px;
+  font-size: clamp(1.25rem, 4vw, 1.625rem) !important;
+  line-height: 1.3;
   color: var(--dpe-text);
   font-weight: 900;
   margin: 0;
@@ -208,9 +217,13 @@
   border: none;
   padding: 10px 25px;
   border-radius: 14px;
+  font-size: 0.875rem;
   font-weight: 800;
   cursor: pointer;
   height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .dpe-add-btn:hover {
   opacity: 0.92;
@@ -254,7 +267,7 @@
   padding: 12px;
   border-radius: 16px;
   text-align: center;
-  font-size: 14px;
+  font-size: 0.875rem;
   outline: none;
   transition: border-color 0.2s;
   height: 40px;
@@ -266,7 +279,7 @@
 }
 
 .dpe-input-field label {
-  font-size: 11px;
+  font-size: 0.6875rem;
   color: var(--dpe-text-light);
   margin-top: 10px;
   font-weight: 700;
@@ -281,6 +294,10 @@
   border-radius: 12px;
   padding: 0 14px;
   height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.875rem;
   cursor: pointer;
   font-weight: 800;
   width: 100%;
@@ -303,10 +320,225 @@
   .dpe-container {
     flex-direction: column;
   }
+  
   .dpe-sidebar {
     width: 100%;
   }
+
+  .dpe-main-content {
+    width: 100%;
+  }
+
+  .dpe-sidebar-card,
+  .dpe-meal-card {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 20px !important;
+  }
+
   .dpe-input-field.action {
     flex: 0 0 140px;
+  }
+}
+
+/* Enhanced Responsive Design for Tablets */
+@media (max-width: 768px) {
+  .dpe {
+    padding: 20px 15px;
+  }
+  
+  .dpe-sidebar-card,
+  .dpe-meal-card {
+    padding: 18px !important;
+    border-radius: 20px;
+  }
+  
+  .dpe-date-nav {
+    padding: 15px;
+  }
+  
+  .dpe-date-nav {
+    gap: 5px;
+  }
+
+  .dpe-date-input {
+    font-size: 0.6875rem !important;
+    padding: 5px 7px !important;
+  }
+  
+  .dpe-nav-btn {
+    padding: 5px 7px;
+    font-size: 0.625rem;
+    flex: 0 0 50px;
+  }
+  
+  .dpe-item-row {
+    padding: 15px;
+    gap: 10px;
+  }
+  
+  .dpe-input-field input {
+    font-size: 0.8125rem;
+    padding: 10px;
+  }
+  
+  .dpe-input-field label {
+    font-size: 0.625rem;
+  }
+  
+  .dpe-input-field.action {
+    flex: 0 0 100px;
+  }
+  
+  .dpe-remove-text {
+    font-size: 0.8125rem;
+    padding: 0 10px;
+  }
+}
+
+/* Enhanced Responsive Design for Mobile */
+@media (max-width: 480px) {
+  .dpe {
+    padding: 15px 10px;
+  }
+  
+  .dpe-sidebar-card,
+  .dpe-meal-card {
+    padding: 15px !important;
+    border-radius: 16px;
+  }
+  
+  .dpe-header {
+    font-size: 1.125rem;
+  }
+
+  .dpe-date-nav {
+    gap: 4px; 
+    padding: 0;  
+    margin-bottom: 16px;
+  }
+  
+  .dpe-nav-btn {
+    padding: 4px 6px;  
+    font-size: 0.625rem;  
+    border-radius: 10px;
+    flex: 0 0 45px;
+  }
+  
+  .dpe-date-input {
+    font-size: 0.625rem !important;
+    padding: 4px 6px !important;
+    border-radius: 10px !important;
+  }
+  
+  .dpe-nav-btn {
+    flex: 0 0 50px;
+    font-size: 0.625rem;
+    padding: 5px 6px;
+  }
+  
+  .dpe-meal-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  
+  .dpe-add-btn {
+    width: 100%;
+  }
+  
+  .dpe-item-row {
+    padding: 12px;
+    gap: 10px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  
+  .dpe-input-field.name {
+    grid-column: 1 / -1;
+  }
+  
+  .dpe-input-field.num {
+    grid-column: span 1;
+  }
+  
+  .dpe-input-field.action {
+    grid-column: 1 / -1;
+    flex: none;
+  }
+  
+  .dpe-input-field input,
+  .dpe-input-field.name input {
+    font-size: 0.8125rem;
+    padding: 10px;
+    height: 42px;
+  }
+  
+  .dpe-input-field label {
+    font-size: 0.625rem;
+    margin-top: 6px;
+  }
+  
+  .dpe-remove-text {
+    padding: 0 12px;
+    height: 42px;
+    font-size: 0.875rem;
+  }
+  
+  .dpe-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .dpe-actions button {
+    width: 100%;
+  }
+  
+  .dpe-summary-item {
+    font-size: 0.875rem;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+  }
+  
+  .dpe-summary-title {
+    margin-bottom: 20px;
+  }
+}
+
+@media (max-width: 360px) {
+  .dpe {
+    padding: 12px 8px;
+  }
+  
+  .dpe-sidebar-card,
+  .dpe-meal-card {
+    padding: 12px !important;
+  }
+  
+  .dpe-item-row {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    padding: 10px;
+  }
+  
+  .dpe-input-field.name,
+  .dpe-input-field.num,
+  .dpe-input-field.action {
+    grid-column: 1 / -1;
+  }
+  
+  .dpe-input-field input {
+    font-size: 0.75rem;
+    padding: 9px;
+    height: 38px;
+  }
+  
+  .dpe-input-field label {
+    font-size: 0.5625rem;
+  }
+  
+  .dpe-remove-text {
+    height: 38px;
+    font-size: 0.8125rem;
   }
 }

@@ -33,7 +33,7 @@ function DashboardGraph(props) {
       <h3 style={{
         textAlign: "center",
         color: "#005BBB",
-        fontSize: "24px",
+        fontSize: "clamp(1.25rem, 3vw, 1.5rem)",
         fontWeight: "800",
         marginBottom: "20px",
         marginTop: "0"
@@ -41,7 +41,7 @@ function DashboardGraph(props) {
         Daily Nutrition Summary
       </h3>
 
-      <div style={{ width: "100%", height: 360 }}>
+      <div style={{ width: "100%", height: "clamp(250px, 50vw, 360px)" }}>
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={nutrition_data}

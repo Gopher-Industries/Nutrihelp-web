@@ -36,11 +36,11 @@
   margin: 0 0 10px 0;
   text-align: left; 
   font-weight: bold;
-  font-size: 18px;
+  font-size: clamp(0.875rem, 3vw, 1.125rem);
 }
 
 .menucard-body p {
-  font-size: 14px;
+  font-size: 0.875rem;
   line-height: 1.5;
   color: #666;
   margin: 0;
@@ -82,11 +82,28 @@
   border: 1px solid #005BBB;
   text-decoration: none;
   border-radius: 20px;
-  font-size: 14px;
+  font-size: 0.875rem;
   transition: all 0.3s;
 }
 
 .recipe-link:hover {
   background-color: #005BBB;
   color: white;
+}
+
+/* Responsive Design for MenuCard */
+@media (max-width: 768px) {
+  .menucard {
+    flex: 0 0 280px;
+    height: 460px;
+  }
+}
+
+@media (max-width: 480px) {
+  .menucard {
+    flex: 0 0 100%;
+    max-width: 400px;
+    height: auto;
+    min-height: 420px;
+  }
 }

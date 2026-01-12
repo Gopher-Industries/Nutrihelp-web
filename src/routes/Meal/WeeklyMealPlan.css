@@ -10,6 +10,8 @@
 
 .weekly-meal-plan-container h2 {
   color: #2e7d32;
+  font-size: clamp(1.375rem, 4vw, 2.25rem) !important;
+  line-height: 1.3;
   margin-bottom: 15px;
 }
 
@@ -72,6 +74,69 @@
 }
 
 .day-card p:nth-of-type(3) {
-  font-size: 14px;
+  font-size: 0.875rem;
   color: #555;
+}
+
+@media (max-width: 768px) {
+  .weekly-meal-plan-container {
+    padding: 15px;
+  }
+  
+  #meal-plan-pdf {
+    gap: 15px;
+  }
+  
+  .day-card {
+    width: 100%;
+    max-width: 500px;
+    padding: 15px;
+  }
+  
+  .day-card h3 {
+    font-size: 1.125rem;
+  }
+  
+  .day-card table {
+    font-size: 0.75rem;
+  }
+  
+  .day-card table th,
+  .day-card table td {
+    padding: 4px !important;
+    word-break: break-word;
+  }
+}
+
+@media (max-width: 480px) {
+  .weekly-meal-plan-container {
+    padding: 10px;
+  }
+  
+  .weekly-meal-plan-container button {
+    width: 100%;
+    padding: 12px;
+  }
+  
+  .day-card {
+    padding: 12px;
+    border-radius: 10px;
+  }
+  
+  .day-card h3 {
+    font-size: 1rem;
+  }
+  
+  .day-card p {
+    font-size: 0.8125rem;
+  }
+  
+  .day-card table {
+    font-size: 0.6875rem;
+  }
+  
+  .day-card table th,
+  .day-card table td {
+    padding: 3px !important;
+  }
 }
