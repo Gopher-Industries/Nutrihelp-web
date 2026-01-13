@@ -341,6 +341,45 @@
   }
 }
 
+/* ===== Dark Mode Support ===== */
+.dark-mode .dpe {
+  /* Colors - Dark Mode */
+  --dpe-primary: #4da3ff;
+  --dpe-primary-light: #1e3a5f;
+  --dpe-primary-lighter: #2d4a6f;
+  --dpe-bg: #121212;
+  --dpe-white: #1e1e1e;
+  --dpe-surface-2: #2a2a2a;
+  --dpe-surface-3: #252525;
+  --dpe-text: #e5e7eb;
+  --dpe-text-medium: #9ca3af;
+  --dpe-text-light: #6b7280;
+  --dpe-border: #374151;
+  --dpe-border-light: #2d3748;
+  
+  /* Shadow */
+  --dpe-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .dpe-date-input {
+  background: var(--dpe-white) !important;
+  color: var(--dpe-text) !important;
+  border-color: var(--dpe-border) !important;
+}
+
+.dark-mode .dpe-date-input:focus {
+  background: var(--dpe-primary-lighter) !important;
+  border-color: var(--dpe-primary) !important;
+}
+
+.dark-mode .dpe-nav-btn {
+  color: var(--dpe-text);
+}
+
+.dark-mode .dpe-nav-btn:hover {
+  color: var(--dpe-white);
+}
+
 /* Enhanced Responsive Design for Tablets */
 @media (max-width: 768px) {
   .dpe {

@@ -1,7 +1,7 @@
 /* Shopping List Page Styles */
 .shopping-list-page {
     min-height: 100vh;
-    background: linear-gradient(135deg, #f3e8ff 25%, #f9f7fc 75%);
+    background: var(--gradient-secondary);
     padding: 20px;
     font-family: 'Poppins', sans-serif;
     overflow-x: hidden; /* Prevent horizontal scrolling */
@@ -13,7 +13,7 @@
     align-items: center;
     max-width: 1200px;
     margin: 0 auto;
-    color: #333;
+    color: var(--text-primary);
     margin-bottom: 30px;
     padding: 20px;
     border-radius: 15px;
@@ -23,7 +23,7 @@
 
 .shopping-list-header h1 {
     font-size: 2.5rem;
-    color: #333;
+    color: var(--text-primary);
 }
 
 .add-item-form {
@@ -37,11 +37,11 @@
 /* Base styles for all input fields and select boxes */
 .item-input, .quantity-input, .unit-select, .category-select, .unit-edit {
     border-radius: 8px;
-    border: 2px solid #e0e0e0;
+    border: 2px solid var(--border-color);
     transition: border-color 0.3s;
     font-family: 'Poppins', sans-serif;
-    background-color: white;
-    color: #333;
+    background-color: var(--card-background);
+    color: var(--text-primary);
 }
 
 .item-input {
@@ -53,11 +53,11 @@
 }
 
 .item-input:focus {
-    border-color: #667eea;
+    border-color: var(--primary-color);
 }
 
 .item-input::placeholder {
-    color: #999;
+    color: var(--text-muted);
 }
 
 .quantity-input, .unit-select, .category-select {
@@ -69,13 +69,13 @@
 }
 
 .quantity-input:focus, .unit-select:focus, .category-select:focus {
-    border-color: #667eea;
+    border-color: var(--primary-color);
 }
 
 /* Dropdown option styles */
 .unit-select option, .category-select option, .unit-edit option {
-    background: white;
-    color: #333;
+    background: var(--card-background);
+    color: var(--text-primary);
     padding: 8px;
     font-size: 14px;
 }
@@ -95,11 +95,11 @@
 
 /* Select box focus and hover states */
 .unit-select:focus, .category-select:focus, .unit-edit:focus {
-    border-color: #667eea;
+    border-color: var(--primary-color);
 }
 
 .unit-select:hover, .category-select:hover, .unit-edit:hover {
-    border-color: #667eea;
+    border-color: var(--primary-color);
     box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
 }
 
@@ -113,27 +113,27 @@
     border-radius: 8px;
     transition: all 0.3s;
     border: 2px solid;
-    background: white;
+    background: var(--card-background);
 }
 
 /* Edit button styles */
 .edit-button {
-    color: #667eea;
-    border-color: #667eea;
+    color: var(--primary-color);
+    border-color: var(--primary-color);
 }
 
 .edit-button:hover {
-    background: #E8EEFF;
+    background: var(--primary-light);
 }
 
 /* Remove button styles */
 .remove-button {
-    color: #ff4757;
-    border-color: #ff4757;
+    color: var(--error-color);
+    border-color: var(--error-color);
 }
 
 .remove-button:hover {
-    background: #FFF0F0;
+    background: var(--error-light);
 }
 
 /* Save and Cancel button styles */
@@ -153,30 +153,30 @@
 
 .save-edit-button {
     border: none;
-    background: #4CAF50;
-    color: white;
+    background: var(--success-color);
+    color: var(--text-inverse);
 }
 
 .save-edit-button:hover {
-    background: #45a049;
+    background: var(--success-dark);
 }
 
 .cancel-edit-button {
-    border: 2px solid #D0D0D0;
-    background: white;
-    color: #1A1A1A;
+    border: 2px solid var(--border-color);
+    background: var(--card-background);
+    color: var(--text-primary);
 }
 
 .cancel-edit-button:hover {
-    background: #f0f0f0;
+    background: var(--hover-background);
 }
 
 /* Mobile responsive styles for select boxes - moved to consolidated responsive section */
 
 .add-button {
     padding: 12px 25px;
-    border: 4px solid #004a99;
-    color: #3E3E3E;
+    border: 4px solid var(--primary-dark);
+    color: var(--text-secondary);
     border-radius: 8px;
     font-size: 14px;
     font-weight: 600;
@@ -185,17 +185,17 @@
 }
 
 .add-button:hover {
-    color: white;
-    background: #004a99;
+    color: var(--text-inverse);
+    background: var(--primary-dark);
 }
 
 /* Filter Controls Container */
 .filter-controls-container {
-    background-color: #FFFFFF;
+    background-color: var(--card-background);
     border-radius: 12px;
     padding: 20px;
     margin-bottom: 24px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    box-shadow: var(--card-shadow);
 }
 
 .filter-controls-grid {
@@ -214,7 +214,7 @@
     display: block;
     font-size: 18px;
     font-weight: 600;
-    color: #1A1A1A;
+    color: var(--text-primary);
     margin-bottom: 8px;
     line-height: 1.5;
 }
@@ -223,10 +223,10 @@
     width: 100%;
     padding: 16px;
     font-size: 18px;
-    border: 2px solid #D0D0D0;
+    border: 2px solid var(--border-color);
     border-radius: 8px;
-    background-color: #FFFFFF;
-    color: #1A1A1A;
+    background-color: var(--card-background);
+    color: var(--text-primary);
     line-height: 1.5;
     cursor: pointer;
     box-sizing: border-box;
@@ -234,7 +234,7 @@
 }
 
 .filter-category-select:focus {
-    border-color: #005BBB;
+    border-color: var(--primary-color);
     outline: none;
 }
 
@@ -247,7 +247,7 @@
     padding: 16px;
     font-size: 18px;
     font-weight: 600;
-    color: #FFFFFF;
+    color: var(--text-inverse);
     border: none;
     border-radius: 8px;
     cursor: pointer;
@@ -257,24 +257,24 @@
 }
 
 .toggle-add-form-btn.add {
-    background-color: #005BBB;
+    background-color: var(--primary-color);
 }
 
 .toggle-add-form-btn.add:hover {
-    background-color: #004a99;
+    background-color: var(--primary-dark);
 }
 
 .toggle-add-form-btn.cancel {
-    background-color: #DC3545;
+    background-color: var(--error-color);
 }
 
 .toggle-add-form-btn.cancel:hover {
-    background-color: #c82333;
+    background-color: var(--error-dark);
 }
 
 /* Items Section */
 .items-section {
-    background-color: white;
+    background-color: var(--card-background);
     padding: 30px;
 }
 
@@ -288,7 +288,7 @@
 
 .section-header h2 {
     margin: 0;
-    color: #333;
+    color: var(--text-primary);
     font-size: 1.5rem;
 }
 
@@ -310,40 +310,40 @@
 }
 
 .mark-all-btn {
-    border:4px solid #4CAF50;
-    color: #4CAF50;
+    border:4px solid var(--success-color);
+    color: var(--success-color);
 }
 
 .mark-all-btn:hover {
-    background: #45a049;
-    color: white;
+    background: var(--success-dark);
+    color: var(--text-inverse);
 }
 
 .clear-btn {
-    border:4px solid #ff9800;
-    color: #ff9800;
+    border:4px solid var(--warning-color);
+    color: var(--warning-color);
 }
 
 .clear-btn:hover {
-    background: #f57c00;
-    color: white;
+    background: var(--warning-dark);
+    color: var(--text-inverse);
 }
 
 .clear-all-btn {
-    border:4px solid #f44336;
-    color: #f44336;
+    border:4px solid var(--error-color);
+    color: var(--error-color);
 }
 
 .clear-all-btn:hover {
-    background: #d32f2f;
-    color: white;
+    background: var(--error-dark);
+    color: var(--text-inverse);
 }
 
 /* Empty State */
 .empty-state {
     text-align: center;
     padding: 60px 20px;
-    color: #666;
+    color: var(--text-muted);
 }
 
 .empty-icon {

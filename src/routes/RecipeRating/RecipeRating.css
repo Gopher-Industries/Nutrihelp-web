@@ -2,6 +2,7 @@
     max-width: 1400px;
     margin: 0 auto;
     padding: 20px;
+    background-color: var(--background-color);
 }
 
 .page-header {
@@ -19,17 +20,17 @@
   padding: 13px 56px;                 
   margin: inherit;                      
 
-  background: linear-gradient(135deg, #667eea 0%, #005BBB 50%, #005BBB 100%);
+  background: var(--gradient-accent);
   border-radius: 25px;               
 
   font-size: 2.2rem;
   font-weight: 700;
   letter-spacing: 0.4px;
 
-  color: #ffffff;
+  color: var(--text-inverse);
   text-align: center;
 
-  box-shadow: 0 8px 18px rgba(0, 91, 187, 0.25);
+  box-shadow: var(--box-shadow-medium);
 }
 
 .page-header h1::after {
@@ -47,7 +48,7 @@
 
 .page-header p {
     font-size: 20px;
-    color: #5A5A5A;
+    color: var(--text-secondary);
 }
 
 .recipe-container {

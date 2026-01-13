@@ -1,15 +1,15 @@
 body {
   font-family: "Montserrat", sans-serif;
-  color: #444444;
+  color: var(--text-primary);
 }
 
 a {
   text-decoration: none;
-  color: #49b5e7;
+  color: var(--text-link);
 }
 
 a:hover {
-  color: #76c7ed;
+  color: var(--text-link-hover);
   text-decoration: none;
 }
 
@@ -20,6 +20,7 @@ h4,
 h5,
 h6 {
   font-family: "Montserrat", sans-serif;
+  color: var(--text-heading);
 }
 
 #account {
@@ -27,15 +28,17 @@ h6 {
   height: calc(100vh - 78px);
   overflow-y: scroll;
   scrollbar-width: thin;
-  scrollbar-color: #bd49e7 #fff;
+  scrollbar-color: var(--primary-color) var(--background-color);
+  background-color: var(--background-color);
 }
 
 .account,
 .titleInput {
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  background: white;
+  box-shadow: var(--box-shadow-light);
+  background: var(--card-background);
   border-radius: 20px;
   padding: 20px;
+  border: 1px solid var(--border-color);
 }
 
 .account > .title {
@@ -43,10 +46,11 @@ h6 {
   display: flex;
   justify-content: space-between;
   transition: all 0.3s ease-in-out;
+  color: var(--text-primary);
 }
 
 .account > .title:hover {
-  color: #bd49e7;
+  color: var(--primary-color);
 }
 
 .account .message {
@@ -70,11 +74,12 @@ h6 {
 .account .message .right {
   overflow: hidden;
   max-height: 25px;
+  color: var(--text-secondary);
 }
 
 .account .message:hover > .left {
-  background: #bd49e7;
-  color: #ebf7fc;
+  background: var(--primary-color);
+  color: var(--text-inverse);
 }
 
 .account:hover .message > .right {
@@ -83,5 +88,5 @@ h6 {
 }
 
 .section-bg {
-  background-color: #f4fbfe;
+  background-color: var(--background-secondary);
 }

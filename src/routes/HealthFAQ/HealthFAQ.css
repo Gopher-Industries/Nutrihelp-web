@@ -7,13 +7,14 @@
     margin-right: auto;
     padding: 20px;
     font-family: "Arial", sans-serif;
+    background-color: var(--background-color);
 }
 
 .health-faq-container .health-faq-title {
     font-size: 2.8rem;
     text-align: left;
     margin-bottom: 20px;
-    color: #327da8; /* Deep blue for title */
+    color: var(--faq-title-color); /* Deep blue for title */
     font-weight: bold;
 }
 
@@ -23,8 +24,8 @@
     justify-content: center;
     margin: 25px 0px;
     padding: 10px 10px;
-    background-color: #f8f9fa;
-    border: 2px solid rgb(213, 213, 213);
+    background-color: var(--background-secondary);
+    border: 2px solid var(--border-color);
     border-radius: 8px;
     flex-wrap: wrap;
     gap: 10px;
@@ -32,22 +33,23 @@
 
 .category-selector button {
     font-size: 1.3rem;
-    color: #333;
+    color: var(--text-primary);
     padding: 10px 15px;
     cursor: pointer;
     border-radius: 6px;
     transition: all 0.3s ease;
-    border: 2px solid rgb(213, 213, 213);
+    border: 2px solid var(--border-color);
+    background-color: var(--card-background);
 }
 
 .category-selector button:hover {
-    background-color: #e9ecef;
+    background-color: var(--background-hover);
 }
 
 .category-selector button.active {
-    background-color: #4CAF50;
-    color: white;
-    border-color: #4CAF50;
+    background-color: var(--success-color);
+    color: var(--text-inverse);
+    border-color: var(--success-color);
 }
 
 .faq-list {
@@ -55,7 +57,7 @@
 }
 
 .faq-item {
-    border: 1px solid #e0e0e0;
+    border: 1px solid var(--border-color);
     border-radius: 4px;
     margin-bottom: 10px;
     overflow: hidden;
@@ -63,7 +65,7 @@
 
 .faq-question {
     padding: 15px 20px;
-    background-color: #f8f9fa;
+    background-color: var(--background-secondary);
     cursor: pointer;
     display: flex;
     justify-content: space-between;
@@ -73,14 +75,14 @@
 }
 
 .faq-question:hover {
-    background-color: #e9ecef;
+    background-color: var(--background-hover);
 }
 
 .faq-question h3 {
     margin: 0;
     font-size: 16px;
     font-weight: 600;
-    color: #2c3e50;
+    color: var(--text-heading);
     flex: 1;
 }
 
@@ -90,6 +92,7 @@
     font-size: 12px;
     margin-right: 1rem;
     right: 0;
+    color: var(--text-secondary);
 }
 
 .toggle-icon.open {
@@ -98,13 +101,14 @@
 
 .faq-health-answer {
     padding: 20px;
-    background-color: white;
-    border-top: 1px solid #e0e0e0;
+    background-color: var(--card-background);
+    border-top: 1px solid var(--border-color);
     line-height: 1.6;
     animation: fadeIn 0.3s ease;
     display: block !important;
     height: auto !important;
     overflow: visible !important;
+    color: var(--faq-answer-color);
 }
 
 @keyframes fadeIn {

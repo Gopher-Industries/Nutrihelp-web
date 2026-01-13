@@ -6,8 +6,8 @@ body {
 
 
 header {
-  background-color: var(--button-background-color);
-  color: var(--text-color);
+  background-color: var(--primary-color);
+  color: var(--text-inverse);
   padding: 10px;
   text-align: center;
 }
@@ -39,12 +39,12 @@ border-radius: 10px;
 }
 
 .food-item {
-background: white;
+background: var(--card-background);
 width: calc(33.33% - 20px); 
 min-width: 220px;
 border-radius: 12px;
 padding: 10px;
-box-shadow: 0px 0px 10px rgba(174, 174, 192, 0.2);
+box-shadow: var(--card-shadow);
 cursor: pointer;
 transition: transform 0.2s ease;
 text-align: center;
@@ -58,7 +58,7 @@ transform: translateY(-5px);
 margin-top: 10px;
 font-weight: 600;
 font-size: 1rem;
-color: #222;
+color: var(--text-primary);
 }
 
 .mealcontainer {
@@ -79,10 +79,10 @@ gap: 20px;
 }
 
 .details-box {
-background-color: #f0f0f0;
+background-color: var(--hover-background);
 padding: 20px;
 border-radius: 12px;
-box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.05);
+box-shadow: var(--card-shadow);
 word-break: break-word;
 overflow-wrap: break-word;
 box-sizing: border-box;
@@ -115,24 +115,25 @@ border-radius: 25px;
 font-size: 1rem;
 font-weight: 600;
 border: none;
-background-color: #a349e4;
-color: white;
+background-color: var(--accent-color);
+color: var(--text-inverse);
 transition: background 0.3s ease;
 cursor: pointer;
 text-align: center;
 }
 
 .viewplan:hover {
-background-color: #00458e;
+background-color: var(--primary-dark);
 }
 
 h3{
 margin-left: 30px; font-size: 1.25rem;
+color: var(--text-primary);
 }
 
 .selected {
-  border: 2px solid #005BBB;            
-  background-color: #E8F1FF;             
+  border: 2px solid var(--primary-color);            
+  background-color: var(--primary-light);             
   box-shadow: 0px 0px 12px rgba(0, 91, 187, 0.3); 
 }
 
@@ -140,7 +141,7 @@ margin-left: 30px; font-size: 1.25rem;
 margin-left: 40px;
 font-size: 1.5rem;
 font-weight: 600;
-color: #333;
+color: var(--text-primary);
 width: fit-content;
 padding: 5px 10px;
 border-radius: 8px;
@@ -149,15 +150,15 @@ cursor: default;
 }
 
 .meal-title:hover {
-background-color: #a349e4;
-color: white;
+background-color: var(--accent-color);
+color: var(--text-inverse);
 }
 
 .meal-header {
-background-color: #005BBB !important; 
+background-color: var(--primary-color) !important; 
 background-image: none !important;    
 animation: none !important;           
-color: white !important;              
+color: var(--text-inverse) !important;              
 padding: 15px !important;
 text-align: center;
 border-radius: 8px;
@@ -192,8 +193,8 @@ position: relative;
 
 /* Toggle Weekly Plan Button */
 .toggle-weekly-btn {
-  background: #005BBB;
-  color: var(--button-text);
+  background: var(--primary-color);
+  color: var(--text-inverse);
   border: none;
   padding: 12px 28px;
   border-radius: 25px;
@@ -205,14 +206,14 @@ position: relative;
 }
 
 .toggle-weekly-btn:hover {
-  background: #00458e;              
+  background: var(--primary-dark);              
   transform: translateY(-2px);
 }
 
 /* Export Button */
 .export-btn {
-  background-color: #2e7d32;
-  color: white;
+  background-color: var(--success-color);
+  color: var(--text-inverse);
   border: none;
   padding: 10px 22px;
   border-radius: 8px;
@@ -222,12 +223,12 @@ position: relative;
   transition: background-color 0.3s ease;
 }
 .export-btn:hover {
-  background-color: #27642a;
+  background-color: var(--success-dark);
 }
 
 /* Meal headers inside Weekly Plan */
 .meal-header {
-  color: #1b5e20 !important;
+  color: var(--success-dark) !important;
   font-weight: 700 !important;
 }
 
@@ -238,10 +239,10 @@ position: relative;
   margin: 20px auto 10px;
   padding: 20px 22px;
   border-radius: 16px;
-  background: #ffffff;            
-  color: #111;                    
-  border: 1px solid #005BBB;        
-  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.06);
+  background: var(--card-background);            
+  color: var(--text-primary);                    
+  border: 1px solid var(--primary-color);        
+  box-shadow: var(--card-shadow);
 }
 
 .personalize-title {
@@ -250,7 +251,7 @@ position: relative;
   font-weight: 800;
   font-size: clamp(1.125rem, 4vw, 1.75rem) !important;
   line-height: 1.3;
-  color: #111;
+  color: var(--text-primary);
 }
 
 .personalize-grid {
@@ -267,24 +268,25 @@ position: relative;
 
 .personalize-label {
   font-weight: 600;
-  color: #222;
+  color: var(--text-secondary);
   font-size: 1rem;
 }
 
 .personalize-input {
   appearance: none;
-  background: #E8F1FF;            
-  color: #111;
+  background: var(--input-background);            
+  color: var(--text-primary);
   border-radius: 12px;
   padding: 10px 12px;
   font-size: 1rem;
   outline: none;
+  border: 1px solid var(--border-color);
   transition: box-shadow .15s ease, border-color .15s ease;
 }
 
 .personalize-input:focus {
-  border-color: #005BBB;
-  box-shadow: 0 0 0 3px rgba(232,241,255,0.18);
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(77, 166, 255, 0.18);
 }
 
 .chip-row {
@@ -294,9 +296,9 @@ position: relative;
 }
 
 .chip {
-  background: #E8F1FF;
-  color: #000000 !important;
-  border: 1px solid #005BBB;
+  background: var(--primary-light);
+  color: var(--text-primary) !important;
+  border: 1px solid var(--primary-color);
   border-radius: 999px;
   padding: 8px 14px;
   font-size: 0.875rem;
@@ -307,12 +309,12 @@ position: relative;
 
 .chip:hover {
   transform: translateY(-1px);
-  border-color: #00458e;
+  border-color: var(--primary-dark);
 }
 
 .chip--active {
-  background: #005BBB;
-  color: #fff !important;
+  background: var(--primary-color);
+  color: var(--text-inverse) !important;
   border-color: transparent;
 }
 
