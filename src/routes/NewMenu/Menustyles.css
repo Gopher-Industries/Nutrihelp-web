@@ -20,8 +20,17 @@ body {
 .Title {
   font-family: "Bangers", system-ui;
   font-weight: 800;
-  font-size: 22px;
+  font-size: clamp(1.25rem, 4.5vw, 1.875rem) !important;
+  line-height: 1.3;
   margin-top: 10px;
+}
+
+.Title h2 {
+  font-family: "Bangers", system-ui;
+  font-weight: 800;
+  font-size: clamp(1.25rem, 4.5vw, 1.875rem) !important;
+  line-height: 1.3;
+  margin: 0;
 }
 
 /* ==== Appointment Button Link ==== */
@@ -42,7 +51,7 @@ body {
   grid-template-columns: 1fr var(--water-width);
   gap: 24px;
   align-items: center;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
 .today-align-grid {
@@ -54,7 +63,7 @@ body {
 
 .today-text {
   text-align: center;    
-  font-size: 18px;
+  font-size: clamp(0.875rem, 3.5vw, 1.125rem);
   font-weight: 700;
   color: #333;
 }
@@ -87,7 +96,7 @@ body {
   border-radius: 16px;
   background: white;  
   border: 2px solid #F0F0F0;
-  margin: 0 0 14px 0;
+  margin: 0 0 12px 0;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
@@ -97,7 +106,7 @@ body {
   border: 1px solid transparent;
   background: transparent;
   padding: 12px 14px;
-  font-size: 18px;
+  font-size: clamp(0.875rem, 3vw, 1.125rem);
   border-radius: 12px;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -150,7 +159,7 @@ body {
   justify-content: center;
   min-height: 200px;
   color: #999;
-  font-size: 16px;
+  font-size: 1rem;
   font-style: italic;
   text-align: center;
   padding: 20px;
@@ -200,6 +209,7 @@ body {
   border: none;
   border-radius: 50px;
   padding: 15px 30px;
+  font-size: 1rem;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
@@ -210,7 +220,9 @@ body {
 
 /* Responsive */
 @media (max-width: 980px) {
-  :root { --water-width: 100%; }
+  :root { 
+    --water-width: 100%; 
+  }
 
   .today-row {
     grid-template-columns: 1fr;
@@ -219,16 +231,131 @@ body {
 
   .meal-water-row {
     grid-template-columns: 1fr;
-    gap: 16px;
+    gap: 12px;
+  }
+
+  .meal-pane {
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .water-panel {
+    width: 100% !important;
     min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .water-fill {
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .water-tracker {
+    width: 100% !important;
+    margin: 0 !important;
+    box-sizing: border-box;
   }
   
   .appointment-btn {
     position: static;
     margin-top: 10px;
     width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .mainBox {
+    padding: 15px;
+  }
+  
+  .meal-water-row {
+    gap: 12px;
+  }
+  
+  .meal-nav-tabs {
+    padding: 6px;
+    gap: 8px;
+  }
+  
+  .nav-tab-btn {
+    padding: 10px 12px;
+    font-size: 1rem;
+  }
+  
+  .water-tracker {
+    padding: 1.2em;
+  }
+  
+  .water-tracker h3 {
+    font-size: 1.1em;
+  }
+  
+  .water-tracker p {
+    font-size: 0.9em;
+    margin-bottom: 1.6em !important;
+  }
+  
+  .tracker-controls {
+    margin-bottom: 1.6em !important;
+  }
+  
+  .glass-display {
+    margin-top: 16px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .mainBox {
+    padding: 10px;
+  }
+  
+  .today-text {
+    font-size: 1rem;
+  }
+  
+  .meal-water-row {
+    gap: 12px;
+  }
+  
+  .meal-nav-tabs {
+    padding: 4px;
+    gap: 6px;
+  }
+  
+  .nav-tab-btn {
+    padding: 8px 10px;
+    font-size: 0.875rem;
+  }
+  
+  .water-tracker {
+    padding: 1em;
+  }
+  
+  .water-tracker h3 {
+    font-size: 1em;
+  }
+  
+  .water-tracker p {
+    font-size: 0.85em;
+    margin-bottom: 1.5em !important;
+  }
+  
+  .tracker-controls {
+    margin-bottom: 1.5em !important;
+  }
+  
+  .tracker-controls button {
+    padding: 0.4em 0.8em;
+    font-size: 1em;
+  }
+  
+  .glass-display {
+    margin-top: 14px !important;
+  }
+  
+  .glass {
+    width: 25px;
+    height: 45px;
   }
 }
