@@ -255,5 +255,72 @@
   gap: 10px 12px;
   margin-bottom: 12px;
 }
+
+@media (max-width: 1024px) {
+  .search-recipes-page {
+    padding: 24px 16px;
+  }
+
+  .search-header {
+    width: min(760px, 92vw);
+  }
+
+  .main-title {
+    font-size: 2.2rem !important;
+    padding: 10px 40px;
+  }
+
+  .categories-grid {
+    gap: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .search-recipes-page {
+    padding: 20px 12px;
+  }
+
+  .search-header {
+    width: 100%;
+    margin-bottom: 24px;
+  }
+
+  .main-title {
+    font-size: 1.8rem !important;
+    padding: 8px 28px;
+  }
+
+  .search-bar {
+    width: 100%;
+  }
+
+  .section {
+    padding: 0 12px;
+  }
+
+  .categories-grid {
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .search-recipes-page {
+    padding: 16px 10px;
+  }
+
+  .main-title {
+    font-size: 1.5rem !important;
+    padding: 8px 20px;
+  }
+
+  .section-title {
+    font-size: 1.15rem;
+  }
+
+  .category-card img {
+    height: 120px;
+  }
+}
  
  
