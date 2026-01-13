@@ -62,7 +62,6 @@ import PostDetail from "./routes/Community/PostDetail";
 import ScanBarcode from "./routes/ScanBarcode/ScanBarcode";
 import AuthCallback from "./pages/AuthCallback";
 import DailyPlanEdit from "./routes/DailyPlan/DailyPlanEdit";
-
 /* -------------------------------
    NAVBAR WRAPPER (HIDE ON ROUTES)
 -------------------------------- */
@@ -112,6 +111,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signUp" element={<SignUp />} />
 
+
         {/* Forgot password flow */}
         {/* legacy route */}
         <Route path="/forgotPassword" element={<ForgotPassword />} />
@@ -120,7 +120,7 @@ function App() {
         <Route path="/forgot/verify" element={<ForgotPasswordVerify />} />
         <Route path="/forgot/reset" element={<ForgotPasswordReset />} />
 
-        <Route path="/MFAform" element={<MFAform />} />
+        <Route path="/mfa" element={<MFAform />} />
 
         <Route path="/home" element={<Home />} />
         <Route path="/faq" element={<FAQ />} />
