@@ -8,8 +8,8 @@
 }
 
 body {
-  background-color: #c9d6ff;
-  background: linear-gradient(to right, #e2e2e2, #c9d6ff);
+  background-color: var(--background-secondary);
+  background: var(--gradient-secondary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -18,9 +18,9 @@ body {
 }
 
 .container {
-  background-color: #fff;
+  background-color: var(--card-background);
   border-radius: 30px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.35);
+  box-shadow: var(--card-shadow-hover);
   position: relative;
   overflow: hidden;
   width: 768px;
@@ -33,22 +33,24 @@ body {
   line-height: 20px;
   letter-spacing: 0.3px;
   margin: 20px 0;
+  color: var(--text-secondary);
 }
 
 .container span {
   font-size: 12px;
+  color: var(--text-muted);
 }
 
 .container a {
-  color: #000000;
+  color: var(--text-primary);
   font-size: 13px;
   text-decoration: none;
   margin: 15px 0 10px;
 }
 
 .container button {
-  background-color: #ba49e7;
-  color: #fff;
+  background-color: var(--accent-color);
+  color: var(--text-inverse);
   font-size: 12px;
   padding: 10px 45px;
   border: 1px solid transparent;
@@ -62,11 +64,11 @@ body {
 
 .container button.hidden {
   background-color: transparent;
-  border-color: #fff;
+  border-color: var(--text-inverse);
 }
 
 .container form {
-  background-color: #fff;
+  background-color: var(--card-background);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -76,14 +78,15 @@ body {
 }
 
 .container input {
-  background-color: #eee;
-  border: none;
+  background-color: var(--input-background);
+  border: 1px solid var(--border-color);
   margin: 8px 0;
   padding: 10px 15px;
   font-size: 13px;
   border-radius: 8px;
   width: 100%;
   outline: none;
+  color: var(--text-primary);
 }
 
 .form-container {
@@ -136,7 +139,7 @@ body {
 }
 
 .social-icons a {
-  border: 1px solid #ccc;
+  border: 1px solid var(--border-color);
   border-radius: 20%;
   display: inline-flex;
   justify-content: center;
@@ -144,6 +147,7 @@ body {
   margin: 0 3px;
   width: 40px;
   height: 40px;
+  color: var(--text-primary);
 }
 
 .toggle-container {
@@ -164,10 +168,10 @@ body {
 }
 
 .toggle {
-  background-color: #9c1de089;
+  background-color: var(--accent-color);
   height: 100%;
-  background: linear-gradient(to right, #9c1de089, #ba49e7);
-  color: #fff;
+  background: var(--gradient-accent);
+  color: var(--text-inverse);
   position: relative;
   left: -100%;
   height: 100%;

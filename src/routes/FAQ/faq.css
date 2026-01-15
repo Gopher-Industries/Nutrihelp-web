@@ -6,6 +6,8 @@
   margin-right: auto;
   padding: 20px;
   font-family: "Arial", sans-serif;
+  background-color: var(--background-color);
+  color: var(--text-primary);
 }
 
 .start-container{
@@ -16,7 +18,7 @@
   font-size: 2.8rem;
   text-align: left;
   margin-bottom: 20px;
-  color: #327da8; /* Deep blue for title */
+  color: var(--faq-title-color);
   font-weight: bold;
 }
 
@@ -27,8 +29,9 @@
 
 /* Category Title */
 .faq-category-title {
-  font-size: 1.8rem; /* Slightly darker transparent blue */
-  color: #327da8;
+  font-size: 1.8rem;
+  color: var(--faq-title-color);
+  background-color: var(--card-background);
   padding: 15px 20px;
   border-radius: 5px;
   display: flex;
@@ -36,13 +39,13 @@
   align-items: center;
   cursor: pointer;
   transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
-  box-shadow:0 5px 10px rgba(167, 166, 166, 0.5);
+  box-shadow: var(--card-shadow);
   margin-bottom: 10px;
 }
 
 .faq-category-title.expanded, .faq-category-toggle.expanded {
-  background-color: #327da8; /* Blue background when expanded */
-  color: white; /* White text for better contrast */
+  background-color: var(--primary-color);
+  color: var(--text-inverse);
   transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
 }
 
@@ -54,8 +57,8 @@
 
 /* FAQ Item */
 .faq-item {
-  background-color: rgba(255, 255, 255, 0.9); /* White with slight transparency */
-  border: 1px solid rgba(200, 230, 255, 0.8); /* Light border */
+  background-color: var(--card-background);
+  border: 1px solid var(--border-color);
   border-radius: 5px;
   margin-bottom: 10px;
   overflow: hidden;
@@ -63,7 +66,7 @@
 }
 
 .faq-item.active {
-  border-color: #327da8; /* Highlight active questions */
+  border-color: var(--primary-color);
 }
 
 /* FAQ Question */
@@ -74,14 +77,14 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  color: #327da8;
+  color: var(--faq-title-color);
   font-weight: bold;
   transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
 }
 
 .faq-question:hover {
-  background-color: rgba(230, 247, 255, 0.8); /* Hover effect */
-  color: #1f6187; /* Darker blue on hover */
+  background-color: var(--faq-hover-bg);
+  color: var(--primary-hover);
 }
 
 /* FAQ Answer */
@@ -89,7 +92,7 @@
   padding: 0;
   margin: 0;
   font-size: 1rem;
-  color: #5a9bb3; /* Muted blue for answer text */
+  color: var(--faq-answer-color);
   line-height: 1.6;
   max-height: 0;
   overflow: hidden;
@@ -102,21 +105,21 @@
   max-height: 500px;
   padding: 15px 20px;
   opacity: 1;
-  background-color: rgba(245, 250, 255, 0.8); /* Very light blueish tint for answers */
-  border-top: 1px solid rgba(200, 230, 255, 0.8);
+  background-color: var(--background-secondary);
+  border-top: 1px solid var(--border-color);
 }
 
 /* FAQ Toggle */
 .faq-toggle {
   font-size: 1.5rem;
-  color: #327da8;
+  color: var(--faq-title-color);
   font-weight: bold;
 }
 
 /* Category Toggle */
 .faq-category-toggle {
   font-size: 1.8rem;
-  color: #327da8;
+  color: var(--faq-title-color);
 }
 
 /* 用户反馈模块整体样式 */
@@ -127,11 +130,11 @@
   align-items: center;
   margin-top: 40px;
   padding: 20px;
-  background-color: #E8F1FF; /* 浅灰背景 */
-  border-left: 6px solid #0056b3;
-  border-radius: 10px; /* 圆角 */
-  text-align: center; /* 居中对齐 */
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); /* 添加阴影效果 */
+  background-color: var(--feedback-bg);
+  border-left: 6px solid var(--feedback-border);
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: var(--card-shadow);
 }
 
 .feedback-head{
@@ -145,55 +148,58 @@
 .feedback-section h2 {
   font-size: 1.6rem;
   margin-bottom: 15px;
-  color: #333; /* 深灰色字体 */
-  font-weight: bold; /* 加粗 */
+  color: var(--text-heading);
+  font-weight: bold;
 }
 
 /* 用户反馈描述 */
 .feedback-section p {
   font-size: 1.4rem !important;
-  color: #555; /* 灰色字体 */
+  color: var(--text-secondary);
   margin-bottom: 20px;
-  line-height: 1.5; /* 行间距 */
+  line-height: 1.5;
 }
 
 /* 用户反馈输入框 */
 .feedback-textarea {
-  width: 100%; /* 占满容器宽度 */
-  max-width: 800px; /* 最大宽度限制 */
-  height: 200px; /* 固定高度 */
+  width: 100%;
+  max-width: 800px;
+  height: 200px;
   padding: 10px;
   font-size: 1rem;
-  border: 1px solid #ccc; /* 输入框边框 */
-  border-radius: 8px; /* 圆角 */
-  resize: none; /* 禁止调整大小 */
-  margin-bottom: 15px; /* 下间距 */
-  outline: none; /* 点击时无边框高亮 */
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1); /* 内阴影效果 */
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  resize: none;
+  margin-bottom: 15px;
+  outline: none;
+  background-color: var(--input-background);
+  color: var(--input-text);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: border-color 0.3s ease-in-out;
 }
 
 .feedback-textarea:focus {
-  border-color: #327da8; /* 聚焦时边框颜色 */
+  border-color: var(--primary-color);
 }
 
 /* 提交按钮样式 */
 .feedback-submit {
   width: 100%;
   max-width: 800px;
-  padding: 10px 20px; /* 按钮内边距 */
-  background-color: #007bff; /* 按钮背景色 */
-  color: #fff; /* 按钮文字颜色 */
+  padding: 10px 20px;
+  background-color: var(--button-background);
+  color: var(--button-text);
   font-size: 1rem;
   font-weight: bold;
-  border-radius: 5px; /* 圆角 */
-  cursor: pointer; /* 鼠标指针样式 */
-  transition: background-color 0.3s ease-in-out; /* 背景色过渡效果 */
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out;
   text-align: center;
+  border: none;
 }
 
 .feedback-submit:hover {
-  background-color: #0056b3; /* 悬停时背景色 */
+  background-color: var(--button-hover);
 }
 
 /* Responsive Design */

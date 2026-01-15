@@ -1,22 +1,23 @@
 .nutrition-page {
-    background-color: #f5e6ff !important;
+    background-color: var(--background-secondary) !important;
     min-height: 100vh;
     padding: 1rem 2rem;
     font-family: 'Segoe UI', sans-serif;
   }
    
   .header {
-    background: white;
+    background: var(--card-background);
     padding: 1rem 2rem;
     display: flex;
     justify-content: space-between;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    box-shadow: var(--card-shadow);
     align-items: center;
   }
    
   .logo {
     font-size: 1.5rem;
     font-weight: bold;
+    color: var(--text-primary);
   }
    
   .nav-links {
@@ -27,7 +28,7 @@
    
   .logout {
     font-weight: bold;
-    color: #c30000;
+    color: var(--error-color);
   }
    
   .main-content {
@@ -59,20 +60,22 @@
     font-size: 2rem;
     font-weight: bold;
     text-align: center;
+    color: var(--text-primary);
   }
    
   .subtitle {
     font-size: 1rem;
     text-align: center;
     margin-bottom: 2rem;
+    color: var(--text-secondary);
   }
    
   .form-box {
-    background: white !important;
+    background: var(--card-background) !important;
     padding: 2rem;
     border-radius: 1rem;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    border: 1px solid #ddd;
+    box-shadow: var(--card-shadow-hover);
+    border: 1px solid var(--border-color);
   }
    
   .food-input-row {
@@ -82,12 +85,14 @@
   .food-input-row input,
   .food-input-row select {
     padding: 0.6rem 1rem;
-    border: 1px solid #aaa;
+    border: 1px solid var(--border-color);
     border-radius: 9999px;
     font-size: 1rem;
     box-sizing: border-box;
-    outline-color: #6366f1;
+    outline-color: var(--primary-color);
     font-family: inherit;
+    background-color: var(--input-background);
+    color: var(--text-primary);
   }
    
   .quantity-group {
@@ -101,7 +106,7 @@
   .food-name-input {
     flex: 1;
     padding: 0.75rem 2.5rem 0.75rem 1rem;
-    border: 1px solid #a5b4fc;
+    border: 1px solid var(--primary-light);
     border-radius: 9999px;
     font-size: 1rem;
     font-family: inherit;
@@ -109,6 +114,8 @@
     box-sizing: border-box;
     height: 48px;
     width: 100%;
+    background-color: var(--input-background);
+    color: var(--text-primary);
   }
    
   .unit-select,
@@ -118,14 +125,14 @@
     background-repeat: no-repeat;
     background-position: right 1rem center;
     background-size: 1rem;
-    color: #111827;
+    color: var(--text-primary);
     line-height: 1.5;
     text-indent: 0;
   }
    
   .unit-select:invalid,
   .meal-select:invalid {
-    color: #6b7280;
+    color: var(--text-muted);
   }
    
   .button-group {
@@ -149,53 +156,56 @@
   }
    
   .add-btn {
-    background-color: #e0bbff;
-    color: #333;
+    background-color: var(--accent-light);
+    color: var(--text-primary);
   }
    
   .add-btn:hover {
-    background-color: #d09eff;
+    background-color: var(--accent-color);
   }
    
   .remove-btn {
-    background-color: #fca5a5;
-    color: #333;
+    background-color: var(--error-light);
+    color: var(--text-primary);
   }
    
   .remove-btn:hover {
-    background-color: #f87171;
+    background-color: var(--error-color);
   }
    
   .calculate-btn {
     margin-top: 1rem;
-    background-color: #6366f1;
-    color: white;
+    background-color: var(--primary-color);
+    color: var(--text-inverse);
   }
    
   .calculate-btn:hover {
-    background-color: #4f46e5;
+    background-color: var(--primary-dark);
   }
    
   .chart-title {
     font-size: 1.5rem;
     font-weight: 500;
     margin-bottom: 0rem;
+    color: var(--text-primary);
   }
    
   .nutrition-input {
     width: 100%;
     padding: 0.6rem 1rem;
-    border: 1px solid #a5b4fc;
+    border: 1px solid var(--primary-light);
     border-radius: 9999px;
     outline: none;
     font-size: 1rem;
     font-family: inherit;
     box-sizing: border-box;
+    background-color: var(--input-background);
+    color: var(--text-primary);
   }
    
   .nutrition-input:focus {
-    outline: 2px solid #6366f1;
-    border-color: #6366f1;
+    outline: 2px solid var(--primary-color);
+    border-color: var(--primary-color);
   }
    
   .nutrition-input[type="number"]::-webkit-inner-spin-button,
@@ -212,8 +222,9 @@
     font-size: 2rem;
     font-weight: 500;
     margin-bottom: 1rem;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid var(--border-color);
     padding-bottom: 0.5rem;
+    color: var(--text-primary);
   }
    
   .form-label {
@@ -221,6 +232,7 @@
     margin-bottom: 0.25rem;
     display: block;
     margin-top: 0.5rem;
+    color: var(--text-secondary);
   }
    
   .input-group {
@@ -229,7 +241,7 @@
   }
    
   .error-msg {
-    color: red;
+    color: var(--error-color);
     margin-top: 1rem;
     font-size: 0.85rem;
   }
@@ -245,6 +257,7 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    color: var(--text-secondary);
   }
    
   .legend-dot {
@@ -261,17 +274,18 @@
   .breakdown-table table {
     margin: 0 auto;
     border-collapse: collapse;
-    border: 1px solid #999;
+    border: 1px solid var(--border-color);
   }
    
   .breakdown-table th,
   .breakdown-table td {
     padding: 0.5rem;
-    border: 1px solid #999;
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
   }
    
   .breakdown-table thead tr {
-    background-color: #f0f0f0;
+    background-color: var(--hover-background);
   }
    
   .button-group-inline {
@@ -284,7 +298,7 @@
     background: none;
     border: none;
     font-size: 1rem;
-    color: #111827;
+    color: var(--text-primary);
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -308,7 +322,7 @@
    
    
   .add-icon {
-    color: #10b981;
+    color: var(--success-color);
   }
    
   .remove-icon {

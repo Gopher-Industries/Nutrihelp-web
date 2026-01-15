@@ -4,10 +4,11 @@
   margin: 2rem auto;
   padding: 2rem;
   text-align: center;
+  background-color: var(--background-color);
 }
 
 .recipe-timer-container h2 {
-  color: #2d3436;
+  color: var(--text-primary);
   margin-bottom: 3rem !important;
   font-weight: 600 !important;
   font-size: 2.5rem !important;
@@ -17,11 +18,12 @@
   margin-top: 2rem;
   padding: 1.5rem;
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(123, 123, 123, 0.5);
+  box-shadow: var(--card-shadow);
+  background-color: var(--card-background);
 }
 
 .recipe-selection h3 {
-  color: #000000;
+  color: var(--text-primary);
   margin-bottom: 1rem;
   font-weight: 500;
   padding: 10px;
@@ -39,40 +41,41 @@
 }
 
 .recipe-card {
-  background-color: white;
+  background-color: var(--card-background);
   border-radius: 8px;
   padding: 1rem;
   cursor: pointer;
   transition: all 0.3s ease;
   border: 2px solid transparent;
- box-shadow: 0 2px 8px rgba(123, 123, 123, 0.5);
+  box-shadow: var(--card-shadow);
+  color: var(--text-primary);
 }
 
 .recipe-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
 
 .recipe-card.selected {
-  border-color: #005BBB;
-  background-color: #f1f9ff;
+  border-color: var(--primary-color);
+  background-color: var(--hover-background);
 }
 
 .recipe-card.selected .recipe-time {
-  color: #0984e3;
+  color: var(--primary-color);
 }
 
 .recipe-time {
   display: block;
   font-size: 0.85rem;
-  color: #0984e3;
+  color: var(--primary-color);
   margin-top: 0.5rem;
 }
 
 .clear-selection {
   background-color: transparent;
-  color: #d63031;
-  border: 1px solid #d63031;
+  color: var(--error-color);
+  border: 1px solid var(--error-color);
   padding: 0.5rem 1rem;
   border-radius: 4px;
   cursor: pointer;
@@ -80,15 +83,15 @@
 }
 
 .clear-selection:hover {
-  background-color: #d63031;
-  color: white;
+  background-color: var(--error-color);
+  color: var(--button-text);
 }
 
 .timer-display {
   padding: 1.5rem;
-  background-color: white;
+  background-color: var(--card-background);
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(123, 123, 123, 0.5);
+  box-shadow: var(--card-shadow);
 }
 
 .time-inputs, .time-display {
@@ -109,37 +112,37 @@
 .recipe-timer-container .time-input-group .uiTimerInput {
   font-size: 2.5rem;
   font-weight: 600;
-  color: #2d3436;
+  color: var(--text-primary);
   padding: 0.5rem 1rem;
   position: relative;
 }
 
 .recipe-timer-container .time-input-group .uiTimerInput:empty:before {
   content: attr(data-placeholder);
-  color: #000000;
+  color: var(--text-muted);
 }
 
 .recipe-timer-container .time-input-group .uiTimerInput:focus {
-  outline: 2px solid #0984e3;
+  outline: 2px solid var(--primary-color);
   outline-offset: 2px;
   border-radius: 4px;
 }
 
 .recipe-timer-container .time-input-group label {
   font-size: 0.85rem;
-  color: #000000 !important;
+  color: var(--text-primary) !important;
 }
 
 .separator {
   font-size: 2rem;
-  color: #b2bec3;
+  color: var(--text-muted);
   margin: 0 0.5rem;
 }
 
 .time-unit {
   font-size: 2.5rem;
   font-weight: 600;
-  color: #2d3436;
+  color: var(--text-primary);
   padding: 0.5rem 1rem;
   position: relative;
 }
@@ -148,12 +151,12 @@
   display: block;
   font-size: 0.85rem;
   font-weight: normal;
-  color: #636e72;
+  color: var(--text-muted);
 }
 
 .separator {
   font-size: 2rem;
-  color: #b2bec3;
+  color: var(--text-muted);
   margin: 0 0.5rem;
 }
 /* AdjustTime Parameters */
@@ -169,10 +172,10 @@
 
 .adjustTimebtns{
   font-size: 18px;
-  color: #005BBB;
+  color: var(--primary-color);
   width: 100px;
   height: 100px;
-  border: 4px solid #005BBB;
+  border: 4px solid var(--primary-color);
   border-radius: 50%;
   padding: 0;
   display: flex;
@@ -180,11 +183,12 @@
   justify-content: center;
   cursor: pointer;
   transition: all 0.2s ease;
+  background-color: var(--card-background);
 }
 
 .adjustTimebtns:hover {
-  background-color: #005BBB;
-  color: #ffffff;
+  background-color: var(--primary-color);
+  color: var(--button-text);
   transform: scale(1.05);
 }
 
@@ -205,23 +209,23 @@
 }
 
 .control-button:not(.reset) {
-  background-color: #0984e3;
-  color: white;
+  background-color: var(--primary-color);
+  color: var(--button-text);
 }
 
 .control-button:not(.reset):hover {
-  background-color: #066bbf;
+  background-color: var(--primary-hover);
 }
 
 .control-button.reset {
-  background-color: #ffffff;
-  border: 4px solid #005BBB;
-  color: #005BBB;
+  background-color: var(--card-background);
+  border: 4px solid var(--primary-color);
+  color: var(--primary-color);
 }
 
 .control-button.reset:hover {
-  background-color: #005BBB;
-  color: #ffffff;
+  background-color: var(--primary-color);
+  color: var(--button-text);
 }
 
 .animate {
@@ -235,9 +239,9 @@
   flex-direction: column;
   margin-top: 2rem;
   padding: 1rem;
-  background-color: #E8F1FF;
-  box-shadow: 0 2px 8px rgba(0, 47, 149, 0.5);
-  border-left: 6px solid #005BBB;
+  background-color: var(--hover-background);
+  box-shadow: var(--card-shadow);
+  border-left: 6px solid var(--primary-color);
   border-radius: 8px;
 }
 .guideHead{
@@ -246,6 +250,7 @@
   font-size: 1.5rem;
   font-weight: 800;
   margin-left: 2rem;
+  color: var(--text-primary);
 }
 .stepContainer{
   list-style: disc;
@@ -253,11 +258,12 @@
   width: 70%;
   text-align: left;
   margin: 0 auto;
+  color: var(--text-primary);
 }
 
 @keyframes pulse {
   0% { transform: scale(1); }
-  50% { transform: scale(1.1); color: #005BBB; }
+  50% { transform: scale(1.1); color: var(--primary-color); }
   100% { transform: scale(1); }
 }
 

@@ -1,5 +1,5 @@
 .landing-container {
-  background-color: #ede9f6;
+  background-color: var(--background-secondary);
   position: relative;
   height: 100vh;
   padding: 20px;
@@ -27,7 +27,7 @@
   font-size: 16px;
   font-weight: 500;
   line-height: 28px;
-  color: #23155B;
+  color: var(--text-heading);
   cursor: pointer;
 }
 
@@ -36,8 +36,8 @@
   font-size: 16px;
   font-weight: 500;
   line-height: 28px;
-  color: #fff;
-  background-color: #ba49e7;
+  color: var(--text-inverse);
+  background-color: var(--accent-color);
   border: none;
   padding: 10px 20px;
   cursor: pointer;
@@ -45,7 +45,7 @@
 }
 
 .content-container {
-  background-color: #fff;
+  background-color: var(--card-background);
   padding: 20px;
   margin-top: 40px;
   border-radius: 8px;
@@ -59,10 +59,11 @@
   align-items: center;
   margin-left: auto;
   margin-right: auto;
+  box-shadow: var(--card-shadow);
 }
 
 .label1 .text-wrapper1 {
-  color: #ba49e7;
+  color: var(--accent-color);
   font-family: "Poppins-Bold", Helvetica;
   font-size: 40px;
   font-weight: 700;
@@ -72,7 +73,7 @@
 }
 
 .label2 .text-wrapper2 {
-  color: #22145b;
+  color: var(--text-heading);
   font-family: "Poppins-Regular", Helvetica;
   font-size: 20px;
   font-weight: 400;
@@ -84,7 +85,7 @@
 }
 
 .label3 .text-wrapper3 {
-  color: #000000;
+  color: var(--text-primary);
   font-family: "Poppins-Medium", Helvetica;
   font-size: 16px;
   font-weight: 500;
@@ -97,7 +98,7 @@
 }
 
 .label4 .text-wrapper4 {
-  color: #22145b;
+  color: var(--text-heading);
   font-family: "Poppins-Regular", Helvetica;
   font-size: 20px;
   font-weight: 400;

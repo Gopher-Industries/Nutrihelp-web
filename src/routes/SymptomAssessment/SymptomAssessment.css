@@ -1,12 +1,12 @@
 .symptom-assessment-wrapper {
     font-family: Arial, sans-serif;
-    background-color: #EEEEEE !important;
+    background-color: var(--background-secondary) !important;
     min-height: 100vh;
     width: 100%;
   }
    
   .hero-section {
-    background-color: #d8edfd !important;
+    background-color: var(--background-hero) !important;
     padding: 5rem 5rem 5rem 2rem !important;
   }
    
@@ -27,19 +27,19 @@
     font-weight: 1000;    
     margin-bottom: 1rem;
     line-height: 1.2;
-    color: #000;
+    color: var(--text-heading);
   }
    
   .hero-text p {
     font-size: 1.35rem;  
     font-weight: 700;
-    color: #000;
+    color: var(--text-primary);
     margin-bottom: 1.5rem;
   }
    
   .get-started-btn {
-    background-color: #005BBB;
-    color: white;
+    background-color: var(--button-background);
+    color: var(--button-text);
     font-size: 1.1rem;      
     font-weight: 700;        
     padding: 0.8rem 1.6rem;  
@@ -47,12 +47,12 @@
     border-radius: 0.5rem;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+    box-shadow: var(--card-shadow);
   }
    
    
   .get-started-btn:hover {
-    background-color: #003f8a !important;
+    background-color: var(--button-hover) !important;
   }
    
   .hero-image {
@@ -64,7 +64,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: #f3f3f3;
+    background-color: var(--background-tertiary);
     padding: 2rem;
   }
    
@@ -73,7 +73,7 @@
     font-size: 1.35rem;  
     font-weight: 700;
     margin-bottom: 1.5rem !important;
-    color: #000;          
+    color: var(--text-heading);          
   }
    
    

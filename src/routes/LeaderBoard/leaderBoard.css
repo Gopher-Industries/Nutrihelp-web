@@ -1,5 +1,5 @@
 .leaderboard-background {
-  background-color:#171817;
+  background-color: var(--leaderboard-bg);
   /* background-image: radial-gradient(circle, #e9ddff 2px, transparent 1px); */
   background-size: 20px 20px;
   min-height: 100vh;
@@ -16,4 +16,8 @@
   flex-direction: column;
   width: 100%;
   max-width: 1200px;
+  color: var(--text-primary);
+  min-height: 100vh;
+  background-color: var(--background-color);
+  box-sizing: border-box;
 }

@@ -1,5 +1,8 @@
 .menu-page {
     padding: 20px;
+    min-height: 100vh;
+    background-color: var(--background-color);
+    box-sizing: border-box;
   }
   
   .tabs button {

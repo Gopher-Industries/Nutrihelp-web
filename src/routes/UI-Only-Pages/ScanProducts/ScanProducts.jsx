@@ -68,7 +68,7 @@ function ScanProducts() {
   };
 
   return (
-    <div className="scan-products-page">
+    <div>
       <div className="scan-products-container">
         <h1>Upload a Photo</h1>
           {/* Select image */}

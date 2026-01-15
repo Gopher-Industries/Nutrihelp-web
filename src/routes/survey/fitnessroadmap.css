@@ -12,7 +12,7 @@
   justify-content: center;
   align-items: self-start;
   gap: 3rem;
-  background: linear-gradient(44deg, #7B44FF 0%, #F26CBA 100%) !important ;
+  background: var(--gradient-primary, linear-gradient(44deg, #7B44FF 0%, #F26CBA 100%)) !important ;
   width: 100%;
   min-height: 100vh;  
   padding-left: 250px;
@@ -29,11 +29,12 @@
 
 .roadmap-heading{
   display: inline-block;
-  background: rgba(255,255,255,0.2) !important;
+  background: var(--glass-background, rgba(255,255,255,0.2)) !important;
   padding: 0.5rem 1rem;
   border-radius: 1rem;
   font-weight: bolder;
   font-size: x-large;
+  color: var(--text-light, white);
 }
 
 .weeks-sidebar {
@@ -52,47 +53,48 @@
   margin-bottom: 0.3rem;
   border-radius: 6px;
   cursor: pointer;
-  color: black;
-  background: #f3f3f3 !important;
+  color: var(--text-primary);
+  background: var(--card-background) !important;
 }
 
 .week-item.locked {
-    color: #888;
+    color: var(--text-muted);
     cursor: not-allowed;
     border: 2px solid;
     padding: 42px;
 
 }
 .week-item.unlocked{
-    color: #888;
+    color: var(--text-muted);
     border: 2px solid;
     padding: 42px;
 }
 
 .week-details {
-    background: #fff !important;
+    background: var(--card-background) !important;
     border-radius: 8px;
     padding: 1rem;
-    box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--card-shadow);
     width: 800px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    color: var(--text-primary);
 }
 
 .done-btn {
   margin-top: 1rem;
   padding: 0.6rem 1rem;
-  background: #4caf50;
-  color: white;
+  background: var(--success-color);
+  color: var(--button-text);
   border: none;
   border-radius: 6px;
   cursor: pointer;
 }
 .complete-msg {
   font-weight: bold;
-  color: #4caf50;
+  color: var(--success-color);
 }
 
 .stats-panel {
@@ -100,22 +102,23 @@
   top: 100px;
   right: 40px;
   width: 220px;
-  background: #ffffffcc;
+  background: var(--card-background);
   backdrop-filter: blur(6px);
   padding: 1rem;
   border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  box-shadow: var(--card-shadow);
 }
 
 .stats-panel h2 {
   font-size: 1.2rem;
   margin-bottom: 0.8rem;
+  color: var(--text-primary);
 }
 
 .progress-bar {
   width: 100%;
   height: 10px;
-  background: #e0e0e0;
+  background: var(--background-secondary);
   border-radius: 6px;
   margin: 0.5rem 0;
   overflow: hidden;
@@ -123,6 +126,6 @@
 
 .progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #7B44FF, #F26CBA);
+  background: var(--gradient-primary, linear-gradient(90deg, #7B44FF, #F26CBA));
   transition: width 0.4s ease;
 }

@@ -1,7 +1,7 @@
 /* Container and Layout */
 .appointments-container {
   min-height: 100vh;
-  background-color: #FAFAFA;
+  background-color: var(--background-secondary);
   padding: 24px;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
@@ -33,7 +33,7 @@
 .appointments-title {
   font-size: 36px;
   font-weight: 700;
-  color: #1A1A1A;
+  color: var(--text-primary);
   margin: 0;
   line-height: 1.5;
 }
@@ -45,8 +45,8 @@
   font-weight: 600;
   border: none;
   border-radius: 8px;
-  background-color: #005BBB;
-  color: #FFFFFF;
+  background-color: var(--primary-color);
+  color: var(--text-inverse);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -56,7 +56,7 @@
 }
 
 .btn-add-appointment:hover {
-  background-color: #004A99;
+  background-color: var(--primary-hover);
   transform: scale(1.05);
 }
 
@@ -67,8 +67,8 @@
   font-weight: 600;
   border: none;
   border-radius: 8px;
-  background-color: #1B873E;
-  color: #FFFFFF;
+  background-color: var(--success-color);
+  color: var(--text-inverse);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -79,7 +79,7 @@
 }
 
 .btn-primary:hover {
-  background-color: #157A36;
+  filter: brightness(0.9);
   transform: scale(1.02);
 }
 
@@ -88,17 +88,17 @@
   padding: 18px;
   font-size: 20px;
   font-weight: 600;
-  border: 2px solid #D0D0D0;
+  border: 2px solid var(--border-color);
   border-radius: 8px;
-  background-color: #FFFFFF;
-  color: #1A1A1A;
+  background-color: var(--card-background);
+  color: var(--text-primary);
   cursor: pointer;
   transition: all 0.2s;
   line-height: 1.5;
 }
 
 .btn-cancel:hover {
-  background-color: #F5F5F5;
+  background-color: var(--background-hover);
   transform: scale(1.02);
 }
 
@@ -106,10 +106,10 @@
   padding: 12px 20px;
   font-size: 16px;
   font-weight: 600;
-  border: 2px solid #005BBB;
+  border: 2px solid var(--primary-color);
   border-radius: 8px;
-  background-color: #FFFFFF;
-  color: #005BBB;
+  background-color: var(--card-background);
+  color: var(--primary-color);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -119,17 +119,17 @@
 }
 
 .btn-edit:hover {
-  background-color: #E8F1FF;
+  background-color: var(--primary-light);
 }
 
 .btn-delete {
   padding: 12px 20px;
   font-size: 16px;
   font-weight: 600;
-  border: 2px solid #CC0000;
+  border: 2px solid var(--error-color);
   border-radius: 8px;
-  background-color: #FFFFFF;
-  color: #CC0000;
+  background-color: var(--card-background);
+  color: var(--error-color);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -139,23 +139,23 @@
 }
 
 .btn-delete:hover {
-  background-color: #FFF0F0;
+  background-color: var(--error-light);
 }
 
 /* Form */
 .form-container {
-  background-color: #FFFFFF;
+  background-color: var(--card-background);
   border-radius: 12px;
   padding: 32px;
   margin-bottom: 24px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  border: 3px solid #005BBB;
+  box-shadow: var(--card-shadow);
+  border: 3px solid var(--primary-color);
 }
 
 .form-title {
   font-size: 26px;
   font-weight: 600;
-  color: #1A1A1A;
+  color: var(--text-primary);
   margin-bottom: 24px;
   line-height: 1.5;
 }
@@ -187,29 +187,29 @@
   display: block;
   font-size: 18px;
   font-weight: 600;
-  color: #1A1A1A;
+  color: var(--text-primary);
   margin-bottom: 8px;
   line-height: 1.5;
 }
 
 .required-indicator {
-  color: #CC0000;
+  color: var(--error-color);
 }
 
 .input-control {
   width: 100%;
   padding: 16px;
   font-size: 18px;
-  border: 2px solid #D0D0D0;
+  border: 2px solid var(--border-color);
   border-radius: 8px;
-  background-color: #FFFFFF;
-  color: #1A1A1A;
+  background-color: var(--input-background);
+  color: var(--text-primary);
   line-height: 1.5;
   box-sizing: border-box;
 }
 
 .input-control:focus {
-  border-color: #005BBB;
+  border-color: var(--primary-color);
   outline: none;
 }
 
@@ -217,17 +217,17 @@
   width: 100%;
   padding: 16px;
   font-size: 18px;
-  border: 2px solid #D0D0D0;
+  border: 2px solid var(--border-color);
   border-radius: 8px;
-  background-color: #FFFFFF;
-  color: #1A1A1A;
+  background-color: var(--input-background);
+  color: var(--text-primary);
   line-height: 1.5;
   cursor: pointer;
   box-sizing: border-box;
 }
 
 .select-control:focus {
-  border-color: #005BBB;
+  border-color: var(--primary-color);
   outline: none;
 }
 
@@ -235,10 +235,10 @@
   width: 100%;
   padding: 16px;
   font-size: 18px;
-  border: 2px solid #D0D0D0;
+  border: 2px solid var(--border-color);
   border-radius: 8px;
-  background-color: #FFFFFF;
-  color: #1A1A1A;
+  background-color: var(--input-background);
+  color: var(--text-primary);
   line-height: 1.5;
   resize: vertical;
   font-family: inherit;
@@ -246,7 +246,7 @@
 }
 
 .textarea-control:focus {
-  border-color: #005BBB;
+  border-color: var(--primary-color);
   outline: none;
 }
 
@@ -266,26 +266,26 @@
   padding: 16px 32px;
   font-size: 18px;
   font-weight: 600;
-  border: 2px solid #D0D0D0;
+  border: 2px solid var(--border-color);
   border-radius: 8px;
-  background-color: #FFFFFF;
-  color: #1A1A1A;
+  background-color: var(--card-background);
+  color: var(--text-primary);
   cursor: pointer;
   transition: all 0.2s;
   line-height: 1.5;
 }
 
 .filter-tab:hover {
-  background-color: #F5F5F5;
+  background-color: var(--background-hover);
 }
 
 .filter-tab.active {
-  border: 3px solid #005BBB;
-  background-color: #E8F1FF;
+  border: 3px solid var(--primary-color);
+  background-color: var(--primary-light);
 }
 
 .filter-tab.active:hover {
-  background-color: #E8F1FF;
+  background-color: var(--primary-light);
 }
 
 .filter-icon {
@@ -294,7 +294,7 @@
 
 /* Empty State */
 .empty-state {
-  background-color: #FFFFFF;
+  background-color: var(--card-background);
   border-radius: 12px;
   padding: 48px;
   text-align: center;
