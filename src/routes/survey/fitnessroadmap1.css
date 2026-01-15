@@ -2,9 +2,12 @@
   display: flex;
   flex-direction: column;
   max-width: 100%;
+  width: 100%;
   padding: 1rem;
-  height: 91vh;
-  background: var(--gradient-primary, linear-gradient(44deg, #7B44FF 0%, #F26CBA 100%)) !important ;
+  min-height: 100vh;
+  background: var(--gradient-primary, linear-gradient(44deg, #7B44FF 0%, #F26CBA 100%)) !important;
+  box-sizing: border-box;
+  overflow-x: hidden;
 }
 .heading{
   background: var(--glass-background, rgba(255,255,255,0.2)) !important;

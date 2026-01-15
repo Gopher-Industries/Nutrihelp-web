@@ -17,4 +17,7 @@
   width: 100%;
   max-width: 1200px;
   color: var(--text-primary);
+  min-height: 100vh;
+  background-color: var(--background-color);
+  box-sizing: border-box;
 }

@@ -1,9 +1,36 @@
 @import url("../../UiTimer/UiTimer.css");
+
+/* Ensure html and body fill viewport for this page */
+html, body, #root, .App {
+  min-height: 100%;
+}
+
 .scan-products-page {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
+  min-height: 100vh;
+  width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  padding: 2rem 1rem 100px 1rem;
+  background-color: var(--background-color);
+  position: relative;
+}
+
+/* Ensure all direct children take full width */
+.scan-products-page > * {
+  width: 100%;
+  max-width: 900px;
+}
+
+/* Nested scan-products-page (when ScanProducts/ScanBarcode rendered inside Scan) */
+.scan-products-page .scan-products-page {
+  min-height: auto;
+  padding: 0;
+  width: 100%;
+  max-width: 100%;
 }
  
  /* Svan button selector */
@@ -28,7 +55,7 @@
 .scan-products-container {
   max-width: 900px;
   width: 100%;
-  margin: 2rem auto;
+  margin: 1rem auto;
   padding: 40px 36px 32px;
   background: var(--card-background);
   border: 1px solid var(--border-color);
@@ -36,6 +63,8 @@
   box-shadow: var(--card-shadow-hover);
   position: relative;
   overflow: hidden;
+  box-sizing: border-box;
+  flex-shrink: 0;
 }
  
  
@@ -160,6 +189,7 @@
   font-weight: 800;
   font-size: .98rem;
   box-shadow: var(--card-shadow);
+  z-index: 100;
 }
 .view-history-button:hover {
   filter: brightness(1.03);
@@ -168,9 +198,23 @@
 }
  
 @media (max-width: 780px){
-  .scan-products-container { padding: 28px 20px; }
+  .scan-products-page {
+    padding: 1rem 0.5rem 100px 0.5rem;
+  }
+  .scan-products-page > * {
+    max-width: 100%;
+  }
+  .scan-products-container { 
+    padding: 28px 20px; 
+    margin: 0;
+    width: 100%;
+    border-radius: 12px;
+  }
   .scan-products-form { grid-template-columns: 1fr; }
   .scan-products-label { font-size: .96rem; }
+  .upload-section {
+    min-height: 15rem;
+  }
 }
  
 .scan-products-container {
