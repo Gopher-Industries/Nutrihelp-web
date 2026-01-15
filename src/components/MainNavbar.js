@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import { Search, Menu, X } from "lucide-react";
 import { useDarkMode } from "../routes/DarkModeToggle/DarkModeContext";
 import "../styles/mainNavbar.css";
 import UserIcon from "./user-stroke-rounded.tsx";
@@ -34,6 +35,7 @@ const MainNavbar = () => {
   const { darkMode } = useDarkMode();
   const [openMenu, setOpenMenu] = useState(null); // "more" | "settings" | "account" | null
   const [scrolled, setScrolled] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navRef = useRef(null);
 
   // close on outside click
@@ -50,7 +52,10 @@ const MainNavbar = () => {
   // close on ESC
   useEffect(() => {
     const onKeyDown = (e) => {
-      if (e.key === "Escape") setOpenMenu(null);
+      if (e.key === "Escape") {
+        setOpenMenu(null);
+        setMobileMenuOpen(false);
+      }
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
@@ -76,20 +81,39 @@ const MainNavbar = () => {
 
   return (
     <header
-      className={`main-header ${darkMode ? "dark-mode" : ""} ${
-        scrolled ? "scrolled" : ""
-      }`}
+      className={`main-header ${darkMode ? "dark-mode" : ""} ${scrolled ? "scrolled" : ""
+        }`}
     >
-      <nav className="main-nav main-nav-desktop" ref={navRef} aria-label="Main">
+      <nav className="main-nav" ref={navRef} aria-label="Main">
+        {/* Mobile Toggle */}
+        <button
+          className="nav-toggle"
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          aria-label="Toggle menu"
+        >
+          {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
+
         {/* Logo -> Home */}
         <Link to="/home" className="nav-logo" aria-label="NutriHelp Home">
           <img src="/images/logo.png" alt="NutriHelp logo" />
         </Link>
 
-        {/* Left */}
-        <div className="nav-left">
+        {/* Left (Desktop) */}
+        <div className="nav-left desktop-only">
           <Link to="/home" className="nav-link">
             Home
+          </Link>
+
+          <Link to="/security/breach-detection" className="nav-link" style={{
+            color: '#2563eb',
+            fontWeight: 'bold',
+            border: '2px solid #2563eb',
+            padding: '8px 20px',
+            borderRadius: '9999px',
+            marginLeft: '10px'
+          }}>
+            Breach Check
           </Link>
 
           <Link to="/ScanProducts" className="nav-link nav-link-icon">
@@ -120,21 +144,21 @@ const MainNavbar = () => {
         </div>
 
         {/* Center search */}
-        <div className="nav-search" role="search">
+        <div className="nav-search-container" role="search">
           <input
             id="nutrihelp-search"
-            className="search-input"
+            className="search-input-field"
             type="search"
             placeholder="Search"
             aria-label="Search NutriHelp"
           />
-          <span className="search-icon" aria-hidden="true">
-            🔍
-          </span>
+          <button className="search-button-icon" aria-label="Submit search">
+            <Search size={20} />
+          </button>
         </div>
 
-        {/* Right */}
-        <div className="nav-right">
+        {/* Right (Desktop) */}
+        <div className="nav-right desktop-only">
           {/* SETTINGS */}
           <div className="nav-dropdown" {...menuHandlers("settings")}>
             <button
@@ -204,8 +228,28 @@ const MainNavbar = () => {
             )}
           </div>
         </div>
+
+        {/* Mobile Menu Overlay */}
+        {mobileMenuOpen && (
+          <div className="mobile-menu">
+            <Link to="/home" className="mobile-link" onClick={() => setMobileMenuOpen(false)}>Home</Link>
+            <Link to="/security/breach-detection" className="mobile-link" onClick={() => setMobileMenuOpen(false)}>Breach Check</Link>
+            <Link to="/ScanProducts" className="mobile-link" onClick={() => setMobileMenuOpen(false)}>Scan</Link>
+
+            <div className="mobile-divider"></div>
+            <div className="mobile-section-title">More</div>
+            <Link to="/createRecipe" className="mobile-link" onClick={() => setMobileMenuOpen(false)}>Create Recipe</Link>
+            <Link to="/dashboard" className="mobile-link" onClick={() => setMobileMenuOpen(false)}>Meal Details</Link>
+            <Link to="/HealthTools" className="mobile-link" onClick={() => setMobileMenuOpen(false)}>Health Tools</Link>
+
+            <div className="mobile-divider"></div>
+            <Link to="/settings" className="mobile-link" onClick={() => setMobileMenuOpen(false)}>Settings</Link>
+            <Link to="/userProfile" className="mobile-link" onClick={() => setMobileMenuOpen(false)}>Account</Link>
+            <Link to="/login" className="mobile-link" onClick={() => setMobileMenuOpen(false)}>Log Out</Link>
+          </div>
+        )}
       </nav>
-    </header>
+    </header >
   );
 };
 

@@ -61,6 +61,7 @@ import PostDetail from "./routes/Community/PostDetail";
 import ScanBarcode from "./routes/ScanBarcode/ScanBarcode";
 import AuthCallback from "./pages/AuthCallback";
 import DailyPlanEdit from "./routes/DailyPlan/DailyPlanEdit";
+import BreachDetectionPage from "./pages/BreachDetectionPage";
 
 /* -------------------------------
    NAVBAR WRAPPER (HIDE ON ROUTES)
@@ -260,7 +261,7 @@ function App() {
         />
 
         <Route path="/weekly-plan" element={<WeeklyMealPlanPage />} />
-        
+
 
         <Route path="/auth/callback" element={<AuthCallback />} />
 
@@ -336,6 +337,15 @@ function App() {
           element={
             <AuthenticateRoute>
               <HealthFAQ />
+            </AuthenticateRoute>
+          }
+        />
+
+        <Route
+          path="security/breach-detection"
+          element={
+            <AuthenticateRoute>
+              <BreachDetectionPage />
             </AuthenticateRoute>
           }
         />
