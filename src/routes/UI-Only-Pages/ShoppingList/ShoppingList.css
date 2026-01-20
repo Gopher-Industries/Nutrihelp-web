@@ -1,7 +1,6 @@
 /* Shopping List Page Styles */
 .shopping-list-page {
     min-height: 100vh;
-    background: var(--gradient-secondary);
     padding: 20px;
     font-family: 'Poppins', sans-serif;
     overflow-x: hidden; /* Prevent horizontal scrolling */
@@ -14,6 +13,7 @@
     max-width: 1200px;
     margin: 0 auto;
     color: var(--text-primary);
+    background-color: white;
     margin-bottom: 30px;
     padding: 20px;
     border-radius: 15px;
