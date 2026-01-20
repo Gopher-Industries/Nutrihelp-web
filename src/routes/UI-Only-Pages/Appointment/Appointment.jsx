@@ -100,10 +100,10 @@ export default function AppointmentsManager() {
   ];
 
   const reminderOptions = [
-    { value: '1-week', label: '1 Week Before' },
+    { value: '7-days', label: '1 Week Before' },
     { value: '1-day', label: '1 Day Before' },
-    { value: '1-hour', label: '1 Hour Before' },
-    { value: '30-min', label: '30 Minutes Before' }
+    { value: '1-hours', label: '1 Hour Before' },
+    { value: '30-minute', label: '30 Minutes Before' }
   ];
 
   // Fetch appointments from API
@@ -160,12 +160,24 @@ export default function AppointmentsManager() {
       setSubmitting(true);
       setError(null);
 
+      // Ensure time is in HH:mm format (24-hour) - strip seconds if present
+      let formattedTime = formData.time;
+      if (formattedTime) {
+        // Split by ':' and take only hours and minutes (first 2 parts)
+        const timeParts = formattedTime.split(':');
+        if (timeParts.length >= 2) {
+          const hours = String(timeParts[0]).padStart(2, '0');
+          const minutes = String(timeParts[1]).padStart(2, '0');
+          formattedTime = `${hours}:${minutes}`;
+        }
+      }
+
       const appointmentData = {
         title: formData.title,
         doctor: formData.doctor,
         type: formData.type,
         date: formData.date,
-        time: formData.time,
+        time: formattedTime,
         location: formData.location,
         address: formData.address,
         phone: formData.phone,
@@ -290,7 +302,14 @@ export default function AppointmentsManager() {
             ))}
           </div>
           <button
-            onClick={() => setShowAddForm(!showAddForm)}
+            onClick={() => {
+              if (showAddForm) {
+                resetForm();
+              } else {
+                setShowAddForm(true);
+                setEditingId(null);
+              }
+            }}
             className="btn-add-appointment"
             disabled={submitting}
           >
