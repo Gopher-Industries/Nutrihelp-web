@@ -63,6 +63,7 @@ import PostDetail from "./routes/Community/PostDetail";
 import ScanBarcode from "./routes/ScanBarcode/ScanBarcode";
 import AuthCallback from "./pages/AuthCallback";
 import DailyPlanEdit from "./routes/DailyPlan/DailyPlanEdit";
+import Account from "./routes/Account/Account.js";
 /* -------------------------------
    NAVBAR WRAPPER (HIDE ON ROUTES)
 -------------------------------- */
@@ -139,6 +140,7 @@ function App() {
         <Route path="/roadmap" element={<FitnessRoadmap />} />
         <Route path="/Scan" element={<Scan />} />
         <Route path="/Meal" element={<Meal />} />
+        <Route path="/account" element={<Account />} />
         {/* PRIVATE ROUTES */}
         <Route
           path="/daily-plan-edit"

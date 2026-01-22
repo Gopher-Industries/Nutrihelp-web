@@ -11,6 +11,7 @@ import {
   ingredientListDB,
 } from "./Config.js";
 import { saveRecipe } from "./data/db/db.js";
+import { recepieApi } from "../../services/recepieApi.js";
 
 // Create Recipe page
 function CreateRecipe() {
@@ -242,6 +243,10 @@ function CreateRecipe() {
     navigate("/recipe");
   };
 
+  const handleSubmit = async () => {
+    
+  }
+
   // Function to validate all fields are filled
   const isFormValid = () => {
     return (
@@ -258,78 +263,6 @@ function CreateRecipe() {
   };
 
   const [attemptedSubmit, setAttemptedSubmit] = useState(false);
-
-  /*   const fileInputRef = useRef(null);
-
-  const [recipeName, setRecipeName] = useState("");
-  const [cuisineType, setCuisineType] = useState("");
-  const [preparationTime, setPreparationTime] = useState("");
-  const [totalServings, setTotalServings] = useState("");
-  const [image, setImage] = useState(null);
-  const [category, setCategory] = useState("");
-  const [ingredient, setIngredient] = useState("");
-  const [quantity, setQuantity] = useState("");
-  const [step, setStep] = useState("");
-
-  const [instructions, setInstructions] = useState([]);
-  const [ingredients, setIngredients] = useState([
-    {
-      category: "",
-      ingredient: "",
-      quantity: "",
-    },
-  ]); */
-
-  /*   const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    try {
-      // Step 1: Upload image to Supabase Storage
-      let imageUrl = null;
-      if (image) {
-        const fileExt = image.name.split(".").pop();
-        const fileName = `${uuidv4()}.${fileExt}`;
-        const filePath = `Create Recipe/${fileName}`;
-
-        const { error: uploadError } = await supabase.storage
-          .from("my-recipe-page")
-          .upload(filePath, image);
-
-        if (uploadError) throw uploadError;
-
-        const { data: publicUrlData } = supabase.storage
-          .from("my-recipe-page")
-          .getPublicUrl(filePath);
-
-        imageUrl = publicUrlData?.publicUrl;
-      }
-
-      // Step 2: Insert recipe data into Supabase
-      const { data, error } = await supabase.from("my-recipe").insert([
-        {
-          creater_id: 1,
-          recipeName,
-          cuisineType,
-          preparationTime,
-          totalServings,
-          ingredients, // already an array of objects
-          instructions, // already an array of strings
-          image_url: imageUrl || null, // use the uploaded image URL or null if no image was uploaded
-        },
-      ]);
-
-      if (error) {
-        console.error("Insert error:", error.message);
-        alert("Failed to save recipe.");
-      } else {
-        alert("Recipe created successfully!");
-        console.log("Inserted recipe:", data);
-      }
-    } catch (err) {
-      console.error("Unexpected error:", err);
-      alert("An unexpected error occurred while saving your recipe.");
-    }
-  }; */
 
   //==================== Render the component ====================
   return (
@@ -882,68 +815,6 @@ function CreateRecipe() {
                     </button>
                   </div>
                 </FramerClient>
-
-                {/* {instruction.length > 0 && (
-                  <div id="no-bg" className="overflow-x-auto mt-4">
-                    <table
-                      id="no-bg"
-                      className="min-w-full border border-gray-300"
-                    >
-                      <thead id="no-bg" className="bg-[#6F42C1] text-white">
-                        <tr>
-                          <th
-                            id="no-bg"
-                            className="border border-gray-300 px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base"
-                          >
-                            Step
-                          </th>
-                          <th
-                            id="no-bg"
-                            className="border border-gray-300 px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base"
-                          >
-                            Actions
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {instruction.map((item, index) => (
-                          <motion.tr
-                            id="no-bg"
-                            className="bg-[#F4F4F4]"
-                            initial={{ opacity: 0, y: -10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: 10 }}
-                            transition={{ duration: 0.3 }}
-                          >
-                            <td
-                              id="no-bg"
-                              className="border border-gray-300 px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base"
-                            >
-                              {item}
-                            </td>
-                            <td
-                              id="no-bg"
-                              className="border border-gray-300 px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base"
-                            >
-                              <button
-                                id="no-bg"
-                                className="text-red-500 !bg-transparent"
-                                type="button"
-                                onClick={() => {
-                                  setInstruction((prev) =>
-                                    prev.filter((_, i) => i !== index)
-                                  );
-                                }}
-                              >
-                                Delete
-                              </button>
-                            </td>
-                          </motion.tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                )} */}
               </div>
 
               {/* Submit Button */}
