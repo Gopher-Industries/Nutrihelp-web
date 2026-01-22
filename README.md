@@ -22,10 +22,7 @@ npm start
 
 ## Key Features
 ### 🏥 Medical Data Breach Checker
-A privacy-first tool designed to protect your medical identity.
-- **Specialized Scanning**: Filters public breach data (via *Have I Been Pwned*) to specifically detect exposures involved in healthcare, insurance, and medical incidents.
-- **Risk Assessment**: Automatically categorizes breaches as **High**, **Medium**, or **Low** risk based on the sensitivity of exposed data (e.g., diagnosis records vs. email addresses).
-- **Privacy Guaranteed**: Searches are performed anonymously; we never log, store, or share your query data.
+The **Medical Data Breach Checker** is a privacy-focused tool that helps users protect their medical identity. By leveraging the *Have I Been Pwned* API, it scans for public data breaches specifically involving healthcare, insurance, or medical records. Searches are performed anonymously without logging any user data, and identified breaches are automatically categorized by risk level to help users prioritize their security actions.
 
 ## Nutrihelp Frontend PR Submission Guidelines
 
