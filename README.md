@@ -20,6 +20,13 @@ npm start
 ### Security Updates
 - **2026-01-22**: Upgraded `jspdf` to v4.0.0 and `html2pdf.js` to v0.14.0 to fix critical vulnerabilities (CVE-2025-68428, CVE-2026-22787).
 
+## Key Features
+### 🏥 Medical Data Breach Checker
+A privacy-first tool designed to protect your medical identity.
+- **Specialized Scanning**: Filters public breach data (via *Have I Been Pwned*) to specifically detect exposures involved in healthcare, insurance, and medical incidents.
+- **Risk Assessment**: Automatically categorizes breaches as **High**, **Medium**, or **Low** risk based on the sensitivity of exposed data (e.g., diagnosis records vs. email addresses).
+- **Privacy Guaranteed**: Searches are performed anonymously; we never log, store, or share your query data.
+
 ## Nutrihelp Frontend PR Submission Guidelines
 
 ### 1. Preparation Before Submission
