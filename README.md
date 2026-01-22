@@ -17,6 +17,9 @@ npm install
 npm start
 ```
 
+### Security Updates
+- **2026-01-22**: Upgraded `jspdf` to v4.0.0 and `html2pdf.js` to v0.14.0 to fix critical vulnerabilities (CVE-2025-68428, CVE-2026-22787).
+
 ## Nutrihelp Frontend PR Submission Guidelines
 
 ### 1. Preparation Before Submission
