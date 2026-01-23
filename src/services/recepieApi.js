@@ -108,20 +108,29 @@ class RecipeApi extends BaseApi {
     async getRecepie() {
         try {
             const userId = this.getCurrentUserId();
-            if (!userId){
-                throw new Error ('User not authenticated');
+            if (!userId) {
+                throw new Error('User not authenticated');
             }
-            const headers = { ...this.getHeaders(), Accept: 'application/json' };
+
+            const headers = { ...this.getHeaders(), 'Content-Type': 'application/json', Accept: 'application/json' };
             const response = await fetch(`${this.baseURL}/recipe`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers,
                 body: JSON.stringify({ user_id: userId })
             });
+            // to trouble shoot and debug
+            // console.log('GET /recipe response (status, ok, type):', response.status, response.ok, typeof response.status);
+            // console.log('response headers:', Array.from(response.headers.entries()));
+            // console.log('content-length header:', response.headers.get('content-length'));
 
-            if (response.status === 204) return [];
+            if (response.status === 204 || response.headers.get('content-length') === '0') {
+                return [];
+            }
+
+            const data = await response.json().catch(() => null);
 
             if (!response.ok) {
-                const errorData = await response.json().catch(() => ({}));
+                const errorData = data || {};
                 if (Array.isArray(errorData.errors)) {
                     const errorMessages = errorData.errors.map(e => e.msg).join(', ');
                     throw new Error(errorMessages);
@@ -129,7 +138,8 @@ class RecipeApi extends BaseApi {
                 throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
             }
 
-            return await response.json();
+            // backend returns { message, statusCode, recipes: [...] }
+            return data && Array.isArray(data.recipes) ? data.recipes : (data || []);
         } catch (error) {
             console.error('Error getting recepie: ', error);
             throw error;
