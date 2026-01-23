@@ -1,82 +1,73 @@
 /**
- * API Service for managing user appointments
- * Connects to the appointment backend endpoints
+ * Recipe API service
  */
-const API_BASE_URL = 'http://localhost:80/api';
+import BaseApi from './baseApi';
 
-class RecipeApi {
+// In-memory lists used by the UI (previously in Config.js)
+export const ingredientListDB = {
+    ingredient: [{ value: '', label: '', id: 0 }],
+    category: [{ value: '', label: '', id: 0 }]
+};
+
+export const cuisineListDB = [{ value: '', label: '', id: 0 }];
+
+export const cookingMethodListDB = [{ value: '', label: '', id: 0 }];
+
+// Functions to fetch and populate the lists
+export async function getCookingMethodList() {
+    try {
+        const response = await fetch(`${recipeApi.baseURL}/fooddata/cookingmethods`, {
+            method: 'GET',
+            headers: recipeApi.getHeaders(),
+        });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const data = await response.json();
+        data.forEach(element => {
+            cookingMethodListDB.push({ value: element.name, label: element.name, id: element.id });
+        });
+        console.log('Cooking methods were fetched from DB');
+    } catch (error) {
+        console.error('Error fetching cooking methods:', error);
+    }
+}
+
+export async function getIngredientsList() {
+    try {
+        const response = await fetch(`${recipeApi.baseURL}/fooddata/ingredients`, {
+            method: 'GET',
+            headers: recipeApi.getHeaders(),
+        });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const data = await response.json();
+        data.forEach(element => {
+            ingredientListDB.ingredient.push({ value: element.name, label: element.name, id: element.id });
+            ingredientListDB.category.push({ value: element.category, label: element.category, id: element.id });
+        });
+        console.log('Ingredients were fetched from DB');
+    } catch (error) {
+        console.error('Error fetching ingredients:', error);
+    }
+}
+
+export async function getCuisineList() {
+    try {
+        const response = await fetch(`${recipeApi.baseURL}/fooddata/cuisines`, {
+            method: 'GET',
+            headers: recipeApi.getHeaders(),
+        });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const data = await response.json();
+        data.forEach(element => {
+            cuisineListDB.push({ value: element.name, label: element.name, id: element.id });
+        });
+        console.log('Cuisines were fetched from DB');
+    } catch (error) {
+        console.error('Error fetching cuisines:', error);
+    }
+}
+class RecipeApi extends BaseApi {
     constructor() {
-        this.baseURL = API_BASE_URL;
-    }
-
-    /**
-     * Get current user ID from localStorage
-     * @returns {string|null} User ID or null if not found
-     */
-    getCurrentUserId() {
-        // Check multiple storage locations used by the app
-        const storageKeys = [
-            { storage: localStorage, key: 'user' },
-            { storage: localStorage, key: 'user_session' },
-            { storage: sessionStorage, key: 'user_session' }
-        ];
-
-        for (const { storage, key } of storageKeys) {
-            const data = storage.getItem(key);
-            if (data) {
-                try {
-                    const userData = JSON.parse(data);
-                    // Check various possible user ID field names
-                    const userId = userData.user_id || userData.id || userData.uid || userData.sub;
-                    if (userId) return userId;
-                } catch (error) {
-                    console.error(`Error parsing ${key}:`, error);
-                }
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Get authentication token from localStorage
-     * @returns {string|null} JWT token or null if not found
-     */
-    getAuthToken() {
-        // Check for dedicated token storage first
-        const authToken = localStorage.getItem('auth_token');
-        if (authToken) return authToken;
-
-        // Check user session objects
-        const storageKeys = [
-            { storage: localStorage, key: 'user' },
-            { storage: localStorage, key: 'user_session' },
-            { storage: sessionStorage, key: 'user_session' }
-        ];
-
-        for (const { storage, key } of storageKeys) {
-            const data = storage.getItem(key);
-            if (data) {
-                try {
-                    const userData = JSON.parse(data);
-                    if (userData.token) return userData.token;
-                } catch (error) {
-                    console.error(`Error parsing ${key}:`, error);
-                }
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Get default headers for API requests
-     * @returns {Object} Headers object
-     */
-    getHeaders() {
-        const token = this.getAuthToken();
-        return {
-            'Content-Type': 'application/json',
-            ...(token && { 'Authorization': `Bearer ${token}` })
-        };
+        super();
     }
 
     async createRecepie(recepieData) {
@@ -86,7 +77,7 @@ class RecipeApi {
                 throw new Error ('User not authenticated');
             }
 
-            const response = await fetch(`${this.baseURL}/createRecepie`, {
+            const response = await fetch(`${this.baseURL}/recipe/createRecipe`, {
                 method: 'POST',
                 headers: this.getHeaders(),
                 body: JSON.stringify({
@@ -113,8 +104,41 @@ class RecipeApi {
             throw error;
         }
     }
+
+    async getRecepie() {
+        try {
+            const userId = this.getCurrentUserId();
+            if (!userId){
+                throw new Error ('User not authenticated');
+            }
+            const headers = { ...this.getHeaders(), Accept: 'application/json' };
+            const response = await fetch(`${this.baseURL}/recipe`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ user_id: userId })
+            });
+
+            if (response.status === 204) return [];
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                if (Array.isArray(errorData.errors)) {
+                    const errorMessages = errorData.errors.map(e => e.msg).join(', ');
+                    throw new Error(errorMessages);
+                }
+                throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+            }
+
+            return await response.json();
+        } catch (error) {
+            console.error('Error getting recepie: ', error);
+            throw error;
+        }
+    }
 }
 
 // Export a singleton instance
-const RecipeObj = new RecipeApi();
-export default RecipeObj;
+export const recipeApi = new RecipeApi();
+export default recipeApi;
+
+

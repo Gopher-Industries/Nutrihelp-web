@@ -31,7 +31,7 @@ import Home from "./routes/Home/Home";
 import DietaryRequirements from "./routes/UI-Only-Pages/DietaryRequirements/DietaryRequirements";
 import ScanProducts from "./routes/UI-Only-Pages/ScanProducts/ScanProducts";
 import Menu from "./routes/UI-Only-Pages/Menu/Menu";
-import Recipe from "./components/Recipe";
+import Recipe from "./routes/MyRecipe/Recipe";
 import Appointment from "./routes/UI-Only-Pages/Appointment/Appointment";
 import newMenu from "./routes/NewMenu/newMenu";
 import Meal from "./routes/Meal/Meal";
