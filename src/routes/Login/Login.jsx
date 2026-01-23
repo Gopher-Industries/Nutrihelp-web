@@ -100,36 +100,50 @@ export default function Login() {
 
   // Handles user sign-in using backend authentication API.
 
-const handleSignIn = async () => {
-  setLoading(true)
+  const handleSignIn = async () => {
+    setLoading(true)
 
-  try {
-    // ✅ Supabase Email/Password Login
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    })
+    try {
+      // ✅ Use backend API for login (matches backend's bcrypt-based auth)
+      const res = await fetch(`${API_BASE}/api/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email.trim().toLowerCase(), password }),
+      })
 
-    if (error) {
-      toast.error(error.message || "Invalid email or password")
-      return
-    }
+      const data = await res.json()
 
-    const user = data.user
+      // Handle MFA required (202 status) - redirect to MFA page
+      if (res.status === 202) {
+        toast.info(data.message || "MFA token sent to your email")
+        navigate("/mfa", { state: { email: email.trim().toLowerCase(), password } })
+        return
+      }
 
-    // ✅ Save minimal session (used by profile page)
-    const userSession = {
-      id: user.id,
-      email: user.email,
-      provider: user.app_metadata?.provider || "email",
-    }
+      if (!res.ok) {
+        toast.error(data.error || data.warning || "Invalid email or password")
+        return
+      }
 
-    localStorage.setItem("user_session", JSON.stringify(userSession))
+      const user = data.user
+      const token = data.token
 
-    // ✅ Set global context (if used)
-    if (typeof setCurrentUser === "function") {
-      setCurrentUser(userSession, rememberMe ? 60 * 60 * 1000 : 0)
-    }
+      // ✅ Save session with JWT token
+      const userSession = {
+        id: user.user_id,
+        email: user.email,
+        name: user.name,
+        token: token,
+        provider: "email",
+      }
+
+      localStorage.setItem("user_session", JSON.stringify(userSession))
+      localStorage.setItem("auth_token", token)
+
+      // ✅ Set global context (if used)
+      if (typeof setCurrentUser === "function") {
+        setCurrentUser(userSession, rememberMe ? 60 * 60 * 1000 : 0)
+      }
 
     // ✅ Optional inactivity logout
     startInactivityWatcher({
@@ -517,7 +531,7 @@ const handleSignIn = async () => {
               </a>
             </div>
 
-            <button type="submit" style={styles.mainBtn}>
+            <button type="submit" style={styles.mainBtn} disabled={loading}>
               {loading ? "Signing in..." : "Sign In"}
             </button>
           </form>

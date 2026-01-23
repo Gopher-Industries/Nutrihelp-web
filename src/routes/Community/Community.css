@@ -3,13 +3,15 @@
 /* Community Page Styles */
 .community-page {
   min-height: 100vh;
-  background: #ffffff;
+  background-color: var(--background-color);
   padding: 20px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  box-sizing: border-box;
+  overflow-x: hidden;
 }
 
 .community-page.dark-mode {
-  background: #1a202c;
+  background-color: var(--background-color);
 }
 
 .community-container {

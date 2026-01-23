@@ -1,13 +1,15 @@
 /* Post Detail Page Styles */
 .post-detail-page {
   min-height: 100vh;
-  background: #f8fafc;
+  background-color: var(--background-color);
   padding: 20px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  box-sizing: border-box;
+  overflow-x: hidden;
 }
 
 .post-detail-page.dark-mode {
-  background: #1a202c;
+  background-color: var(--background-color);
 }
 
 .post-detail-container {

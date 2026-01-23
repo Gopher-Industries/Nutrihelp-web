@@ -661,4 +661,105 @@ button:focus-visible,
 
 }
 
- 
+/* ===== Dark Mode Support ===== */
+.dark-mode .page-wrapper {
+  background-color: var(--food-preferences-div-background-color);
+}
+
+.dark-mode .purple-box {
+  background: 
+    radial-gradient(1000px 420px at 10% 0%, rgba(100, 80, 180, 0.15), transparent 60%),
+    radial-gradient(1000px 420px at 90% 0%, rgba(80, 40, 160, 0.12), transparent 60%),
+    var(--background-secondary);
+  border-color: var(--border-color);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .white-card {
+  background: linear-gradient(var(--card-background), var(--card-background)) padding-box,
+              linear-gradient(135deg, rgba(100, 80, 180, 0.2), rgba(120, 100, 200, 0.2)) border-box;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .white-card h3 {
+  color: var(--text-primary);
+}
+
+.dark-mode .item-card {
+  border-bottom-color: var(--border-color);
+}
+
+.dark-mode .item-card:hover {
+  background: linear-gradient(180deg, var(--background-hover), var(--card-background));
+}
+
+.dark-mode .details strong {
+  color: var(--text-primary);
+}
+
+.dark-mode .details p {
+  color: var(--text-secondary);
+}
+
+.dark-mode .item-icon {
+  background: var(--background-secondary);
+  border-color: var(--border-color);
+}
+
+.dark-mode .slider {
+  background: var(--border-color);
+  border-color: var(--border-color);
+}
+
+.dark-mode .tag {
+  background: rgba(5, 150, 105, 0.2);
+  color: #34d399;
+  border-color: rgba(5, 150, 105, 0.3);
+}
+
+.dark-mode .checkbox-row {
+  color: var(--text-primary);
+}
+
+.dark-mode .add-box {
+  background: linear-gradient(135deg, var(--card-background), var(--background-secondary));
+  border-color: var(--border-color);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .add-box-input {
+  background: var(--input-background);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+.dark-mode .save-btn-wrapper {
+  background: linear-gradient(to top, rgba(18, 18, 18, 0.95), rgba(18, 18, 18, 0));
+  border-top-color: var(--border-color);
+}
+
+.dark-mode .section-heading h1 {
+  color: var(--h1-color);
+}
+
+.dark-mode .section-heading .subtitle {
+  color: var(--text-primary);
+}
+
+.dark-mode .section-heading p {
+  color: var(--text-secondary);
+}
+
+.dark-mode .styled-alert {
+  background: linear-gradient(135deg, #2d1f4e, #3d2a5e);
+  border-color: #7c3aed;
+  box-shadow: 0 12px 32px rgba(100, 50, 200, 0.4);
+}
+
+.dark-mode .alert-message {
+  color: #e9d5ff;
+}
+
+.dark-mode .box-label {
+  color: var(--text-secondary);
+}

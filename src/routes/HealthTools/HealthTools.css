@@ -9,6 +9,12 @@
   --success-color: #005BBB;
 }
 
+.dark-mode {
+  --card-bg: var(--card-background);
+  --text-color: var(--text-secondary);
+  --heading-color: var(--text-primary);
+}
+
 .health-tools {
   margin: 0 auto;
   padding: 24px 20px 32px 20px; 
@@ -27,17 +33,17 @@
   padding: 13px 56px;                  
   margin: 0 auto 36px auto;
 
-  background: linear-gradient(135deg, #667eea 0%, #005BBB 50%, #005BBB 100%);
+  background: var(--gradient-accent);
   border-radius: 25px;               
 
   font-size: 2.2rem;
   font-weight: 700;
   letter-spacing: 0.4px;
 
-  color: #ffffff;
+  color: var(--text-inverse);
   text-align: center;
 
-  box-shadow: 0 8px 18px rgba(0, 91, 187, 0.25);
+  box-shadow: var(--box-shadow-medium);
 }
 
 .health-tools h1::after {
@@ -130,7 +136,7 @@
   background-color: var(--card-bg);
   padding: 40px; 
   border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--box-shadow-medium);
   color: var(--text-color);
   display: flex;
   flex-direction: column;
@@ -138,10 +144,12 @@
   align-items: center;
   text-align: center;
   transition: transform 0.2s ease;
+  border: 1px solid var(--border-color);
 }
 
 .card:hover {
   transform: translateY(-4px);
+  box-shadow: var(--card-shadow-hover);
 }
 
 .card h3 {
@@ -157,7 +165,8 @@
   border-radius: 8px;
   border: 1px solid var(--border-color);
   font-size: 1.1rem;
-  color: var(--text-color);
+  color: var(--input-text);
+  background-color: var(--input-background);
   box-sizing: border-box;
 }
 
@@ -174,7 +183,7 @@
 }
 
 .input-field::placeholder {
-  color: #999999;
+  color: var(--input-placeholder);
 }
 
 .primary-button {
@@ -186,7 +195,7 @@
   border: none;
   cursor: pointer;
   background-color: var(--primary-color);
-  color: #ffffff;
+  color: var(--button-text);
   transition: background-color 0.3s ease, transform 0.1s ease;
 }
 
