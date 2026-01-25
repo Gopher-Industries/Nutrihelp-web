@@ -47,10 +47,10 @@
 //     <div className="fitness-form-container">
 
 //       <form onSubmit={handleSubmit}>
-        
+
 //         {/* Step 1: Current Fitness */}
 //         {currentStep === 1 && (
-          
+
 //           <div className="current-fitness-form">
 //             <h2>Personalize Your Health Tracker</h2>
 //             <div className="form-group">
@@ -188,16 +188,16 @@ const FitnessInput = ({ onProfileSaved }) => {
 
       // Send the data to the backend API using fetch
       try {
-        const response = await fetch("http://localhost:80/api/fitness-journey", {
+        const response = await fetch("http://localhost:5000/api/fitness-journey", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify(data),
         });
-      
+
         const result = await response.json();
-      
+
         if (response.ok) {
           alert("Fitness journey saved successfully!");
           onProfileSaved(); // If you want to redirect or show something
@@ -207,7 +207,7 @@ const FitnessInput = ({ onProfileSaved }) => {
       } catch (error) {
         alert(`Network error: ${error.message}`);
       }
-      
+
     }
   };
 

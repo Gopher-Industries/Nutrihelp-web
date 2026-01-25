@@ -66,7 +66,7 @@ export default function Login() {
   const { setCurrentUser } = useContext(UserContext)
   const { darkMode } = useDarkMode()
   const navigate = useNavigate()
-  const API_BASE = "http://localhost:80"
+  const API_BASE = "http://localhost:5000" // same as your old code
 
   const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -145,29 +145,29 @@ export default function Login() {
         setCurrentUser(userSession, rememberMe ? 60 * 60 * 1000 : 0)
       }
 
-    // ✅ Optional inactivity logout
-    startInactivityWatcher({
-      enabled: !rememberMe,
-      seconds: 30,
-      onTimeout: async () => {
-        await supabase.auth.signOut()
-        localStorage.removeItem("user_session")
-        setCurrentUser?.(null)
-        toast.info("You were signed out due to inactivity.")
-        navigate("/login")
-      },
-    })
+      // ✅ Optional inactivity logout
+      startInactivityWatcher({
+        enabled: !rememberMe,
+        seconds: 30,
+        onTimeout: async () => {
+          await supabase.auth.signOut()
+          localStorage.removeItem("user_session")
+          setCurrentUser?.(null)
+          toast.info("You were signed out due to inactivity.")
+          navigate("/login")
+        },
+      })
 
-    toast.success("Welcome back!")
-    navigate("/home")
+      toast.success("Welcome back!")
+      navigate("/home")
 
-  } catch (err) {
-    console.error("Login error:", err)
-    toast.error("Unable to sign in. Please try again later.")
-  } finally {
-    setLoading(false)
+    } catch (err) {
+      console.error("Login error:", err)
+      toast.error("Unable to sign in. Please try again later.")
+    } finally {
+      setLoading(false)
+    }
   }
-}
 
   // keep Google sign-in logic from old code (unchanged)
   const handleGoogleSignIn = async () => {
@@ -190,16 +190,16 @@ export default function Login() {
   }
 
   useEffect(() => {
-  if (location.state?.message) {
-    toast.success(location.state.message, {
-      position: "top-right",
-      autoClose: 4000,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: false,
-    })
-  }
-}, [location.state])
+    if (location.state?.message) {
+      toast.success(location.state.message, {
+        position: "top-right",
+        autoClose: 4000,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: false,
+      })
+    }
+  }, [location.state])
 
 
   // UI (unchanged structure) 
