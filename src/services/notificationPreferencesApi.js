@@ -2,7 +2,7 @@
  * API Service for managing user notification preferences
  * Integrates with the extended user preferences API
  */
-const API_BASE_URL = 'http://localhost:80/api';
+const API_BASE_URL = 'http://localhost:5000/api';
 
 class NotificationPreferencesApi {
     constructor() {
@@ -61,7 +61,7 @@ class NotificationPreferencesApi {
     async request(endpoint, options = {}) {
         const url = `${this.baseURL}${endpoint}`;
         const token = this.getAuthToken();
-        
+
         const config = {
             headers: {
                 'Content-Type': 'application/json',
@@ -73,12 +73,12 @@ class NotificationPreferencesApi {
 
         try {
             const response = await fetch(url, config);
-            
+
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({}));
                 throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
             }
-            
+
             return await response.json();
         } catch (error) {
             console.error('API request failed:', error);
@@ -93,16 +93,16 @@ class NotificationPreferencesApi {
     async getNotificationPreferences() {
         try {
             const response = await this.request('/user/preferences/extended/notifications');
-            
+
             if (response.success && response.data) {
                 return response.data;
             }
-            
+
             // Return default preferences if API fails
             return this.defaultPreferences;
         } catch (error) {
             console.error('Error fetching notification preferences:', error);
-            
+
             // Try to get from localStorage as fallback
             const saved = localStorage.getItem('notificationPreferences');
             if (saved) {
@@ -112,7 +112,7 @@ class NotificationPreferencesApi {
                     console.error('Error parsing saved preferences:', parseError);
                 }
             }
-            
+
             return this.defaultPreferences;
         }
     }
@@ -130,20 +130,20 @@ class NotificationPreferencesApi {
                     notification_preferences: preferences
                 })
             });
-            
+
             if (response.success) {
                 // Save to localStorage as cache
                 localStorage.setItem('notificationPreferences', JSON.stringify(preferences));
                 return response;
             }
-            
+
             throw new Error(response.error || 'Failed to update notification preferences');
         } catch (error) {
             console.error('Error updating notification preferences:', error);
-            
+
             // Save to localStorage as fallback
             localStorage.setItem('notificationPreferences', JSON.stringify(preferences));
-            
+
             return {
                 success: false,
                 error: error.message,
@@ -159,21 +159,21 @@ class NotificationPreferencesApi {
     async getAllUserPreferences() {
         try {
             const response = await this.request('/user/preferences/extended');
-            
+
             if (response.success && response.data) {
                 // Cache notification preferences
                 if (response.data.notification_preferences) {
-                    localStorage.setItem('notificationPreferences', 
+                    localStorage.setItem('notificationPreferences',
                         JSON.stringify(response.data.notification_preferences));
                 }
-                
+
                 return response.data;
             }
-            
+
             throw new Error('Failed to fetch user preferences');
         } catch (error) {
             console.error('Error fetching all user preferences:', error);
-            
+
             // Return cached data if available
             const cached = this.getCachedPreferences();
             return cached;
@@ -199,27 +199,27 @@ class NotificationPreferencesApi {
                     ...preferences
                 })
             });
-            
+
             if (response.success) {
                 // Cache notification preferences
                 if (preferences.notification_preferences) {
-                    localStorage.setItem('notificationPreferences', 
+                    localStorage.setItem('notificationPreferences',
                         JSON.stringify(preferences.notification_preferences));
                 }
-                
+
                 return response;
             }
-            
+
             throw new Error(response.error || 'Failed to update user preferences');
         } catch (error) {
             console.error('Error updating all user preferences:', error);
-            
+
             // Save to localStorage as fallback
             if (preferences.notification_preferences) {
-                localStorage.setItem('notificationPreferences', 
+                localStorage.setItem('notificationPreferences',
                     JSON.stringify(preferences.notification_preferences));
             }
-            
+
             return {
                 success: false,
                 error: error.message,
@@ -246,7 +246,7 @@ class NotificationPreferencesApi {
                 console.error('Error parsing cached preferences:', parseError);
             }
         }
-        
+
         return {
             notification_preferences: this.defaultPreferences,
             language: 'en',

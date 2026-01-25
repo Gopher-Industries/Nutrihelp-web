@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import './../../../styles/auth.css'
-import SubHeading from'../../../components/general_components/headings/SubHeading'
+import SubHeading from '../../../components/general_components/headings/SubHeading'
 import './DietaryRequirements.css'
 
-import { Image, Button} from 'semantic-ui-react'
+import { Image, Button } from 'semantic-ui-react'
 import PreferenceImage from './images/pref.jpg'
 
 function UserPreference() {
@@ -113,7 +113,7 @@ function UserPreference() {
     console.log("preferencedata", preferencedata);
 
     // Make the fetch request
-    fetch('http://localhost:80/api/userPreference', {
+    fetch('http://localhost:5000/api/userPreference', {
       method: 'POST',
       body: JSON.stringify({ id, preferencedata }),
       headers: {
@@ -121,18 +121,18 @@ function UserPreference() {
         'Content-Type': 'application/json'
       },
     })
-    .then((response) => {
-      // Handle successful response
-      console.log(response);
-      alert('User Preference selected successfully!');
-      // Reset form data after successful submission
-      handleRedoClick();
-    })
-    .catch((error) => {
-      // Handle errors
-      console.error('Error sending message:', error);
-      alert('Failed to send message. Please try again later.');
-    });
+      .then((response) => {
+        // Handle successful response
+        console.log(response);
+        alert('User Preference selected successfully!');
+        // Reset form data after successful submission
+        handleRedoClick();
+      })
+      .catch((error) => {
+        // Handle errors
+        console.error('Error sending message:', error);
+        alert('Failed to send message. Please try again later.');
+      });
   };
 
   return (

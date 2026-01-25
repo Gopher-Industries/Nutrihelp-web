@@ -89,7 +89,7 @@ const Home = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    fetch("http://localhost:80/api/contactus", {
+    fetch("http://localhost:5000/api/contactus", {
       method: "POST",
       body: JSON.stringify(formData),
       headers: {

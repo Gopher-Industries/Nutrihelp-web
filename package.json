@@ -5,7 +5,10 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "react-scripts start",
+    "start": "concurrently -n \"FRONTEND,BACKEND,AI\" -c \"bgBlue.bold,bgMagenta.bold,bgGreen.bold\" \"npm run start:frontend\" \"npm run start:backend\" \"npm run start:ai\"",
+    "start:frontend": "react-scripts start",
+    "start:backend": "cd Nutrihelp-api && npm start",
+    "start:ai": "cd Nutrihelp-api && python mock_ai_server.py",
     "build": "react-scripts build"
   },
   "keywords": [],
@@ -22,10 +25,10 @@
     "antd": "^5.19.1",
     "axios": "^1.7.9",
     "dompurify": "^3.1.0",
-    "firebase": "^10.6.0",
+    "firebase": "^11.0.0",
     "framer-motion": "^12.5.0",
-    "html2pdf.js": "^0.10.3",
-    "jspdf": "^3.0.4",
+    "html2pdf.js": "^0.14.0",
+    "jspdf": "^4.0.0",
     "jspdf-autotable": "^5.0.2",
     "lucide-react": "^0.483.0",
     "react": "^18.2.0",
@@ -59,6 +62,7 @@
   "devDependencies": {
     "@types/dompurify": "^3.0.5",
     "@types/react": "^18.2.0",
+    "concurrently": "^9.2.1",
     "eslint": "^8.57.0",
     "eslint-plugin-security": "^3.0.0",
     "msw": "^2.2.13",
