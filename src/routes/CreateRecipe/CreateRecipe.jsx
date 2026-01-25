@@ -116,7 +116,7 @@ function CreateRecipe() {
     setIngredientQuantity("");
   };
 
-  const handleRemoveTableData = () => {};
+  const handleRemoveTableData = () => { };
 
   //--------------- Instructions Section -----------------
 
@@ -212,7 +212,7 @@ function CreateRecipe() {
         await saveToIndexedDB(formData);
         window.dispatchEvent(new Event("recipeUpdated"));
 
-        fetch("http://localhost:80/api/recipe/", {
+        fetch("http://localhost:5000/api/recipe/", {
           method: "POST",
           body: JSON.stringify(formData),
           headers: {
@@ -355,7 +355,7 @@ function CreateRecipe() {
               {/* Header - flex column on mobile, row on sm+ */}
               <div
                 id="no-bg"
-                //className="flex flex-col bg-[#E8F1FF] sm:flex-row justify-between items-center mb-6 sm:mb-8 md:mb-10 lg:mb-12"
+              //className="flex flex-col bg-[#E8F1FF] sm:flex-row justify-between items-center mb-6 sm:mb-8 md:mb-10 lg:mb-12"
               >
                 <div id="no-bg" className="w-full flex justify-center">
                   <h1
@@ -406,7 +406,7 @@ function CreateRecipe() {
 
                     <div
                       id="no-bg"
-                       className="flex flex-col w-full gap-2"
+                      className="flex flex-col w-full gap-2"
                     >
                       <label
                         id="no-bg"
@@ -467,8 +467,8 @@ function CreateRecipe() {
                 >
                   Cooking Description
                 </h2>
-                <div id="no-bg" 
-                className="flex flex-col gap-6 w-full"
+                <div id="no-bg"
+                  className="flex flex-col gap-6 w-full"
                 >
                   <div
                     id="no-bg"
@@ -482,7 +482,7 @@ function CreateRecipe() {
                     </label>
                     <input
                       id="no-bg"
-                       className="w-full rounded-xl h-10 sm:h-12 border border-gray-400 px-4"
+                      className="w-full rounded-xl h-10 sm:h-12 border border-gray-400 px-4"
                       placeholder="e.g.,   30 minutes"
                       value={preparationTime}
                       onChange={(e) =>
@@ -544,7 +544,7 @@ function CreateRecipe() {
                   <FramerClient>
                     <div
                       id="no-bg"
-                     className="flex flex-col sm:flex-row sm:items-start gap-4 sm:gap-6 mb-4 sm:mb-6"
+                      className="flex flex-col sm:flex-row sm:items-start gap-4 sm:gap-6 mb-4 sm:mb-6"
                     >
                       <div
                         id="no-bg"
@@ -635,10 +635,10 @@ function CreateRecipe() {
                             id="no-bg"
                             className="w-full sm:w-2/3 rounded-xl h-10 sm:h-12 border border-gray-400 px-4 bg-white"
                             defaultValue=""
-                            /*   value={ingredientQuantity}
-                            onChange={(e) =>
-                              handleIngredientQuantityChange(e.target.value)
-                            } */
+                          /*   value={ingredientQuantity}
+                          onChange={(e) =>
+                            handleIngredientQuantityChange(e.target.value)
+                          } */
                           >
                             <option value="" disabled>
                               Select one
@@ -866,8 +866,8 @@ function CreateRecipe() {
                     />
                   </div>
 
-                  <div id="no-bg" 
-                  className="flex items-center justify-start sm:justify-start sm:w-1/2"
+                  <div id="no-bg"
+                    className="flex items-center justify-start sm:justify-start sm:w-1/2"
                   >
                     <button
                       id="no-bg"

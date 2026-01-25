@@ -16,7 +16,7 @@
 //   useEffect(() => {
 //     const fetchFitnessData = async () => {
 //       try {
-//         const res = await fetch("http://localhost:80/api/fitness-Journey");
+//         const res = await fetch("http://localhost:5000/api/fitness-Journey");
 //         const data = await res.json();
 //         setFitnessData(Array.isArray(data) ? data[data.length - 1] : data);
 //       } catch (error) {
@@ -129,7 +129,7 @@ const FitnessJourney = () => {
   useEffect(() => {
     const fetchFitnessData = async () => {
       try {
-        const res = await fetch("http://localhost:80/api/fitness-Journey");
+        const res = await fetch("http://localhost:5000/api/fitness-Journey");
         const data = await res.json();
         setFitnessData(Array.isArray(data) ? data[data.length - 1] : data);
       } catch (error) {
@@ -178,7 +178,7 @@ const FitnessJourney = () => {
         >
           <BarChart2 />
         </div>
-        
+
       </div>
 
       {/* Conditional rendering based on activePage */}

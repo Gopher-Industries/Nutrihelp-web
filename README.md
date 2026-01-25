@@ -17,6 +17,13 @@ npm install
 npm start
 ```
 
+### Security Updates
+- **2026-01-22**: Upgraded `jspdf` to v4.0.0 and `html2pdf.js` to v0.14.0 to fix critical vulnerabilities (CVE-2025-68428, CVE-2026-22787).
+
+## Key Features
+### 🏥 Medical Data Breach Checker
+The **Medical Data Breach Checker** is a privacy-focused tool that helps users protect their medical identity. By leveraging the *Have I Been Pwned* API, it scans for public data breaches specifically involving healthcare, insurance, or medical records. Searches are performed anonymously without logging any user data, and identified breaches are automatically categorized by risk level to help users prioritize their security actions.
+
 ## Nutrihelp Frontend PR Submission Guidelines
 
 ### 1. Preparation Before Submission
