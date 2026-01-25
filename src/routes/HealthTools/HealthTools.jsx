@@ -155,6 +155,7 @@ function HealthTools() {
         </button>
       </div>
 
+
       <div className="tool-panel">
         {activeTool === 'macro' && (
           <div className="card">
@@ -293,6 +294,25 @@ function HealthTools() {
           <li>Press the calculate button to see your result.</li>
         </ul>
       </section>
+
+      {/* Row: Medical Breach Checker */}
+      <div className="flex-row" style={{ marginTop: '20px' }}>
+        <div className="card" style={{ width: '100%', borderColor: '#6366f1', borderWidth: '2px' }}>
+          <h3 style={{ color: '#4f46e5' }}>Medical Record Breach Checker</h3>
+          <p>
+            Check if your email address has been exposed in any known healthcare-related data breaches.
+            We prioritize your privacy and security.
+          </p>
+          <button
+            className="primary-button"
+            style={{ backgroundColor: '#4f46e5', marginTop: '10px' }}
+            onClick={() => window.location.href = '/security/breach-detection'}
+          >
+            Check Now
+          </button>
+        </div>
+      </div>
+
     </div>
   );
 }

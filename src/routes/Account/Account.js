@@ -8,7 +8,7 @@ function Account() {
   const [isVisible, setIsVisible] = useState(false);
   const [mealDataList, setMealDataList] = useState([]);
   const [userId, setUserId] = useState("");
-  const [date, setDate] = useState(""); 
+  const [date, setDate] = useState("");
 
   useEffect(() => {
     const fetchMealData = async () => {
@@ -17,7 +17,7 @@ function Account() {
         if (userId) params.append('user_id', userId);
         if (date) params.append('created_at', date);
 
-        const response = await fetch(`http://localhost:80/api/account?${params.toString()}`);
+        const response = await fetch(`http://localhost:5000/api/account?${params.toString()}`);
         if (!response.ok) {
           throw new Error("Failed to fetch meal plan data");
         }
@@ -46,14 +46,14 @@ function Account() {
 
   function formatDate(dateString) {
     const date = new Date(dateString);
-    
+
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
     const hours = String(date.getHours()).padStart(2, '0');
     const minutes = String(date.getMinutes()).padStart(2, '0');
     const seconds = String(date.getSeconds()).padStart(2, '0');
-    
+
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
   }
 

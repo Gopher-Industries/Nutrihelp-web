@@ -6,7 +6,7 @@ const ingredientListDB = {
 const cuisineListDB = [{ value: '', label: '', id: 0 }];
 
 const getIngredientsList = async () => {
-    fetch('http://localhost:80/api/fooddata/ingredients', {
+    fetch('http://localhost:5000/api/fooddata/ingredients', {
         method: 'GET',
         headers: {
             'Origin': 'http://localhost:3000/',
@@ -28,7 +28,7 @@ const getIngredientsList = async () => {
 }
 
 const getCuisineList = async () => {
-    fetch('http://localhost:80/api/fooddata/cuisines', {
+    fetch('http://localhost:5000/api/fooddata/cuisines', {
         method: 'GET',
         headers: {
             'Origin': 'http://localhost:3000/',

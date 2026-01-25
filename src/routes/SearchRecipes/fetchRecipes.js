@@ -1,5 +1,5 @@
 /*export async function fetchRecipes(user_id) {
-  const response = await fetch("http://localhost:80/api/recipe", {
+  const response = await fetch("http://localhost:5000/api/recipe", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -14,19 +14,19 @@
 }*/
 
 export async function fetchRecipes(user_id) {
-  const res = await fetch("http://localhost:80/api/recipe", {
+  const res = await fetch("http://localhost:5000/api/recipe", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ user_id }),
   });
- 
+
   if (res.status === 400) throw new Error("User Id is required");
   if (res.status === 404) return { recipes: [] };
   if (!res.ok) {
     const text = await res.text().catch(() => "");
     throw new Error(`Request failed: ${res.status} ${text}`);
   }
- 
+
   const data = await res.json();
   return { recipes: data.recipes || [], message: data.message };
 }
