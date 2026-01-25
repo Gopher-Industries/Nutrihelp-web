@@ -49,8 +49,8 @@ nav {
 } */
 
 header {
-  background-color: #caa3e1;
-  color: #ffffff;
+  background-color: var(--accent-light);
+  color: var(--text-inverse);
   padding: 10px;
   text-align: center;
 }
@@ -67,7 +67,7 @@ input {
 button {
   padding: 8px;
   /* background-color: var(--button-background-color); */
-  color: #fff;
+  color: var(--text-inverse);
   border: none;
   cursor: pointer;
 }
@@ -94,12 +94,13 @@ button {
 }
 
 .food-item {
-  background-color: #fff;
+  background-color: var(--card-background);
   padding: 10px;
   margin: 10px;
   border-radius: 8px;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--card-shadow);
   width: 300px;
+  color: var(--text-primary);
 }
 
 .food-item h2 {

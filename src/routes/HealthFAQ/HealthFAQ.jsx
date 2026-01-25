@@ -1,15 +1,30 @@
 import { useState } from "react";
+import "../FAQ/faq.css";
 import "./HealthFAQ.css";
 
 function HealthFAQ() {
   const [activeCategory, setActiveCategory] = useState("general");
   const [openItems, setOpenItems] = useState({});
+  const [feedback, setFeedback] = useState("");
 
   const toggleItem = (id) => {
     setOpenItems(prev => ({
       ...prev,
       [id]: !prev[id]
     }));
+  };
+
+  const handleFeedbackChange = (e) => {
+    setFeedback(e.target.value);
+  };
+
+  const handleFeedbackSubmit = () => {
+    if (feedback.trim() !== "") {
+      alert(`Thank you for your feedback: "${feedback}"`);
+      setFeedback("");
+    } else {
+      alert("Please enter your feedback before submitting.");
+    }
   };
 
   const faqData = {
@@ -177,11 +192,7 @@ function HealthFAQ() {
 
   return (
     <div className="health-faq-container">
-      <h2>Nutrition & Health Intake FAQ</h2>
-      <p className="faq-intro">
-        Find answers to common questions about daily nutritional requirements and healthy intake of various substances.
-      </p>
-
+      <h1 className="health-faq-title">Nutrition & Health Intake FAQ</h1>
       <div className="category-selector">
         <button
           className={activeCategory === "general" ? "active" : ""}
@@ -225,13 +236,31 @@ function HealthFAQ() {
                 </span>
               </div>
               {isOpen && (
-                <div className="faq-answer">
+                <div className="faq-health-answer">
                   <p>{item.answer}</p>
                 </div>
               )}
             </div>
           );
         })}
+      </div>
+
+      <div className="feedback-section">
+        <div className="feedback-head">
+          <h2>Still Need Help?</h2>
+          <p>
+            Our friendly support team is here to help you. Leave your question:
+          </p>
+        </div>
+        <textarea
+          placeholder="Enter your question here..."
+          value={feedback}
+          onChange={handleFeedbackChange}
+          className="feedback-textarea"
+        ></textarea>
+        <button onClick={handleFeedbackSubmit} className="feedback-submit">
+          Submit 
+        </button>
       </div>
     </div>
   );

@@ -216,13 +216,11 @@ const Meal = () => {
   // UI helpers
   const SectionHeader = ({ title, show, toggle, totalCount, selectedCount }) => (
     <div
+      className="section-header"  
       style={{
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
-        cursor: "pointer",
-        marginTop: 20,
-        padding: "10px 0",
         cursor: "pointer",
         marginTop: 12,
         padding: "8px 0",
@@ -231,7 +229,7 @@ const Meal = () => {
       onClick={toggle}
     >
       <h3 
-        className="heading" 
+        className="section-header-title" 
         style={{ 
           margin: 0, 
           marginLeft: 0,      
@@ -246,15 +244,15 @@ const Meal = () => {
         {title}
       </h3>
 
-      <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-        <span style={{
-          fontSize: 12, padding: "4px 10px", borderRadius: 999,
+      <div className="section-header-info" style={{ display: "flex", gap: 12, alignItems: "center" }}>
+        <span className="info-badge" style={{
+          fontSize: "0.75rem", padding: "4px 10px", borderRadius: 999,
           background: "#eef2ff", color: "#3730a3", whiteSpace: "nowrap"
         }}>
           {totalCount} items
         </span>
-        <span style={{
-          fontSize: 12, padding: "4px 10px", borderRadius: 999,
+        <span className="info-badge" style={{
+          fontSize: "0.75rem", padding: "4px 10px", borderRadius: 999,
           background: selectedCount > 0 ? "#E8F1FF" : "#f3f4f6",
           color: selectedCount > 0 ? "#005BBB" : "#374151",
           whiteSpace: "nowrap"
@@ -262,8 +260,8 @@ const Meal = () => {
           {selectedCount} selected
         </span>
         
-        <span style={{ 
-          fontSize: 12, 
+        <span className="info-hint" style={{ 
+          fontSize: "0.75rem", 
           color: "#6b7280", 
           fontStyle: "italic",
           minWidth: "100px",
@@ -285,7 +283,7 @@ const Meal = () => {
         right: 8,
         background: "rgba(232, 241, 255, 0.95)",
         color: "black",
-        fontSize: 12,
+        fontSize: "0.75rem",
         padding: "2px 6px",
         borderRadius: 8,
         boxShadow: "0 1px 4px rgba(0,0,0,0.15)",
@@ -304,7 +302,7 @@ const Meal = () => {
             display: "flex",
             justifyContent: "space-between",
             marginBottom: 4,
-            fontSize: 14,
+            fontSize: "0.875rem",
           }}
         >
           <span>{label}</span>
@@ -343,7 +341,7 @@ const Meal = () => {
           }}
         >
           <div style={{ maxWidth: "900px", margin: "0 auto", textAlign: "center" }}>
-            <h1 style={{ margin: 0, fontSize: "clamp(22px, 4vw, 36px)", lineHeight: 1.2 }}>
+            <h1 style={{ margin: 0, fontSize: "clamp(1.375rem, 4vw, 2.25rem)", lineHeight: 1.2 }}>
               What is Your Meal Plan Today?
             </h1>
           </div>
@@ -368,7 +366,7 @@ const Meal = () => {
                 maxWidth: "520px",
                 padding: "12px 16px",
                 borderRadius: "12px",
-                fontSize: "16px",
+                fontSize: "1rem",
                 cursor: "pointer",
               }}
             >
@@ -387,11 +385,15 @@ const Meal = () => {
                     border: "1px solid #eee",
                   }}
                 >
-                  <h2 style={{ textAlign: "center", marginTop: 0 }}>🎯 Personalized Weekly Plan</h2>
+                  <h2 style={{ textAlign: "center", marginTop: 0, fontSize: "clamp(1.125rem, 4vw, 1.75rem)", lineHeight: 1.3 }}>🎯 Personalized Weekly Plan</h2>
                   <PersonalizedPlanForm onGenerate={(filters) => setPersonalFilters(filters)} />
                   {personalFilters && (
                     <div style={{ width: "100%", marginTop: "12px" }}>
-                      <PersonalizedWeeklyPlan filters={personalFilters} />
+                      <PersonalizedWeeklyPlan
+                        filters={personalFilters}
+                        onExport={() => exportMealPlanAsPDF('personalized-meal-plan')}
+                        showExport
+                      />
                     </div>
                   )}
                 </div>
@@ -544,10 +546,10 @@ const Meal = () => {
             }}
           >
             <div className="details-box" style={{ borderRadius: 16 }}>
-              <h3 style={{ fontSize: "2rem", marginTop: 0 }}>Nutritional Value</h3>
+              <h3 style={{ fontSize: "clamp(1.25rem, 3vw, 1.5rem)", margin: "0 auto", marginBottom: "0.5rem", textAlign: "center" }}>Nutritional Value</h3>
               <ul
                 style={{
-                  fontSize: "1.2rem",
+                  fontSize: "clamp(1rem, 2vw, 1.2rem)",
                   marginTop: "0.5rem",
                   listStyle: "none",
                   paddingLeft: 0,
@@ -565,7 +567,7 @@ const Meal = () => {
                 <NutritionBar label="Sodium" value={totalNutrition.sodium} max={2300} unit="mg" />
               </div>
 
-              <ul style={{ fontSize: "1.3rem", marginTop: "12px" }}>
+              <ul style={{ fontSize: "clamp(1rem, 2vw, 1.3rem)", marginTop: "12px" }}>
                 <li>Calories: {totalNutrition.calories}</li>
                 <li>Proteins: {totalNutrition.proteins}g</li>
                 <li>Fats: {totalNutrition.fats}g</li>

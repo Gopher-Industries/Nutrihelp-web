@@ -1,446 +1,280 @@
 /* Shopping List Page Styles */
 .shopping-list-page {
     min-height: 100vh;
-    background: linear-gradient(135deg, #f3e8ff 25%, #f9f7fc 75%);
     padding: 20px;
     font-family: 'Poppins', sans-serif;
     overflow-x: hidden; /* Prevent horizontal scrolling */
 }
 
 .shopping-list-header {
-    text-align: center;
-    color: #333;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    color: var(--text-primary);
+    background-color: white;
     margin-bottom: 30px;
     padding: 20px;
-    background: rgba(255, 255, 255, 0.9);
     border-radius: 15px;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    flex-wrap: wrap;
+    gap: 15px;
 }
 
 .shopping-list-header h1 {
     font-size: 2.5rem;
-    margin: 0 0 10px 0;
-    color: #333;
+    color: var(--text-primary);
 }
 
-.shopping-list-header p {
-    font-size: 1.1rem;
-    margin: 0;
-    opacity: 0.9;
-}
-
-.meal-plan-summary {
-    margin-top: 10px;
-    padding: 8px 16px;
-    background: rgba(102, 126, 234, 0.1);
-    border-radius: 20px;
-    display: inline-block;
-}
-
-.meal-plan-summary span {
-    font-size: 0.9rem;
-    color: #667eea;
-    font-weight: 500;
-}
-
-/* Ensure select box container has correct z-index */
 .add-item-form {
     display: flex;
     gap: 15px;
+    padding: 10px 0px;
     align-items: center;
     flex-wrap: wrap;
-    position: relative; /* Provide positioning context for dropdown */
-    z-index: 1000; /* Ensure form container has high enough z-index */
-    overflow: visible !important; /* Ensure dropdown options are not clipped */
 }
 
-/* Unified base styles for all input fields and select boxes */
-.item-input, .quantity-input, .unit-select, .category-select, .unit-edit, .quantity-edit, .search-input {
-    border-radius: 8px !important;
-    border: 2px solid #e0e0e0 !important;
-    transition: border-color 0.3s !important;
-    outline: none !important;
-    box-sizing: border-box !important;
-    font-family: 'Poppins', sans-serif !important;
-    background-color: white !important;
-    color: #333 !important;
-    opacity: 1 !important;
-    visibility: visible !important;
-    line-height: 1.2 !important; /* Adjust line height to ensure text vertical centering */
-    display: flex !important; /* Use flexbox to ensure vertical centering */
-    align-items: center !important; /* Vertical center alignment */
+/* Base styles for all input fields and select boxes */
+.item-input, .quantity-input, .unit-select, .category-select, .unit-edit {
+    border-radius: 8px;
+    border: 2px solid var(--border-color);
+    transition: border-color 0.3s;
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--card-background);
+    color: var(--text-primary);
 }
 
 .item-input {
-    padding: 12px 15px !important;
-    font-size: 14px !important;
-    height: 48px !important;
+    padding: 12px 15px;
+    font-size: 14px;
+    height: 48px;
     flex: 2;
     min-width: 200px;
-    background-color: white !important;
-    color: #333 !important;
-    line-height: 1.2 !important;
-    display: flex !important;
-    align-items: center !important;
 }
 
 .item-input:focus {
-    border-color: #667eea !important;
+    border-color: var(--primary-color);
 }
 
 .item-input::placeholder {
-    color: #999 !important;
-    opacity: 1 !important;
+    color: var(--text-muted);
 }
 
 .quantity-input, .unit-select, .category-select {
-    padding: 12px 15px !important;
-    font-size: 14px !important;
-    background: white !important;
-    height: 48px !important;
+    padding: 12px 15px;
+    font-size: 14px;
+    height: 48px;
     flex: 1;
     min-width: 120px;
-    position: relative;
-    z-index: 1;
-    color: #333 !important;
-    line-height: 1.2 !important;
-    display: flex !important;
-    align-items: center !important;
 }
 
 .quantity-input:focus, .unit-select:focus, .category-select:focus {
-    border-color: #667eea !important;
-    z-index: 10;
+    border-color: var(--primary-color);
 }
 
-/* Ensure dropdown options are not blocked */
+/* Dropdown option styles */
 .unit-select option, .category-select option, .unit-edit option {
-    background: white !important;
-    color: #333 !important;
-    padding: 8px !important;
-    font-size: 14px !important;
+    background: var(--card-background);
+    color: var(--text-primary);
+    padding: 8px;
+    font-size: 14px;
 }
 
-/* Unified select box display */
+/* Select box display with custom dropdown arrow */
 .unit-select, .category-select, .unit-edit {
-    appearance: none !important;
-    -webkit-appearance: none !important;
-    -moz-appearance: none !important;
-    -o-appearance: none !important;
-    -ms-appearance: none !important;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
     background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
     background-repeat: no-repeat;
     background-position: right 12px center;
     background-size: 16px;
-    padding-right: 45px !important; /* Increase right padding to leave more space for dropdown arrow */
-    position: relative;
-    z-index: 1001;
-    background-color: white !important;
-    color: #333 !important;
-    font-size: 14px !important;
-    -webkit-box-sizing: border-box !important;
-    -moz-box-sizing: border-box !important;
-    text-overflow: ellipsis !important;
-    white-space: nowrap !important;
-    background-position: right 12px center !important;
-    background-size: 16px !important;
-    opacity: 1 !important;
-    visibility: visible !important;
-    overflow: hidden !important; /* Ensure text doesn't overflow */
-    max-width: 100% !important; /* Ensure it doesn't exceed container width */
-    line-height: 1.2 !important; /* Adjust line height to ensure text vertical centering */
-    display: flex !important; /* Use flexbox to ensure vertical centering */
-    align-items: center !important; /* Vertical center alignment */
+    padding-right: 40px;
+    cursor: pointer;
 }
 
-/* Select box styles for adding new items */
-.add-item-form .unit-select,
-.add-item-form .category-select {
-    flex: 1 !important;
-    min-width: 120px !important;
-    padding-right: 45px !important; /* Ensure new item form select boxes have enough right padding */
-    max-width: calc(100% - 10px) !important; /* Leave some space for flex layout */
-    line-height: 1.2 !important; /* Ensure text vertical centering */
-    display: flex !important;
-    align-items: center !important;
-}
-
-/* Select box styles for editing items */
-.unit-edit {
-    width: 80px !important;
-    flex-shrink: 0 !important;
-    height: 32px !important;
-    padding: 6px 10px !important;
-    padding-right: 35px !important; /* Add right padding for unit select box when editing */
-    font-size: 12px !important;
-    min-width: 80px !important;
-    background-color: white !important;
-    color: #333 !important;
-    max-width: 80px !important; /* Limit maximum width */
-    line-height: 1.2 !important; /* Ensure text vertical centering */
-    display: flex !important;
-    align-items: center !important;
-}
-
-/* Ensure dropdown options are fully visible */
+/* Select box focus and hover states */
 .unit-select:focus, .category-select:focus, .unit-edit:focus {
-    z-index: 1002 !important;
-    border-color: #667eea !important;
+    border-color: var(--primary-color);
 }
 
-/* Add better visual feedback for select boxes */
 .unit-select:hover, .category-select:hover, .unit-edit:hover {
-    border-color: #667eea !important;
-    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2) !important;
+    border-color: var(--primary-color);
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
 }
 
-/* Improved remove button styles */
+/* Action button base styles */
+.edit-button, .remove-button {
+    padding: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    transition: all 0.3s;
+    border: 2px solid;
+    background: var(--card-background);
+}
+
+/* Edit button styles */
+.edit-button {
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.edit-button:hover {
+    background: var(--primary-light);
+}
+
+/* Remove button styles */
 .remove-button {
-    background: #ff4757 !important;
-    color: white !important;
-    border: none !important;
-    border-radius: 50% !important;
-    width: 32px !important;
-    height: 32px !important;
-    cursor: pointer !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    font-size: 18px !important;
-    font-weight: bold !important;
-    transition: all 0.3s ease !important;
-    flex-shrink: 0 !important;
-    position: relative !important;
-    z-index: 10 !important;
+    color: var(--error-color);
+    border-color: var(--error-color);
 }
 
 .remove-button:hover {
-    background: #ff3742 !important;
-    transform: scale(1.1) !important;
-    box-shadow: 0 4px 12px rgba(255, 71, 87, 0.3) !important;
+    background: var(--error-light);
 }
 
-.remove-button:active {
-    transform: scale(0.95) !important;
-}
-
-/* Ensure select boxes display normally on mobile devices */
-@media (max-width: 768px) {
-    .add-item-form .unit-select,
-    .add-item-form .category-select {
-        width: 100% !important;
-        min-width: unset !important;
-        flex: none !important;
-        margin-bottom: 5px !important;
-        padding-right: 45px !important; /* Ensure mobile devices have enough right padding */
-        max-width: 100% !important; /* Use full width on mobile devices */
-        line-height: 1.2 !important;
-        display: flex !important;
-        align-items: center !important;
-    }
-    
-    .unit-edit {
-        width: 70px !important;
-        min-width: 70px !important;
-        padding-right: 35px !important; /* Ensure unit select box when editing has enough space on mobile devices */
-        max-width: 70px !important; /* Limit maximum width on mobile devices */
-        line-height: 1.2 !important;
-        display: flex !important;
-        align-items: center !important;
-    }
-}
-
-/* Ensure select boxes display normally on small screens */
-@media (max-width: 480px) {
-    .add-item-form .unit-select,
-    .add-item-form .category-select {
-        z-index: 1003 !important;
-        position: relative !important;
-        transform: translateZ(0) !important;
-        padding-right: 45px !important; /* Ensure small screens have enough right padding */
-        max-width: 100% !important; /* Use full width on small screens */
-        line-height: 1.2 !important;
-        display: flex !important;
-        align-items: center !important;
-    }
-    
-    .unit-edit {
-        z-index: 1003 !important;
-        position: relative !important;
-        transform: translateZ(0) !important;
-        width: 60px !important;
-        min-width: 60px !important;
-        padding-right: 30px !important; /* Slightly reduce right padding on small screens but maintain enough space */
-        max-width: 60px !important; /* Limit maximum width on small screens */
-        line-height: 1.2 !important;
-        display: flex !important;
-        align-items: center !important;
-    }
-    
-    .remove-button {
-        width: 28px !important;
-        height: 28px !important;
-        font-size: 16px !important;
-    }
-    
-    /* Ensure select box container doesn't clip content */
-    .add-item-section {
-        overflow: visible !important;
-        position: relative !important;
-        z-index: 1000 !important;
-    }
-    
-    /* Ensure the entire page container doesn't clip select boxes */
-    .shopping-list-container {
-        overflow: visible !important;
-        position: relative !important;
-    }
-}
-
-.add-button {
-    padding: 12px 25px;
-    background-color: var(--button-background-color);
-    color: #3E3E3E;
-    border: none;
-    border-radius: 8px;
-    font-size: 14px;
+/* Save and Cancel button styles */
+.save-edit-button, .cancel-edit-button {
+    flex: 1;
+    padding: 12px;
+    font-size: 16px;
     font-weight: 600;
+    border-radius: 8px;
     cursor: pointer;
-    transition: all ease-in-out 0.3s;
-    height: 48px;
-    box-sizing: border-box;
-    white-space: nowrap;
-    min-width: fit-content;
-    flex-shrink: 0;
-}
-
-.add-button:hover {
-    color: white;
-    background: #8531ce;
-}
-
-/* Search and Filter Section */
-.search-filter-section {
-    padding: 25px 30px;
-    background: #f8f9fa;
-    border-bottom: 1px solid #e0e0e0;
-}
-
-.search-box {
-    margin-bottom: 20px;
-}
-
-/* Unified search input box styles */
-.search-input {
-    width: 100%;
-    padding: 12px 15px !important;
-    font-size: 14px !important;
-    height: 48px !important;
-    min-width: 0;
-    background-color: white !important;
-    color: #333 !important;
-    line-height: 1.2 !important;
-    display: flex !important;
-    align-items: center !important;
-}
-
-.search-input:focus {
-    border-color: #667eea !important;
-}
-
-.search-input::placeholder {
-    color: #999 !important;
-    opacity: 1 !important;
-}
-
-.filter-buttons {
     display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-
-/* Unified border-radius styles for all buttons */
-.filter-btn, .clear-btn, .clear-all-btn, .clear-meal-plan-btn, .add-button, .back-button {
-    border-radius: 8px !important;
-}
-
-.filter-btn {
-    padding: 8px 16px;
-    border: 2px solid #e0e0e0;
-    background: white;
-    color: #666;
-    font-size: 12px;
-    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
     transition: all 0.3s;
 }
 
-.filter-btn:hover {
-    border-color: var(--category-color, #667eea);
-    color: var(--category-color, #667eea);
+.save-edit-button {
+    border: none;
+    background: var(--success-color);
+    color: var(--text-inverse);
 }
 
-.filter-btn.active {
-    background: var(--category-color, #667eea);
-    color: white;
-    border-color: var(--category-color, #667eea);
+.save-edit-button:hover {
+    background: var(--success-dark);
 }
 
-/* Progress Section */
-.progress-section {
-    padding: 20px 30px;
-    background: #f8f9fa;
-    border-bottom: 1px solid #e0e0e0;
+.cancel-edit-button {
+    border: 2px solid var(--border-color);
+    background: var(--card-background);
+    color: var(--text-primary);
 }
 
-.progress-bar {
-    width: 100%;
-    height: 8px;
-    background: #e0e0e0;
+.cancel-edit-button:hover {
+    background: var(--hover-background);
+}
+
+/* Mobile responsive styles for select boxes - moved to consolidated responsive section */
+
+.add-button {
+    padding: 12px 25px;
+    border: 4px solid var(--primary-dark);
+    color: var(--text-secondary);
     border-radius: 8px;
-    overflow: hidden;
-    margin-bottom: 10px;
-}
-
-.progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, #4CAF50, #8BC34A);
-    transition: width 0.3s ease;
-}
-
-.progress-text {
-    text-align: center;
-    color: #666;
     font-size: 14px;
-    margin-bottom: 8px;
-}
-
-.progress-percentage {
-    color: #4CAF50;
     font-weight: 600;
-    margin-left: 5px;
+    transition: all ease-in-out 0.3s;
+    height: 48px;
 }
 
-.progress-details {
+.add-button:hover {
+    color: var(--text-inverse);
+    background: var(--primary-dark);
+}
+
+/* Filter Controls Container */
+.filter-controls-container {
+    background-color: var(--card-background);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 24px;
+    box-shadow: var(--card-shadow);
+}
+
+.filter-controls-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    align-items: end;
+}
+
+.filter-control-group {
     display: flex;
+    flex-direction: column;
+}
+
+.filter-control-label {
+    display: block;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+    line-height: 1.5;
+}
+
+.filter-category-select {
+    width: 100%;
+    padding: 16px;
+    font-size: 18px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    background-color: var(--card-background);
+    color: var(--text-primary);
+    line-height: 1.5;
+    cursor: pointer;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease;
+}
+
+.filter-category-select:focus {
+    border-color: var(--primary-color);
+    outline: none;
+}
+
+.toggle-add-form-btn {
+    display: flex;
+    align-items: center;
     justify-content: center;
-    gap: 20px;
-    font-size: 12px;
-    color: #666;
+    gap: 8px;
+    width: 100%;
+    padding: 16px;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-inverse);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    line-height: 1.5;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
 }
 
-.completed-count {
-    color: #4CAF50;
-    font-weight: 500;
+.toggle-add-form-btn.add {
+    background-color: var(--primary-color);
 }
 
-.remaining-count {
-    color: #FF9800;
-    font-weight: 500;
+.toggle-add-form-btn.add:hover {
+    background-color: var(--primary-dark);
+}
+
+.toggle-add-form-btn.cancel {
+    background-color: var(--error-color);
+}
+
+.toggle-add-form-btn.cancel:hover {
+    background-color: var(--error-dark);
 }
 
 /* Items Section */
 .items-section {
+    background-color: var(--card-background);
     padding: 30px;
 }
 
@@ -448,70 +282,68 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    align-content: center;
     margin-bottom: 25px;
 }
 
 .section-header h2 {
     margin: 0;
-    color: #333;
+    color: var(--text-primary);
     font-size: 1.5rem;
 }
 
-.action-buttons {
+.action-buttons-slist {
     display: flex;
-    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    gap: 15px;
 }
 
-.clear-btn, .clear-all-btn, .clear-meal-plan-btn, .mark-all-btn {
-    padding: 8px 16px;
+.clear-btn, .clear-all-btn, .mark-all-btn {
+    padding: 16px;
     border: none;
-    font-size: 12px;
+    font-size: 1.2rem;
     cursor: pointer;
     transition: all 0.3s;
     border-radius: 8px;
 }
 
 .mark-all-btn {
-    background: #4CAF50;
-    color: white;
+    border:4px solid var(--success-color);
+    color: var(--success-color);
 }
 
 .mark-all-btn:hover {
-    background: #45a049;
+    background: var(--success-dark);
+    color: var(--text-inverse);
 }
 
 .clear-btn {
-    background: #ff9800;
-    color: white;
+    border:4px solid var(--warning-color);
+    color: var(--warning-color);
 }
 
 .clear-btn:hover {
-    background: #f57c00;
+    background: var(--warning-dark);
+    color: var(--text-inverse);
 }
 
 .clear-all-btn {
-    background: #f44336;
-    color: white;
+    border:4px solid var(--error-color);
+    color: var(--error-color);
 }
 
 .clear-all-btn:hover {
-    background: #d32f2f;
-}
-
-.clear-meal-plan-btn {
-    background: #667eea;
-    color: white;
-}
-
-.clear-meal-plan-btn:hover {
-    background: #5a67d8;
+    background: var(--error-dark);
+    color: var(--text-inverse);
 }
 
 /* Empty State */
 .empty-state {
     text-align: center;
     padding: 60px 20px;
-    color: #666;
+    color: var(--text-muted);
 }
 
 .empty-icon {
@@ -547,6 +379,7 @@
     border-radius: 8px;
     transition: all 0.3s ease;
     position: relative;
+    flex-wrap: wrap;
 }
 
 .shopping-item:hover {
@@ -561,40 +394,24 @@
     opacity: 0.7;
 }
 
-.item-checkbox {
-    width: 20px;
-    height: 20px;
-    cursor: pointer;
-    accent-color: #4CAF50;
-}
-
 /* Improved item info area styles */
 .item-info {
-    flex: 2;
+    flex: 1;
     display: flex;
-    flex-direction: column;
-    gap: 4px;
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
     min-width: 0; /* Prevent text overflow */
 }
 
-.item-name {
+.item-name, .item-category {
     font-weight: 600;
-    font-size: 16px;
+    font-size: 1.4rem;
     color: #333;
     display: flex;
     align-items: center;
     gap: 8px;
     word-break: break-word; /* Allow long text to wrap */
-}
-
-.meal-plan-badge {
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    color: white;
-    padding: 2px 8px;
-    border-radius: 8px;
-    font-size: 10px;
-    font-weight: 500;
-    text-transform: capitalize;
 }
 
 .purchased-badge {
@@ -607,68 +424,30 @@
     margin-left: 8px;
 }
 
-.item-category {
-    font-size: 12px;
-    font-weight: 500;
-    opacity: 0.8;
-}
-
 .shopping-item.checked .item-name {
     text-decoration: line-through;
     color: #666;
-}
-
-.shopping-item.checked {
-    background: #e8f5e8;
-    border-color: #4CAF50;
-    opacity: 0.8;
 }
 
 .shopping-item.checked .item-category {
     opacity: 0.6;
 }
 
-/* Improved quantity editing area styles */
-.item-quantity {
+/* Edit mode container */
+.edit-mode-container {
+    flex: 1;
+    width: 100%;
+}
+
+.edit-buttons-container {
     display: flex;
     gap: 8px;
-    align-items: center;
-    flex-wrap: nowrap;
-    min-width: 0; /* Prevent overflow */
 }
 
-/* Unified quantity editing input box styles */
-.quantity-edit {
-    width: 60px !important;
-    text-align: center !important;
-    flex-shrink: 0 !important;
-    padding: 6px 10px !important;
-    font-size: 12px !important;
-    background: white !important;
-    height: 32px !important;
-    min-width: 0 !important;
-    color: #333 !important;
-    line-height: 1.2 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important; /* Horizontal centering */
-}
-
-.quantity-edit:focus {
-    border-color: #667eea !important;
-    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2) !important;
-}
-
-/* Remove duplicate style definitions */
-
-/* Remove duplicate remove-button style definitions */
-
-/* Back Section */
-.back-section {
-    padding: 20px 30px;
-    background: #f8f9fa;
-    border-top: 1px solid #e0e0e0;
-    text-align: center;
+.item-action-buttons {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
 }
 
 .back-button {
@@ -683,146 +462,34 @@
 }
 
 .back-button:hover {
-    color: white;
-    background: #8531ce;
+    color: black;
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-    .shopping-list-page {
-        padding: 10px;
-    }
-    
-    .shopping-list-header h1 {
-        font-size: 2rem;
-    }
-    
-    .add-item-form {
-        flex-direction: column;
-        gap: 10px;
-        align-items: stretch;
-    }
-    
-    .item-input, .quantity-input, .unit-select, .category-select {
-        width: 100%;
-        min-width: unset;
-        flex: none;
-    }
-    
-    .add-button {
-        width: 100%;
-        margin-top: 10px;
-    }
-    
-    .filter-buttons {
-        justify-content: center;
-        flex-wrap: wrap;
-    }
-    
-    .section-header {
-        flex-direction: column;
-        gap: 15px;
-        text-align: center;
-    }
-    
-    .action-buttons {
-        justify-content: center;
-        flex-wrap: wrap;
-    }
-    
-    .shopping-item {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-        padding: 15px;
-    }
-    
-    .item-quantity {
-        width: 100%;
-        justify-content: space-between;
-        flex-wrap: wrap;
-        gap: 8px;
-    }
-    
-    .quantity-edit, .unit-edit {
-        min-width: 80px;
-        flex: 1;
-    }
-    
-    .remove-button {
-        align-self: flex-end;
-    }
-}
+/* Note: Main responsive styles are consolidated at the end of this file */
 
-@media (max-width: 480px) {
-    .shopping-list-container {
-        border-radius: 8px;
-        margin: 0 5px;
-    }
-    
-    .add-item-section, .search-filter-section, .items-section {
-        padding: 15px;
-    }
-    
-    .filter-buttons {
-        flex-direction: column;
-        gap: 8px;
-    }
-    
-    .filter-btn {
-        text-align: center;
-        width: 100%;
-    }
-    
-    /* Ensure select boxes are fully visible on small screens */
-    .unit-select, .category-select, .unit-edit {
-        z-index: 1003 !important;
-        position: relative !important;
-        transform: translateZ(0) !important;
-    }
-    
-    /* Prevent select boxes from being clipped by parent container */
-    .add-item-section {
-        overflow: visible !important;
-        position: relative !important;
-        z-index: 1000 !important;
-    }
-    
-    /* Ensure the entire page container doesn't clip select boxes */
-    .shopping-list-container {
-        overflow: visible !important;
-        position: relative !important;
-    }
-} 
-
-/* Ensure page container doesn't clip content */
 .shopping-list-container {
     max-width: 1200px;
     margin: 0 auto;
-    background: white;
     border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    overflow: visible !important; /* Changed to visible to prevent select boxes from being clipped */
-    border: 1px solid #ddd;
-    position: relative; /* Provide positioning context for child elements */
 }
 
 /* Add Item Section */
 .add-item-section {
     padding: 30px;
+    margin-bottom: 30px;
+    border-radius: 10px;
     background: white;
     border-bottom: 1px solid #e0e0e0;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    position: relative; /* Provide positioning context for dropdown */
-    z-index: 1; /* Ensure correct z-index */
-    overflow: visible !important; /* Ensure dropdown options are not clipped */
 }
 
 .add-item-section h2 {
     margin: 0 0 20px 0;
     color: #333;
     font-size: 1.5rem;
-} 
+}
+
+/* Note: Add item section responsive styles are in the consolidated section at end of file */
 
 .item-actions {
     display: flex;
@@ -831,20 +498,18 @@
 }
 
 .purchase-btn {
-    padding: 6px 12px;
+    padding: 16px;
     border: none;
-    border-radius: 8px;
-    font-size: 12px;
-    font-weight: 500;
+    border-radius: 50%;
     cursor: pointer;
     transition: all 0.3s ease;
     white-space: nowrap;
-    min-width: 120px;
+
 }
 
 .purchase-btn.unpurchased {
-    background: #FF9800;
-    color: white;
+    color: #ffffff;
+    border: 5px solid #FF9800;
 }
 
 .purchase-btn.unpurchased:hover {
@@ -864,107 +529,545 @@
     box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
 }
 
-.shopping-item {
-    display: flex;
-    align-items: center;
-    padding: 16px;
-    margin-bottom: 12px;
-    background: white;
-    border: 2px solid #e0e0e0;
-    border-radius: 8px;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-} 
-
 /* Responsive design for purchase buttons */
 @media (max-width: 768px) {
     .purchase-btn {
-        padding: 8px 10px;
-        font-size: 11px;
-        min-width: 100px;
+        padding: 12px;
     }
     
     .item-actions {
-        margin-right: 8px;
+        margin-right: 0;
+        margin-bottom: 8px;
     }
 }
 
 @media (max-width: 480px) {
     .purchase-btn {
-        padding: 6px 8px;
-        font-size: 10px;
+        padding: 10px;
+    }
+}
+
+/* ===========================================
+   COMPREHENSIVE RESPONSIVE DESIGN
+   =========================================== */
+
+/* Large Tablets and Small Desktops (max-width: 1024px) */
+@media (max-width: 1024px) {
+    .shopping-list-container {
+        max-width: 95%;
+    }
+
+    .shopping-list-header {
+        max-width: 95%;
+        padding: 18px;
+    }
+
+    .shopping-list-header h1 {
+        font-size: 2.2rem;
+    }
+
+    .item-info {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .filter-controls-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .add-item-section,
+    .items-section {
+        padding: 25px;
+    }
+
+    .item-input {
+        min-width: 180px;
+    }
+
+    .quantity-input,
+    .unit-select,
+    .category-select {
+        min-width: 100px;
+    }
+}
+
+/* Tablets (max-width: 768px) */
+@media (max-width: 768px) {
+    .shopping-list-page {
+        padding: 12px;
+    }
+
+    .shopping-list-container {
+        border-radius: 15px;
+    }
+
+    .shopping-list-header {
+        flex-direction: column;
+        text-align: center;
+        padding: 15px;
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+
+    .shopping-list-header h1 {
+        font-size: 1.8rem;
+        width: 100%;
+    }
+
+    .back-button {
+        width: 100%;
+        text-align: center;
+        padding: 10px 20px;
+    }
+
+    .filter-controls-container {
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+
+    .filter-controls-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .filter-control-label {
+        font-size: 16px;
+        margin-bottom: 6px;
+    }
+
+    .filter-category-select {
+        padding: 14px;
+        font-size: 16px;
+    }
+
+    .toggle-add-form-btn {
+        padding: 14px;
+        font-size: 16px;
+    }
+
+    .add-item-section {
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+
+    .add-item-section h2 {
+        font-size: 1.3rem;
+        margin-bottom: 15px;
+    }
+
+    .add-item-form {
+        flex-direction: column;
+        gap: 10px;
+        align-items: stretch;
+    }
+
+    .item-input,
+    .quantity-input,
+    .unit-select,
+    .category-select {
+        width: 100%;
+        min-width: unset;
+        flex: none;
+        height: 46px;
+        font-size: 15px;
+    }
+
+    .add-button {
+        width: 100%;
+        margin-top: 5px;
+        height: 46px;
+        font-size: 15px;
+    }
+
+    .items-section {
+        padding: 20px;
+    }
+
+    .section-header {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .section-header h2 {
+        font-size: 1.3rem;
+    }
+
+    .action-buttons-slist {
+        flex-direction: column;
+        width: 100%;
+        gap: 10px;
+    }
+
+    .clear-btn,
+    .clear-all-btn,
+    .mark-all-btn {
+        width: 100%;
+        padding: 12px;
+        font-size: 1rem;
+        border-width: 3px;
+    }
+
+    .items-list {
+        gap: 10px;
+    }
+
+    .shopping-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 14px;
+    }
+
+    .item-info {
+        width: 100%;
+        gap: 0.4rem;
+    }
+
+    .item-name,
+    .item-category {
+        font-size: 1.2rem;
+    }
+
+    .item-action-buttons {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .edit-button,
+    .remove-button {
+        flex: 1;
+        padding: 10px;
+    }
+
+    .edit-mode-container .add-item-form {
+        gap: 8px;
+    }
+
+    .edit-buttons-container {
+        flex-direction: row;
+        gap: 8px;
+    }
+
+    .save-edit-button,
+    .cancel-edit-button {
+        flex: 1;
+        font-size: 15px;
+        padding: 12px;
+    }
+
+    .unit-edit {
+        width: 80px;
         min-width: 80px;
     }
-    
-    .purchase-btn.unpurchased {
-        content: "⏳ Mark";
+
+    .empty-state {
+        padding: 40px 15px;
     }
-    
-    .purchase-btn.purchased {
-        content: "✅ Done";
+
+    .empty-icon {
+        font-size: 3rem;
     }
-} 
 
-.multi-select-checkbox {
-    width: 18px;
-    height: 18px;
-    cursor: pointer;
-    accent-color: #4CAF50;
+    .empty-state h3 {
+        font-size: 1.1rem;
+    }
+
+    .empty-state p {
+        font-size: 13px;
+    }
+
+    .purchase-btn {
+        padding: 12px;
+    }
+
+    .item-actions {
+        margin-right: 0;
+        margin-bottom: 8px;
+    }
 }
 
-.shopping-item.selected {
-    background: #e3f2fd;
-    border-color: #2196F3;
-    box-shadow: 0 4px 8px rgba(33, 150, 243, 0.2);
+/* Mobile Phones (max-width: 480px) */
+@media (max-width: 480px) {
+    .shopping-list-page {
+        padding: 8px;
+    }
+
+    .shopping-list-container {
+        border-radius: 10px;
+    }
+
+    .shopping-list-header {
+        padding: 12px;
+        margin-bottom: 15px;
+        border-radius: 10px;
+        gap: 10px;
+    }
+
+    .shopping-list-header h1 {
+        font-size: 1.5rem;
+    }
+
+    .back-button {
+        padding: 10px 18px;
+        font-size: 14px;
+    }
+
+    .filter-controls-container {
+        padding: 12px;
+        margin-bottom: 15px;
+        border-radius: 10px;
+    }
+
+    .filter-control-label {
+        font-size: 14px;
+    }
+
+    .filter-category-select,
+    .toggle-add-form-btn {
+        font-size: 14px;
+        padding: 12px;
+        border-radius: 6px;
+    }
+
+    .add-item-section {
+        padding: 15px;
+        margin-bottom: 15px;
+        border-radius: 8px;
+    }
+
+    .add-item-section h2 {
+        font-size: 1.1rem;
+        margin-bottom: 12px;
+    }
+
+    .add-item-form {
+        gap: 8px;
+    }
+
+    .item-input,
+    .quantity-input,
+    .unit-select,
+    .category-select {
+        font-size: 14px;
+        height: 44px;
+        padding: 10px 12px;
+        border-radius: 6px;
+    }
+
+    .add-button {
+        font-size: 14px;
+        height: 44px;
+        padding: 10px 18px;
+        border-width: 3px;
+    }
+
+    .items-section {
+        padding: 15px;
+    }
+
+    .section-header {
+        gap: 12px;
+        margin-bottom: 15px;
+    }
+
+    .section-header h2 {
+        font-size: 1.15rem;
+    }
+
+    .action-buttons-slist {
+        gap: 8px;
+    }
+
+    .clear-btn,
+    .clear-all-btn,
+    .mark-all-btn {
+        font-size: 0.9rem;
+        padding: 10px;
+        border-width: 3px;
+        border-radius: 6px;
+    }
+
+    .items-list {
+        gap: 8px;
+    }
+
+    .shopping-item {
+        padding: 12px;
+        gap: 10px;
+        border-radius: 6px;
+    }
+
+    .item-name,
+    .item-category {
+        font-size: 1rem;
+    }
+
+    .purchased-badge {
+        font-size: 9px;
+        padding: 2px 6px;
+        border-radius: 6px;
+    }
+
+    .item-action-buttons {
+        gap: 6px;
+    }
+
+    .edit-button,
+    .remove-button {
+        padding: 8px;
+        border-radius: 6px;
+    }
+
+    .edit-buttons-container {
+        gap: 6px;
+    }
+
+    .save-edit-button,
+    .cancel-edit-button {
+        font-size: 14px;
+        padding: 10px;
+        border-radius: 6px;
+    }
+
+    .unit-edit {
+        width: 70px;
+        min-width: 70px;
+    }
+
+    .empty-state {
+        padding: 30px 12px;
+    }
+
+    .empty-icon {
+        font-size: 2.5rem;
+        margin-bottom: 15px;
+    }
+
+    .empty-state h3 {
+        font-size: 1rem;
+        margin-bottom: 8px;
+    }
+
+    .empty-state p {
+        font-size: 12px;
+    }
+
+    .purchase-btn {
+        padding: 10px;
+    }
 }
 
-.multi-select-btn {
-    background: #9C27B0;
-    color: white;
-    padding: 8px 16px;
-    border: none;
-    font-size: 12px;
-    cursor: pointer;
-    transition: all 0.3s;
-    border-radius: 8px;
-}
+/* Extra Small Phones (max-width: 360px) */
+@media (max-width: 360px) {
+    .shopping-list-page {
+        padding: 6px;
+    }
 
-.multi-select-btn:hover {
-    background: #7B1FA2;
-}
+    .shopping-list-header {
+        padding: 10px;
+    }
 
-.mark-selected-btn {
-    background: #4CAF50;
-    color: white;
-    padding: 8px 16px;
-    border: none;
-    font-size: 12px;
-    cursor: pointer;
-    transition: all 0.3s;
-    border-radius: 8px;
-    margin-right: 8px;
-}
+    .shopping-list-header h1 {
+        font-size: 1.3rem;
+    }
 
-.mark-selected-btn:hover:not(:disabled) {
-    background: #45a049;
-}
+    .back-button {
+        padding: 8px 14px;
+        font-size: 13px;
+    }
 
-.mark-selected-btn:disabled {
-    background: #ccc;
-    cursor: not-allowed;
-}
+    .filter-controls-container {
+        padding: 10px;
+    }
 
-.cancel-multi-select-btn {
-    background: #f44336;
-    color: white;
-    padding: 8px 16px;
-    border: none;
-    font-size: 12px;
-    cursor: pointer;
-    transition: all 0.3s;
-    border-radius: 8px;
-}
+    .filter-control-label {
+        font-size: 13px;
+    }
 
-.cancel-multi-select-btn:hover {
-    background: #d32f2f;
-} 
+    .filter-category-select,
+    .toggle-add-form-btn {
+        font-size: 13px;
+        padding: 10px;
+    }
+
+    .add-item-section {
+        padding: 12px;
+    }
+
+    .add-item-section h2 {
+        font-size: 1rem;
+    }
+
+    .item-input,
+    .quantity-input,
+    .unit-select,
+    .category-select {
+        font-size: 13px;
+        height: 42px;
+        padding: 8px 10px;
+    }
+
+    .add-button {
+        font-size: 13px;
+        height: 42px;
+    }
+
+    .items-section {
+        padding: 12px;
+    }
+
+    .section-header h2 {
+        font-size: 1.05rem;
+    }
+
+    .clear-btn,
+    .clear-all-btn,
+    .mark-all-btn {
+        font-size: 0.85rem;
+        padding: 8px;
+    }
+
+    .shopping-item {
+        padding: 10px;
+    }
+
+    .item-name,
+    .item-category {
+        font-size: 0.9rem;
+    }
+
+    .edit-button,
+    .remove-button {
+        padding: 6px;
+    }
+
+    .save-edit-button,
+    .cancel-edit-button {
+        font-size: 13px;
+        padding: 8px;
+    }
+
+    .unit-edit {
+        width: 60px;
+        min-width: 60px;
+    }
+
+    .empty-state {
+        padding: 25px 10px;
+    }
+
+    .empty-icon {
+        font-size: 2rem;
+    }
+
+    .empty-state h3 {
+        font-size: 0.95rem;
+    }
+
+    .purchase-btn {
+        padding: 8px;
+    }
+}

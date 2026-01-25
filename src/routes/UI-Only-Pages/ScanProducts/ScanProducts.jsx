@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom'; // Use useNavigate instead of useHistory
 import './ScanProducts.css';
 import SubHeading from '../../../components/general_components/headings/SubHeading';
@@ -8,6 +8,7 @@ function ScanProducts() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [history, setHistory] = useState([]);
+  const fileInputRef = useRef(null);
 
   const navigate = useNavigate(); // Initialize useNavigate hook
 
@@ -67,40 +68,21 @@ function ScanProducts() {
   };
 
   return (
-    <div className="scan-products-page">
+    <div>
       <div className="scan-products-container">
-        <SubHeading text="Scan Products" />
-        {/* Input Title */}
-        <div className="scan-products-segment">
-          <div className="scan-products-form">
-            <label className="scan-products-label">Title</label>
-            <input
-              className="scan-products-input"
-              placeholder="Enter product title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-            />
-          </div>
-
-          {/* Input Description */}
-          <div className="scan-products-form">
-            <label className="scan-products-label">Description</label>
-            <input
-              className="scan-products-input"
-              placeholder="Enter product description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            />
-          </div>
-
+        <h1>Upload a Photo</h1>
           {/* Select image */}
           <div className="scan-products-form">
             <label className="scan-products-label">Image</label>
-            <div className="upload-section">
-              <label htmlFor="file-upload">
-                <p>Drop your image here, or browse</p>
-              </label>
-              <input id="file-upload" type="file" onChange={handleFileUploadChange} />
+            <div className="upload-section" onClick={() => fileInputRef.current?.click()} style={{ cursor: 'pointer' }}>
+              <p>Click to Upload Image</p>
+              <input 
+                ref={fileInputRef}
+                id="file-upload" 
+                type="file" 
+                onChange={handleFileUploadChange}
+                style={{ display: 'none' }}
+              />
               {uploadedImage && (
                 <p className="file-name">
                   {/* Displays if there is an image selected (displays the image name) */}
@@ -114,13 +96,14 @@ function ScanProducts() {
           <button className="upload-button" onClick={handleImageUpload}>
             Upload Image
           </button>
-        </div>
+      </div>
+
+
 
         {/* View History Button */}
         <button className="view-history-button" onClick={handleViewHistory}>
           View Upload History
         </button>
-      </div>
     </div>
   );
 }

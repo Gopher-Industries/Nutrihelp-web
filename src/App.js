@@ -35,6 +35,7 @@ import Recipe from "./components/Recipe";
 import Appointment from "./routes/UI-Only-Pages/Appointment/Appointment";
 import newMenu from "./routes/NewMenu/newMenu";
 import Meal from "./routes/Meal/Meal";
+import Scan from "./routes/ScanBarcode/Scan.jsx"
 import MFAform from "./routes/MFA/MFAform";
 import Dashboard from "./routes/NewMenu/Dashboard";
 import AuthenticateRoute from "./routes/AuthenticateRoute/AuthenticateRoute";
@@ -57,30 +58,34 @@ import Settings from "./routes/Settings/Settings";
 import HealthFAQ from "./routes/HealthFAQ/HealthFAQ";
 import FitnessRoadmap from "./routes/survey/FitnessRoadmap";
 import Community from "./routes/Community/Community";
+import ChatPage from "./routes/chat/ChatPage";
 import PostDetail from "./routes/Community/PostDetail";
 import ScanBarcode from "./routes/ScanBarcode/ScanBarcode";
 import AuthCallback from "./pages/AuthCallback";
 import DailyPlanEdit from "./routes/DailyPlan/DailyPlanEdit";
-
 /* -------------------------------
    NAVBAR WRAPPER (HIDE ON ROUTES)
 -------------------------------- */
 function NavbarWrapper() {
   const location = useLocation();
 
-  // Routes where navbar should NOT appear
   const hideNavbarRoutes = [
     "/login",
-    "/signUp",
-    "/forgotPassword",    // existing
-    "/forgot/verify",     // new verify page
-    "/forgot/reset",      // new reset page
-    "/MFAform"
+    "/signup",
+    "/forgot",
+    "/forgotpassword",
+    "/forgot/verify",
+    "/forgot/reset",
+    "/mfaform",
   ];
 
-  const shouldHideNavbar = hideNavbarRoutes.includes(location.pathname);
+  const currentPath = location.pathname.toLowerCase();
 
-  return !shouldHideNavbar ? <MainNavbar /> : null;
+  const shouldHideNavbar = hideNavbarRoutes.some((route) =>
+    currentPath.startsWith(route)
+  );
+
+  return shouldHideNavbar ? null : <MainNavbar />;
 }
 
 import WeeklyMealPlanPage from './routes/Meal/WeeklyMealPlanPage';
@@ -109,7 +114,8 @@ function App() {
 
         {/* PUBLIC ROUTES */}
         <Route path="/login" element={<Login />} />
-        <Route path="/signUp" element={<SignUp />} />
+        <Route path="/signup" element={<SignUp />} />
+
 
         {/* Forgot password flow */}
         {/* legacy route */}
@@ -119,18 +125,20 @@ function App() {
         <Route path="/forgot/verify" element={<ForgotPasswordVerify />} />
         <Route path="/forgot/reset" element={<ForgotPasswordReset />} />
 
-        <Route path="/MFAform" element={<MFAform />} />
+        <Route path="/mfa" element={<MFAform />} />
 
         <Route path="/home" element={<Home />} />
         <Route path="/faq" element={<FAQ />} />
         <Route path="/leaderboard" element={<Leaderboard />} />
         <Route path="/community" element={<Community />} />
+        <Route path="/chat" element={<ChatPage />} />
         <Route path="/community/post/:postId" element={<PostDetail />} />
 
         <Route path="/survey" element={<ObesityPredictor />} />
         <Route path="/survey/result" element={<Predictionresult />} />
         <Route path="/roadmap" element={<FitnessRoadmap />} />
-
+        <Route path="/Scan" element={<Scan />} />
+        <Route path="/Meal" element={<Meal />} />
         {/* PRIVATE ROUTES */}
         <Route
           path="/daily-plan-edit"
@@ -341,6 +349,7 @@ function App() {
         />
 
         <Route path="ScanBarcode" element={<ScanBarcode />} />
+        <Route path="Scan" element={<Scan />}/>
       </Routes>
     </Router>
   );

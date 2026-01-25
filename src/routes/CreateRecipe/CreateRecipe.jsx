@@ -548,7 +548,7 @@ function CreateRecipe() {
                     >
                       <div
                         id="no-bg"
-                        className="flex flex-col w-1/2"
+                        className="flex flex-col w-full sm:w-1/2"
                       >
                         <label
                           id="no-bg"
@@ -579,7 +579,7 @@ function CreateRecipe() {
 
                       <div
                         id="no-bg"
-                        className="flex flex-col w-1/2"
+                        className="flex flex-col w-full sm:w-1/2"
                       >
                         <label
                           id="no-bg"
@@ -617,7 +617,7 @@ function CreateRecipe() {
                           <input
                             id="no-bg"
                             //list="units"
-                            className="w-2/3 rounded-xl h-10 sm:h-12 border border-gray-400 px-4 bg-white"
+                            className="w-full sm:w-2/3 rounded-xl h-10 sm:h-12 border border-gray-400 px-4 bg-white"
                             defaultValue=""
                             value={ingredientQuantity}
                             onChange={(e) =>
@@ -633,7 +633,7 @@ function CreateRecipe() {
                         </datalist> */}
                           <select
                             id="no-bg"
-                            className="w-2/3 sm:w-2/3 rounded-xl h-10 sm:h-12 border border-gray-400 px-4 bg-white"
+                            className="w-full sm:w-2/3 rounded-xl h-10 sm:h-12 border border-gray-400 px-4 bg-white"
                             defaultValue=""
                             /*   value={ingredientQuantity}
                             onChange={(e) =>

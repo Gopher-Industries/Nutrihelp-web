@@ -1,19 +1,18 @@
 "use client"
 
-import React, { useState, useContext } from "react"
+import React, { useState, useContext, useEffect } from "react"
 import { Eye, EyeOff, UserIcon } from "lucide-react"
 import loginImage from "../../images/Nutrihelp.jpg"
 import logoImage from "../../images/logos_black_icon.png"
 
-// ADDED IMPORTS (kept small & compatible with your existing UI)
-import { useNavigate } from "react-router-dom"
+// ADDED IMPORTS
 import { toast } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 import { UserContext } from "../../context/user.context"
 import { useDarkMode } from "../DarkModeToggle/DarkModeContext"
-import { supabase } from "../../supabaseClient" // keep if present in your repo
+import { supabase } from "../../supabaseClient"
+import { useNavigate, useLocation } from "react-router-dom"
 
-// Inactivity watcher copied from your old code (unchanged logic)
 function startInactivityWatcher({ enabled, seconds = 30, onTimeout }) {
   if (window.__idleInterval) {
     clearInterval(window.__idleInterval)
@@ -54,6 +53,8 @@ function startInactivityWatcher({ enabled, seconds = 30, onTimeout }) {
 
 export default function Login() {
   // Existing UI state (unchanged)
+
+  const location = useLocation()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
@@ -65,7 +66,7 @@ export default function Login() {
   const { setCurrentUser } = useContext(UserContext)
   const { darkMode } = useDarkMode()
   const navigate = useNavigate()
-  const API_BASE = "http://localhost:80" // same as your old code
+  const API_BASE = "http://localhost:80"
 
   const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -97,107 +98,76 @@ export default function Login() {
     }
   }
 
-  // sign-in flow merged from your old code (calls backend, sets context, starts watcher, toasts, navigates to MFA)
+  // Handles user sign-in using backend authentication API.
+
   const handleSignIn = async () => {
     setLoading(true)
+
     try {
-      const response = await fetch(`${API_BASE}/api/login`, {
+      // ✅ Use backend API for login (matches backend's bcrypt-based auth)
+      const res = await fetch(`${API_BASE}/api/login`, {
         method: "POST",
-        body: JSON.stringify({ email, password }),
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email.trim().toLowerCase(), password }),
       })
 
-      if (response.ok) {
-        const data = await response.json().catch(() => ({}))
-        const expirationTimeInMillis = rememberMe ? 3600000 : 0
-        if (typeof setCurrentUser === "function") {
-          // old code passed expiration; keep same signature
-          setCurrentUser(data.user, expirationTimeInMillis)
-        }
+      const data = await res.json()
 
-        // start inactivity watcher (only when user did NOT check rememberMe)
-        startInactivityWatcher({
-          enabled: !rememberMe,
-          seconds: 30, // same short test-time as old code
-          onTimeout: async () => {
-            try {
-              if (supabase?.auth?.signOut) {
-                await supabase.auth.signOut()
-              }
-            } finally {
-              if (typeof setCurrentUser === "function") setCurrentUser(null)
-              toast.info("⏱️ You were signed out due to 30s of inactivity.", {
-                position: "top-right",
-                autoClose: 5000,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: false,
-                hideProgressBar: false,
-                icon: false,
-                closeButton: false,
-                style: {
-                  background: "#111827",
-                  color: "#fff",
-                  borderRadius: "14px",
-                  boxShadow: "0 10px 25px rgba(0,0,0,0.25)",
-                  border: "1px solid rgba(255,255,255,0.08)",
-                  fontSize: "0.95rem",
-                },
-              })
-              navigate("/login")
-            }
-          },
-        })
-
-        // show welcome toast (keeps old message & behavior)
-        toast.success(
-          "💧 Welcome back! Don’t forget to check your meal plan & track your water intake!",
-          {
-            position: "top-right",
-            autoClose: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            hideProgressBar: false,
-            theme: "colored",
-            style: {
-              fontSize: "1.1rem",
-              fontWeight: "bold",
-              padding: "1.2rem",
-              borderRadius: "10px",
-              boxShadow: "0px 4px 12px rgba(0,0,0,0.1)",
-              backgroundColor: "#d1f0ff",
-              color: "#0d47a1",
-            },
-          }
-        )
-
-        // small delay then navigate to MFA (old used 300ms)
-        setTimeout(() => {
-          navigate("/MFAform", { state: { email, password } })
-        }, 300)
-      } else {
-        // parse error and show inline + toast (keeps UI visible)
-        const data = await response.json().catch(() => ({}))
-        const errMsg =
-          data.error ||
-          data.message ||
-          "Failed to sign in. Please check your credentials and try again."
-        setErrors((prev) => ({ ...prev, email: "" }))
-        toast.error(errMsg, { position: "top-right", autoClose: 4000 })
-        setErrors((prev) => ({ ...prev, password: errMsg }))
+      // Handle MFA required (202 status) - redirect to MFA page
+      if (res.status === 202) {
+        toast.info(data.message || "MFA token sent to your email")
+        navigate("/mfa", { state: { email: email.trim().toLowerCase(), password } })
+        return
       }
-    } catch (error) {
-      console.error("Error signing in:", error)
-      const msg = "Failed to sign in. An error occurred."
-      toast.error(msg, { position: "top-right", autoClose: 4000 })
-      setErrors((prev) => ({ ...prev, password: msg }))
-    } finally {
-      setLoading(false)
-    }
+
+      if (!res.ok) {
+        toast.error(data.error || data.warning || "Invalid email or password")
+        return
+      }
+
+      const user = data.user
+      const token = data.token
+
+      // ✅ Save session with JWT token
+      const userSession = {
+        id: user.user_id,
+        email: user.email,
+        name: user.name,
+        token: token,
+        provider: "email",
+      }
+
+      localStorage.setItem("user_session", JSON.stringify(userSession))
+      localStorage.setItem("auth_token", token)
+
+      // ✅ Set global context (if used)
+      if (typeof setCurrentUser === "function") {
+        setCurrentUser(userSession, rememberMe ? 60 * 60 * 1000 : 0)
+      }
+
+    // ✅ Optional inactivity logout
+    startInactivityWatcher({
+      enabled: !rememberMe,
+      seconds: 30,
+      onTimeout: async () => {
+        await supabase.auth.signOut()
+        localStorage.removeItem("user_session")
+        setCurrentUser?.(null)
+        toast.info("You were signed out due to inactivity.")
+        navigate("/login")
+      },
+    })
+
+    toast.success("Welcome back!")
+    navigate("/home")
+
+  } catch (err) {
+    console.error("Login error:", err)
+    toast.error("Unable to sign in. Please try again later.")
+  } finally {
+    setLoading(false)
   }
+}
 
   // keep Google sign-in logic from old code (unchanged)
   const handleGoogleSignIn = async () => {
@@ -219,7 +189,20 @@ export default function Login() {
     navigate("/forgotPassword")
   }
 
-  // UI (unchanged structure) — small tweak: show loading text on the submit button if loading
+  useEffect(() => {
+  if (location.state?.message) {
+    toast.success(location.state.message, {
+      position: "top-right",
+      autoClose: 4000,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: false,
+    })
+  }
+}, [location.state])
+
+
+  // UI (unchanged structure) 
   const styles = {
     container: {
       display: "flex",
@@ -548,15 +531,21 @@ export default function Login() {
               </a>
             </div>
 
-            <button type="submit" style={styles.mainBtn}>
+            <button type="submit" style={styles.mainBtn} disabled={loading}>
               {loading ? "Signing in..." : "Sign In"}
             </button>
           </form>
 
           <p style={styles.switchText}>
             Don't have an account?
-            <a style={styles.switchLink} href="#signup"> Create Account</a>
+            <span
+              style={styles.switchLink}
+              onClick={() => navigate("/Signup")}
+            >
+              {" "}Create Account
+            </span>
           </p>
+
 
           <div style={styles.divider}>
             <span style={{ backgroundColor: "white", padding: "0 8px", position: "relative", zIndex: 1 }}>

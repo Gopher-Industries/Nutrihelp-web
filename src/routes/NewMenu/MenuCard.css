@@ -6,9 +6,10 @@
   border-radius: 15px;
   display: flex;
   flex-direction: column;
-  background: #fff;
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  background: var(--card-background);
+  box-shadow: var(--card-shadow);
   transition: transform 0.2s;
+  border: 1px solid var(--border-color);
 }
 
 .menucard:hover {
@@ -36,13 +37,14 @@
   margin: 0 0 10px 0;
   text-align: left; 
   font-weight: bold;
-  font-size: 18px;
+  font-size: clamp(0.875rem, 3vw, 1.125rem);
+  color: var(--text-primary);
 }
 
 .menucard-body p {
-  font-size: 14px;
+  font-size: 0.875rem;
   line-height: 1.5;
-  color: #666;
+  color: var(--text-secondary);
   margin: 0;
   max-height: 90px; 
   overflow-y: auto; 
@@ -54,12 +56,12 @@
 }
 
 .menucard-body p::-webkit-scrollbar-thumb {
-  background: #ccc;
+  background: var(--border-color);
   border-radius: 4px;
 }
 
 .menucard-body p::-webkit-scrollbar-thumb:hover {
-  background: #999;
+  background: var(--text-muted);
 }
 
 .menucard-body p:hover {
@@ -77,16 +79,33 @@
 .recipe-link {
   display: inline-block;
   padding: 8px 25px;
-  background-color: #E8F1FF; 
-  color: #005BBB;
-  border: 1px solid #005BBB;
+  background-color: var(--primary-light); 
+  color: var(--primary-color);
+  border: 1px solid var(--primary-color);
   text-decoration: none;
   border-radius: 20px;
-  font-size: 14px;
+  font-size: 0.875rem;
   transition: all 0.3s;
 }
 
 .recipe-link:hover {
-  background-color: #005BBB;
-  color: white;
+  background-color: var(--primary-color);
+  color: var(--text-inverse);
+}
+
+/* Responsive Design for MenuCard */
+@media (max-width: 768px) {
+  .menucard {
+    flex: 0 0 280px;
+    height: 460px;
+  }
+}
+
+@media (max-width: 480px) {
+  .menucard {
+    flex: 0 0 100%;
+    max-width: 400px;
+    height: auto;
+    min-height: 420px;
+  }
 }

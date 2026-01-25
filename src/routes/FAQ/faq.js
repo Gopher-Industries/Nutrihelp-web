@@ -201,18 +201,17 @@ const FAQ = () => {
 
   return (
     <div className="faq-container">
-      <h1 className="faq-title">Frequently Asked Questions</h1>
-      <p className="faq-description">
-        Find answers to the most common questions grouped by category.
-      </p>
+      <div className="start-container">
+        <h1 className="faq-title">Frequently Asked Questions</h1>
+      </div>
       {faqCategories.map((category, catIndex) => (
         <div key={catIndex} className="faq-category">
           <div
-            className="faq-category-title"
+            className={`faq-category-title ${expandedCategory === catIndex ? 'expanded' : ''}`}
             onClick={() => handleExpandCategory(catIndex)}
           >
             {category.category}
-            <span className="faq-category-toggle">
+            <span className={`faq-category-toggle ${expandedCategory === catIndex ? 'expanded' : ''}` }>
               {expandedCategory === catIndex ? "-" : "+"}
             </span>
           </div>
@@ -253,18 +252,20 @@ const FAQ = () => {
 
       {/* 新增用户反馈模块 */}
       <div className="feedback-section">
-        <h2>We Value Your Feedback</h2>
-        <p>
-          Let us know how we can improve or share your experience with NutriHelp.
-        </p>
+        <div className="feedback-head">
+          <h2>Still Need Help?</h2>
+          <p>
+            Our friendly support team is here to help you. Leave your question:
+          </p>
+        </div>
         <textarea
-          placeholder="Enter your feedback here..."
+          placeholder="Enter your question here..."
           value={feedback}
           onChange={handleFeedbackChange}
           className="feedback-textarea"
         ></textarea>
         <button onClick={handleFeedbackSubmit} className="feedback-submit">
-          Submit Feedback
+          Submit 
         </button>
       </div>
     </div>
