@@ -70,6 +70,9 @@ const SideMenu = ({ onNavigate, mode = "desktop", onClose }) => {
           <Link to="/RecipeRating" className="mega-item" onClick={close}>
             Recipe Rating
           </Link>
+          <Link to="/recipe" className="mega-item" onClick={close}>
+          Recipe
+          </Link>
         </div>
 
         <div className="mega-col">
