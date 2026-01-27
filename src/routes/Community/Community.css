@@ -44,18 +44,21 @@
   font-size: 3rem;
   font-weight: 700;
   margin-bottom: 10px;
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--primary-color);
+  background: none;
+  -webkit-background-clip: initial;
+  -webkit-text-fill-color: initial;
+  background-clip: initial;
 }
 
 .dark-mode .community-title {
-  background: linear-gradient(135deg, #90cdf4, #63b3ed);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--primary-color);
+  background: none;
+  -webkit-background-clip: initial;
+  -webkit-text-fill-color: initial;
+  background-clip: initial;
 }
+
 
 .community-subtitle {
   font-size: 1.2rem;
@@ -72,7 +75,7 @@
   align-items: center;
   gap: 10px;
   padding: 15px 25px;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: var(--primary-color);
   color: white;
   border: none;
   border-radius: 50px;
@@ -143,6 +146,108 @@
 
 .dark-mode .stat-label {
   color: #a0aec0;
+}
+
+.community-page.light-mode {
+  background: #ffffff;
+}
+
+/* Header */
+.light-mode .community-header {
+  background: rgba(255, 255, 255, 0.95);
+  color: inherit;
+}
+
+/* Title */
+.light-mode .community-title {
+  color: var(--primary-color);
+  background: none;
+  -webkit-background-clip: initial;
+  -webkit-text-fill-color: initial;
+  background-clip: initial;
+}
+
+/* Subtitle */
+.light-mode .community-subtitle {
+  color: #666;
+}
+
+/* Stats */
+.light-mode .stat-item {
+  background: rgba(255, 255, 255, 0.95);
+  color: inherit;
+}
+
+.light-mode .stat-number {
+  color: #667eea;
+}
+
+.light-mode .stat-label {
+  color: #666;
+}
+
+/* Search */
+.light-mode .search-input {
+  background: #ffffff;
+  border-color: #e1e5e9;
+  color: inherit;
+}
+
+.light-mode .search-suggestions {
+  background: white;
+  border-color: #e1e5e9;
+}
+
+.light-mode .suggestion-section {
+  border-bottom-color: #f0f0f0;
+}
+
+.light-mode .suggestion-title {
+  color: #666;
+}
+
+.light-mode .suggestion-item {
+  color: #333;
+}
+
+.light-mode .suggestion-item:hover {
+  background: #f7fafc;
+}
+
+/* Category tabs */
+.light-mode .category-tab {
+  background: rgba(255, 255, 255, 0.9);
+  color: #666;
+}
+
+/* Posts / cards */
+.light-mode .post-card {
+  background: rgba(255, 255, 255, 0.95);
+  color: inherit;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.light-mode .author-name {
+  color: #333;
+}
+
+.light-mode .post-timestamp {
+  color: #999;
+}
+
+.light-mode .post-text {
+  color: #333;
+}
+
+/* Post actions */
+.light-mode .post-actions {
+  border-top-color: #e2e8f0;
+}
+
+.light-mode .post-actions .action-btn {
+  background: #ffffff;
+  color: #667eea;
+  border-color: #667eea;
 }
 
 /* ============================= */
@@ -557,29 +662,41 @@ width: 100%;
 }
 
 .category-weight-loss {
-  background: #fed7d7;
-  color: #c53030;
+ background: rgba(0, 91, 187, 0.12) !important;
+  color: var(--primary-color) !important;
+  border: 1px solid rgba(0, 91, 187, 0.25) !important;
 }
+
+
 
 .category-fitness {
-  background: #c6f6d5;
-  color: #2f855a;
+background: rgba(0, 91, 187, 0.12) !important;
+  color: var(--primary-color) !important;
+  border: 1px solid rgba(0, 91, 187, 0.25) !important;
 }
+
 
 .category-dietary-restrictions {
-  background: #bee3f8;
-  color: #2b6cb0;
+  background: rgba(0, 91, 187, 0.12) !important;
+  color: var(--primary-color) !important;
+  border: 1px solid rgba(0, 91, 187, 0.25) !important;
 }
+
 
 .category-meal-prep {
-  background: #fef5e7;
-  color: #d69e2e;
+  background: rgba(0, 91, 187, 0.12) !important;
+  color: var(--primary-color) !important;
+  border: 1px solid rgba(0, 91, 187, 0.25) !important;
 }
 
+
+
 .category-nutrition-tips {
-  background: #e9d8fd;
-  color: #553c9a;
+  background: rgba(0, 91, 187, 0.12) !important;
+  color: var(--primary-color) !important;
+  border: 1px solid rgba(0, 91, 187, 0.25) !important;
 }
+
 
 .post-content {
   margin-bottom: 20px;
