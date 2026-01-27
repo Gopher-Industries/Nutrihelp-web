@@ -1,87 +1,84 @@
-import React, { useState } from 'react';
+import React, { useState } from 'react'
 import './../../../styles/auth.css'
 import SubHeading from '../../../components/general_components/headings/SubHeading'
 import './DietaryRequirements.css'
 
-import { Image } from 'semantic-ui-react'
-import PreferenceImage from './images/pref.jpg'
-
 function UserPreference() {
 
-  const [specialDietaryRequirements, setSpecialDietaryRequirements] = useState([]);
-  const [allergies, setAllergies] = useState([]);
-  const [dislikes, setDislikes] = useState([]);
-  const [healthConditions, setHealthConditions] = useState([]);
-  const [cuisine, setCuisine] = useState([]);
-  const [spiceLevel, setSpiceLevel] = useState([]);
-  const [cookingMethod, setCookingMethod] = useState([]);
+  const [specialDietaryRequirements, setSpecialDietaryRequirements] = useState([])
+  const [allergies, setAllergies] = useState([])
+  const [dislikes, setDislikes] = useState([])
+  const [healthConditions, setHealthConditions] = useState([])
+  const [cuisine, setCuisine] = useState([])
+  const [spiceLevel, setSpiceLevel] = useState([])
+  const [cookingMethod, setCookingMethod] = useState([])
 
   const handleCloseClick = (index, value) => {
-    if (index === 0) setSpecialDietaryRequirements(specialDietaryRequirements.filter(i => i !== value));
-    if (index === 1) setAllergies(allergies.filter(i => i !== value));
-    if (index === 2) setDislikes(dislikes.filter(i => i !== value));
-    if (index === 3) setHealthConditions(healthConditions.filter(i => i !== value));
-    if (index === 4) setCuisine(cuisine.filter(i => i !== value));
-    if (index === 5) setSpiceLevel(spiceLevel.filter(i => i !== value));
-    if (index === 6) setCookingMethod(cookingMethod.filter(i => i !== value));
-  };
+    if (index === 0) setSpecialDietaryRequirements(specialDietaryRequirements.filter(i => i !== value))
+    if (index === 1) setAllergies(allergies.filter(i => i !== value))
+    if (index === 2) setDislikes(dislikes.filter(i => i !== value))
+    if (index === 3) setHealthConditions(healthConditions.filter(i => i !== value))
+    if (index === 4) setCuisine(cuisine.filter(i => i !== value))
+    if (index === 5) setSpiceLevel(spiceLevel.filter(i => i !== value))
+    if (index === 6) setCookingMethod(cookingMethod.filter(i => i !== value))
+  }
 
-  const handleDropdownChange = (event, index) => {
-    const value = event.target.value;
+  const handleDropdownChange = (e, index) => {
+    const value = e.target.value
 
     if (index === 0)
       specialDietaryRequirements.includes(value)
         ? setSpecialDietaryRequirements(specialDietaryRequirements.filter(i => i !== value))
-        : setSpecialDietaryRequirements([...specialDietaryRequirements, value]);
+        : setSpecialDietaryRequirements([...specialDietaryRequirements, value])
 
     if (index === 1)
       allergies.includes(value)
         ? setAllergies(allergies.filter(i => i !== value))
-        : setAllergies([...allergies, value]);
+        : setAllergies([...allergies, value])
 
     if (index === 2)
       dislikes.includes(value)
         ? setDislikes(dislikes.filter(i => i !== value))
-        : setDislikes([...dislikes, value]);
+        : setDislikes([...dislikes, value])
 
     if (index === 3)
       healthConditions.includes(value)
         ? setHealthConditions(healthConditions.filter(i => i !== value))
-        : setHealthConditions([...healthConditions, value]);
+        : setHealthConditions([...healthConditions, value])
 
     if (index === 4)
       cuisine.includes(value)
         ? setCuisine(cuisine.filter(i => i !== value))
-        : setCuisine([...cuisine, value]);
+        : setCuisine([...cuisine, value])
 
     if (index === 5)
       spiceLevel.includes(value)
         ? setSpiceLevel(spiceLevel.filter(i => i !== value))
-        : setSpiceLevel([...spiceLevel, value]);
+        : setSpiceLevel([...spiceLevel, value])
 
     if (index === 6)
       cookingMethod.includes(value)
         ? setCookingMethod(cookingMethod.filter(i => i !== value))
-        : setCookingMethod([...cookingMethod, value]);
-  };
+        : setCookingMethod([...cookingMethod, value])
+  }
 
   const handleRedoClick = () => {
-    setSpecialDietaryRequirements([]);
-    setAllergies([]);
-    setDislikes([]);
-    setHealthConditions([]);
-    setCuisine([]);
-    setSpiceLevel([]);
-    setCookingMethod([]);
+    setSpecialDietaryRequirements([])
+    setAllergies([])
+    setDislikes([])
+    setHealthConditions([])
+    setCuisine([])
+    setSpiceLevel([])
+    setCookingMethod([])
 
-    document.querySelectorAll('.dropdown select').forEach(select => {
-      select.value = '';
-    });
-  };
+    document.querySelectorAll('.dropdown select').forEach(s => {
+      s.value = ''
+    })
+  }
 
   const handleConfirmClick = () => {
 
-    const id = 1;
+    const id = 1
 
     const preferencedata = {
       specialDietaryRequirements,
@@ -91,7 +88,7 @@ function UserPreference() {
       cuisine,
       spiceLevel,
       cookingMethod
-    };
+    }
 
     fetch('http://localhost:80/api/userPreference', {
       method: 'POST',
@@ -101,23 +98,19 @@ function UserPreference() {
         'Content-Type': 'application/json'
       }
     })
-    .then(() => {
-      alert('User Preference selected successfully!');
-      handleRedoClick();
-    })
-    .catch(() => {
-      alert('Failed to send message. Please try again later.');
-    });
-  };
+      .then(() => {
+        alert('User Preference selected successfully!')
+        handleRedoClick()
+      })
+      .catch(() => {
+        alert('Failed to send message. Please try again later.')
+      })
+  }
 
   return (
     <div className="preferences-container">
 
       <SubHeading text="Your Preferences" />
-
-      <div className="pref-img">
-        <Image src={PreferenceImage} />
-      </div>
 
       <div className="select">
         <h4>Please confirm your selections</h4>
@@ -139,11 +132,11 @@ function UserPreference() {
                 <option value="Gluten-free">Gluten-free</option>
               </select>
 
-              {specialDietaryRequirements.map((v,i)=>(
+              {specialDietaryRequirements.map((v, i) => (
                 <div key={i} className="selected-option">
                   {v}
                   <img src="./images/close.png" className="close-icon"
-                    onClick={()=>handleCloseClick(0,v)} />
+                    onClick={() => handleCloseClick(0, v)} />
                 </div>
               ))}
             </div>
@@ -159,11 +152,11 @@ function UserPreference() {
                 <option value="Nuts">Nuts</option>
               </select>
 
-              {allergies.map((v,i)=>(
+              {allergies.map((v, i) => (
                 <div key={i} className="selected-option">
                   {v}
                   <img src="./images/close.png" className="close-icon"
-                    onClick={()=>handleCloseClick(1,v)} />
+                    onClick={() => handleCloseClick(1, v)} />
                 </div>
               ))}
             </div>
@@ -180,11 +173,11 @@ function UserPreference() {
                 <option value="Limit Cholesterol 2800mg">Limit Cholesterol 2800mg</option>
               </select>
 
-              {healthConditions.map((v,i)=>(
+              {healthConditions.map((v, i) => (
                 <div key={i} className="selected-option">
                   {v}
                   <img src="./images/close.png" className="close-icon"
-                    onClick={()=>handleCloseClick(3,v)} />
+                    onClick={() => handleCloseClick(3, v)} />
                 </div>
               ))}
             </div>
@@ -206,11 +199,11 @@ function UserPreference() {
                 <option value="Onions">Onions</option>
               </select>
 
-              {dislikes.map((v,i)=>(
+              {dislikes.map((v, i) => (
                 <div key={i} className="selected-option">
                   {v}
                   <img src="./images/close.png" className="close-icon"
-                    onClick={()=>handleCloseClick(2,v)} />
+                    onClick={() => handleCloseClick(2, v)} />
                 </div>
               ))}
             </div>
@@ -226,11 +219,11 @@ function UserPreference() {
                 <option value="Indian">Indian</option>
               </select>
 
-              {cuisine.map((v,i)=>(
+              {cuisine.map((v, i) => (
                 <div key={i} className="selected-option">
                   {v}
                   <img src="./images/close.png" className="close-icon"
-                    onClick={()=>handleCloseClick(4,v)} />
+                    onClick={() => handleCloseClick(4, v)} />
                 </div>
               ))}
             </div>
@@ -246,11 +239,11 @@ function UserPreference() {
                 <option value="Spicy">Spicy</option>
               </select>
 
-              {spiceLevel.map((v,i)=>(
+              {spiceLevel.map((v, i) => (
                 <div key={i} className="selected-option">
                   {v}
                   <img src="./images/close.png" className="close-icon"
-                    onClick={()=>handleCloseClick(5,v)} />
+                    onClick={() => handleCloseClick(5, v)} />
                 </div>
               ))}
             </div>
@@ -266,11 +259,11 @@ function UserPreference() {
                 <option value="Fried">Fried</option>
               </select>
 
-              {cookingMethod.map((v,i)=>(
+              {cookingMethod.map((v, i) => (
                 <div key={i} className="selected-option">
                   {v}
                   <img src="./images/close.png" className="close-icon"
-                    onClick={()=>handleCloseClick(6,v)} />
+                    onClick={() => handleCloseClick(6, v)} />
                 </div>
               ))}
             </div>
@@ -293,7 +286,7 @@ function UserPreference() {
       </div>
 
     </div>
-  );
+  )
 }
 
-export default UserPreference;
+export default UserPreference
