@@ -1,9 +1,18 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useDarkMode } from "../routes/DarkModeToggle/DarkModeContext";
 import "../styles/mainNavbar.css";
 import UserIcon from "./user-stroke-rounded.tsx";
 import SideMenu from "./SideMenu";
+
+const RobotIcon = ({ size = 20 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true">
+    <rect x="3" y="7" width="18" height="14" rx="4" ry="4" fill="none" stroke="currentColor" strokeWidth="2"/>
+    <circle cx="9" cy="13" r="1" fill="currentColor"/>
+    <circle cx="15" cy="13" r="1" fill="currentColor"/>
+    <path d="M12 7V3" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+  </svg>
+);
 
 const ChevronDownIcon = ({ size = 18 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true">
@@ -44,6 +53,8 @@ const HamburgerIcon = ({ size = 20 }) => (
 
 const MainNavbar = () => {
   const { darkMode } = useDarkMode();
+
+  const navigate = useNavigate();
 
   // Desktop dropdowns
   const [openMenu, setOpenMenu] = useState(null); // "more" | "settings" | "account" | null
@@ -160,22 +171,21 @@ const MainNavbar = () => {
             </div>
           </div>
 
-          {/* Center search */}
-          <div className="nav-search" role="search">
-            <input
-              id="nutrihelp-search"
-              className="search-input"
-              type="search"
-              placeholder="Search"
-              aria-label="Search NutriHelp"
-            />
-            <span className="search-icon" aria-hidden="true">
-              🔍
-            </span>
-          </div>
-
           {/* Right */}
           <div className="nav-right">
+            <button
+              type="button"
+              className="nav-button nav-assistant"
+              aria-label="Open Assistant"
+              onClick={() => navigate("/chat")}
+            >
+              <span className="nav-icon">
+                <RobotIcon />
+              </span>
+              Assistant
+            </button>
+
+
             {/* SETTINGS */}
             <div className="nav-dropdown" {...menuHandlers("settings")}>
               <button

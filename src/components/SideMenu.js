@@ -139,6 +139,7 @@ const SideMenu = ({ onNavigate, mode = "desktop", onClose }) => {
     () => ({
       title: "Menu",
       items: [
+        { type: "action", label: "Assistant", action: "assistant" },
         { type: "link", label: "Home", to: "/home" },
         { type: "link", label: "Scan Products", to: "/Scan" },
 
@@ -241,6 +242,12 @@ const SideMenu = ({ onNavigate, mode = "desktop", onClose }) => {
     }, 300);
   };
 
+  const doAssistant = () => {
+    close();
+    navigate("/chat");
+  };
+
+
   return (
     <div className="mobile-menu">
       <div className="mobile-menu-header">
@@ -253,16 +260,6 @@ const SideMenu = ({ onNavigate, mode = "desktop", onClose }) => {
         >
           <CloseIcon />
         </button>
-      </div>
-
-      {/* Search always available on mobile */}
-      <div className="mobile-menu-search" role="search">
-        <input
-          className="mobile-search-input"
-          type="search"
-          placeholder="Search"
-          aria-label="Search NutriHelp"
-        />
       </div>
 
       <div className="mobile-menu-list" role="menu" aria-label="Navigation items">
@@ -319,6 +316,20 @@ const SideMenu = ({ onNavigate, mode = "desktop", onClose }) => {
                 <span className="mobile-item-right">
                   <ChevronRight />
                 </span>
+              </button>
+            );
+          }
+
+          if (item.type === "action" && item.action === "assistant") {
+            return (
+              <button
+                key={`${item.label}-${idx}`}
+                type="button"
+                className="mobile-menu-item mobile-menu-item-assistant"
+                onClick={doAssistant}
+                role="menuitem"
+              >
+                <span className="mobile-item-left">{item.label}</span>
               </button>
             );
           }
