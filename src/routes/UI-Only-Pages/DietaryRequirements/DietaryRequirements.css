@@ -6,7 +6,7 @@
   border-radius: 16px;
   box-shadow: 0 12px 30px rgba(0,0,0,0.12);
   border: 1px solid rgba(0,0,0,0.12);
-  min-height: 92vh;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
@@ -28,7 +28,7 @@
 .containerpre {
   display: flex;
   flex-direction: column;
-  gap: 22px;
+  gap: 20px;
   padding: 10px 0;
   flex-grow: 1;
 }
@@ -43,7 +43,7 @@
 .group-box {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 20px;
 }
 
 .form-group {

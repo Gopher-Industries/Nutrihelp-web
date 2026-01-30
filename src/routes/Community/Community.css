@@ -1,6 +1,3 @@
-/* Community.css */
-
-/* Community Page Styles */
 .community-page {
   min-height: 100vh;
   background: #ffffff;
@@ -18,7 +15,6 @@
   padding: 20px;
 }
 
-/* Header Section */
 .community-header {
   display: flex;
   justify-content: space-between;
@@ -92,7 +88,6 @@
   box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
 }
 
-/* Stats Section */
 .community-stats {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -148,123 +143,16 @@
   color: #a0aec0;
 }
 
-.community-page.light-mode {
-  background: #ffffff;
-}
-
-/* Header */
-.light-mode .community-header {
-  background: rgba(255, 255, 255, 0.95);
-  color: inherit;
-}
-
-/* Title */
-.light-mode .community-title {
-  color: var(--primary-color);
-  background: none;
-  -webkit-background-clip: initial;
-  -webkit-text-fill-color: initial;
-  background-clip: initial;
-}
-
-/* Subtitle */
-.light-mode .community-subtitle {
-  color: #666;
-}
-
-/* Stats */
-.light-mode .stat-item {
-  background: rgba(255, 255, 255, 0.95);
-  color: inherit;
-}
-
-.light-mode .stat-number {
-  color: #667eea;
-}
-
-.light-mode .stat-label {
-  color: #666;
-}
-
-/* Search */
-.light-mode .search-input {
-  background: #ffffff;
-  border-color: #e1e5e9;
-  color: inherit;
-}
-
-.light-mode .search-suggestions {
-  background: white;
-  border-color: #e1e5e9;
-}
-
-.light-mode .suggestion-section {
-  border-bottom-color: #f0f0f0;
-}
-
-.light-mode .suggestion-title {
-  color: #666;
-}
-
-.light-mode .suggestion-item {
-  color: #333;
-}
-
-.light-mode .suggestion-item:hover {
-  background: #f7fafc;
-}
-
-/* Category tabs */
-.light-mode .category-tab {
-  background: rgba(255, 255, 255, 0.9);
-  color: #666;
-}
-
-/* Posts / cards */
-.light-mode .post-card {
-  background: rgba(255, 255, 255, 0.95);
-  color: inherit;
-  border-color: rgba(255, 255, 255, 0.2);
-}
-
-.light-mode .author-name {
-  color: #333;
-}
-
-.light-mode .post-timestamp {
-  color: #999;
-}
-
-.light-mode .post-text {
-  color: #333;
-}
-
-/* Post actions */
-.light-mode .post-actions {
-  border-top-color: #e2e8f0;
-}
-
-.light-mode .post-actions .action-btn {
-  background: #ffffff;
-  color: #667eea;
-  border-color: #667eea;
-}
-
-/* ============================= */
-/* Search and Filter Section     */
-/* ============================= */
-
 .search-filter-section {
   display: flex;
   gap: 16px;
-  align-items: center;     /* key: vertical alignment */
-  flex-wrap: nowrap;       /* keep one row on desktop */
+  align-items: center;     
+  flex-wrap: nowrap;       
   position: relative;
   margin-bottom: 30px;
   min-height: 52px;
 }
 
-/* Search grows, selects stay consistent */
 .search-container {
   flex: 1 1 auto;
   min-width: 420px;
@@ -280,7 +168,6 @@
   z-index: 2;
 }
 
-/* Unified control height */
 .search-input,
 .filter-select,
 .sort-select {
@@ -293,7 +180,6 @@
   background: #ffffff;
 }
 
-/* Search input needs icon padding */
 .search-input {
 width: 100%;
   height: 52px;          
@@ -320,12 +206,9 @@ width: 100%;
   display: flex;
   align-items: center;
   flex-shrink: 0;
-  margin-top: 33px;              /* move pills down */
+  margin-top: 33px;              
 }
 
-
-
-/* Selects: center text inside pill */
 .filter-select,
 .sort-select {
   height: 52px;          
@@ -352,7 +235,6 @@ width: 100%;
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.08);
 }
 
-/* Search Suggestions */
 .search-suggestions {
   position: absolute;
   top: calc(100% + 6px);
@@ -425,7 +307,6 @@ width: 100%;
   background: #4a5568;
 }
 
-/* Category Tabs */
 .category-tabs {
   display: flex;
   gap: 15px;
@@ -471,7 +352,6 @@ width: 100%;
   font-size: 1.2rem;
 }
 
-/* Posts Section */
 .posts-section {
   margin-bottom: 40px;
 }
@@ -518,7 +398,7 @@ width: 100%;
   gap: 25px;
 }
 
-/* Post Card */
+
 .post-card {
   background: rgba(255, 255, 255, 0.95);
   border-radius: 20px;
@@ -608,7 +488,7 @@ width: 100%;
   gap: 10px;
 }
 
-/* Owner actions (edit/delete) - renamed to avoid clash */
+
 .post-owner-actions {
   display: flex;
   gap: 6px;
@@ -750,7 +630,6 @@ background: rgba(0, 91, 187, 0.12) !important;
   transform: translateY(-1px);
 }
 
-/* Footer actions (like/comment/share/bookmark) */
 .post-actions {
   display: flex;
   gap: 20px;
@@ -839,7 +718,6 @@ background: rgba(0, 91, 187, 0.12) !important;
   transform: scale(1.1);
 }
 
-/* Responsive Design */
 @media (max-width: 900px) {
   .search-filter-section {
     flex-wrap: wrap;
