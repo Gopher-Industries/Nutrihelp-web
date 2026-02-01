@@ -201,7 +201,7 @@ const MainNavbar = () => {
                 </span>
               </button>
 
-              {/* For future anchors */}
+              {/* Settings' anchors */}
               {openMenu === "settings" && (
                 <div
                   id="menu-settings"

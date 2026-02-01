@@ -110,8 +110,9 @@
 }
 
 /* Quick Actions styles removed */
-
+/* Anchor offset so sections don't hide under sticky navbar */
 .settings-section {
+  scroll-margin-top: 90px;
   margin-bottom: 40px;
   padding: 30px;
   background-color: var(--card-background-secondary);

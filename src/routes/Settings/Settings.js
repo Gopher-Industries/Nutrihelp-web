@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useDarkMode } from '../../routes/DarkModeToggle/DarkModeContext';
 import { getFontSizeOptions, applyFontSize, getCurrentFontSize } from '../../utils/fontSizeManager';
 import { testVoiceSettings, saveVoiceSettings } from '../../utils/voiceSettingsManager';
-import { MoonIcon, SunIcon, Bell, Globe, Save, Volume2 } from "lucide-react";
+import { MoonIcon, SunIcon, Bell, Globe, Volume2 } from "lucide-react";
 import notificationPreferencesApi from '../../services/notificationPreferencesApi';
 import './Settings.css';
 import Switch from "react-switch";
@@ -11,7 +11,9 @@ import Slider from '@mui/material/Slider';
 
 const Settings = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { darkMode, setDarkMode } = useDarkMode();
+
   const [fontSize, setFontSize] = useState('medium');
   const [fontSizes, setFontSizes] = useState({});
   const [isLoading, setIsLoading] = useState(true);
@@ -131,15 +133,15 @@ const Settings = () => {
         const savedShowHelpfulTips = localStorage.getItem('showHelpfulTips') !== 'false';
         const savedAutoSave = localStorage.getItem('autoSave') !== 'false';
         const savedVoiceSettings = JSON.parse(localStorage.getItem('voiceSettings') || '{}');
-        
+
         setHighContrast(savedHighContrast);
         setShowFocusIndicators(savedShowFocusIndicators);
         setScreenReaderSupport(savedScreenReaderSupport);
         setRememberPreferences(savedRememberPreferences);
         setShowHelpfulTips(savedShowHelpfulTips);
         setAutoSave(savedAutoSave);
-        setVoiceSettings({ ...voiceSettings, ...savedVoiceSettings });
-        
+        setVoiceSettings(prev => ({ ...prev, ...savedVoiceSettings }));
+
         setIsLoading(false);
       } catch (error) {
         console.error('Error initializing settings:', error);
@@ -153,17 +155,37 @@ const Settings = () => {
     initializeSettings();
   }, []);
 
+  // Anchor scrolling for /settings#section
+  useEffect(() => {
+    if (isLoading) return;
+
+    const hash = location.hash?.replace('#', '');
+    if (!hash) return;
+
+    // allow layout to settle
+    const t = setTimeout(() => {
+      requestAnimationFrame(() => {
+        const el = document.getElementById(hash);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    }, 50);
+
+    return () => clearTimeout(t);
+  }, [location.hash, isLoading]);
+
   // Load settings from local storage (fallback function)
   const loadSettingsFromLocalStorage = () => {
     try {
       const savedGlobalDarkMode = localStorage.getItem('globalDarkMode') === 'true';
       const savedLanguage = localStorage.getItem('language') || 'en';
       const savedNotifications = JSON.parse(localStorage.getItem('notifications') || '{}');
-      
+
       setDarkMode(savedGlobalDarkMode);
       setLanguage(savedLanguage);
-      setNotifications({ ...notifications, ...savedNotifications });
-      
+      setNotifications(prev => ({ ...prev, ...savedNotifications }));
+
       if (savedGlobalDarkMode) {
         document.body.classList.add('dark-mode');
       } else {
@@ -388,24 +410,6 @@ const Settings = () => {
     }, 3000);
   };
 
-  // Handle back navigation
-  const handleBack = () => {
-    if (hasUnsavedChanges) {
-      if (window.confirm('You have unsaved changes. Are you sure you want to leave?')) {
-        navigate(-1);
-      }
-    } else {
-      navigate(-1);
-    }
-  };
-
-  // Handle save settings
-  const handleSaveSettings = () => {
-    saveSettings();
-    setHasUnsavedChanges(false);
-    navigate(-1);
-  };
-
   if (isLoading) {
     return (
       <div className={`settings-page ${darkMode ? 'dark-mode' : ''}`}>
@@ -442,6 +446,7 @@ const Settings = () => {
     {
       id: 'display',
       title: 'Display Settings',
+      description: 'Theme mode and display preferences',
       content: (
         <div className="theme-mode-selector">
             <button 
@@ -466,6 +471,7 @@ const Settings = () => {
     {
       id: 'font',
       title: 'Font Size',
+      description: 'Adjust text size for readability',
       content: (
         <>
           <div className="font-size-options">
@@ -493,6 +499,7 @@ const Settings = () => {
     {
       id: 'accessibility',
       title: 'Accessibility',
+      description: 'Support features for diverse accessibility needs',
       content: (
         <div className="accessibility-options">
           <div className="checkbox-group">
@@ -557,6 +564,7 @@ const Settings = () => {
     {
       id: 'notifications',
       title: 'Notifications',
+      description: 'Choose which reminders and alerts you receive',
       content: (
         <div className="notification-options">
           <div className="notification-header">
@@ -700,6 +708,7 @@ const Settings = () => {
     {
       id: 'language',
       title: 'Language',
+      description: 'Change your preferred language',
       content: (
         <div className="language-dropdown-container">
           <select 
@@ -858,6 +867,7 @@ const Settings = () => {
     {
       id: 'preferences',
       title: 'User Preferences',
+      description: 'Personal preferences and autosave options',
       content: (
         <div className="user-preference-options">
           <div className="checkbox-group">
@@ -951,7 +961,11 @@ const Settings = () => {
 
           {/* Settings Sections */}
           {allSections.map((section) => (
-            <div key={section.id} className="settings-section">
+            <div
+              key={section.id}
+              id={section.id}
+              className="settings-section"
+            >
               <h2 className="section-title">
                  {section.title === 'Display Settings' && <SunIcon size={24} />}
                  {section.title === 'Font Size' && <span style={{ fontSize: '24px' }}>Aa</span>}
