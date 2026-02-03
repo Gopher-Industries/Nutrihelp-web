@@ -1,10 +1,253 @@
+.preferences-container {
+  width: min(920px, 92%);
+  margin: 40px auto;
+  background-color: #ffffff;
+  padding: 28px;
+  border-radius: 16px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+  border: 1px solid rgba(0,0,0,0.12);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
 
+.mainpre {
+  text-align: center;
+  margin-bottom: 18px;
+}
 
 .select {
-    margin-top: 2rem;
-    margin-left: 1rem;
-  
-  }
+  text-align: center;
+  margin-top: 10px;
+}
+
+.select h4 {
+  color: #555;
+}
+
+.containerpre {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 10px 0;
+  flex-grow: 1;
+}
+
+.group-title {
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #005bbb;
+}
+
+.group-box {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  background: #ffffff;
+  padding: 16px 18px;
+  border-radius: 14px;
+  border: 1px solid rgba(0,91,187,0.18);
+}
+
+.form-group h3 {
+  margin-bottom: 10px;
+  font-size: 0.95rem;
+  color: #222;
+}
+
+.dropdown {
+  width: 100%;
+}
+
+.dropdown select {
+  width: 100%;
+  height: 46px;
+  border-radius: 12px;
+  padding: 0 14px;
+  background: #ffffff;
+  color: #222;
+  border: 1px solid #bbb;
+}
+
+.dropdown select:focus {
+  border-color: #005bbb;
+  box-shadow: 0 0 0 3px rgba(0,91,187,0.2);
+}
+
+.selected-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  margin: 10px 10px 0 0;
+  border-radius: 999px;
+  background: rgba(0,91,187,0.1);
+  border: 1px solid rgba(0,91,187,0.25);
+  color: #005bbb;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.close-icon {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.buttonpre,
+.buttonre {
+  display: flex;
+  justify-content: center;
+}
+
+.buttonpre {
+  margin-top: 60px;
+}
+
+.buttonre {
+  margin-top: 40px;
+}
+
+.btn-pre {
+  min-width: 240px;
+  height: 60px;
+  border-radius: 999px;
+  background: #005bbb;
+  color: #ffffff;
+  border: none;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn-redo {
+  min-width: 240px;
+  height: 60px;
+  border-radius: 999px;
+  background: transparent;
+  color: #005bbb;
+  border: 1px solid #005bbb;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.light-mode .preferences-container {
+  background-color: #ffffff;
+  border: 1px solid rgba(0,0,0,0.12);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+}
+
+.light-mode .select h4 {
+  color: #555;
+}
+
+.light-mode .group-title {
+  color: #005bbb;
+}
+
+.light-mode .form-group {
+  background: #ffffff;
+  border: 1px solid rgba(0,91,187,0.18);
+}
+
+.light-mode .form-group h3 {
+  color: #222;
+}
+
+.light-mode .dropdown select {
+  background: #ffffff;
+  color: #222;
+  border: 1px solid #bbb;
+}
+
+.light-mode .btn-pre {
+  background: #005bbb;
+  color: #ffffff;
+}
+
+.light-mode .btn-redo {
+  border: 1px solid #005bbb;
+  color: #005bbb;
+}
+
+.light-mode .containerpre {
+  background: #ffffff;
+}
+
+.light-mode .group-box {
+  background: transparent;
+}
+
+.light-mode .preferences-container {
+  background: #ffffff;
+}
+
+
+.dark-mode .preferences-container {
+  background-color: #0f141a;
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: 0 12px 35px rgba(0,0,0,0.6);
+}
+
+.dark-mode .select h4 {
+  color: rgba(255,255,255,0.7);
+}
+
+.dark-mode .group-title {
+  color: #4da3ff;
+}
+
+.dark-mode .form-group {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.10);
+}
+
+.dark-mode .form-group h3 {
+  color: rgba(255,255,255,0.9);
+}
+
+.dark-mode .dropdown select {
+  background: rgba(255,255,255,0.10);
+  color: rgba(255,255,255,0.95);
+  border: 1px solid rgba(255,255,255,0.15);
+}
+
+.dark-mode .dropdown select:focus {
+  border-color: #4da3ff;
+  box-shadow: 0 0 0 3px rgba(77,163,255,0.25);
+}
+
+.dark-mode .selected-option {
+  background: rgba(77,163,255,0.18);
+  border: 1px solid rgba(77,163,255,0.28);
+  color: rgba(255,255,255,0.92);
+}
+
+.dark-mode .btn-pre {
+  background: #2f93ff;
+  color: #ffffff;
+}
+
+.dark-mode .btn-redo {
+  background: #2f93ff;
+  border: 1px solid rgba(47,147,255,0.35);
+  color: #ffffff;
+}
+
+
+.dark-mode .containerpre {
+  background: transparent !important;
+}
+
+.dark-mode .group-box {
+  background: transparent !important;
+}
+
+
+@media (max-width: 640px) {
   .preferences-container {
       width: 80%;
       margin: 0 auto;
@@ -212,7 +455,4 @@
     opacity: 0;
     transition: opacity 0.2s ease-in-out;
   }
-  
-  .selected-option:hover::before {
-    opacity: 1;
-  }
+}

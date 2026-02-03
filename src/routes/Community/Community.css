@@ -1,6 +1,3 @@
-/* Community.css */
-
-/* Community Page Styles */
 .community-page {
   min-height: 100vh;
   background-color: var(--background-color);
@@ -20,7 +17,6 @@
   padding: 20px;
 }
 
-/* Header Section */
 .community-header {
   display: flex;
   justify-content: space-between;
@@ -46,18 +42,21 @@
   font-size: 3rem;
   font-weight: 700;
   margin-bottom: 10px;
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--primary-color);
+  background: none;
+  -webkit-background-clip: initial;
+  -webkit-text-fill-color: initial;
+  background-clip: initial;
 }
 
 .dark-mode .community-title {
-  background: linear-gradient(135deg, #90cdf4, #63b3ed);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--primary-color);
+  background: none;
+  -webkit-background-clip: initial;
+  -webkit-text-fill-color: initial;
+  background-clip: initial;
 }
+
 
 .community-subtitle {
   font-size: 1.2rem;
@@ -74,7 +73,7 @@
   align-items: center;
   gap: 10px;
   padding: 15px 25px;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: var(--primary-color);
   color: white;
   border: none;
   border-radius: 50px;
@@ -91,7 +90,6 @@
   box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
 }
 
-/* Stats Section */
 .community-stats {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -147,21 +145,16 @@
   color: #a0aec0;
 }
 
-/* ============================= */
-/* Search and Filter Section     */
-/* ============================= */
-
 .search-filter-section {
   display: flex;
   gap: 16px;
-  align-items: center;     /* key: vertical alignment */
-  flex-wrap: nowrap;       /* keep one row on desktop */
+  align-items: center;     
+  flex-wrap: nowrap;       
   position: relative;
   margin-bottom: 30px;
   min-height: 52px;
 }
 
-/* Search grows, selects stay consistent */
 .search-container {
   flex: 1 1 auto;
   min-width: 420px;
@@ -177,7 +170,6 @@
   z-index: 2;
 }
 
-/* Unified control height */
 .search-input,
 .filter-select,
 .sort-select {
@@ -190,7 +182,6 @@
   background: #ffffff;
 }
 
-/* Search input needs icon padding */
 .search-input {
 width: 100%;
   height: 52px;          
@@ -217,12 +208,9 @@ width: 100%;
   display: flex;
   align-items: center;
   flex-shrink: 0;
-  margin-top: 33px;              /* move pills down */
+  margin-top: 33px;              
 }
 
-
-
-/* Selects: center text inside pill */
 .filter-select,
 .sort-select {
   height: 52px;          
@@ -249,7 +237,6 @@ width: 100%;
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.08);
 }
 
-/* Search Suggestions */
 .search-suggestions {
   position: absolute;
   top: calc(100% + 6px);
@@ -322,7 +309,6 @@ width: 100%;
   background: #4a5568;
 }
 
-/* Category Tabs */
 .category-tabs {
   display: flex;
   gap: 15px;
@@ -368,7 +354,6 @@ width: 100%;
   font-size: 1.2rem;
 }
 
-/* Posts Section */
 .posts-section {
   margin-bottom: 40px;
 }
@@ -415,7 +400,7 @@ width: 100%;
   gap: 25px;
 }
 
-/* Post Card */
+
 .post-card {
   background: rgba(255, 255, 255, 0.95);
   border-radius: 20px;
@@ -505,7 +490,7 @@ width: 100%;
   gap: 10px;
 }
 
-/* Owner actions (edit/delete) - renamed to avoid clash */
+
 .post-owner-actions {
   display: flex;
   gap: 6px;
@@ -559,29 +544,41 @@ width: 100%;
 }
 
 .category-weight-loss {
-  background: #fed7d7;
-  color: #c53030;
+ background: rgba(0, 91, 187, 0.12) !important;
+  color: var(--primary-color) !important;
+  border: 1px solid rgba(0, 91, 187, 0.25) !important;
 }
+
+
 
 .category-fitness {
-  background: #c6f6d5;
-  color: #2f855a;
+background: rgba(0, 91, 187, 0.12) !important;
+  color: var(--primary-color) !important;
+  border: 1px solid rgba(0, 91, 187, 0.25) !important;
 }
+
 
 .category-dietary-restrictions {
-  background: #bee3f8;
-  color: #2b6cb0;
+  background: rgba(0, 91, 187, 0.12) !important;
+  color: var(--primary-color) !important;
+  border: 1px solid rgba(0, 91, 187, 0.25) !important;
 }
+
 
 .category-meal-prep {
-  background: #fef5e7;
-  color: #d69e2e;
+  background: rgba(0, 91, 187, 0.12) !important;
+  color: var(--primary-color) !important;
+  border: 1px solid rgba(0, 91, 187, 0.25) !important;
 }
 
+
+
 .category-nutrition-tips {
-  background: #e9d8fd;
-  color: #553c9a;
+  background: rgba(0, 91, 187, 0.12) !important;
+  color: var(--primary-color) !important;
+  border: 1px solid rgba(0, 91, 187, 0.25) !important;
 }
+
 
 .post-content {
   margin-bottom: 20px;
@@ -635,7 +632,6 @@ width: 100%;
   transform: translateY(-1px);
 }
 
-/* Footer actions (like/comment/share/bookmark) */
 .post-actions {
   display: flex;
   gap: 20px;
@@ -724,7 +720,6 @@ width: 100%;
   transform: scale(1.1);
 }
 
-/* Responsive Design */
 @media (max-width: 900px) {
   .search-filter-section {
     flex-wrap: wrap;

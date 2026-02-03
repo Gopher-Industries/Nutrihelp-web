@@ -25,7 +25,7 @@ import ForgotPasswordReset from "./routes/ForgotPassword/ForgotPasswordReset";
 import CreateRecipe from "./routes/CreateRecipe/CreateRecipe";
 import SearchRecipes from "./routes/SearchRecipes/SearchRecipes";
 import CategoryResults from "./routes/SearchRecipes/CategoryResults";
-import YourPreferences from "./routes/UI-Only-Pages/YourPreferences/pref-dis-health";
+import YourPreferences from './routes/UI-Only-Pages/YourPreferences/YourPreferences';
 import UserProfilePage from "./routes/UI-Only-Pages/UserProfilePage/userprofile";
 import Home from "./routes/Home/Home";
 import DietaryRequirements from "./routes/UI-Only-Pages/DietaryRequirements/DietaryRequirements";
