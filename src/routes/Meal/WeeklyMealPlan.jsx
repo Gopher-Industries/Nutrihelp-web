@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { fetchWeeklyMealPlan } from './WeeklyMealUtils';
 import DayRow from './components/DayRow'; 
+import './WeeklyMealPlan.css';
 
 const WeeklyMealPlan = ({ onExport, showExport = true }) => {
   const [mealPlan, setMealPlan] = useState([]);
@@ -43,7 +44,7 @@ const WeeklyMealPlan = ({ onExport, showExport = true }) => {
       width: '100%'
     }}>
       <h2 style={{ 
-        color: '#000000ff', 
+        color: 'var(--text-primary)', 
         textAlign: 'center',
         fontSize: "clamp(1.375rem, 4vw, 2.25rem)",
         lineHeight: 1.3,
@@ -56,7 +57,7 @@ const WeeklyMealPlan = ({ onExport, showExport = true }) => {
         <button
           onClick={onExport}
           style={{ 
-            backgroundColor: '#005BBB', 
+            backgroundColor: 'var(--primary-color)', 
             color: 'white', 
             border: 'none', 
             padding: '10px 20px', 

@@ -379,13 +379,21 @@ const Meal = () => {
                   className="weekly-container"
                   style={{
                     width: "100%",
-                    background: "#fafafa",
+                    background: "var(--background-secondary)",
                     borderRadius: "12px",
                     padding: "16px",
-                    border: "1px solid #eee",
+                    border: "1px solid var(--border-color)",
                   }}
                 >
-                  <h2 style={{ textAlign: "center", marginTop: 0, fontSize: "clamp(1.125rem, 4vw, 1.75rem)", lineHeight: 1.3 }}>🎯 Personalized Weekly Plan</h2>
+                  <h2 style={{ 
+                    textAlign: "center", 
+                    marginTop: 0, 
+                    fontSize: "clamp(1.125rem, 4vw, 1.75rem)", 
+                    lineHeight: 1.3,
+                    color: "var(--text-primary)"
+                  }}>
+                    🎯 Personalized Weekly Plan
+                  </h2>
                   <PersonalizedPlanForm onGenerate={(filters) => setPersonalFilters(filters)} />
                   {personalFilters && (
                     <div style={{ width: "100%", marginTop: "12px" }}>

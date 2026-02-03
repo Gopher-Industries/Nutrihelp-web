@@ -18,8 +18,8 @@ export default function DayRow({ dayPlan, ingredientsByRecipe }) {
           fontSize: "clamp(1rem, 3.5vw, 1.25rem)",
           lineHeight: 1.3,
           marginTop: 20,
-          color: "#1a237e",
-          borderBottom: "1px solid #ccc",
+          color: "var(--text-heading)",
+          borderBottom: "1px solid var(--border-color)",
           paddingBottom: 6,
           marginBottom: 12,
         }}
@@ -44,10 +44,10 @@ export default function DayRow({ dayPlan, ingredientsByRecipe }) {
             <div
               key={mealKey}
               style={{
-                border: "1px solid #ddd",
+                border: "1px solid var(--border-color)",
                 borderRadius: 10,
                 padding: 14,
-                backgroundColor: "#f9f9f9",
+                backgroundColor: "var(--card-background-secondary)",
                 boxShadow: "0 4px 8px rgba(0,0,0,0.05)",
                 minWidth: 0,
               }}
@@ -56,7 +56,7 @@ export default function DayRow({ dayPlan, ingredientsByRecipe }) {
                 className="meal-header"
                 style={{
                   margin: "4px 0 8px",
-                  color: "#005BBB",
+                  color: "var(--primary-color)",
                   textDecoration: "underline",
                   fontSize: "clamp(0.875rem, 3vw, 1rem)",
                   lineHeight: 1.3,
@@ -66,88 +66,104 @@ export default function DayRow({ dayPlan, ingredientsByRecipe }) {
                 {mealKey.charAt(0).toUpperCase() + mealKey.slice(1)}
               </h3>
 
-              <p style={{ fontWeight: 700, margin: "0 0 6px", fontSize: "clamp(0.875rem, 2.5vw, 1rem)" }}>
+              <p style={{ 
+                fontWeight: 700, 
+                margin: "0 0 6px", 
+                fontSize: "clamp(0.875rem, 2.5vw, 1rem)",
+                color: "var(--text-primary)"
+              }}>
                 {recipe?.recipe_name || "N/A"}
               </p>
 
               <p
                 style={{
                   fontSize: "clamp(0.75rem, 2vw, 0.875rem)",
-                  color: "#333",
+                  color: "var(--text-secondary)",
                   margin: "0 0 10px",
                   whiteSpace: "pre-wrap",
                 }}
               >
-                {recipe?.instructions || "No instructions available."}
+                {recipe?.instructions || "No instructions"}
               </p>
 
-              {rId && ingList.length > 0 && (
-                <div style={{ marginTop: 6 }}>
-                  <p style={{ margin: "0 0 6px", fontWeight: 600, fontSize: "clamp(0.75rem, 2vw, 0.875rem)" }}>
-                    Ingredients
-                  </p>
+              <p
+                style={{
+                  fontSize: "clamp(0.75rem, 2vw, 0.875rem)",
+                  marginBottom: 6,
+                  fontWeight: 600,
+                  color: "var(--text-primary)",
+                }}
+              >
+                Ingredients:
+              </p>
 
-                  <table
-                    style={{
-                      width: "100%",
-                      borderCollapse: "collapse",
-                      fontSize: "clamp(0.6875rem, 2vw, 0.8125rem)",
-                      background: "#fff",
-                      border: "1px solid #e0e0e0",
-                    }}
-                  >
-                    <thead>
-                      <tr>
-                        <th
+              {ingList.length > 0 ? (
+                <table
+                  style={{
+                    width: "100%",
+                    borderCollapse: "collapse",
+                    fontSize: "clamp(0.6875rem, 2vw, 0.8125rem)",
+                    color: "var(--text-secondary)",
+                  }}
+                >
+                  <thead>
+                    <tr>
+                      <th
+                        style={{
+                          textAlign: "left",
+                          padding: 4,
+                          fontWeight: 600,
+                          borderBottom: "1px solid var(--border-color)",
+                          color: "var(--text-primary)",
+                        }}
+                      >
+                        Name
+                      </th>
+                      <th
+                        style={{
+                          textAlign: "left",
+                          padding: 4,
+                          fontWeight: 600,
+                          borderBottom: "1px solid var(--border-color)",
+                          color: "var(--text-primary)",
+                        }}
+                      >
+                        Qty
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {ingList.map((ing, i) => (
+                      <tr key={i}>
+                        <td
                           style={{
-                            textAlign: "left",
-                            padding: 6,
-                            borderBottom: "1px solid #e0e0e0",
+                            padding: 4,
+                            borderBottom: "1px solid var(--border-color-light)",
                           }}
                         >
-                          Ingredient
-                        </th>
-                        <th
+                          {getIngredientName(ing)}
+                        </td>
+                        <td
                           style={{
-                            textAlign: "left",
-                            padding: 6,
-                            borderBottom: "1px solid #e0e0e0",
+                            padding: 4,
+                            borderBottom: "1px solid var(--border-color-light)",
                           }}
                         >
-                          Quantity
-                        </th>
+                          {getIngredientQty(ing)}
+                        </td>
                       </tr>
-                    </thead>
-
-                    <tbody>
-                      {ingList.map((ing, idx) => (
-                        <tr key={idx}>
-                          <td
-                            style={{
-                              padding: 6,
-                              borderBottom: "1px solid #f0f0f0",
-                            }}
-                          >
-                            {getIngredientName(ing)}
-                          </td>
-                          <td
-                            style={{
-                              padding: 6,
-                              borderBottom: "1px solid #f0f0f0",
-                            }}
-                          >
-                            {getIngredientQty(ing)}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-
-              {rId && ingList.length === 0 && (
-                <p style={{ fontSize: "clamp(0.6875rem, 2vw, 0.75rem)", color: "#666", marginTop: 4 }}>
-                  Ingredients not available for this recipe.
+                    ))}
+                  </tbody>
+                </table>
+              ) : (
+                <p
+                  style={{
+                    fontSize: "clamp(0.6875rem, 2vw, 0.75rem)",
+                    color: "var(--text-muted)",
+                    fontStyle: "italic",
+                  }}
+                >
+                  No ingredients listed.
                 </p>
               )}
             </div>
