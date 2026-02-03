@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import "./SymptomAssessment.css";
  
 const symptomsList = [
@@ -208,6 +208,7 @@ export default function SymptomAssessmentPage() {
   const [selectedSymptoms, setSelectedSymptoms] = useState([]);
   const [deficiencies, setDeficiencies] = useState([]);
   const [meals, setMeals] = useState([]);
+  const formSectionRef = useRef(null);
  
   const handleToggleSymptom = (symptom) => {
     const updatedSymptoms = selectedSymptoms.includes(symptom)
@@ -252,23 +253,10 @@ export default function SymptomAssessmentPage() {
     setMeals(Object.values(mealMap));
   };
  
-  const handleNext = () => {
-    const detectedDeficiencies = new Set();
-    selectedSymptoms.forEach((symptom) => {
-      const related = deficiencyMapping[symptom];
-      if (related) related.forEach((d) => detectedDeficiencies.add(d));
-    });
-    setDeficiencies(Array.from(detectedDeficiencies));
- 
-    const mealsSet = new Set();
-    Array.from(detectedDeficiencies).forEach((d) => {
-      if (mealSuggestions[d]) {
-        mealSuggestions[d].forEach((meal) =>
-          mealsSet.add(JSON.stringify(meal))
-        );
-      }
-    });
-    setMeals(Array.from(mealsSet).map((m) => JSON.parse(m)));
+  const handleGetStarted = () => {
+    if (formSectionRef.current) {
+      formSectionRef.current.scrollIntoView({ behavior: "smooth" });
+    }
   };
  
   return (
@@ -281,40 +269,27 @@ export default function SymptomAssessmentPage() {
               Symptom-Based <br /> Nutrient Assessment
             </h1>
             <p>Identify potential nutrient deficiencies based on symptoms</p>
-            <button className="get-started-btn">GET STARTED</button>
+            <button className="get-started-btn" onClick={handleGetStarted}>
+              GET STARTED
+            </button>
           </div>
           <img src="/images/symptom_assessment/symptom.png" alt="Health" className="hero-image" />
         </div>
       </div>
 
       {}
-        <div className="search-container">
-          <div className="search-inner">
-            <span className="input-icon">🔍</span>
-            <input
-              type="text"
-              placeholder="Search Symptoms ..."
-              className="search-input-field"
-            />
-            <span className="input-next-button" onClick={handleNext}>
-              Next
-            </span>
-          </div>
-        </div>
-
-      {}
-      <div className="form-section">
+      <div className="form-section" ref={formSectionRef}>
         <h2>Describe how you are feeling?</h2>
         <div className="symptom-grid">
           {symptomsList.map((symptom) => (
             <label key={symptom} className="symptom-option">
               <input
                 type="checkbox"
-                className="custom-checkbox"
+                className="symptom-checkbox"
                 checked={selectedSymptoms.includes(symptom)}
                 onChange={() => handleToggleSymptom(symptom)}
               />
-              <span className="symptom-label-text">{symptom}</span>
+              <span className="symptom-chip">{symptom}</span>
             </label>
           ))}
         </div>

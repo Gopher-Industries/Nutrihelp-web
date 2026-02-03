@@ -6,14 +6,14 @@ body {
 
 
 header {
-  background-color: var(--button-background-color);
-  color: var(--text-color);
+  background-color: var(--primary-color);
+  color: var(--text-inverse);
   padding: 10px;
   text-align: center;
 }
 
 header h1 {
-font-size: 28px;
+font-size: 1.75rem;
 font-weight: bold;
 }
 
@@ -39,12 +39,12 @@ border-radius: 10px;
 }
 
 .food-item {
-background: white;
+background: var(--card-background);
 width: calc(33.33% - 20px); 
 min-width: 220px;
 border-radius: 12px;
 padding: 10px;
-box-shadow: 0px 0px 10px rgba(174, 174, 192, 0.2);
+box-shadow: var(--card-shadow);
 cursor: pointer;
 transition: transform 0.2s ease;
 text-align: center;
@@ -57,8 +57,8 @@ transform: translateY(-5px);
 .names {
 margin-top: 10px;
 font-weight: 600;
-font-size: 16px;
-color: #222;
+font-size: 1rem;
+color: var(--text-primary);
 }
 
 .mealcontainer {
@@ -79,10 +79,27 @@ gap: 20px;
 }
 
 .details-box {
-background-color: #f0f0f0;
+background-color: var(--hover-background);
 padding: 20px;
 border-radius: 12px;
-box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.05);
+box-shadow: var(--card-shadow);
+word-break: break-word;
+overflow-wrap: break-word;
+box-sizing: border-box;
+}
+
+.details-box h3 {
+word-break: keep-all;
+overflow-wrap: normal;
+margin-left: 0 !important;
+text-align: center !important;
+font-size: clamp(1.25rem, 3vw, 1.5rem) !important;
+}
+
+.details-box ul,
+.details-box li {
+word-break: normal;
+overflow-wrap: break-word;
 }
 
 .button-group {
@@ -95,35 +112,36 @@ gap: 15px;
 width: 100%;
 padding: 12px;
 border-radius: 25px;
-font-size: 16px;
+font-size: 1rem;
 font-weight: 600;
 border: none;
-background-color: #a349e4;
-color: white;
+background-color: var(--accent-color);
+color: var(--text-inverse);
 transition: background 0.3s ease;
 cursor: pointer;
 text-align: center;
 }
 
 .viewplan:hover {
-background-color: #00458e;
+background-color: var(--primary-dark);
 }
 
 h3{
-margin-left: 30px; font-size: 20px;
+margin-left: 30px; font-size: 1.25rem;
+color: var(--text-primary);
 }
 
 .selected {
-  border: 2px solid #005BBB;            
-  background-color: #E8F1FF;             
+  border: 2px solid var(--primary-color);            
+  background-color: var(--primary-light);             
   box-shadow: 0px 0px 12px rgba(0, 91, 187, 0.3); 
 }
 
 .meal-title {
 margin-left: 40px;
-font-size: 24px;
+font-size: 1.5rem;
 font-weight: 600;
-color: #333;
+color: var(--text-primary);
 width: fit-content;
 padding: 5px 10px;
 border-radius: 8px;
@@ -132,15 +150,15 @@ cursor: default;
 }
 
 .meal-title:hover {
-background-color: #a349e4;
-color: white;
+background-color: var(--accent-color);
+color: var(--text-inverse);
 }
 
 .meal-header {
-background-color: #005BBB !important; 
+background-color: var(--primary-color) !important; 
 background-image: none !important;    
 animation: none !important;           
-color: white !important;              
+color: var(--text-inverse) !important;              
 padding: 15px !important;
 text-align: center;
 border-radius: 8px;
@@ -175,8 +193,8 @@ position: relative;
 
 /* Toggle Weekly Plan Button */
 .toggle-weekly-btn {
-  background: #005BBB;
-  color: var(--button-text);
+  background: var(--primary-color);
+  color: var(--text-inverse);
   border: none;
   padding: 12px 28px;
   border-radius: 25px;
@@ -188,28 +206,29 @@ position: relative;
 }
 
 .toggle-weekly-btn:hover {
-  background: #00458e;              
+  background: var(--primary-dark);              
   transform: translateY(-2px);
 }
 
 /* Export Button */
 .export-btn {
-  background-color: #2e7d32;
-  color: white;
+  background-color: var(--success-color);
+  color: var(--text-inverse);
   border: none;
   padding: 10px 22px;
   border-radius: 8px;
+  font-size: 1rem;
   font-weight: bold;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
 .export-btn:hover {
-  background-color: #27642a;
+  background-color: var(--success-dark);
 }
 
 /* Meal headers inside Weekly Plan */
 .meal-header {
-  color: #1b5e20 !important;
+  color: var(--success-dark) !important;
   font-weight: 700 !important;
 }
 
@@ -220,18 +239,19 @@ position: relative;
   margin: 20px auto 10px;
   padding: 20px 22px;
   border-radius: 16px;
-  background: #ffffff;            
-  color: #111;                    
-  border: 1px solid #005BBB;        
-  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.06);
+  background: var(--card-background);            
+  color: var(--text-primary);                    
+  border: 1px solid var(--primary-color);        
+  box-shadow: var(--card-shadow);
 }
 
 .personalize-title {
   margin: 0 0 12px 0;
   text-align: center;
   font-weight: 800;
-  font-size: 1.25rem;
-  color: #111;
+  font-size: clamp(1.125rem, 4vw, 1.75rem) !important;
+  line-height: 1.3;
+  color: var(--text-primary);
 }
 
 .personalize-grid {
@@ -248,22 +268,25 @@ position: relative;
 
 .personalize-label {
   font-weight: 600;
-  color: #222;
+  color: var(--text-secondary);
+  font-size: 1rem;
 }
 
 .personalize-input {
   appearance: none;
-  background: #E8F1FF;            
-  color: #111;
+  background: var(--input-background);            
+  color: var(--text-primary);
   border-radius: 12px;
   padding: 10px 12px;
+  font-size: 1rem;
   outline: none;
+  border: 1px solid var(--border-color);
   transition: box-shadow .15s ease, border-color .15s ease;
 }
 
 .personalize-input:focus {
-  border-color: #005BBB;
-  box-shadow: 0 0 0 3px rgba(232,241,255,0.18);
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(77, 166, 255, 0.18);
 }
 
 .chip-row {
@@ -273,11 +296,12 @@ position: relative;
 }
 
 .chip {
-  background: #E8F1FF;
-  color: #000000 !important;
-  border: 1px solid #005BBB;
+  background: var(--primary-light);
+  color: var(--text-primary) !important;
+  border: 1px solid var(--primary-color);
   border-radius: 999px;
   padding: 8px 14px;
+  font-size: 0.875rem;
   font-weight: 600;
   cursor: pointer;
   transition: background .15s ease, transform .1s ease, border-color .15s ease;
@@ -285,12 +309,12 @@ position: relative;
 
 .chip:hover {
   transform: translateY(-1px);
-  border-color: #00458e;
+  border-color: var(--primary-dark);
 }
 
 .chip--active {
-  background: #005BBB;
-  color: #fff !important;
+  background: var(--primary-color);
+  color: var(--text-inverse) !important;
   border-color: transparent;
 }
 
@@ -307,7 +331,7 @@ position: relative;
   border: none;                
   border-radius: 5px;         
   cursor: pointer;            
-  font-size: 16px;            
+  font-size: 1rem;            
   margin-right: 10px; 
 }
 
@@ -318,6 +342,7 @@ position: relative;
   border: none;
   padding: 12px 20px;
   border-radius: 12px;
+  font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
   box-shadow: 0 6px 18px rgba(67, 95, 160, 0.25);
@@ -385,14 +410,14 @@ position: relative;
 }
 
 .meal-header h1 {
-  font-size: 2.8rem;
+  font-size: clamp(1.8rem, 4.5vw, 2.8rem);
   margin-bottom: 15px;
   color: var(--text-inverse);
   font-weight: 700;
 }
 
 .meal-header p {
-  font-size: 1.2rem;
+  font-size: clamp(1rem, 2.5vw, 1.2rem);
   opacity: 0.9;
   color: var(--text-inverse);
   max-width: 600px;
@@ -414,7 +439,7 @@ position: relative;
 }
 
 .section-title {
-  font-size: 2rem;
+  font-size: clamp(1.5rem, 3.5vw, 2rem);
   margin-bottom: 20px;
   color: var(--text-primary);
   font-weight: 600;
@@ -438,7 +463,7 @@ position: relative;
 /* Food Items Grid */
 .food-items-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
   gap: 25px;
   margin-bottom: 30px;
 }
@@ -488,7 +513,7 @@ position: relative;
 }
 
 .food-item-title {
-  font-size: 1.4rem;
+  font-size: clamp(1.2rem, 3vw, 1.4rem);
   font-weight: 600;
   margin-bottom: 10px;
   color: var(--text-primary);
@@ -644,7 +669,7 @@ position: relative;
 }
 
 .summary-title {
-  font-size: 1.5rem;
+  font-size: clamp(1.3rem, 3vw, 1.5rem);
   margin-bottom: 20px;
   color: var(--text-primary);
   font-weight: 600;
@@ -869,32 +894,150 @@ position: relative;
 /* Responsive Design */
 @media (max-width: 768px) {
   .meal-container {
-    padding: 15px;
+    padding: 15px !important;
+    flex-direction: column !important;
+  }
+  
+  .details-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    position: static !important;
+    order: -1;
+    margin-bottom: 20px;
+    padding: 0 !important;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .details-box {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 20px;
+    margin: 0;
+  }
+  
+  .viewplan {
+    width: 100%;
+    box-sizing: border-box;
+    margin: 0 !important;
+  }
+  
+  .link {
+    width: 100%;
+    display: block;
+  }
+  
+  .section-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 10px !important;
+    padding: 12px 0 !important;
+  }
+  
+  .section-header-title {
+    width: 100% !important;
+    font-size: 1.125rem !important;
+  }
+  
+  .section-header-info {
+    width: 100% !important;
+    flex-wrap: wrap !important;
+    justify-content: flex-start !important;
+    gap: 8px !important;
+  }
+  
+  .info-hint {
+    width: 100% !important;
+    text-align: left !important;
+    min-width: 0 !important;
+    margin-top: 4px;
+  }
+  
+  .weekly-container {
+    padding: 12px !important;
+    border-radius: 10px;
+    box-sizing: border-box;
+  }
+  
+  .personalize-card {
+    padding: 15px !important;
+    margin: 10px 0 !important;
+    border-radius: 12px;
+    box-sizing: border-box;
+    overflow-x: hidden; 
+  }
+  
+  .personalize-grid {
+    grid-template-columns: 1fr !important;  
+    gap: 12px;
+  }
+  
+  .personalize-field {
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .personalize-input {
+    width: 100%;
+    box-sizing: border-box;
+    font-size: 0.875rem;
+    padding: 8px 10px;
+  }
+  
+  .chip-row {
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  
+  .chip {
+    font-size: 0.8125rem;
+    padding: 6px 12px;
+  }
+  
+  .personalize-actions {
+    flex-direction: column !important;
+    gap: 10px !important;
+    justify-content: stretch !important;
+    width: 100%;
+  }
+  
+  .btn-primary-solid,
+  .export-btn {
+    width: 100% !important;
+    box-sizing: border-box;
+  }
+  
+  .menuContainer {
+    padding: 15px 0;
+    width: 100%;
+  }
+  
+  .food-item {
+    padding: 20px;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100%;
+  }
+  
+  .food-item img {
+    display: block !important;
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
   }
   
   .meal-header {
     padding: 20px;
   }
   
-  .meal-header h1 {
-    font-size: 2.2rem;
-  }
-  
   .meal-plan-section {
     padding: 20px;
-  }
-  
-  .section-title {
-    font-size: 1.8rem;
   }
   
   .food-items-grid {
     grid-template-columns: 1fr;
     gap: 20px;
-  }
-  
-  .food-item {
-    padding: 20px;
   }
   
   .nutrition-grid {
@@ -913,28 +1056,98 @@ position: relative;
 }
 
 @media (max-width: 480px) {
-  .meal-header h1 {
-    font-size: 1.8rem;
+  .meal-container {
+    padding: 10px !important;
   }
   
-  .meal-header p {
-    font-size: 1rem;
+  .details-container {
+    gap: 12px;
   }
   
-  .section-title {
-    font-size: 1.5rem;
+  .details-box {
+    padding: 15px;
+    border-radius: 12px;
   }
   
-  .food-item-title {
-    font-size: 1.2rem;
+  .details-box h3 {
+    font-size: clamp(1rem, 3vw, 1.25rem) !important;
+  }
+  
+  .viewplan {
+    padding: 12px;
+    font-size: 0.9375rem;
+  }
+  
+  .section-header {
+    padding: 10px 0 !important;
+  }
+  
+  .section-header-title {
+    font-size: 1rem !important;
+  }
+  
+  .info-badge {
+    font-size: 0.6875rem !important;
+    padding: 3px 8px !important;
+  }
+  
+  .info-hint {
+    font-size: 0.6875rem !important;
+  }
+  
+  .weekly-container {
+    padding: 8px !important;
+  }
+  
+  .personalize-card {
+    padding: 12px !important;
+    margin: 8px 0 !important;
+    border-radius: 10px;
+  }
+  
+  .personalize-title {
+    margin-bottom: 10px;
+    word-wrap: break-word; 
+  }
+  
+  .personalize-grid {
+    gap: 10px;
+  }
+  
+  .personalize-label {
+    font-size: 0.8125rem;
+  }
+  
+  .personalize-input {
+    font-size: 0.8125rem;
+    padding: 8px;
+  }
+  
+  .chip {
+    font-size: 0.75rem;
+    padding: 5px 10px;
+  }
+  
+  .btn-primary-solid,
+  .export-btn {
+    padding: 10px !important;
+    font-size: 0.875rem;
+  }
+  
+  .menuContainer {
+    padding: 10px 0;
+  }
+  
+  .food-item {
+    padding: 15px;
+  }
+  
+  .food-item img {
+    height: 100px;
   }
   
   .nutrition-summary {
     padding: 20px;
-  }
-  
-  .summary-title {
-    font-size: 1.3rem;
   }
 }
 

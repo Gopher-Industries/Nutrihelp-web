@@ -1,10 +1,12 @@
 .symptom-assessment-wrapper {
     font-family: Arial, sans-serif;
-    background-color: #EEEEEE !important;
+    background-color: var(--background-secondary) !important;
+    min-height: 100vh;
+    width: 100%;
   }
    
   .hero-section {
-    background-color: #d8edfd !important;
+    background-color: var(--background-hero) !important;
     padding: 5rem 5rem 5rem 2rem !important;
   }
    
@@ -25,19 +27,19 @@
     font-weight: 1000;    
     margin-bottom: 1rem;
     line-height: 1.2;
-    color: #000;
+    color: var(--text-heading);
   }
    
   .hero-text p {
     font-size: 1.35rem;  
     font-weight: 700;
-    color: #000;
+    color: var(--text-primary);
     margin-bottom: 1.5rem;
   }
    
   .get-started-btn {
-    background-color: #005BBB;
-    color: white;
+    background-color: var(--button-background);
+    color: var(--button-text);
     font-size: 1.1rem;      
     font-weight: 700;        
     padding: 0.8rem 1.6rem;  
@@ -45,12 +47,12 @@
     border-radius: 0.5rem;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+    box-shadow: var(--card-shadow);
   }
    
    
   .get-started-btn:hover {
-    background-color: #003f8a !important;
+    background-color: var(--button-hover) !important;
   }
    
   .hero-image {
@@ -62,7 +64,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: #f3f3f3;
+    background-color: var(--background-tertiary);
     padding: 2rem;
   }
    
@@ -71,83 +73,62 @@
     font-size: 1.35rem;  
     font-weight: 700;
     margin-bottom: 1.5rem !important;
-    color: #000;          
+    color: var(--text-heading);          
   }
    
    
   .symptom-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1.2rem;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 1rem;
     width: 100%;
-    max-width: 900px;
+    max-width: 980px;
     margin-bottom: 2rem;
   }
    
   .symptom-option {
+    position: relative;
+    cursor: pointer;
+  }
+   
+  .symptom-checkbox {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+ 
+  .symptom-chip {
     display: flex;
-    flex-direction: column;        
     align-items: center;
     justify-content: center;
     text-align: center;
-    background-color: #005BBB;
-    border: 1px solid #ddd;
-    border-radius: 1rem;
-    padding: 1rem;
+    min-height: 64px;
+    padding: 0.9rem 1.2rem;
+    border-radius: 999px;
     font-size: 1rem;
-    font-weight: 600;
-    height: 110px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-
-  .symptom-option:hover {
-    transform: translateY(-4px);
-  }
-   
-  .custom-checkbox {
-    appearance: none;
-    -webkit-appearance: none;
-    width: 22px;
-    height: 22px;
-    border-radius: 4px;
-    border: 2px solid #FFFFFF ;
-    background-color: #fff;
-    display: grid;
-    place-content: center;
-    cursor: pointer;
-    margin-bottom: 0.5rem;
-    transition: all 0.2s ease;
-  }
-   
-  .custom-checkbox:checked {
-    background-color: #1B873E;    
-    border-color: #1B873E;
-  }
-   
-  .custom-checkbox:checked::before {
-    content: "✓";
-    color: white;
-    font-size: 14px;
-    font-weight: bold;
-    line-height: 1;
-  }
-  
-   
-   
-  .symptom-label-text {
-    font-size: 1.25rem;
     font-weight: 700;
+    color: #0f172a;
+    background: linear-gradient(140deg, #ffffff 0%, #f4f8ff 100%);
+    border: 1px solid #d7e4ff;
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
   }
-   
-  .symptom-option input:checked + .symptom-label-text {
-    color: #fff;
+ 
+  .symptom-option:hover .symptom-chip {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 24px rgba(15, 23, 42, 0.14);
+    border-color: #aac6ff;
   }
-   
-  .symptom-option input:checked ~ .symptom-label-text {
-    border: 2px solid #fff;
-    padding: 0.5rem;
-    border-radius: 6px;
+ 
+  .symptom-option:focus-within .symptom-chip {
+    box-shadow: 0 0 0 3px rgba(0, 91, 187, 0.25), 0 12px 24px rgba(15, 23, 42, 0.14);
+  }
+ 
+  .symptom-checkbox:checked + .symptom-chip {
+    color: #ffffff;
+    background: linear-gradient(140deg, #005bbb 0%, #1b78ff 100%);
+    border-color: #1b78ff;
+    box-shadow: 0 12px 22px rgba(0, 91, 187, 0.3);
   }
    
    
@@ -341,10 +322,121 @@
     margin-bottom: 0.5rem;
   }
    
-  .result-card p {
+.result-card p {
     font-size: 0.9rem;
     color: #555;
   }
+ 
+ @media (max-width: 1024px) {
+   .hero-section {
+     padding: 4rem 2.5rem 4rem 2rem !important;
+   }
+ 
+   .hero-text {
+     max-width: 60%;
+     padding-left: 2rem;
+   }
+ 
+   .hero-text h1 {
+     font-size: 3rem;
+   }
+ 
+   .hero-image {
+     max-width: 30%;
+   }
+ 
+   .results-section {
+     padding: 1.5rem 4rem 6rem !important;
+   }
+ }
+ 
+ @media (max-width: 900px) {
+   .hero-content {
+     flex-direction: column;
+     gap: 2rem;
+   }
+ 
+   .hero-text {
+     max-width: 100%;
+     padding-left: 0;
+     text-align: center;
+   }
+ 
+   .hero-text h1 {
+     font-size: 2.6rem;
+   }
+ 
+   .hero-text p {
+     font-size: 1.15rem;
+   }
+ 
+   .hero-image {
+     max-width: 55%;
+   }
+ 
+   .form-section {
+     padding: 1.5rem;
+   }
+ }
+ 
+ @media (max-width: 768px) {
+   .hero-section {
+     padding: 3rem 1.5rem !important;
+   }
+ 
+   .hero-text h1 {
+     font-size: 2.2rem;
+   }
+ 
+   .hero-text p {
+     font-size: 1rem;
+   }
+ 
+   .get-started-btn {
+     width: 100%;
+     max-width: 280px;
+   }
+ 
+   .symptom-grid {
+     grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+   }
+ 
+   .symptom-chip {
+     min-height: 56px;
+     font-size: 0.95rem;
+     padding: 0.75rem 1rem;
+   }
+ 
+   .results-section {
+     padding: 1.5rem 2rem 5rem !important;
+   }
+ }
+ 
+ @media (max-width: 480px) {
+   .hero-text h1 {
+     font-size: 1.9rem;
+   }
+ 
+   .hero-image {
+     max-width: 75%;
+   }
+ 
+   .form-section h2 {
+     font-size: 1.1rem;
+   }
+ 
+   .symptom-grid {
+     grid-template-columns: 1fr;
+   }
+ 
+   .symptom-chip {
+     width: 100%;
+   }
+ 
+   .results-section {
+     padding: 1.2rem 1.2rem 4rem !important;
+   }
+ }
    
    
    

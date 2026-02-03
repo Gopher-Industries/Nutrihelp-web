@@ -31,7 +31,7 @@ import Home from "./routes/Home/Home";
 import DietaryRequirements from "./routes/UI-Only-Pages/DietaryRequirements/DietaryRequirements";
 import ScanProducts from "./routes/UI-Only-Pages/ScanProducts/ScanProducts";
 import Menu from "./routes/UI-Only-Pages/Menu/Menu";
-import Recipe from "./components/Recipe";
+import Recipe from "./routes/MyRecipe/Recipe";
 import Appointment from "./routes/UI-Only-Pages/Appointment/Appointment";
 import newMenu from "./routes/NewMenu/newMenu";
 import Meal from "./routes/Meal/Meal";
@@ -63,7 +63,7 @@ import PostDetail from "./routes/Community/PostDetail";
 import ScanBarcode from "./routes/ScanBarcode/ScanBarcode";
 import AuthCallback from "./pages/AuthCallback";
 import DailyPlanEdit from "./routes/DailyPlan/DailyPlanEdit";
-
+import Account from "./routes/Account/Account.js";
 /* -------------------------------
    NAVBAR WRAPPER (HIDE ON ROUTES)
 -------------------------------- */
@@ -117,6 +117,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
 
+
         {/* Forgot password flow */}
         {/* legacy route */}
         <Route path="/forgotPassword" element={<ForgotPassword />} />
@@ -125,7 +126,7 @@ function App() {
         <Route path="/forgot/verify" element={<ForgotPasswordVerify />} />
         <Route path="/forgot/reset" element={<ForgotPasswordReset />} />
 
-        <Route path="/MFAform" element={<MFAform />} />
+        <Route path="/mfa" element={<MFAform />} />
 
         <Route path="/home" element={<Home />} />
         <Route path="/faq" element={<FAQ />} />
@@ -139,6 +140,7 @@ function App() {
         <Route path="/roadmap" element={<FitnessRoadmap />} />
         <Route path="/Scan" element={<Scan />} />
         <Route path="/Meal" element={<Meal />} />
+        <Route path="/account" element={<Account />} />
         {/* PRIVATE ROUTES */}
         <Route
           path="/daily-plan-edit"

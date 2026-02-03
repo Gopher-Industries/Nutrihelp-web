@@ -8,7 +8,6 @@ function Scan() {
   const [scanMethod, setScanMethod] = useState('barcode'); // 'barcode' or 'image'
 
   return (
-    <>
     <div className="scan-products-page">
       {/* Not totally necessary <h1 className="scanHead" >Scan</h1> */}
       <div className="scan-products-container">
@@ -28,25 +27,25 @@ function Scan() {
           </button>
         </div>
       </div>
-    </div>
-    {/* Product Image Scan Section */}
-    {scanMethod === 'image' && (
-        <ScanProducts/>
-    )}
 
-    {/* Barcode Scan Section */}
-    {scanMethod === 'barcode' && (
-        <ScanBarcode/>
-    )}
-    <div className="mainContainer" style={{width:'900px', margin:'2rem auto'}}>
-      <span className="guideHead"><b>How to use:</b></span>
-      <ul className="stepContainer">
-        <li className="steps"><b>Product Image:</b> Take a clear photo of the product and fill in the details.</li>
-        <li className="steps"><b>Barcode:</b> Type in the numbers shown below the barcode lines.</li>
-      </ul>
-    </div>
+      {/* Product Image Scan Section */}
+      {scanMethod === 'image' && (
+          <ScanProducts/>
+      )}
 
-    </>
+      {/* Barcode Scan Section */}
+      {scanMethod === 'barcode' && (
+          <ScanBarcode/>
+      )}
+
+      <div className="mainContainer" style={{ maxWidth: '900px', width: '100%', margin: '2rem auto' }}>
+        <span className="guideHead"><b>How to use:</b></span>
+        <ul className="stepContainer">
+          <li className="steps"><b>Product Image:</b> Take a clear photo of the product and fill in the details.</li>
+          <li className="steps"><b>Barcode:</b> Type in the numbers shown below the barcode lines.</li>
+        </ul>
+      </div>
+    </div>
   );
 }
 

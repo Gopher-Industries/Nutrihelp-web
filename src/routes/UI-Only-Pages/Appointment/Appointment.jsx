@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { Calendar, Clock, Plus, X, Edit2, Trash2, Bell, MapPin, User, Phone, Check } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Calendar, Clock, Plus, X, Edit2, Trash2, Bell, MapPin, User, Phone, Check, Loader2 } from 'lucide-react';
+import { appointmentApi } from '../../../services/appointmentApi';
 import './appointment.css';
 
 // Move component definitions outside to prevent re-creation on each render
@@ -54,35 +55,19 @@ const TextArea = ({ label, value, onChange, placeholder }) => (
 );
 
 export default function AppointmentsManager() {
-  const [appointments, setAppointments] = useState([
-    {
-      id: 1,
-      title: 'Dr. Smith - Annual Checkup',
-      doctor: 'Dr. Robert Smith',
-      type: 'General Checkup',
-      date: '2024-12-05',
-      time: '10:00',
-      location: 'Main Street Medical Center',
-      address: '123 Main St, Suite 200',
-      phone: '(555) 123-4567',
-      notes: 'Bring insurance card and list of current medications',
-      reminder: '1-day'
-    },
-    {
-      id: 2,
-      title: 'Dr. Johnson - Eye Exam',
-      doctor: 'Dr. Sarah Johnson',
-      type: 'Eye Examination',
-      date: '2024-12-10',
-      time: '14:30',
-      location: 'Vision Care Clinic',
-      address: '456 Oak Avenue',
-      phone: '(555) 987-6543',
-      notes: 'Remember to bring current glasses',
-      reminder: '1-hour'
-    }
-  ]);
+  // State for appointments data
+  const [appointments, setAppointments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
 
+  // Pagination state
+  const [page, setPage] = useState(1);
+  const [pageSize] = useState(10);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+
+  // UI state
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [viewFilter, setViewFilter] = useState('upcoming');
@@ -115,11 +100,38 @@ export default function AppointmentsManager() {
   ];
 
   const reminderOptions = [
-    { value: '1-week', label: '1 Week Before' },
+    { value: '7-days', label: '1 Week Before' },
     { value: '1-day', label: '1 Day Before' },
-    { value: '1-hour', label: '1 Hour Before' },
-    { value: '30-min', label: '30 Minutes Before' }
+    { value: '1-hours', label: '1 Hour Before' },
+    { value: '30-minute', label: '30 Minutes Before' }
   ];
+
+  // Fetch appointments from API
+  const fetchAppointments = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const response = await appointmentApi.getAppointments({
+        page,
+        pageSize
+      });
+
+      setAppointments(response.appointments || []);
+      setTotalPages(response.totalPages || 1);
+      setTotalCount(response.total || 0);
+    } catch (err) {
+      console.error('Error fetching appointments:', err);
+      setError(err.message || 'Failed to load appointments');
+    } finally {
+      setLoading(false);
+    }
+  }, [page, pageSize]);
+
+  // Load appointments on mount and when dependencies change
+  useEffect(() => {
+    fetchAppointments();
+  }, [fetchAppointments]);
 
   const resetForm = () => {
     setFormData({
@@ -138,32 +150,87 @@ export default function AppointmentsManager() {
     setShowAddForm(false);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!formData.title || !formData.date || !formData.time) {
       alert('Please fill in at least the appointment title, date, and time.');
       return;
     }
 
-    if (editingId) {
-      setAppointments(appointments.map(apt => 
-        apt.id === editingId ? { ...formData, id: editingId } : apt
-      ));
-    } else {
-      setAppointments([...appointments, { ...formData, id: Date.now() }]);
+    try {
+      setSubmitting(true);
+      setError(null);
+
+      // Ensure time is in HH:mm format (24-hour) - strip seconds if present
+      let formattedTime = formData.time;
+      if (formattedTime) {
+        // Split by ':' and take only hours and minutes (first 2 parts)
+        const timeParts = formattedTime.split(':');
+        if (timeParts.length >= 2) {
+          const hours = String(timeParts[0]).padStart(2, '0');
+          const minutes = String(timeParts[1]).padStart(2, '0');
+          formattedTime = `${hours}:${minutes}`;
+        }
+      }
+
+      const appointmentData = {
+        title: formData.title,
+        doctor: formData.doctor,
+        type: formData.type,
+        date: formData.date,
+        time: formattedTime,
+        location: formData.location,
+        address: formData.address,
+        phone: formData.phone,
+        notes: formData.notes,
+        reminder: formData.reminder
+      };
+
+      if (editingId) {
+        await appointmentApi.updateAppointment(editingId, appointmentData);
+      } else {
+        await appointmentApi.createAppointment(appointmentData);
+      }
+
+      // Refresh the appointments list
+      await fetchAppointments();
+      resetForm();
+    } catch (err) {
+      console.error('Error saving appointment:', err);
+      alert(err.message || 'Failed to save appointment. Please try again.');
+    } finally {
+      setSubmitting(false);
     }
-    resetForm();
   };
 
   const handleEdit = (appointment) => {
-    setFormData(appointment);
+    setFormData({
+      title: appointment.title || '',
+      doctor: appointment.doctor || '',
+      type: appointment.type || '',
+      date: appointment.date || '',
+      time: appointment.time || '',
+      location: appointment.location || '',
+      address: appointment.address || '',
+      phone: appointment.phone || '',
+      notes: appointment.notes || '',
+      reminder: appointment.reminder || '1-day'
+    });
     setEditingId(appointment.id);
     setShowAddForm(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this appointment?')) {
-      setAppointments(appointments.filter(apt => apt.id !== id));
+      try {
+        setError(null);
+        await appointmentApi.deleteAppointment(id);
+        // Refresh the appointments list
+        await fetchAppointments();
+      } catch (err) {
+        console.error('Error deleting appointment:', err);
+        alert(err.message || 'Failed to delete appointment. Please try again.');
+      }
     }
   };
 
@@ -207,6 +274,16 @@ export default function AppointmentsManager() {
           </div>
         </div>
 
+        {/* Error Display */}
+        {error && (
+          <div className="error-banner">
+            <p>{error}</p>
+            <button onClick={fetchAppointments} className="btn-retry">
+              Retry
+            </button>
+          </div>
+        )}
+
         {/* Filter Tabs */}
         <div className="filter-tabs">
           <div className="tab-section">
@@ -225,8 +302,16 @@ export default function AppointmentsManager() {
             ))}
           </div>
           <button
-            onClick={() => setShowAddForm(!showAddForm)}
+            onClick={() => {
+              if (showAddForm) {
+                resetForm();
+              } else {
+                setShowAddForm(true);
+                setEditingId(null);
+              }
+            }}
             className="btn-add-appointment"
+            disabled={submitting}
           >
             {showAddForm ? <X size={24} /> : <Plus size={24} />}
             {showAddForm ? 'Cancel' : 'Add Appointment'}
@@ -322,14 +407,25 @@ export default function AppointmentsManager() {
               <button
                 onClick={handleSubmit}
                 className="btn-primary"
+                disabled={submitting}
               >
-                <Check size={24} />
-                {editingId ? 'Update Appointment' : 'Save Appointment'}
+                {submitting ? (
+                  <>
+                    <Loader2 size={24} className="spinner" />
+                    {editingId ? 'Updating...' : 'Saving...'}
+                  </>
+                ) : (
+                  <>
+                    <Check size={24} />
+                    {editingId ? 'Update Appointment' : 'Save Appointment'}
+                  </>
+                )}
               </button>
 
               <button
                 onClick={resetForm}
                 className="btn-cancel"
+                disabled={submitting}
               >
                 Cancel
               </button>
@@ -338,8 +434,16 @@ export default function AppointmentsManager() {
         )}
 
 
+        {/* Loading State */}
+        {loading && (
+          <div className="loading-state">
+            <Loader2 size={48} className="spinner" color="#005BBB" />
+            <p>Loading appointments...</p>
+          </div>
+        )}
+
         {/* Appointments List */}
-        {filteredAppointments.length === 0 ? (
+        {!loading && filteredAppointments.length === 0 ? (
           <div className="empty-state">
             <Calendar size={64} color="#D0D0D0" className="empty-state-icon" />
             <h3 className="empty-state-title">
@@ -351,7 +455,7 @@ export default function AppointmentsManager() {
                'Click "Add Appointment" to schedule your first appointment.'}
             </p>
           </div>
-        ) : (
+        ) : !loading && (
           <div className="appointments-list">
             {filteredAppointments.map(apt => {
               const isPast = new Date(`${apt.date}T${apt.time}`) < now;
@@ -492,6 +596,29 @@ export default function AppointmentsManager() {
                 </div>
               );
             })}
+          </div>
+        )}
+
+        {/* Pagination */}
+        {!loading && totalPages > 1 && (
+          <div className="pagination">
+            <button
+              onClick={() => setPage(p => Math.max(1, p - 1))}
+              disabled={page === 1}
+              className="pagination-btn"
+            >
+              Previous
+            </button>
+            <span className="pagination-info">
+              Page {page} of {totalPages} ({totalCount} total)
+            </span>
+            <button
+              onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+              disabled={page === totalPages}
+              className="pagination-btn"
+            >
+              Next
+            </button>
           </div>
         )}
       </div>

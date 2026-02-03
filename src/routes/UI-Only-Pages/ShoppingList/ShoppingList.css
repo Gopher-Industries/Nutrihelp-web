@@ -1,7 +1,6 @@
 /* Shopping List Page Styles */
 .shopping-list-page {
     min-height: 100vh;
-    background: linear-gradient(135deg, #f3e8ff 25%, #f9f7fc 75%);
     padding: 20px;
     font-family: 'Poppins', sans-serif;
     overflow-x: hidden; /* Prevent horizontal scrolling */
@@ -13,7 +12,8 @@
     align-items: center;
     max-width: 1200px;
     margin: 0 auto;
-    color: #333;
+    color: var(--text-primary);
+    background-color: white;
     margin-bottom: 30px;
     padding: 20px;
     border-radius: 15px;
@@ -23,7 +23,7 @@
 
 .shopping-list-header h1 {
     font-size: 2.5rem;
-    color: #333;
+    color: var(--text-primary);
 }
 
 .add-item-form {
@@ -37,11 +37,11 @@
 /* Base styles for all input fields and select boxes */
 .item-input, .quantity-input, .unit-select, .category-select, .unit-edit {
     border-radius: 8px;
-    border: 2px solid #e0e0e0;
+    border: 2px solid var(--border-color);
     transition: border-color 0.3s;
     font-family: 'Poppins', sans-serif;
-    background-color: white;
-    color: #333;
+    background-color: var(--card-background);
+    color: var(--text-primary);
 }
 
 .item-input {
@@ -53,11 +53,11 @@
 }
 
 .item-input:focus {
-    border-color: #667eea;
+    border-color: var(--primary-color);
 }
 
 .item-input::placeholder {
-    color: #999;
+    color: var(--text-muted);
 }
 
 .quantity-input, .unit-select, .category-select {
@@ -69,13 +69,13 @@
 }
 
 .quantity-input:focus, .unit-select:focus, .category-select:focus {
-    border-color: #667eea;
+    border-color: var(--primary-color);
 }
 
 /* Dropdown option styles */
 .unit-select option, .category-select option, .unit-edit option {
-    background: white;
-    color: #333;
+    background: var(--card-background);
+    color: var(--text-primary);
     padding: 8px;
     font-size: 14px;
 }
@@ -95,11 +95,11 @@
 
 /* Select box focus and hover states */
 .unit-select:focus, .category-select:focus, .unit-edit:focus {
-    border-color: #667eea;
+    border-color: var(--primary-color);
 }
 
 .unit-select:hover, .category-select:hover, .unit-edit:hover {
-    border-color: #667eea;
+    border-color: var(--primary-color);
     box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
 }
 
@@ -113,27 +113,27 @@
     border-radius: 8px;
     transition: all 0.3s;
     border: 2px solid;
-    background: white;
+    background: var(--card-background);
 }
 
 /* Edit button styles */
 .edit-button {
-    color: #667eea;
-    border-color: #667eea;
+    color: var(--primary-color);
+    border-color: var(--primary-color);
 }
 
 .edit-button:hover {
-    background: #E8EEFF;
+    background: var(--primary-light);
 }
 
 /* Remove button styles */
 .remove-button {
-    color: #ff4757;
-    border-color: #ff4757;
+    color: var(--error-color);
+    border-color: var(--error-color);
 }
 
 .remove-button:hover {
-    background: #FFF0F0;
+    background: var(--error-light);
 }
 
 /* Save and Cancel button styles */
@@ -153,61 +153,30 @@
 
 .save-edit-button {
     border: none;
-    background: #4CAF50;
-    color: white;
+    background: var(--success-color);
+    color: var(--text-inverse);
 }
 
 .save-edit-button:hover {
-    background: #45a049;
+    background: var(--success-dark);
 }
 
 .cancel-edit-button {
-    border: 2px solid #D0D0D0;
-    background: white;
-    color: #1A1A1A;
+    border: 2px solid var(--border-color);
+    background: var(--card-background);
+    color: var(--text-primary);
 }
 
 .cancel-edit-button:hover {
-    background: #f0f0f0;
+    background: var(--hover-background);
 }
 
-/* Mobile responsive styles for select boxes */
-@media (max-width: 768px) {
-    .add-item-form .unit-select,
-    .add-item-form .category-select {
-        width: 100%;
-        min-width: unset;
-        flex: none;
-        margin-bottom: 5px;
-    }
-    
-    .unit-edit {
-        width: 70px;
-        min-width: 70px;
-    }
-}
-
-/* Small screen responsive styles */
-@media (max-width: 480px) {
-    .unit-edit {
-        width: 60px;
-        min-width: 60px;
-    }
-    
-    .edit-button, .remove-button {
-        padding: 8px;
-    }
-    
-    .save-edit-button, .cancel-edit-button {
-        font-size: 14px;
-        padding: 10px;
-    }
-}
+/* Mobile responsive styles for select boxes - moved to consolidated responsive section */
 
 .add-button {
     padding: 12px 25px;
-    border: 4px solid #004a99;
-    color: #3E3E3E;
+    border: 4px solid var(--primary-dark);
+    color: var(--text-secondary);
     border-radius: 8px;
     font-size: 14px;
     font-weight: 600;
@@ -216,17 +185,17 @@
 }
 
 .add-button:hover {
-    color: white;
-    background: #004a99;
+    color: var(--text-inverse);
+    background: var(--primary-dark);
 }
 
 /* Filter Controls Container */
 .filter-controls-container {
-    background-color: #FFFFFF;
+    background-color: var(--card-background);
     border-radius: 12px;
     padding: 20px;
     margin-bottom: 24px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    box-shadow: var(--card-shadow);
 }
 
 .filter-controls-grid {
@@ -245,7 +214,7 @@
     display: block;
     font-size: 18px;
     font-weight: 600;
-    color: #1A1A1A;
+    color: var(--text-primary);
     margin-bottom: 8px;
     line-height: 1.5;
 }
@@ -254,10 +223,10 @@
     width: 100%;
     padding: 16px;
     font-size: 18px;
-    border: 2px solid #D0D0D0;
+    border: 2px solid var(--border-color);
     border-radius: 8px;
-    background-color: #FFFFFF;
-    color: #1A1A1A;
+    background-color: var(--card-background);
+    color: var(--text-primary);
     line-height: 1.5;
     cursor: pointer;
     box-sizing: border-box;
@@ -265,7 +234,7 @@
 }
 
 .filter-category-select:focus {
-    border-color: #005BBB;
+    border-color: var(--primary-color);
     outline: none;
 }
 
@@ -278,7 +247,7 @@
     padding: 16px;
     font-size: 18px;
     font-weight: 600;
-    color: #FFFFFF;
+    color: var(--text-inverse);
     border: none;
     border-radius: 8px;
     cursor: pointer;
@@ -288,24 +257,24 @@
 }
 
 .toggle-add-form-btn.add {
-    background-color: #005BBB;
+    background-color: var(--primary-color);
 }
 
 .toggle-add-form-btn.add:hover {
-    background-color: #004a99;
+    background-color: var(--primary-dark);
 }
 
 .toggle-add-form-btn.cancel {
-    background-color: #DC3545;
+    background-color: var(--error-color);
 }
 
 .toggle-add-form-btn.cancel:hover {
-    background-color: #c82333;
+    background-color: var(--error-dark);
 }
 
 /* Items Section */
 .items-section {
-    background-color: white;
+    background-color: var(--card-background);
     padding: 30px;
 }
 
@@ -319,7 +288,7 @@
 
 .section-header h2 {
     margin: 0;
-    color: #333;
+    color: var(--text-primary);
     font-size: 1.5rem;
 }
 
@@ -341,40 +310,40 @@
 }
 
 .mark-all-btn {
-    border:4px solid #4CAF50;
-    color: #4CAF50;
+    border:4px solid var(--success-color);
+    color: var(--success-color);
 }
 
 .mark-all-btn:hover {
-    background: #45a049;
-    color: white;
+    background: var(--success-dark);
+    color: var(--text-inverse);
 }
 
 .clear-btn {
-    border:4px solid #ff9800;
-    color: #ff9800;
+    border:4px solid var(--warning-color);
+    color: var(--warning-color);
 }
 
 .clear-btn:hover {
-    background: #f57c00;
-    color: white;
+    background: var(--warning-dark);
+    color: var(--text-inverse);
 }
 
 .clear-all-btn {
-    border:4px solid #f44336;
-    color: #f44336;
+    border:4px solid var(--error-color);
+    color: var(--error-color);
 }
 
 .clear-all-btn:hover {
-    background: #d32f2f;
-    color: white;
+    background: var(--error-dark);
+    color: var(--text-inverse);
 }
 
 /* Empty State */
 .empty-state {
     text-align: center;
     padding: 60px 20px;
-    color: #666;
+    color: var(--text-muted);
 }
 
 .empty-icon {
@@ -496,236 +465,12 @@
     color: black;
 }
 
-/* Responsive Design */
-
-/* Tablet screens */
-@media (max-width: 1024px) {
-    .shopping-list-header h1 {
-        font-size: 2.2rem;
-    }
-    
-    .item-info {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.5rem;
-    }
-    
-    .filter-controls-grid {
-        grid-template-columns: 1fr;
-    }
-}
-
-/* Mobile screens */
-@media (max-width: 768px) {
-    .shopping-list-page {
-        padding: 10px;
-    }
-    
-    .shopping-list-header {
-        flex-direction: column;
-        text-align: center;
-        padding: 15px;
-        gap: 10px;
-    }
-    
-    .shopping-list-header h1 {
-        font-size: 1.8rem;
-        width: 100%;
-    }
-    
-    .back-button {
-        width: 100%;
-        text-align: center;
-    }
-    
-    .filter-controls-container {
-        padding: 15px;
-    }
-    
-    .add-item-form {
-        flex-direction: column;
-        gap: 10px;
-        align-items: stretch;
-    }
-    
-    .item-input, .quantity-input, .unit-select, .category-select {
-        width: 100%;
-        min-width: unset;
-        flex: none;
-    }
-    
-    .add-button {
-        width: 100%;
-        margin-top: 10px;
-    }
-    
-    .section-header {
-        flex-direction: column;
-        gap: 15px;
-        text-align: center;
-    }
-    
-    .section-header h2 {
-        font-size: 1.3rem;
-    }
-    
-    .action-buttons-slist {
-        flex-direction: column;
-        width: 100%;
-        gap: 10px;
-    }
-    
-    .clear-btn, .clear-all-btn, .mark-all-btn {
-        width: 100%;
-        padding: 12px;
-        font-size: 1rem;
-    }
-    
-    .shopping-item {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-        padding: 12px;
-    }
-    
-    .item-info {
-        width: 100%;
-    }
-    
-    .item-name, .item-category {
-        font-size: 1.1rem;
-    }
-    
-    .item-action-buttons {
-        width: 100%;
-        justify-content: space-between;
-    }
-    
-    .edit-button, .remove-button {
-        flex: 1;
-        padding: 10px;
-    }
-    
-    .edit-mode-container .add-item-form {
-        gap: 8px;
-    }
-    
-    .edit-buttons-container {
-        flex-direction: column;
-        gap: 8px;
-    }
-    
-    .save-edit-button, .cancel-edit-button {
-        width: 100%;
-    }
-}
-
-/* Small mobile screens */
-@media (max-width: 480px) {
-    .shopping-list-page {
-        padding: 5px;
-    }
-    
-    .shopping-list-container {
-        border-radius: 8px;
-        margin: 0;
-    }
-    
-    .shopping-list-header {
-        padding: 10px;
-        margin-bottom: 15px;
-    }
-    
-    .shopping-list-header h1 {
-        font-size: 1.5rem;
-    }
-    
-    .add-item-section, .items-section {
-        padding: 10px;
-    }
-    
-    .filter-controls-container {
-        padding: 10px;
-    }
-    
-    .filter-control-label {
-        font-size: 14px;
-    }
-    
-    .filter-category-select, .toggle-add-form-btn {
-        font-size: 14px;
-        padding: 12px;
-    }
-    
-    .item-input, .quantity-input, .unit-select, .category-select {
-        font-size: 14px;
-        height: 44px;
-        padding: 10px;
-    }
-    
-    .add-button {
-        font-size: 14px;
-        height: 44px;
-        padding: 10px 20px;
-    }
-    
-    .shopping-item {
-        padding: 10px;
-        gap: 8px;
-    }
-    
-    .item-name, .item-category {
-        font-size: 1rem;
-    }
-    
-    .purchased-badge {
-        font-size: 9px;
-        padding: 2px 6px;
-    }
-    
-    .purchase-btn {
-        padding: 12px;
-    }
-    
-    .edit-button, .remove-button {
-        padding: 8px;
-    }
-    
-    .clear-btn, .clear-all-btn, .mark-all-btn {
-        font-size: 0.9rem;
-        padding: 10px;
-    }
-}
+/* Note: Main responsive styles are consolidated at the end of this file */
 
 .shopping-list-container {
     max-width: 1200px;
     margin: 0 auto;
     border-radius: 20px;
-}
-
-/* Extra small screens */
-@media (max-width: 360px) {
-    .shopping-list-header h1 {
-        font-size: 1.3rem;
-    }
-    
-    .section-header h2 {
-        font-size: 1.1rem;
-    }
-    
-    .item-name, .item-category {
-        font-size: 0.9rem;
-    }
-    
-    .filter-category-select, .toggle-add-form-btn {
-        font-size: 13px;
-        padding: 10px;
-    }
-    
-    .clear-btn, .clear-all-btn, .mark-all-btn {
-        font-size: 0.85rem;
-        padding: 8px;
-    }
 }
 
 /* Add Item Section */
@@ -744,18 +489,7 @@
     font-size: 1.5rem;
 }
 
-@media (max-width: 768px) {
-    .add-item-section h2 {
-        font-size: 1.3rem;
-    }
-}
-
-@media (max-width: 480px) {
-    .add-item-section h2 {
-        font-size: 1.1rem;
-        margin-bottom: 15px;
-    }
-} 
+/* Note: Add item section responsive styles are in the consolidated section at end of file */
 
 .item-actions {
     display: flex;
@@ -810,5 +544,530 @@
 @media (max-width: 480px) {
     .purchase-btn {
         padding: 10px;
+    }
+}
+
+/* ===========================================
+   COMPREHENSIVE RESPONSIVE DESIGN
+   =========================================== */
+
+/* Large Tablets and Small Desktops (max-width: 1024px) */
+@media (max-width: 1024px) {
+    .shopping-list-container {
+        max-width: 95%;
+    }
+
+    .shopping-list-header {
+        max-width: 95%;
+        padding: 18px;
+    }
+
+    .shopping-list-header h1 {
+        font-size: 2.2rem;
+    }
+
+    .item-info {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .filter-controls-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .add-item-section,
+    .items-section {
+        padding: 25px;
+    }
+
+    .item-input {
+        min-width: 180px;
+    }
+
+    .quantity-input,
+    .unit-select,
+    .category-select {
+        min-width: 100px;
+    }
+}
+
+/* Tablets (max-width: 768px) */
+@media (max-width: 768px) {
+    .shopping-list-page {
+        padding: 12px;
+    }
+
+    .shopping-list-container {
+        border-radius: 15px;
+    }
+
+    .shopping-list-header {
+        flex-direction: column;
+        text-align: center;
+        padding: 15px;
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+
+    .shopping-list-header h1 {
+        font-size: 1.8rem;
+        width: 100%;
+    }
+
+    .back-button {
+        width: 100%;
+        text-align: center;
+        padding: 10px 20px;
+    }
+
+    .filter-controls-container {
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+
+    .filter-controls-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .filter-control-label {
+        font-size: 16px;
+        margin-bottom: 6px;
+    }
+
+    .filter-category-select {
+        padding: 14px;
+        font-size: 16px;
+    }
+
+    .toggle-add-form-btn {
+        padding: 14px;
+        font-size: 16px;
+    }
+
+    .add-item-section {
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+
+    .add-item-section h2 {
+        font-size: 1.3rem;
+        margin-bottom: 15px;
+    }
+
+    .add-item-form {
+        flex-direction: column;
+        gap: 10px;
+        align-items: stretch;
+    }
+
+    .item-input,
+    .quantity-input,
+    .unit-select,
+    .category-select {
+        width: 100%;
+        min-width: unset;
+        flex: none;
+        height: 46px;
+        font-size: 15px;
+    }
+
+    .add-button {
+        width: 100%;
+        margin-top: 5px;
+        height: 46px;
+        font-size: 15px;
+    }
+
+    .items-section {
+        padding: 20px;
+    }
+
+    .section-header {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .section-header h2 {
+        font-size: 1.3rem;
+    }
+
+    .action-buttons-slist {
+        flex-direction: column;
+        width: 100%;
+        gap: 10px;
+    }
+
+    .clear-btn,
+    .clear-all-btn,
+    .mark-all-btn {
+        width: 100%;
+        padding: 12px;
+        font-size: 1rem;
+        border-width: 3px;
+    }
+
+    .items-list {
+        gap: 10px;
+    }
+
+    .shopping-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 14px;
+    }
+
+    .item-info {
+        width: 100%;
+        gap: 0.4rem;
+    }
+
+    .item-name,
+    .item-category {
+        font-size: 1.2rem;
+    }
+
+    .item-action-buttons {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .edit-button,
+    .remove-button {
+        flex: 1;
+        padding: 10px;
+    }
+
+    .edit-mode-container .add-item-form {
+        gap: 8px;
+    }
+
+    .edit-buttons-container {
+        flex-direction: row;
+        gap: 8px;
+    }
+
+    .save-edit-button,
+    .cancel-edit-button {
+        flex: 1;
+        font-size: 15px;
+        padding: 12px;
+    }
+
+    .unit-edit {
+        width: 80px;
+        min-width: 80px;
+    }
+
+    .empty-state {
+        padding: 40px 15px;
+    }
+
+    .empty-icon {
+        font-size: 3rem;
+    }
+
+    .empty-state h3 {
+        font-size: 1.1rem;
+    }
+
+    .empty-state p {
+        font-size: 13px;
+    }
+
+    .purchase-btn {
+        padding: 12px;
+    }
+
+    .item-actions {
+        margin-right: 0;
+        margin-bottom: 8px;
+    }
+}
+
+/* Mobile Phones (max-width: 480px) */
+@media (max-width: 480px) {
+    .shopping-list-page {
+        padding: 8px;
+    }
+
+    .shopping-list-container {
+        border-radius: 10px;
+    }
+
+    .shopping-list-header {
+        padding: 12px;
+        margin-bottom: 15px;
+        border-radius: 10px;
+        gap: 10px;
+    }
+
+    .shopping-list-header h1 {
+        font-size: 1.5rem;
+    }
+
+    .back-button {
+        padding: 10px 18px;
+        font-size: 14px;
+    }
+
+    .filter-controls-container {
+        padding: 12px;
+        margin-bottom: 15px;
+        border-radius: 10px;
+    }
+
+    .filter-control-label {
+        font-size: 14px;
+    }
+
+    .filter-category-select,
+    .toggle-add-form-btn {
+        font-size: 14px;
+        padding: 12px;
+        border-radius: 6px;
+    }
+
+    .add-item-section {
+        padding: 15px;
+        margin-bottom: 15px;
+        border-radius: 8px;
+    }
+
+    .add-item-section h2 {
+        font-size: 1.1rem;
+        margin-bottom: 12px;
+    }
+
+    .add-item-form {
+        gap: 8px;
+    }
+
+    .item-input,
+    .quantity-input,
+    .unit-select,
+    .category-select {
+        font-size: 14px;
+        height: 44px;
+        padding: 10px 12px;
+        border-radius: 6px;
+    }
+
+    .add-button {
+        font-size: 14px;
+        height: 44px;
+        padding: 10px 18px;
+        border-width: 3px;
+    }
+
+    .items-section {
+        padding: 15px;
+    }
+
+    .section-header {
+        gap: 12px;
+        margin-bottom: 15px;
+    }
+
+    .section-header h2 {
+        font-size: 1.15rem;
+    }
+
+    .action-buttons-slist {
+        gap: 8px;
+    }
+
+    .clear-btn,
+    .clear-all-btn,
+    .mark-all-btn {
+        font-size: 0.9rem;
+        padding: 10px;
+        border-width: 3px;
+        border-radius: 6px;
+    }
+
+    .items-list {
+        gap: 8px;
+    }
+
+    .shopping-item {
+        padding: 12px;
+        gap: 10px;
+        border-radius: 6px;
+    }
+
+    .item-name,
+    .item-category {
+        font-size: 1rem;
+    }
+
+    .purchased-badge {
+        font-size: 9px;
+        padding: 2px 6px;
+        border-radius: 6px;
+    }
+
+    .item-action-buttons {
+        gap: 6px;
+    }
+
+    .edit-button,
+    .remove-button {
+        padding: 8px;
+        border-radius: 6px;
+    }
+
+    .edit-buttons-container {
+        gap: 6px;
+    }
+
+    .save-edit-button,
+    .cancel-edit-button {
+        font-size: 14px;
+        padding: 10px;
+        border-radius: 6px;
+    }
+
+    .unit-edit {
+        width: 70px;
+        min-width: 70px;
+    }
+
+    .empty-state {
+        padding: 30px 12px;
+    }
+
+    .empty-icon {
+        font-size: 2.5rem;
+        margin-bottom: 15px;
+    }
+
+    .empty-state h3 {
+        font-size: 1rem;
+        margin-bottom: 8px;
+    }
+
+    .empty-state p {
+        font-size: 12px;
+    }
+
+    .purchase-btn {
+        padding: 10px;
+    }
+}
+
+/* Extra Small Phones (max-width: 360px) */
+@media (max-width: 360px) {
+    .shopping-list-page {
+        padding: 6px;
+    }
+
+    .shopping-list-header {
+        padding: 10px;
+    }
+
+    .shopping-list-header h1 {
+        font-size: 1.3rem;
+    }
+
+    .back-button {
+        padding: 8px 14px;
+        font-size: 13px;
+    }
+
+    .filter-controls-container {
+        padding: 10px;
+    }
+
+    .filter-control-label {
+        font-size: 13px;
+    }
+
+    .filter-category-select,
+    .toggle-add-form-btn {
+        font-size: 13px;
+        padding: 10px;
+    }
+
+    .add-item-section {
+        padding: 12px;
+    }
+
+    .add-item-section h2 {
+        font-size: 1rem;
+    }
+
+    .item-input,
+    .quantity-input,
+    .unit-select,
+    .category-select {
+        font-size: 13px;
+        height: 42px;
+        padding: 8px 10px;
+    }
+
+    .add-button {
+        font-size: 13px;
+        height: 42px;
+    }
+
+    .items-section {
+        padding: 12px;
+    }
+
+    .section-header h2 {
+        font-size: 1.05rem;
+    }
+
+    .clear-btn,
+    .clear-all-btn,
+    .mark-all-btn {
+        font-size: 0.85rem;
+        padding: 8px;
+    }
+
+    .shopping-item {
+        padding: 10px;
+    }
+
+    .item-name,
+    .item-category {
+        font-size: 0.9rem;
+    }
+
+    .edit-button,
+    .remove-button {
+        padding: 6px;
+    }
+
+    .save-edit-button,
+    .cancel-edit-button {
+        font-size: 13px;
+        padding: 8px;
+    }
+
+    .unit-edit {
+        width: 60px;
+        min-width: 60px;
+    }
+
+    .empty-state {
+        padding: 25px 10px;
+    }
+
+    .empty-icon {
+        font-size: 2rem;
+    }
+
+    .empty-state h3 {
+        font-size: 0.95rem;
+    }
+
+    .purchase-btn {
+        padding: 8px;
     }
 }

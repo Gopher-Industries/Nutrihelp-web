@@ -1,12 +1,10 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import './ObesityPredict.css';
 import { useNavigate } from 'react-router-dom';
 
 export default function ObesityPredict() {
   const [formData, setFormData] = useState({});
   const [progress, setProgress] = useState(0);
-  const [showScrollHint, setShowScrollHint] = useState(false);
-  const formRef = useRef(null);
   const navigate = useNavigate();
 
   // Grouped Questions
@@ -103,11 +101,6 @@ export default function ObesityPredict() {
 };
 
 
-  const handleScroll = () => {
-    const { scrollTop, scrollHeight, clientHeight } = formRef.current;
-    setShowScrollHint(scrollTop + clientHeight >= scrollHeight - 10);
-  };
-
   return (
     <div className="obesity-card">
       <div className="heading_survey">
@@ -119,7 +112,7 @@ export default function ObesityPredict() {
       </div>
 
       <div className="main_foorm">
-        <form ref={formRef} className="obesity-form" onScroll={handleScroll} onSubmit={handleSubmit}>
+        <form className="obesity-form" onSubmit={handleSubmit}>
           
           {Object.entries(questionGroups).map(([groupName, questions]) => (
             <div key={groupName} className="question-group">
@@ -164,8 +157,6 @@ export default function ObesityPredict() {
               </div>
             </div>
           ))}
-
-          {showScrollHint && <div className="scroll-hint">✅ You’ve reached the bottom</div>}
 
           <div className='predict'>
             <button type="submit" className="predict-btn">Predict</button>

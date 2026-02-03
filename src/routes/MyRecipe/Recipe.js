@@ -1,32 +1,27 @@
 import { useEffect, useState } from "react";
-import { getRecipes } from "../routes/CreateRecipe/data/db/db";
-import "../styles/recipe.css";
+import recipeApi from "../../services/recepieApi";
+import "../../styles/recipe.css";
 import { RefreshCcwIcon } from "lucide-react";
 
 function Recipe() {
   const userId = 15;
   const [recipes, setRecipes] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const [refresh, setRefetch] = useState(false);
-
-  const fetchRecipes = async () => {
-    try {
-      const response = await fetch(`http://localhost:3000/recipes/${userId}`);
-      if (!response.ok) {
-        throw new Error("Failed to fetch recipes");
-      }
-      const data = await response.json();
-      //setRecipes(data);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   useEffect(() => {
     const fetchData = async () => {
-      const data = await getRecipes();
-      setRecipes(data);
+      setLoading(true);
+      setError(null);
+      try {
+        const data = await recipeApi.getRecepie();
+        setRecipes(Array.isArray(data) ? data : []);
+      } catch (err) {
+        setError(err.message || "Failed to load recipes");
+      } finally {
+        setLoading(false);
+      }
     };
     fetchData();
 
@@ -66,6 +61,12 @@ function Recipe() {
           id="no-bg"
           className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-12 px-4"
         >
+          {loading && (
+            <div className="col-span-full text-center text-gray-500">Loading recipes...</div>
+          )}
+          {error && (
+            <div className="col-span-full text-center text-red-600">{error}</div>
+          )}
           {recipes.map((item, index) => (
             <div
               key={index}
