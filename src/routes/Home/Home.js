@@ -108,6 +108,31 @@ const Home = () => {
       });
   };
 
+  const [subscriptEmail, setSubscriptEmail] = useState("");
+
+  const handleSubscribe = async (e) => {
+    e.preventDefault();
+    console.log(e.target.name, e.target.value);
+
+    fetch("http://localhost/api/home/subscribe", {
+      method: "POST",
+      body: JSON.stringify({ email: subscriptEmail }),
+      headers: {
+        Origin: "http://localhost:3000/",
+        "Content-Type": "application/json",
+      },
+    })
+    .then((response) => {
+      console.log(response);
+      alert("Subscribe successfully!");
+      setSubscriptEmail("");
+    })
+    .catch((error) => {
+      console.error("Error Subscribe message:", error);
+      alert("Failed to Subscribe. Please try again later.");
+    });
+  };
+
   const onGetStarted = () => {
     // If logged in, go to dashboard (menu/meal details); otherwise login
     navigate(currentUser ? "/dashboard" : "/login");
@@ -433,9 +458,9 @@ const Home = () => {
             <div className="footer-newsletter">
               <h3>Newsletter</h3>
               <p>Stay updated with our latest news and insights.</p>
-              <form onSubmit={(e) => e.preventDefault()} className="newsletter-form">
+              <form onSubmit={handleSubscribe} className="newsletter-form">
                 <label className="sr-only" htmlFor="newsletterEmail">Email</label>
-                <input id="newsletterEmail" type="email" placeholder="Enter your email" />
+                <input id="newsletterEmail" type="email" placeholder="Enter your email" value={subscriptEmail} onChange={(e)=>{setSubscriptEmail(e.target.value)}}/>
                 <button type="submit" className="btn-primary">
                   Subscribe
                 </button>
