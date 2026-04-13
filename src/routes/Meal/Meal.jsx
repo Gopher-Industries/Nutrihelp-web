@@ -1,18 +1,27 @@
 import "./Meal.css";
 
-import { Link } from "react-router-dom";
-import React, { useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import React, { useState, useEffect, useContext } from "react";
 import MotivationalPopup from "./MotivationalPopup";
 import WeeklyMealPlan from "./WeeklyMealPlan";
 import { exportMealPlanAsPDF } from "./PDFExport";
 import PersonalizedPlanForm from "./PersonalizedPlanForm";
 import PersonalizedWeeklyPlan from "./PersonalizedWeeklyPlan";
-
-import { useNavigate } from "react-router-dom";
+import { TodayMenuContext } from "../../context/TodayMenuContext";
 
 const Meal = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { todayMenu, saveMenu, loading, error, success } = useContext(TodayMenuContext);
+  
   const [selectedItems, setSelectedItems] = useState([]);
+  
+  // Hydrate from context if we navigated here via the Edit Today Menu flow
+  useEffect(() => {
+    if (location.state?.editMode && todayMenu?.items?.length > 0) {
+      setSelectedItems(todayMenu.items);
+    }
+  }, [location.state, todayMenu]);
   const [totalNutrition, setTotalNutrition] = useState({
     calories: 0,
     proteins: 0,
@@ -590,9 +599,23 @@ const Meal = () => {
               </button>
             </Link>
 
+            <button 
+               className="viewplan"
+               onClick={() => saveMenu(selectedItems, totalNutrition)}
+               disabled={loading || selectedItems.length === 0}
+               style={{ 
+                 background: (loading || selectedItems.length === 0) ? '#9ca3af' : 'var(--primary-color, #005BBB)',
+                 marginBottom: '10px' 
+               }}
+            >
+              {loading ? "Saving..." : "Save to Today Menu"}
+            </button>
+            {error && <div style={{ color: 'var(--error-color, #dc2626)', fontSize: '0.875rem', marginBottom: '10px', textAlign: 'center' }}>{error}</div>}
+            {success && <div style={{ color: 'var(--success-color, #16a34a)', fontSize: '0.875rem', marginBottom: '10px', textAlign: 'center' }}>Saved Successfully!</div>}
+
             <Link className="link" to="/dashboard" state={{ selectedItems, totalNutrition }}>
               <button className="viewplan">
-                View Meal Plan
+                View Meal Plan / Back to Dashboard
               </button>
             </Link>
 

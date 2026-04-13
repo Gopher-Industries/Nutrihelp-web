@@ -67,7 +67,7 @@ const SideMenu = ({ onNavigate, mode = "desktop", onClose }) => {
           <Link to="/searchRecipes" className="mega-item" onClick={close}>
             Search Recipes
           </Link>
-          <Link to="/RecipeRating" className="mega-item" onClick={close}>
+          <Link to="/recipe-rating" className="mega-item" onClick={close}>
             Recipe Rating
           </Link>
           <Link to="/recipe" className="mega-item" onClick={close}>
@@ -80,7 +80,7 @@ const SideMenu = ({ onNavigate, mode = "desktop", onClose }) => {
           <Link to="/dashboard" className="mega-item" onClick={close}>
             Meal Details
           </Link>
-          <Link to="/Meal" className="mega-item" onClick={close}>
+          <Link to="/meal" className="mega-item" onClick={close}>
             Plan
           </Link>
           <Link to="/daily-plan-edit" className="mega-item" onClick={close}>
@@ -90,10 +90,10 @@ const SideMenu = ({ onNavigate, mode = "desktop", onClose }) => {
 
         <div className="mega-col">
           <div className="mega-title">Health</div>
-          <Link to="/HealthFAQ" className="mega-item" onClick={close}>
+          <Link to="/health-faq" className="mega-item" onClick={close}>
             Health FAQ
           </Link>
-          <Link to="/HealthTools" className="mega-item" onClick={close}>
+          <Link to="/health-tools" className="mega-item" onClick={close}>
             Health Tools
           </Link>
           <Link to="/healthnews" className="mega-item" onClick={close}>
@@ -112,10 +112,10 @@ const SideMenu = ({ onNavigate, mode = "desktop", onClose }) => {
           <Link to="/faq" className="mega-item" onClick={close}>
             FAQ
           </Link>
-          <Link to="/UiTimer" className="mega-item" onClick={close}>
+          <Link to="/ui-timer" className="mega-item" onClick={close}>
             Cooking Timer
           </Link>
-          <Link to="/Appointment" className="mega-item" onClick={close}>
+          <Link to="/appointment" className="mega-item" onClick={close}>
             My Appointments
           </Link>
           <Link to="/community" className="mega-item" onClick={close}>
@@ -141,7 +141,7 @@ const SideMenu = ({ onNavigate, mode = "desktop", onClose }) => {
       items: [
         { type: "action", label: "Assistant", action: "assistant" },
         { type: "link", label: "Home", to: "/home" },
-        { type: "link", label: "Scan Products", to: "/Scan" },
+        { type: "link", label: "Scan Products", to: "/scan" },
 
         {
           type: "submenu",
@@ -149,7 +149,7 @@ const SideMenu = ({ onNavigate, mode = "desktop", onClose }) => {
           items: [
             { type: "link", label: "Create Recipe", to: "/createRecipe" },
             { type: "link", label: "Search Recipes", to: "/searchRecipes" },
-            { type: "link", label: "Recipe Rating", to: "/RecipeRating" },
+            { type: "link", label: "Recipe Rating", to: "/recipe-rating" },
           ],
         },
 
@@ -158,7 +158,7 @@ const SideMenu = ({ onNavigate, mode = "desktop", onClose }) => {
           label: "Meal Planning",
           items: [
             { type: "link", label: "Meal Details", to: "/dashboard" },
-            { type: "link", label: "Plan", to: "/Meal" },
+            { type: "link", label: "Plan", to: "/meal" },
             { type: "link", label: "Daily Meal", to: "/daily-plan-edit" },
           ],
         },
@@ -167,8 +167,8 @@ const SideMenu = ({ onNavigate, mode = "desktop", onClose }) => {
           type: "submenu",
           label: "Health",
           items: [
-            { type: "link", label: "Health FAQ", to: "/HealthFAQ" },
-            { type: "link", label: "Health Tools", to: "/HealthTools" },
+            { type: "link", label: "Health FAQ", to: "/health-faq" },
+            { type: "link", label: "Health Tools", to: "/health-tools" },
             { type: "link", label: "Health News", to: "/healthnews" },
             { type: "link", label: "Symptom Assessment", to: "/symptomassessment" },
             { type: "link", label: "Fitness Roadmap", to: "/survey" },
@@ -180,8 +180,8 @@ const SideMenu = ({ onNavigate, mode = "desktop", onClose }) => {
           label: "Resources",
           items: [
             { type: "link", label: "FAQ", to: "/faq" },
-            { type: "link", label: "Cooking Timer", to: "/UiTimer" },
-            { type: "link", label: "My Appointments", to: "/Appointment" },
+            { type: "link", label: "Cooking Timer", to: "/ui-timer" },
+            { type: "link", label: "My Appointments", to: "/appointment" },
             { type: "link", label: "Community", to: "/community" },
           ],
         },
@@ -205,8 +205,8 @@ const SideMenu = ({ onNavigate, mode = "desktop", onClose }) => {
           type: "submenu",
           label: "Account",
           items: [
-            { type: "link", label: "Profile", to: "/userProfile" },
-            { type: "link", label: "Dietary Preference", to: "/dietaryRequirements" },
+            { type: "link", label: "Profile", to: "/user-profile" },
+            { type: "link", label: "Dietary Preference", to: "/dietary-requirements" },
             { type: "link", label: "Allergies & Intolerances", to: "/preferences" },
             { type: "link", label: "Log Out", to: "/login" },
           ],

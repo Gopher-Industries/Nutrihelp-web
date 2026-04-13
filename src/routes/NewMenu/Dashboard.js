@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext, useMemo } from "react";
 import { useLocation, Link } from "react-router-dom";
+import { TodayMenuContext } from "../../context/TodayMenuContext";
 import DashboardGraph from "../../components/Dashboard-Graph";
 import Card from "./MenuCard";
 import "./MenuCard.css";
@@ -9,14 +10,23 @@ import WaterTracker from "../../components/WaterTracker";
 
 const Dashboard = () => {
   const location = useLocation();
-  const selectedItems = location.state?.selectedItems || [];
-  const totalNutrition = location.state?.totalNutrition || {
-    calories: 0,
-    proteins: 0,
-    fats: 0,
-    vitamins: 0,
-    sodium: 0,
-  };
+  const { todayMenu } = useContext(TodayMenuContext);
+  
+  const selectedItems = useMemo(() => 
+    todayMenu?.items?.length > 0 ? todayMenu.items : (location.state?.selectedItems || []),
+    [todayMenu?.items, location.state?.selectedItems]
+  );
+
+  const totalNutrition = useMemo(() => 
+    todayMenu?.items?.length > 0 ? todayMenu.totalNutrition : (location.state?.totalNutrition || {
+      calories: 0,
+      proteins: 0,
+      fats: 0,
+      vitamins: 0,
+      sodium: 0,
+    }),
+    [todayMenu?.items, todayMenu?.totalNutrition, location.state?.totalNutrition, location.state?.selectedItems]
+  );
 
   const [activeTab, setActiveTab] = useState("breakfast");
   const [groupedItems, setGroupedItems] = useState({
@@ -46,11 +56,42 @@ const Dashboard = () => {
     );
   };
 
+  if (selectedItems.length === 0) {
+      return (
+        <main>
+          <div className="mainBox">
+            <div className="Title"><h2>TODAY'S MENU</h2></div>
+            <div style={{ textAlign: "center", padding: "60px 20px" }}>
+              <h3 style={{ color: "var(--text-primary)" }}>No Menu Saved for Today</h3>
+              <p style={{ color: "var(--text-secondary)", marginBottom: 20 }}>You haven't selected or saved any meals for today yet.</p>
+              <Link to="/meal">
+                <button className="appointment-btn" style={{ width: "auto", padding: "12px 24px" }}>
+                  Choose Meals
+                </button>
+              </Link>
+            </div>
+           </div>
+        </main>
+      );
+  }
+
   return (
     <main>
       <div className="mainBox">
-        <div className="Title">
-          <h2>MENU</h2>
+        <div className="Title" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <h2 style={{ margin: 0 }}>MENU</h2>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <Link to="/meal" state={{ editMode: true }} style={{ textDecoration: 'none' }}>
+              <button className="appointment-btn" style={{ padding: '8px 16px', width: 'auto', margin: 0 }}>
+                Edit Today Menu
+              </button>
+            </Link>
+            <Link to="/meal" style={{ textDecoration: 'none' }}>
+              <button className="appointment-btn" style={{ padding: '8px 16px', width: 'auto', margin: 0, background: '#6b7280' }}>
+                Back to Meal Selection
+              </button>
+            </Link>
+          </div>
         </div>
 
         <Link to="/appointment" className="button-link">

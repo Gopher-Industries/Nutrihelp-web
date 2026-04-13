@@ -134,8 +134,7 @@ function App() {
         <Route path="/survey" element={<ObesityPredictor />} />
         <Route path="/survey/result" element={<Predictionresult />} />
         <Route path="/roadmap" element={<FitnessRoadmap />} />
-        <Route path="/Scan" element={<Scan />} />
-        <Route path="/Meal" element={<Meal />} />
+        <Route path="/scan" element={<Scan />} />
         <Route path="/account" element={<Account />} />
         {/* PRIVATE ROUTES */}
         <Route
@@ -193,7 +192,7 @@ function App() {
         />
 
         <Route
-          path="Appointment"
+          path="appointment"
           element={
             <AuthenticateRoute>
               <Appointment />
@@ -202,7 +201,7 @@ function App() {
         />
 
         <Route
-          path="dietaryRequirements"
+          path="dietary-requirements"
           element={
             <AuthenticateRoute>
               <DietaryRequirements />
@@ -211,7 +210,7 @@ function App() {
         />
 
         <Route
-          path="ScanProducts"
+          path="scan-products"
           element={
             <AuthenticateRoute>
               <ScanProducts />
@@ -220,7 +219,7 @@ function App() {
         />
 
         <Route
-          path="RecipeRating"
+          path="recipe-rating"
           element={
             <AuthenticateRoute>
               <RecipeRating />
@@ -229,7 +228,7 @@ function App() {
         />
 
         <Route
-          path="UiTimer"
+          path="ui-timer"
           element={
             <AuthenticateRoute>
               <UiTimer />
@@ -257,7 +256,7 @@ function App() {
 
         <Route path="/recipe/:id" element={<RecipeDetail />} />
         <Route
-          path="Meal"
+          path="/meal"
           element={
             <AuthenticateRoute>
               <Meal />
@@ -347,7 +346,7 @@ function App() {
         />
 
         <Route path="ScanBarcode" element={<ScanBarcode />} />
-        <Route path="Scan" element={<Scan />}/>
+        <Route path="scan" element={<Scan />}/>
       </Routes>
     </Router>
   );
