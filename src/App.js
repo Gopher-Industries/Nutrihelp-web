@@ -62,8 +62,6 @@ import Community from "./routes/Community/Community";
 import ChatPage from "./routes/chat/ChatPage";
 import PostDetail from "./routes/Community/PostDetail";
 import ScanBarcode from "./routes/ScanBarcode/ScanBarcode";
-import FoodDetails from "./routes/UI-Only-Pages/ScanProducts/FoodDetails";
-import UploadHistory from "./routes/UI-Only-Pages/ScanProducts/UploadHistory";
 import AuthCallback from "./pages/AuthCallback";
 import DailyPlanEdit from "./routes/DailyPlan/DailyPlanEdit";
 import Account from "./routes/Account/Account.js";
@@ -138,7 +136,6 @@ function App() {
         <Route path="/survey/result" element={<Predictionresult />} />
         <Route path="/roadmap" element={<FitnessRoadmap />} />
         <Route path="/Scan" element={<Scan />} />
-        <Route path="/Meal" element={<Meal />} />
         <Route
           path="/dish/detail"
           element={
@@ -237,22 +234,6 @@ function App() {
             </AuthenticateRoute>
           }
         />
-        <Route
-          path="food-details/:foodName"
-          element={
-            <AuthenticateRoute>
-              <FoodDetails />
-            </AuthenticateRoute>
-          }
-        />
-        <Route
-          path="upload-history"
-          element={
-            <AuthenticateRoute>
-              <UploadHistory />
-            </AuthenticateRoute>
-          }
-        />
 
         <Route
           path="RecipeRating"
@@ -299,7 +280,7 @@ function App() {
           }
         />
         <Route
-          path="Meal"
+          path="/Meal"
           element={
             <AuthenticateRoute>
               <Meal />
@@ -396,7 +377,7 @@ function App() {
         />
 
         <Route path="ScanBarcode" element={<ScanBarcode />} />
-        <Route path="Scan" element={<Scan />}/>
+
       </Routes>
     </Router>
   );

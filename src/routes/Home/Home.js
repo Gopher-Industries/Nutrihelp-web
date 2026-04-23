@@ -23,6 +23,9 @@ import {
   Twitter,
   Utensils,
   Bot,
+  Quote,
+  ChevronRight,
+  ArrowRight,
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { validateEmail, ERROR_MESSAGES } from "../../utils/validationRules";
@@ -54,6 +57,7 @@ const Home = () => {
         "Access a variety of nutritious meal plans and recipes designed to meet your everyday needs.",
       image: "/images/4.jpg",
       route: "/Meal",
+      cta: "Learn More →",
     },
     {
       title: "Dietary Needs",
@@ -61,6 +65,7 @@ const Home = () => {
         "Customise plans based on dietary requirements, allergies, and preferences.",
       image: "/images/5.jpg",
       route: "/dietaryRequirements",
+      cta: "Browse Options →",
     },
     {
       title: "Create Recipes",
@@ -68,6 +73,7 @@ const Home = () => {
         "Create personalised recipes tailored to your taste and nutrition goals.",
       image: "/images/6.jpg",
       route: "/createRecipe",
+      cta: "Start Cooking →",
     },
     {
       title: "Product Scanning",
@@ -75,6 +81,7 @@ const Home = () => {
         "Scan a product to analyse nutrition and receive an easy-to-understand breakdown.",
       image: "/images/7.jpg",
       route: "/ScanProducts",
+      cta: "Try Scanner →",
     },
   ];
 
@@ -170,10 +177,13 @@ const Home = () => {
     navigate(currentUser ? "/dashboard" : "/login");
   };
 
-  const scrollToContact = () => {
-    const el = document.getElementById("contact");
+  const scrollToSection = (id) => {
+    const el = document.getElementById(id);
     if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
   };
+
+  const [activeReview, setActiveReview] = useState(0);
+  const [swiperInstance, setSwiperInstance] = useState(null);
 
   const onAssistant = () => {
     navigate(currentUser ? "/chat" : "/login");
@@ -191,15 +201,7 @@ const Home = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
             >
-              <div className="home-hero-brand" aria-hidden="true">
-                <img
-                  src="/images/logos_white.png"
-                  alt=""
-                  className="home-hero-logo"
-                />
-              </div>
-
-              <h1 className="home-hero-title">NutriHelp</h1>
+              <h1 className="home-hero-title">Personalised Nutrition for Better Health</h1>
               <p className="home-hero-subtitle">
                 NutriHelp supports you in managing your general wellbeing and
                 nutrient-related conditions through personalised nutrition
@@ -207,10 +209,10 @@ const Home = () => {
               </p>
 
               <div className="home-hero-actions">
-                <button className="btn-primary" type="button" onClick={onGetStarted}>
-                  Get Started
+                <button className="hero-btn-primary" type="button" onClick={onGetStarted}>
+                  Get started
                 </button>
-                <button className="btn-secondary" type="button" onClick={scrollToContact}>
+                <button className="hero-btn-secondary" type="button" onClick={() => scrollToSection("contact")}>
                   Contact Us
                 </button>
               </div>
@@ -224,8 +226,8 @@ const Home = () => {
             >
               {/* effect image approach, but consistent */}
               <img
-                src="https://cdni.iconscout.com/illustration/premium/thumb/cakes-taste-and-quality-feedback-illustration-download-in-svg-png-gif-file-formats--food-app-happy-customer-drink-illustrations-3444786.png"
-                alt="Illustration of people and health support"
+                src="/images/hero_illustration.png"
+                alt="Illustration of healthy food items in a circle"
                 className="home-hero-illustration"
                 loading="lazy"
               />
@@ -234,50 +236,34 @@ const Home = () => {
         </section>
 
         {/* == ABOUT == */}
-        <section className="home-about" aria-label="About NutriHelp">
+        <section id="about" className="home-about" aria-label="About NutriHelp">
           <div className="home-container about-inner">
-            <motion.img
-              initial={{ x: -140, opacity: 0 }}
-              whileInView={{ x: 0, opacity: 1 }}
-              transition={{ duration: 1 }}
-              src="https://cdni.iconscout.com/illustration/premium/thumb/doctor-consultation-illustration-download-in-svg-png-gif-file-formats--checking-patient-medical-check-up-hospital-checkup-anamnesis-system-pack-healthcare-illustrations-7065409.png"
-              className="about-illustration"
-              alt="Doctor consultation illustration"
-              loading="lazy"
-            />
-
-            <div className="about-content">
+            <div className="about-header">
               <h2 className="section-title">NutriHelp</h2>
               <p className="section-lead">
                 NutriHelp assists you in managing your overall well-being,
                 preventing nutrient-related diseases, and overcoming
                 deficiencies through personalised nutrition plans.
               </p>
+            </div>
 
-              <div className="about-features" role="list">
-                <div className="about-feature" role="listitem">
-                  <HeartPulse size={40} aria-hidden="true" />
-                  <div>
-                    <h3>Diagnosis</h3>
-                    <p>Identify nutritional risks early with accurate assessments.</p>
-                  </div>
-                </div>
+            <div className="about-features" role="list">
+              <div className="about-feature" role="listitem">
+                <HeartPulse size={36} aria-hidden="true" className="feature-icon" />
+                <h3>Diagnosis</h3>
+                <p>Identify nutritional risks early with accurate assessments.</p>
+              </div>
 
-                <div className="about-feature" role="listitem">
-                  <Stethoscope size={40} aria-hidden="true" />
-                  <div>
-                    <h3>Personalised plan</h3>
-                    <p>Tailored nutrition guidance to support your health goals.</p>
-                  </div>
-                </div>
+              <div className="about-feature" role="listitem">
+                <Stethoscope size={36} aria-hidden="true" className="feature-icon" />
+                <h3>Personalised plan</h3>
+                <p>Tailored nutrition guidance to support your health goals.</p>
+              </div>
 
-                <div className="about-feature" role="listitem">
-                  <Utensils size={40} aria-hidden="true" />
-                  <div>
-                    <h3>Dine Pad</h3>
-                    <p>Smart meal tracking and recommendations for balanced eating.</p>
-                  </div>
-                </div>
+              <div className="about-feature" role="listitem">
+                <Utensils size={36} aria-hidden="true" className="feature-icon" />
+                <h3>Dine Pad</h3>
+                <p>Smart meal tracking and recommendations for balanced eating.</p>
               </div>
             </div>
           </div>
@@ -286,11 +272,16 @@ const Home = () => {
         {/* == SERVICES (BIG images, modern card look) == */}
         <section className="home-services" aria-label="NutriHelp services">
           <div className="home-container">
-            <header className="section-header">
-              <h2 className="section-title">Services</h2>
-              <p className="section-lead">
-                Explore key services designed to support your nutrition journey.
-              </p>
+            <header className="section-header services-header">
+              <div className="services-header-left">
+                <h2 className="section-title">Our Services</h2>
+                <p className="section-lead">
+                  Explore key services designed to support your nutrition journey.
+                </p>
+              </div>
+              <Link to="/searchRecipes" className="explore-all">
+                Explore all services <ArrowRight size={20} />
+              </Link>
             </header>
 
             <div className="services-grid">
@@ -305,13 +296,13 @@ const Home = () => {
                     type="button"
                     className="service-card-btn"
                     onClick={() => navigate(s.route)}
-                    aria-label={`Open ${s.title}`}
+                    aria-label={`Learn more about ${s.title}`}
                   >
                     <img src={s.image} alt={s.title} className="service-image" loading="lazy" />
                     <div className="service-body">
                       <h3 className="service-title">{s.title}</h3>
                       <p className="service-desc">{s.description}</p>
-                      <span className="service-cta">Open</span>
+                      <span className="service-cta">{s.cta}</span>
                     </div>
                   </button>
                 </motion.article>
@@ -323,48 +314,65 @@ const Home = () => {
         {/* == REVIEWS == */}
         <section className="home-reviews" aria-label="User reviews">
           <div className="home-container">
-            <header className="section-header">
-              <h2 className="section-title">User Reviews</h2>
-              <p className="section-lead">See what our users have to say about NutriHelp.</p>
-            </header>
-
             <Swiper
-              effect={"coverflow"}
-              grabCursor={true}
-              centeredSlides={true}
-              slidesPerView={"auto"}
-              coverflowEffect={{
-                rotate: 30,
-                stretch: 0,
-                depth: 100,
-                modifier: 1,
-                slideShadows: false,
-              }}
-              pagination={{ clickable: true }}
-              navigation={true}
-              modules={[EffectCoverflow, Pagination, Navigation]}
-              className="mySwiper"
+              onSwiper={setSwiperInstance}
+              onSlideChange={(swiper) => setActiveReview(swiper.activeIndex)}
+              modules={[Pagination, Navigation]}
+              className="reviews-slider"
             >
               {reviews.map((review, index) => (
-                <SwiperSlide key={index} className="review-slide">
-                  <div className={`review-card ${darkMode ? "review-card-dark" : ""}`}>
-                    <img
-                      src={review.avatar}
-                      alt={`${review.name}'s avatar`}
-                      className="review-avatar"
-                      loading="lazy"
-                    />
-
-                    <h3 className="review-name">{review.name}</h3>
-                    <div className="review-rating" aria-label={`Rating ${review.rating} out of 5`}>
-                      {"★".repeat(review.rating)}
-                      {"☆".repeat(5 - review.rating)}
+                <SwiperSlide key={index} className="review-slide-full">
+                  <div className={`review-split ${darkMode ? "review-split-dark" : ""}`}>
+                    <div className="review-content-left">
+                      <Quote className="review-quote-icon" size={40} fill="currentColor" opacity={0.2} />
+                      <h2 className="review-text-large">“{review.review}”</h2>
+                      <div className="review-user-block">
+                        <img
+                          src={review.avatar}
+                          alt={`${review.name}'s avatar`}
+                          className="review-avatar"
+                          loading="lazy"
+                        />
+                        <div className="review-user-info">
+                          <h3 className="review-name">{review.name}</h3>
+                          <span className="review-verified">Verified user</span>
+                        </div>
+                      </div>
+                      <div className="review-rating" aria-label={`Rating ${review.rating} out of 5`}>
+                        {"★".repeat(review.rating)}
+                        {"☆".repeat(5 - review.rating)}
+                      </div>
                     </div>
-                    <p className="review-text">“{review.review}”</p>
+                    <div className="review-image-right">
+                      <img src="/images/7.jpg" alt="Review related view" className="review-large-img" />
+                    </div>
                   </div>
                 </SwiperSlide>
               ))}
             </Swiper>
+
+            <div className="review-nav-footer">
+              <button 
+                className="review-nav-btn" 
+                onClick={() => swiperInstance?.slidePrev()}
+                aria-label="Previous review"
+              >
+                <ChevronRight size={20} style={{ transform: 'rotate(180deg)' }} />
+              </button>
+              
+              <span className="review-status">Review {activeReview + 1} of {reviews.length}</span>
+
+              <button 
+                className="review-nav-btn" 
+                onClick={() => swiperInstance?.slideNext()}
+                aria-label="Next review"
+              >
+                <ChevronRight size={20} />
+              </button>
+            </div>
+
+
+
           </div>
         </section>
 
@@ -372,94 +380,73 @@ const Home = () => {
         <section id="contact" className="home-contact" aria-label="Contact us">
           <div className="home-container">
             <header className="section-header">
-              <h2 className="section-title">Contact</h2>
+              <h2 className="section-title">Contact Us</h2>
               <p className="section-lead">
                 Have questions or need assistance? Reach out to us.
               </p>
             </header>
 
-            <div className="contact-grid">
-              <div className="contact-info" aria-label="Contact information">
-                <div className="contact-info-card">
-                  <MapPin aria-hidden="true" />
-                  <div>
-                    <h3>Location</h3>
-                    <p>799 Nutrihelp Rd, Melbourne, Vic, 3000</p>
-                  </div>
-                </div>
-
-                <div className="contact-info-card">
-                  <Mail aria-hidden="true" />
-                  <div>
-                    <h3>Email</h3>
-                    <p>info@nutrihelp.com.au</p>
-                  </div>
-                </div>
-
-                <div className="contact-info-card">
-                  <Phone aria-hidden="true" />
-                  <div>
-                    <h3>Call</h3>
-                    <p>1300 798 999</p>
-                  </div>
-                </div>
-              </div>
-
+            <div className="contact-form-wrapper">
               <form className="contact-form" onSubmit={handleSubmit} aria-label="Contact form">
-                <label className="sr-only" htmlFor="name">Your Name</label>
-                <input
-                  id="name"
-                  name="name"
-                  type="text"
-                  placeholder="Your Name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  onBlur={() => setContactTouched(prev => ({ ...prev, name: true }))}
-                  style={{ borderColor: contactErrors.name && contactTouched.name ? 'red' : '' }}
-                />
-                <FieldError error={contactErrors.name} touched={contactTouched.name} />
+                <div className="form-row-2">
+                  <div className="form-group">
+                    <label htmlFor="name">Full Name</label>
+                    <input
+                      id="name"
+                      name="name"
+                      type="text"
+                      value={formData.name}
+                      onChange={handleChange}
+                      onBlur={() => setContactTouched(prev => ({ ...prev, name: true }))}
+                      style={{ borderColor: contactErrors.name && contactTouched.name ? 'var(--error-color, red)' : '' }}
+                    />
+                    <FieldError error={contactErrors.name} touched={contactTouched.name} />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="email">Email Address</label>
+                    <input
+                      id="email"
+                      name="email"
+                      type="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      onBlur={() => setContactTouched(prev => ({ ...prev, email: true }))}
+                      style={{ borderColor: contactErrors.email && contactTouched.email ? 'var(--error-color, red)' : '' }}
+                    />
+                    <FieldError error={contactErrors.email} touched={contactTouched.email} />
+                  </div>
+                </div>
 
-                <label className="sr-only" htmlFor="email">Your Email</label>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  placeholder="Your Email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  onBlur={() => setContactTouched(prev => ({ ...prev, email: true }))}
-                  style={{ borderColor: contactErrors.email && contactTouched.email ? 'red' : '' }}
-                />
-                <FieldError error={contactErrors.email} touched={contactTouched.email} />
+                <div className="form-group">
+                  <label htmlFor="subject">Subject</label>
+                  <input
+                    id="subject"
+                    name="subject"
+                    type="text"
+                    value={formData.subject}
+                    onChange={handleChange}
+                    onBlur={() => setContactTouched(prev => ({ ...prev, subject: true }))}
+                    style={{ borderColor: contactErrors.subject && contactTouched.subject ? 'var(--error-color, red)' : '' }}
+                  />
+                  <FieldError error={contactErrors.subject} touched={contactTouched.subject} />
+                </div>
 
-                <label className="sr-only" htmlFor="subject">Subject</label>
-                <input
-                  id="subject"
-                  name="subject"
-                  type="text"
-                  placeholder="Subject"
-                  value={formData.subject}
-                  onChange={handleChange}
-                  onBlur={() => setContactTouched(prev => ({ ...prev, subject: true }))}
-                  style={{ borderColor: contactErrors.subject && contactTouched.subject ? 'red' : '' }}
-                />
-                <FieldError error={contactErrors.subject} touched={contactTouched.subject} />
+                <div className="form-group">
+                  <label htmlFor="message">Message</label>
+                  <textarea
+                    id="message"
+                    name="message"
+                    rows="5"
+                    value={formData.message}
+                    onChange={handleChange}
+                    onBlur={() => setContactTouched(prev => ({ ...prev, message: true }))}
+                    style={{ borderColor: contactErrors.message && contactTouched.message ? 'var(--error-color, red)' : '' }}
+                  />
+                  <FieldError error={contactErrors.message} touched={contactTouched.message} />
+                </div>
 
-                <label className="sr-only" htmlFor="message">Message</label>
-                <textarea
-                  id="message"
-                  name="message"
-                  rows="5"
-                  placeholder="Message"
-                  value={formData.message}
-                  onChange={handleChange}
-                  onBlur={() => setContactTouched(prev => ({ ...prev, message: true }))}
-                  style={{ borderColor: contactErrors.message && contactTouched.message ? 'red' : '' }}
-                />
-                <FieldError error={contactErrors.message} touched={contactTouched.message} />
-
-                <button type="submit" className="btn-primary btn-full">
-                  Submit
+                <button type="submit" className="btn-primary btn-full btn-send">
+                  Send Message
                 </button>
               </form>
             </div>
@@ -469,55 +456,68 @@ const Home = () => {
         {/* == FOOTER (social links + contact) == */}
         <footer className="home-footer" aria-label="Footer">
           <div className="footer-inner home-container">
-            <div className="footer-brand">
+            
+            <div className="footer-column footer-brand">
               <img src="/images/logo.png" alt="NutriHelp logo" className="footer-logo" />
+              <div className="footer-details">
+                <div className="footer-detail-row">
+                  <span>799 Nutrihelp Rd,<br/>Melbourne, Vic, 3000</span>
+                </div>
+                <div className="footer-detail-row">
+                  <span>info@nutrihelp.com.au<br/>1300 798 999</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="footer-column footer-nav-col">
+              <h3>NAVIGATION</h3>
+              <ul className="footer-nav-list">
+                <li><button type="button" onClick={() => scrollToSection("about")}>About</button></li>
+                <li><Link to="/faq">Privacy</Link></li>
+                <li><Link to="/faq">Terms</Link></li>
+                <li><button type="button" onClick={() => scrollToSection("contact")}>Contact</button></li>
+              </ul>
+            </div>
+
+            <div className="footer-column footer-social-col">
+              <h3>SOCIAL</h3>
               <div className="footer-social" aria-label="Social media links">
-                <a href="#" aria-label="Twitter"><Twitter /></a>
-                <a href="#" aria-label="Facebook"><Facebook /></a>
-                <a href="#" aria-label="Instagram"><Instagram /></a>
-                <a href="#" aria-label="LinkedIn"><Linkedin /></a>
-              </div>
-              <p className="footer-follow">Follow us</p>
-            </div>
-
-            <div className="footer-details">
-              <div className="footer-detail-row">
-                <MapPin aria-hidden="true" />
-                <span>799 Nutrihelp Rd, Melbourne, Vic, 3000</span>
-              </div>
-              <div className="footer-detail-row">
-                <Mail aria-hidden="true" />
-                <span>info@nutrihelp.com.au</span>
-              </div>
-              <div className="footer-detail-row">
-                <Phone aria-hidden="true" />
-                <span>1300 798 999</span>
+                <a href="#" aria-label="Facebook"><Facebook size={20}/></a>
+                <a href="#" aria-label="Instagram"><Instagram size={20}/></a>
+                <a href="#" aria-label="LinkedIn"><Linkedin size={20}/></a>
+                <a href="#" aria-label="Twitter"><Twitter size={20}/></a>
               </div>
             </div>
 
-            <div className="footer-newsletter">
-              <h3>Newsletter</h3>
+            <div className="footer-column footer-newsletter">
+              <h3>NEWSLETTER</h3>
               <p>Stay updated with our latest news and insights.</p>
               <form onSubmit={handleSubscribe} className="newsletter-form">
                 <label className="sr-only" htmlFor="newsletterEmail">Email</label>
-                <input
-                  id="newsletterEmail"
-                  type="email"
-                  placeholder="Enter your email"
-                  value={subscriptEmail}
-                  onChange={(e) => {
-                    setSubscriptEmail(e.target.value);
-                    setNewsletterError("");
-                  }}
-                  onBlur={() => setNewsletterTouched(true)}
-                  style={{ borderColor: newsletterError && newsletterTouched ? 'red' : '' }}
-                />
+                <div className="newsletter-input-group">
+                  <input
+                    id="newsletterEmail"
+                    type="email"
+                    placeholder="Enter your email"
+                    value={subscriptEmail}
+                    onChange={(e) => {
+                      setSubscriptEmail(e.target.value);
+                      setNewsletterError("");
+                    }}
+                    onBlur={() => setNewsletterTouched(true)}
+                    style={{ borderColor: newsletterError && newsletterTouched ? 'red' : '' }}
+                  />
+                  <button type="submit" className="btn-primary btn-subscribe">
+                    Subscribe
+                  </button>
+                </div>
                 <FieldError error={newsletterError} touched={newsletterTouched} />
-                <button type="submit" className="btn-primary">
-                  Subscribe
-                </button>
               </form>
             </div>
+
+          </div>
+          <div className="footer-bottom">
+            <p className="copyright">©️ 2026 NutriHelp. All rights reserved.</p>
           </div>
         </footer>
 
