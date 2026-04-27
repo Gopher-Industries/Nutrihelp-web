@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useDarkMode } from "../routes/DarkModeToggle/DarkModeContext";
 import "../styles/mainNavbar.css";
 import UserIcon from "./user-stroke-rounded.tsx";
 import SideMenu from "./SideMenu";
+import { useAssistant } from "../context/assistant.context";
 
 const RobotIcon = ({ size = 20 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true">
@@ -53,8 +54,7 @@ const HamburgerIcon = ({ size = 20 }) => (
 
 const MainNavbar = () => {
   const { darkMode } = useDarkMode();
-
-  const navigate = useNavigate();
+  const { openAssistant } = useAssistant();
 
   // Desktop dropdowns
   const [openMenu, setOpenMenu] = useState(null); // "more" | "settings" | "account" | null
@@ -176,7 +176,7 @@ const MainNavbar = () => {
               type="button"
               className="nav-button nav-assistant"
               aria-label="Open Assistant"
-              onClick={() => navigate("/chat")}
+              onClick={openAssistant}
             >
               <span className="nav-icon">
                 <RobotIcon />

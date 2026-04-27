@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../styles/mainNavbar.css";
+import { useAssistant } from "../context/assistant.context";
 
 const ChevronRight = ({ size = 18 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true">
@@ -41,12 +42,12 @@ const CloseIcon = ({ size = 18 }) => (
 );
 
 const SideMenu = ({ onNavigate, mode = "desktop", onClose }) => {
+  const { openAssistant } = useAssistant();
+  const navigate = useNavigate();
   const close = () => typeof onNavigate === "function" && onNavigate();
 
   // Desktop Mega Menu
   if (mode === "desktop") {
-    const navigate = useNavigate();
-
     const goToContact = () => {
       close();
       navigate("/home");
@@ -133,8 +134,6 @@ const SideMenu = ({ onNavigate, mode = "desktop", onClose }) => {
   }
 
   // Mobile Drawer Menu (stack navigation)
-  const navigate = useNavigate();
-
   const menuTree = useMemo(
     () => ({
       title: "Menu",
@@ -244,7 +243,7 @@ const SideMenu = ({ onNavigate, mode = "desktop", onClose }) => {
 
   const doAssistant = () => {
     close();
-    navigate("/chat");
+    openAssistant();
   };
 
 

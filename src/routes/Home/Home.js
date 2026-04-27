@@ -28,10 +28,12 @@ import { Link, useNavigate } from "react-router-dom";
 import { validateEmail, ERROR_MESSAGES } from "../../utils/validationRules";
 import FieldError from "../../components/FieldError";
 import { toast } from "react-toastify";
+import { useAssistant } from "../../context/assistant.context";
 
 const Home = () => {
   const { currentUser } = useContext(UserContext);
   const { darkMode } = useDarkMode();
+  const { openAssistant } = useAssistant();
   const navigate = useNavigate();
 
   // Reviews
@@ -176,7 +178,7 @@ const Home = () => {
   };
 
   const onAssistant = () => {
-    navigate(currentUser ? "/chat" : "/login");
+    openAssistant();
   };
 
   return (

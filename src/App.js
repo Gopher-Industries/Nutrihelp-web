@@ -70,6 +70,8 @@ import DailyPlanEdit from "./routes/DailyPlan/DailyPlanEdit";
 import Account from "./routes/Account/Account.js";
 import TextToSpeechControl from "./components/TextToSpeech/TextToSpeech";
 import { isAuthPath } from "./utils/ttsRouteUtils";
+import { AssistantProvider } from "./context/assistant.context";
+import AssistantWidget from "./components/assistant/AssistantWidget";
 /* -------------------------------
    GLOBAL AUTHENTICATED LAYOUT
 -------------------------------- */
@@ -110,18 +112,19 @@ function App() {
 
   return (
     <Router>
-      {/* Show navbar only on allowed pages */}
-      <GlobalAuthenticatedLayout />
+      <AssistantProvider>
+        {/* Show navbar only on allowed pages */}
+        <GlobalAuthenticatedLayout />
 
-      <ToastContainer />
+        <ToastContainer />
 
-      <Routes>
-        <Route
-          path="/"
-          element={
-            currentUser ? <Navigate to="/home" /> : <Navigate to="/login" />
-          }
-        />
+        <Routes>
+          <Route
+            path="/"
+            element={
+              currentUser ? <Navigate to="/home" /> : <Navigate to="/login" />
+            }
+          />
 
         {/* PUBLIC ROUTES */}
         <Route path="/login" element={<Login />} />
@@ -415,9 +418,12 @@ function App() {
           }
         />
 
-        <Route path="ScanBarcode" element={<ScanBarcode />} />
-        <Route path="scan" element={<Scan />}/>
-      </Routes>
+          <Route path="ScanBarcode" element={<ScanBarcode />} />
+          <Route path="scan" element={<Scan />}/>
+        </Routes>
+
+        <AssistantWidget />
+      </AssistantProvider>
     </Router>
   );
 }
