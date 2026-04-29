@@ -295,8 +295,14 @@ export default function DailyPlanEdit() {
     });
   };
 
-  const handleAddMeal = () => {
-    navigate("/Meal");
+  const handleAddMeal = (mealType) => {
+    const normalizedMealType = normalizeMealType(mealType);
+    navigate(`/meal/${encodeURIComponent(normalizedMealType)}?date=${encodeURIComponent(selectedDate)}`, {
+      state: {
+        defaultMealType: normalizedMealType,
+        planDate: selectedDate,
+      },
+    });
   };
 
   const renderMealCard = (section) => {
@@ -373,7 +379,7 @@ export default function DailyPlanEdit() {
           </div>
         )}
 
-        <button type="button" className="dpe-add-meal-btn" onClick={handleAddMeal}>
+        <button type="button" className="dpe-add-meal-btn" onClick={() => handleAddMeal(section.key)}>
           <Plus size={20} />
           Add Meal
         </button>

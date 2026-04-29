@@ -55,7 +55,7 @@ function ScanBarcode() {
     }
 
     try {
-      const response = await fetch(`http://localhost:8080/api/barcode?code=${barcodeInput}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:8081'}/api/barcode?code=${barcodeInput}`, {
         method: "POST",
         body: JSON.stringify({ user_id }),
         headers: {

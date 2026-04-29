@@ -1,7 +1,7 @@
 import "./Meal.css";
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import {
   BarChart3,
   Check,
@@ -12,9 +12,14 @@ import {
   Search,
   Settings2,
   ShoppingCart,
+  Sparkles,
   Trash2,
   Users,
 } from "lucide-react";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
+import PersonalizedPlanForm from "./PersonalizedPlanForm";
+import PersonalizedWeeklyPlan from "./PersonalizedWeeklyPlan";
 
 const FILTERS = [
   { key: "breakfast", label: "Breakfast" },
@@ -513,6 +518,53 @@ function normalizeMealType(value) {
   return "others";
 }
 
+function parseRequestedMealFilter(value) {
+  const normalized = normalize(value);
+  if (normalized === "breakfast" || normalized === "lunch" || normalized === "dinner" || normalized === "others") {
+    return normalized;
+  }
+  if (normalized === "snack" || normalized === "snacks" || normalized === "other") return "others";
+  return null;
+}
+
+function resolveInitialMealFilter(location, routeMealType) {
+  const routeRequestedType = parseRequestedMealFilter(routeMealType);
+  if (routeRequestedType) return routeRequestedType;
+
+  if (!location) return null;
+
+  const stateMealType =
+    location.state?.defaultMealType ||
+    location.state?.mealType ||
+    location.state?.activeFilter;
+
+  if (stateMealType) {
+    const parsedFromState = parseRequestedMealFilter(stateMealType);
+    if (parsedFromState) return parsedFromState;
+  }
+
+  const searchParams = new URLSearchParams(location.search || "");
+  const queryMealType = searchParams.get("mealType") || searchParams.get("tab");
+  return parseRequestedMealFilter(queryMealType);
+}
+
+function isISODateString(value) {
+  return /^\d{4}-\d{2}-\d{2}$/.test(String(value || ""));
+}
+
+function resolveInitialPlanDate(location) {
+  if (!location) return null;
+
+  const stateDate = location.state?.planDate || location.state?.selectedDate || location.state?.targetDate;
+  if (isISODateString(stateDate)) return stateDate;
+
+  const searchParams = new URLSearchParams(location.search || "");
+  const queryDate = searchParams.get("date") || searchParams.get("planDate");
+  if (isISODateString(queryDate)) return queryDate;
+
+  return null;
+}
+
 function getMealIdentityKey(meal, fallback = "") {
   const recipeIdKey = normalize(meal?.recipeId);
   if (recipeIdKey && recipeIdKey !== "null") return `recipe:${recipeIdKey}`;
@@ -597,15 +649,19 @@ function estimateMealNutrition(meal) {
 }
 
 const Meal = () => {
+  const { preselectedMealType } = useParams();
+  const location = useLocation();
   const navigate = useNavigate();
   const [todayISO, setTodayISO] = useState(() => getTodayISO());
-  const [activeFilter, setActiveFilter] = useState("all");
+  const [activeFilter, setActiveFilter] = useState(
+    () => resolveInitialMealFilter(location, preselectedMealType) || "all",
+  );
   const [query, setQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [gridColumns, setGridColumns] = useState(() => getMealGridColumns());
   const [widgetFabBottom, setWidgetFabBottom] = useState(DEFAULT_WIDGET_BOTTOM);
   const [isWidgetMenuOpen, setIsWidgetMenuOpen] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(() => getTodayISO());
+  const [selectedDate, setSelectedDate] = useState(() => resolveInitialPlanDate(location) || getTodayISO());
   const dateInputRef = useRef(null);
   const searchWrapRef = useRef(null);
   const widgetFabRef = useRef(null);
@@ -620,6 +676,27 @@ const Meal = () => {
   const [mealSelectionsByDate, setMealSelectionsByDate] = useState(() =>
     normalizeSelectionsByDate(readSelectionsByDateFromStorage()),
   );
+
+  const [activeTab, setActiveTab] = useState('addMeal');
+  const [planFilters, setPlanFilters] = useState(null);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname, location.search]);
+
+  useEffect(() => {
+    const requestedFilter = resolveInitialMealFilter(location, preselectedMealType);
+    if (requestedFilter) {
+      setActiveFilter(requestedFilter);
+    }
+  }, [preselectedMealType, location.key, location.search]);
+
+  useEffect(() => {
+    const requestedDate = resolveInitialPlanDate(location);
+    if (requestedDate && requestedDate !== selectedDate) {
+      setSelectedDate(requestedDate);
+    }
+  }, [selectedDate, location.key, location.search]);
 
   const normalizedQuery = normalize(query);
 
@@ -1182,6 +1259,23 @@ const Meal = () => {
     });
   };
 
+  const handleGeneratePlan = (filters) => {
+    setPlanFilters(filters);
+  };
+
+  const handleExportPDF = () => {
+    const printArea = document.getElementById('personalized-meal-plan');
+    if (!printArea) return;
+    html2canvas(printArea, { scale: 2 }).then((canvas) => {
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const imgWidth = 210;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+      pdf.save('Personalized_Meal_Plan.pdf');
+    });
+  };
+
   const selectedCount = selectedMeals.length;
   const selectedViewCount = SELECTED_VIEW_SECTIONS.reduce(
     (total, section) => total + selectedMealGroups[section.key].length,
@@ -1209,6 +1303,25 @@ const Meal = () => {
           <span className="crumb-current">Add Meal</span>
         </div>
 
+        <div className="meal-tab-switcher">
+          <button
+            type="button"
+            className={`meal-tab-btn ${activeTab === 'addMeal' ? 'active' : ''}`}
+            onClick={() => setActiveTab('addMeal')}
+          >
+            Add Meal
+          </button>
+          <button
+            type="button"
+            className={`meal-tab-btn ${activeTab === 'personalizedPlan' ? 'active' : ''}`}
+            onClick={() => setActiveTab('personalizedPlan')}
+          >
+            <Sparkles size={15} />
+            AI Personalized Plan
+          </button>
+        </div>
+
+        {activeTab === 'addMeal' && (<>
         <div className="add-meal-toolbar">
           <div className="add-meal-date-row" aria-label="Plan date controls">
             <button
@@ -1832,6 +1945,24 @@ const Meal = () => {
             </div>
           </aside>
         </div>
+        </>)}
+
+        {activeTab === 'personalizedPlan' && (
+          <div className="personalized-plan-section">
+            <PersonalizedPlanForm
+              onGenerate={handleGeneratePlan}
+              onExport={planFilters ? handleExportPDF : undefined}
+              loading={false}
+            />
+            {planFilters && (
+              <PersonalizedWeeklyPlan
+                filters={planFilters}
+                onExport={handleExportPDF}
+                showExport={true}
+              />
+            )}
+          </div>
+        )}
       </div>
 
       <div

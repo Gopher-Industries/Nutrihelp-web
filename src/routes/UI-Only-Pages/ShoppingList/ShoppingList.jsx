@@ -286,7 +286,7 @@ const ShoppingList = () => {
             <header className="shopping-list-header">
                 <h1>Shopping List</h1>
                 {/* Back to meal planning */}
-                <Link to="/Meal" className="back-button">
+                <Link to="/meal" className="back-button">
                     ← Back to Meal Planning
                 </Link>
             </header>

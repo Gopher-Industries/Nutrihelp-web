@@ -1,0 +1,295 @@
+/* PersonalizedPlan.css — styles for PersonalizedPlanForm + PersonalizedWeeklyPlan */
+
+/* ── CSS variable bridge (maps to Meal.css tokens) ─────────────────────── */
+.personalize-card,
+.personalized-plan-section {
+  --pp-brand:        #005bbb;
+  --pp-brand-hover:  #00489a;
+  --pp-brand-soft:   #eaf2ff;
+  --pp-ink-strong:   #0f172a;
+  --pp-ink-body:     #334155;
+  --pp-ink-soft:     #64748b;
+  --pp-line:         #d8e0ec;
+  --pp-bg:           #ffffff;
+  --pp-bg-soft:      #f8fafc;
+  --pp-success-bg:   #dcfce7;
+  --pp-success-ink:  #166534;
+  --pp-danger-bg:    #fee2e2;
+  --pp-danger-ink:   #991b1b;
+  --pp-radius-card:  14px;
+  --pp-radius-input: 10px;
+  --pp-shadow:       0 2px 12px rgba(10, 30, 70, 0.07);
+
+  /* bridge to PersonalizedWeeklyPlan inline styles */
+  --primary-color:          #005bbb;
+  --primary-hover:          #00489a;
+  --primary-light:          #eaf2ff;
+  --text-primary:           #0f172a;
+  --text-secondary:         #64748b;
+  --text-muted:             #94a3b8;
+  --text-inverse:           #ffffff;
+  --border-color:           #d8e0ec;
+  --background-secondary:   #f8fafc;
+  --card-background:        #ffffff;
+  --card-background-secondary: #f8fafc;
+  --input-background:       #ffffff;
+  --error-color:            #dc2626;
+}
+
+/* ── Form card ──────────────────────────────────────────────────────────── */
+.personalize-card {
+  background: var(--pp-bg);
+  border: 1px solid var(--pp-line);
+  border-radius: var(--pp-radius-card);
+  padding: 28px 28px 24px;
+  box-shadow: var(--pp-shadow);
+  margin-bottom: 28px;
+}
+
+.personalize-title {
+  margin: 0 0 24px;
+  font-size: 1.375rem;
+  font-weight: 800;
+  color: var(--pp-ink-strong);
+  letter-spacing: -0.01em;
+}
+
+/* ── 2-col grid for Basic Preferences ──────────────────────────────────── */
+.personalize-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px 20px;
+}
+
+@media (max-width: 640px) {
+  .personalize-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Field wrapper ──────────────────────────────────────────────────────── */
+.personalize-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.personalize-label {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--pp-ink-body);
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+}
+
+/* ── Inputs / selects / textareas ───────────────────────────────────────── */
+.personalize-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 14px;
+  border: 1.5px solid var(--pp-line);
+  border-radius: var(--pp-radius-input);
+  background: var(--pp-bg);
+  color: var(--pp-ink-strong);
+  font-family: inherit;
+  font-size: 0.9375rem;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.personalize-input:focus {
+  outline: none;
+  border-color: var(--pp-brand);
+  box-shadow: 0 0 0 3px rgba(0, 91, 187, 0.12);
+}
+
+select.personalize-input {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
+  cursor: pointer;
+}
+
+/* ── Chip rows ──────────────────────────────────────────────────────────── */
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 16px;
+  border: 1.5px solid var(--pp-line);
+  border-radius: 999px;
+  background: var(--pp-bg);
+  color: var(--pp-ink-body);
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.16s ease;
+  white-space: nowrap;
+  min-height: 36px;
+}
+
+.chip:hover {
+  border-color: var(--pp-brand);
+  color: var(--pp-brand);
+  background: var(--pp-brand-soft);
+}
+
+.chip--active {
+  border-color: var(--pp-brand);
+  background: var(--pp-brand);
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.chip--active:hover {
+  background: var(--pp-brand-hover);
+  border-color: var(--pp-brand-hover);
+  color: #ffffff;
+}
+
+/* ── Primary button ─────────────────────────────────────────────────────── */
+.btn-primary-solid {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 13px 28px;
+  border: none;
+  border-radius: 10px;
+  background: var(--pp-brand);
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.18s ease, transform 0.12s ease, box-shadow 0.18s ease;
+  box-shadow: 0 2px 8px rgba(0, 91, 187, 0.25);
+}
+
+.btn-primary-solid:hover:not(:disabled) {
+  background: var(--pp-brand-hover);
+  box-shadow: 0 4px 14px rgba(0, 91, 187, 0.35);
+  transform: translateY(-1px);
+}
+
+.btn-primary-solid:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btn-primary-solid:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* ── Export / secondary button ──────────────────────────────────────────── */
+.export-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 13px 24px;
+  border: 1.5px solid var(--pp-brand);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--pp-brand);
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.18s ease, color 0.18s ease, transform 0.12s ease;
+}
+
+.export-btn:hover {
+  background: var(--pp-brand-soft);
+  transform: translateY(-1px);
+}
+
+/* ── Actions row ────────────────────────────────────────────────────────── */
+.personalize-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+/* ── Generate bar ───────────────────────────────────────────────────────── */
+.personalize-generate-bar {
+  margin-top: 24px;
+  padding: 20px 24px;
+  border-radius: 12px;
+  background: var(--pp-brand-soft);
+  border: 1.5px solid #bfdbfe;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.personalize-generate-hint {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--pp-ink-body);
+  flex: 1 1 200px;
+}
+
+.personalize-generate-btn {
+  font-size: 1.0625rem;
+  padding: 14px 32px;
+  min-height: 50px;
+  flex-shrink: 0;
+}
+
+/* ── Spinner ────────────────────────────────────────────────────────────── */
+.pp-spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: spin 0.75s linear infinite;
+  flex-shrink: 0;
+}
+
+/* ── Spin keyframe (used by button loading spinner) ─────────────────────── */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Responsive ─────────────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .personalize-card {
+    padding: 18px 16px 20px;
+  }
+
+  .personalize-generate-bar {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 16px;
+  }
+
+  .personalize-generate-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .personalize-actions {
+    flex-direction: column;
+  }
+
+  .export-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}

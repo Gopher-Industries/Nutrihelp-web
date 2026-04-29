@@ -123,6 +123,8 @@ const Dashboard = () => {
     [selectedItems],
   );
 
+  const addMealTab = useMemo(() => (activeTab === "snack" ? "others" : activeTab), [activeTab]);
+
   const totalNutrition = useMemo(
     () =>
       selectedItems.reduce(
@@ -177,6 +179,13 @@ const Dashboard = () => {
         <div className="today-row">
           <div className="today-align-grid">
             <div className="today-text">Today · {todayIso}</div>
+            <Link
+              to={`/meal/${addMealTab}?date=${encodeURIComponent(todayIso)}`}
+              state={{ defaultMealType: addMealTab, planDate: todayIso }}
+              className="edit-menu-btn"
+            >
+              Edit Menu
+            </Link>
           </div>
           <div className="today-row-spacer" />
         </div>

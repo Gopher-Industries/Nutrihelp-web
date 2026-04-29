@@ -351,15 +351,16 @@
 
 /* Buttons */
 .dark-mode .btn,
-.dark-mode button {
+.dark-mode button:not([class]) {
   background-color: var(--button-background);
   color: var(--button-text);
   border-color: var(--button-border);
 }
 
 .dark-mode .btn:hover,
-.dark-mode button:hover {
+.dark-mode button:not([class]):hover {
   background-color: var(--button-hover);
+  color: var(--button-text);
 }
 
 .dark-mode .btn-secondary {

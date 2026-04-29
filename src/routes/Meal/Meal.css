@@ -1475,3 +1475,51 @@
     min-height: 42px;
   }
 }
+
+/* ── Page-level tab switcher ─────────────────────────────────────────────── */
+.meal-tab-switcher {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  border-bottom: 2px solid var(--line);
+  padding-bottom: 0;
+}
+
+.meal-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 20px;
+  border: none;
+  border-bottom: 3px solid transparent;
+  background: transparent;
+  color: var(--ink-soft);
+  font-family: inherit;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: -2px;
+  transition: color 0.18s ease, border-color 0.18s ease;
+  white-space: nowrap;
+}
+
+.meal-tab-btn:hover {
+  color: var(--ink-strong);
+}
+
+.meal-tab-btn.active {
+  color: var(--brand);
+  border-bottom-color: var(--brand);
+}
+
+/* ── Personalized plan section ───────────────────────────────────────────── */
+.personalized-plan-section {
+  padding-top: 8px;
+}
+
+@media (max-width: 640px) {
+  .meal-tab-btn {
+    padding: 8px 14px;
+    font-size: 0.875rem;
+  }
+}

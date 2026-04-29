@@ -1,11 +1,12 @@
   "use client"
 
   import { useContext, useMemo, useRef, useState, useEffect } from "react"
-  import { ArrowRight, KeyRound, ShieldCheck, TimerReset } from "lucide-react"
+  import { ArrowRight, KeyRound, Pencil, ShieldCheck, TimerReset } from "lucide-react"
   import { useNavigate } from "react-router-dom"
   import { toast } from "react-toastify"
   import profileLogo from "./NutriHelp-logos_black.png"
   import { UserContext } from "../../../context/user.context"
+  import profileApi from "../../../services/profileApi"
   import { supabase } from "../../../supabaseClient"
   import ChangePasswordModal from "./ChangePasswordModal"
 
@@ -21,15 +22,17 @@
   ]
 
   const INITIAL_FORM = {
+    username: "",
     firstName: "",
     lastName: "",
     email: "",
     phone: "",
+    address: "",
     goals: [],
     avatar: null,
   }
 
-  const API_BASE = "http://localhost:80"
+  const API_BASE = process.env.REACT_APP_API_BASE_URL || "http://localhost:8081"
 
   const EMPTY_PREFERENCES = {
     dietary_requirements: [],
@@ -90,6 +93,112 @@
       health_conditions: toDisplayList(data.health_conditions),
       spice_levels: toDisplayList(data.spice_levels),
       cooking_methods: toDisplayList(data.cooking_methods),
+    }
+  }
+
+  const toUsernameFromEmail = (email = "") => String(email || "").split("@")[0] || ""
+
+  const splitFullName = (fullName = "") => {
+    const cleaned = String(fullName || "").trim().replace(/\s+/g, " ")
+    if (!cleaned) return { firstName: "", lastName: "" }
+    const parts = cleaned.split(" ")
+    if (parts.length === 1) return { firstName: parts[0], lastName: "" }
+    return {
+      firstName: parts.slice(0, -1).join(" "),
+      lastName: parts.slice(-1).join(""),
+    }
+  }
+
+  const normalizeAddress = (value = "") => {
+    const cleaned = String(value || "").trim()
+    if (!cleaned) return ""
+    if (/placeholder/i.test(cleaned)) return ""
+    if (/address\s*123/i.test(cleaned)) return ""
+    return cleaned
+  }
+
+  const withAvatarCacheBust = (url = "") => {
+    const raw = String(url || "").trim()
+    if (!raw) return ""
+    if (raw.includes("token=")) return raw
+    const separator = raw.includes("?") ? "&" : "?"
+    return `${raw}${separator}t=${Date.now()}`
+  }
+
+  const mapProfilePayloadToForm = (payload, fallbackEmail = "") => {
+    const profile = payload && typeof payload === "object" ? payload : {}
+    const email = String(profile.email || fallbackEmail || "").trim()
+
+    let firstName = String(profile.firstName || profile.first_name || "").trim()
+    let lastName = String(profile.lastName || profile.last_name || "").trim()
+    const fullName = String(profile.fullName || profile.full_name || profile.name || "").trim()
+
+    if (!firstName && !lastName && fullName) {
+      const splitName = splitFullName(fullName)
+      firstName = splitName.firstName
+      lastName = splitName.lastName
+    }
+
+    const username = String(
+      profile.username ||
+        profile.user_name ||
+        profile.userName ||
+        toUsernameFromEmail(email)
+    ).trim()
+
+    const avatarUrl = String(profile.imageUrl || profile.image_url || profile.avatar || "").trim()
+
+    return {
+      username,
+      firstName,
+      lastName,
+      email,
+      phone: String(profile.contactNumber || profile.contact_number || profile.phone || "").trim(),
+      address: normalizeAddress(profile.address),
+      goals: [],
+      avatar: avatarUrl ? { url: withAvatarCacheBust(avatarUrl) } : null,
+    }
+  }
+
+  const fileToDataUrl = (file) =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onload = () => resolve(typeof reader.result === "string" ? reader.result : "")
+      reader.onerror = () => reject(new Error("Unable to read the selected image"))
+      reader.readAsDataURL(file)
+    })
+
+  const syncStoredUserSession = (profile, setCurrentUser) => {
+    try {
+      const raw = localStorage.getItem("user_session")
+      const session = raw ? JSON.parse(raw) : {}
+      const normalized = mapProfilePayloadToForm(profile || {}, session.email || "")
+      const fullName = [normalized.firstName, normalized.lastName].filter(Boolean).join(" ").trim()
+      const avatarUrl = normalized.avatar?.url || session.image_url || ""
+      const nextSession = {
+        ...session,
+        id: profile.id || session.id,
+        user_id: profile.id || session.user_id,
+        email: normalized.email || session.email,
+        username: normalized.username || session.username,
+        first_name: normalized.firstName || session.first_name,
+        last_name: normalized.lastName || session.last_name,
+        contact_number: normalized.phone || session.contact_number,
+        address: normalized.address || session.address,
+        name: fullName || normalized.username || normalized.email || session.name,
+        image_url: avatarUrl,
+      }
+
+      localStorage.setItem("user_session", JSON.stringify(nextSession))
+
+      if (typeof setCurrentUser === "function") {
+        setCurrentUser((prev) => ({
+          ...(prev || {}),
+          ...nextSession,
+        }))
+      }
+    } catch (_error) {
+      // Ignore session sync issues; the profile save already succeeded.
     }
   }
 
@@ -206,6 +315,16 @@
     paddingBottom: 8,
     color: "#000",
     whiteSpace: "nowrap",
+  })
+
+  const getSidebarNameStyles = (width) => ({
+    fontSize: width < 768 ? 24 : width < 1024 ? 28 : 40,
+    lineHeight: 1.1,
+    fontWeight: 700,
+    color: "#111827",
+    textAlign: "center",
+    wordBreak: "break-word",
+    maxWidth: "100%",
   })
 
   const getGoalListStyles = (width) => ({
@@ -374,11 +493,33 @@
     fontWeight: 600,
   })
 
+  const getCardHeaderStyles = (width) => ({
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 12,
+    marginBottom: width < 768 ? 16 : width < 1024 ? 20 : 24,
+    flexWrap: "wrap",
+  })
+
   const getTitleStyles = (width) => ({
     fontSize: width < 768 ? 20 : width < 1024 ? 24 : 28,
     fontWeight: 700,
-    marginBottom: width < 768 ? 16 : width < 1024 ? 20 : 24,
+    margin: 0,
     color: "#000",
+  })
+
+  const getEditToggleButtonStyles = (hovered, disabled = false) => ({
+    border: "none",
+    background: "transparent",
+    color: disabled ? "#94a3b8" : hovered ? "#1d4ed8" : "#2f6fed",
+    fontSize: 16,
+    fontWeight: 700,
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 6,
+    cursor: disabled ? "not-allowed" : "pointer",
+    padding: "4px 0",
   })
 
   const getGrid2Styles = (width) => ({
@@ -401,16 +542,18 @@
     userSelect: "none",
   })
 
-  const getInputStyles = (width) => ({
+  const getInputStyles = (width, disabled = false, hasError = false) => ({
     height: width < 768 ? 40 : 44,
     padding: "0 14px",
     borderRadius: 22,
-    border: "1px solid #cfcfd4",
+    border: hasError ? "1px solid #ef4444" : "1px solid #cfcfd4",
     fontSize: width < 768 ? 13 : 14,
     outline: "none",
     fontFamily: "inherit",
     boxSizing: "border-box",
-    background: "#ffffff",          
+    background: disabled ? "#f1f5f9" : "#ffffff",
+    color: disabled ? "#64748b" : "#111827",
+    cursor: disabled ? "not-allowed" : "text",
   })
 
   const getPhoneInputStyles = (width) => ({
@@ -458,6 +601,28 @@
   const getButtonHoverStyles = (width) => ({
     ...getButtonStyles(width),
     background: "#1e54d9",
+  })
+
+  const getSecondaryButtonStyles = (width, hovered = false) => ({
+    marginTop: width < 768 ? 8 : 10,
+    padding: width < 768 ? "10px 20px" : "12px 28px",
+    borderRadius: 8,
+    border: "1px solid #cbd5e1",
+    background: hovered ? "#f1f5f9" : "#ffffff",
+    color: "#475569",
+    fontSize: width < 768 ? 13 : 15,
+    fontWeight: 600,
+    cursor: "pointer",
+    transition: "background 0.2s ease",
+    width: width < 768 ? "100%" : "auto",
+  })
+
+  const getButtonRowStyles = (width) => ({
+    display: "flex",
+    alignItems: "center",
+    gap: 12,
+    flexDirection: width < 768 ? "column" : "row",
+    marginTop: 8,
   })
 
   const getPasswordPanelStyles = (width) => ({
@@ -627,10 +792,17 @@ const getRadioInnerStyles = (checked) => ({
   export default function UserAccountPage() {
     const [width, setWidth] = useState(typeof window !== "undefined" ? window.innerWidth : 1024)
     const [form, setForm] = useState(INITIAL_FORM)
+    const [serverSnapshot, setServerSnapshot] = useState(INITIAL_FORM)
+    const [isEditing, setIsEditing] = useState(false)
+    const [isProfileLoading, setIsProfileLoading] = useState(true)
+    const [profileError, setProfileError] = useState("")
+    const [profileReloadKey, setProfileReloadKey] = useState(0)
+    const [isSaving, setIsSaving] = useState(false)
     const [preferences, setPreferences] = useState(EMPTY_PREFERENCES)
     const [preferencesLoading, setPreferencesLoading] = useState(true)
     const [preferencesError, setPreferencesError] = useState("")
     const [touched, setTouched] = useState({})
+    const [serverFieldErrors, setServerFieldErrors] = useState({})
     const [hoveredButton, setHoveredButton] = useState(null)
     const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false)
     const fileRef = useRef(null)
@@ -656,60 +828,61 @@ const getRadioInnerStyles = (checked) => ({
     const authToken =
       localStorage.getItem("auth_token") ||
       localStorage.getItem("jwt_token") ||
+      localStorage.getItem("token") ||
+      sessionStorage.getItem("jwt_token") ||
+      sessionStorage.getItem("token") ||
       currentUser?.token ||
       storedSession?.token ||
       ""
 
+    const fallbackEmail = currentUser?.email || storedSession?.email || ""
+
   useEffect(() => {
-  const fetchProfile = async () => {
-    try {
-      const sessionRaw = localStorage.getItem("user_session")
-      const parsedSession = sessionRaw ? JSON.parse(sessionRaw) : null
-      const token =
-        localStorage.getItem("auth_token") ||
-        localStorage.getItem("jwt_token") ||
-        parsedSession?.token
+    let mounted = true
 
-      if (!parsedSession || !token) {
-        console.warn("JWT token missing")
-        return
+    const fetchProfile = async () => {
+      setIsProfileLoading(true)
+      setProfileError("")
+
+      try {
+        if (!authToken) {
+          throw new Error("Please sign in again to load your profile.")
+        }
+
+        const profile = await profileApi.fetchProfile(authToken)
+        const mappedForm = mapProfilePayloadToForm(profile, fallbackEmail)
+
+        if (!mounted) return
+
+        setForm((prev) => ({
+          ...prev,
+          ...mappedForm,
+          goals: prev.goals,
+        }))
+        setServerSnapshot((prev) => ({
+          ...prev,
+          ...mappedForm,
+          goals: prev.goals,
+        }))
+        setTouched({})
+        setServerFieldErrors({})
+      } catch (error) {
+        if (mounted) {
+          setProfileError(error?.message || "Unable to load profile.")
+        }
+      } finally {
+        if (mounted) {
+          setIsProfileLoading(false)
+        }
       }
-
-      const session = parsedSession
-
-      const res = await fetch(`${API_BASE}/api/profile`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      })
-
-      if (!res.ok) {
-        console.error("Profile fetch failed", res.status)
-        return
-      }
-
-      const data = await res.json()
-      const profile = Array.isArray(data) ? data[0] : data
-
-      setForm((prev) => ({
-        ...prev,
-        firstName: profile.first_name || "",
-        lastName: profile.last_name || "",
-        email: profile.email || session.email,
-        phone: profile.contact_number || "",
-        goals: profile.goals ? [profile.goals] : [],
-        avatar: profile.image_url ? { url: profile.image_url } : null,
-      }))
-
-    } catch (err) {
-      console.error("Profile fetch error:", err)
     }
-  }
 
-  fetchProfile()
-}, [])
+    fetchProfile()
+
+    return () => {
+      mounted = false
+    }
+  }, [authToken, fallbackEmail, isChangePasswordOpen, profileReloadKey])
 
   useEffect(() => {
     let mounted = true
@@ -785,30 +958,146 @@ const getRadioInnerStyles = (checked) => ({
       return () => window.removeEventListener("resize", handleResize)
     }, [])
 
-    const set = (k, v) => setForm((f) => ({ ...f, [k]: v }))
+    const set = (k, v) => {
+      setForm((f) => ({ ...f, [k]: v }))
+      setServerFieldErrors((prev) => {
+        if (!prev[k]) return prev
+        const next = { ...prev }
+        delete next[k]
+        return next
+      })
+    }
 
     const mark = (k) => setTouched((t) => ({ ...t, [k]: true }))
 
-    const errors = useMemo(() => {
+    const clientErrors = useMemo(() => {
       const e = {}
-      if (touched.firstName && !form.firstName) e.firstName = "Required"
-      if (touched.email && !emailOk(form.email)) e.email = "Invalid email"
-      if (touched.phone && !phoneOk(form.phone)) e.phone = "Invalid phone"
+      if (touched.username && !form.username?.trim()) e.username = "Username is required."
+      if (touched.firstName && !form.firstName?.trim()) e.firstName = "First name is required."
+      if (touched.email && !emailOk(form.email)) e.email = "Please enter a valid email address."
+      if (touched.phone && form.phone && !phoneOk(form.phone)) e.phone = "Phone must contain 8-15 digits."
+      if (touched.address && form.address?.trim().length > 255) e.address = "Address must be 255 characters or less."
       return e
     }, [form, touched])
 
+    const inlineErrors = useMemo(
+      () => ({
+        ...clientErrors,
+        ...serverFieldErrors,
+      }),
+      [clientErrors, serverFieldErrors]
+    )
+
     const onPick = (e) => {
+      if (!isEditing) return
       const file = e.target.files?.[0]
       if (!file) return
       set("avatar", { file, url: URL.createObjectURL(file) })
     }
 
-    const handleSaveChanges = () => {
-      mark("firstName")
-      mark("email")
-      mark("phone")
-      if (Object.keys(errors).length === 0) {
+    const beginEdit = () => {
+      if (!authToken || isProfileLoading) return
+      setIsEditing(true)
+      setTouched({})
+      setServerFieldErrors({})
+      setProfileError("")
+    }
+
+    const cancelEdit = () => {
+      setForm((prev) => ({
+        ...prev,
+        ...serverSnapshot,
+        goals: prev.goals,
+      }))
+      setTouched({})
+      setServerFieldErrors({})
+      setIsEditing(false)
+      if (fileRef.current) {
+        fileRef.current.value = ""
+      }
+    }
+
+    const validateBeforeSave = () => {
+      const nextTouched = {
+        username: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+        phone: true,
+        address: true,
+      }
+      setTouched((prev) => ({ ...prev, ...nextTouched }))
+
+      const errors = {}
+      if (!form.username?.trim()) errors.username = "Username is required."
+      if (!form.firstName?.trim()) errors.firstName = "First name is required."
+      if (!emailOk(form.email)) errors.email = "Please enter a valid email address."
+      if (form.phone && !phoneOk(form.phone)) errors.phone = "Phone must contain 8-15 digits."
+      if (form.address?.trim().length > 255) errors.address = "Address must be 255 characters or less."
+      return errors
+    }
+
+    const handleSaveChanges = async () => {
+      if (!isEditing) return
+
+      const validationErrors = validateBeforeSave()
+      setServerFieldErrors({})
+
+      if (Object.keys(validationErrors).length > 0) {
+        return
+      }
+
+      if (!authToken) {
+        toast.error("Please sign in again before saving your profile.")
+        return
+      }
+
+      setIsSaving(true)
+
+      try {
+        const payload = {
+          username: form.username.trim(),
+          firstName: form.firstName.trim(),
+          lastName: form.lastName.trim(),
+          email: form.email.trim(),
+          contactNumber: form.phone.replace(/\s/g, ""),
+          address: form.address.trim(),
+        }
+
+        if (form.avatar?.file) {
+          payload.userImage = await fileToDataUrl(form.avatar.file)
+        }
+
+        const savedProfile = await profileApi.updateProfile(payload, authToken)
+        const nextForm = mapProfilePayloadToForm(savedProfile, payload.email)
+
+        setForm((prev) => ({
+          ...prev,
+          ...nextForm,
+          goals: prev.goals,
+        }))
+        setServerSnapshot((prev) => ({
+          ...prev,
+          ...nextForm,
+          goals: prev.goals,
+        }))
+        setTouched({})
+        setServerFieldErrors({})
+        setIsEditing(false)
+
+        syncStoredUserSession(savedProfile, setCurrentUser)
         toast.success("Profile changes saved.")
+      } catch (error) {
+        const mappedFieldErrors =
+          error?.fieldErrors && typeof error.fieldErrors === "object" ? error.fieldErrors : {}
+        setServerFieldErrors(mappedFieldErrors)
+        setTouched((prev) => ({
+          ...prev,
+          ...Object.keys(mappedFieldErrors).reduce((acc, key) => ({ ...acc, [key]: true }), {}),
+        }))
+        toast.error(error?.message || "Unable to save your profile right now.")
+      } finally {
+        setIsSaving(false)
       }
     }
 
@@ -821,6 +1110,7 @@ const getRadioInnerStyles = (checked) => ({
 
       localStorage.removeItem("auth_token")
       localStorage.removeItem("jwt_token")
+      localStorage.removeItem("sso_session")
       localStorage.removeItem("user_session")
 
       if (typeof logOut === "function") {
@@ -842,6 +1132,11 @@ const getRadioInnerStyles = (checked) => ({
       await completeLogoutAndRedirect()
     }
 
+    const sidebarDisplayName = useMemo(() => {
+      const firstLast = [form.firstName, form.lastName].filter(Boolean).join(" ").trim()
+      return firstLast || form.username?.trim() || form.email?.trim() || "Account"
+    }, [form.firstName, form.lastName, form.username, form.email])
+
     return (
       <div style={getPageStyles(width)}>
         <div style={getWrapperStyles(width)}>
@@ -852,6 +1147,7 @@ const getRadioInnerStyles = (checked) => ({
               alt="User profile avatar"
               style={getAvatarStyles(width)}
             />
+            <div style={getSidebarNameStyles(width)}>{sidebarDisplayName}</div>
 
             <div
               style={{
@@ -888,7 +1184,63 @@ const getRadioInnerStyles = (checked) => ({
           <main style={getMainStyles(width)}>
             {/* Personal Details Section */}
             <section style={getCardStyles(width)}>
-              <h2 style={getTitleStyles(width)}>Personal Details</h2>
+              <div style={getCardHeaderStyles(width)}>
+                <h2 style={getTitleStyles(width)}>Personal Details</h2>
+                {!isEditing ? (
+                  <button
+                    type="button"
+                    style={getEditToggleButtonStyles(hoveredButton === "edit", !authToken || isProfileLoading)}
+                    onMouseEnter={() => setHoveredButton("edit")}
+                    onMouseLeave={() => setHoveredButton(null)}
+                    onClick={beginEdit}
+                    disabled={!authToken || isProfileLoading}
+                  >
+                    <Pencil size={18} />
+                    Edit
+                  </button>
+                ) : null}
+              </div>
+
+              {isProfileLoading ? (
+                <div style={getPreferenceInfoStyles(false)}>Loading profile details...</div>
+              ) : null}
+
+              {profileError ? (
+                <div style={{ ...getPreferenceInfoStyles(true), marginTop: 12 }}>
+                  <div>{profileError}</div>
+                  <button
+                    type="button"
+                    style={{ ...getSecondaryButtonStyles(width, hoveredButton === "retry"), marginTop: 8 }}
+                    onMouseEnter={() => setHoveredButton("retry")}
+                    onMouseLeave={() => setHoveredButton(null)}
+                    onClick={() => setProfileReloadKey((prev) => prev + 1)}
+                  >
+                    Retry
+                  </button>
+                </div>
+              ) : null}
+
+              <div style={getGrid2Styles(width)}>
+                <FormField
+                  label="Username"
+                  value={form.username}
+                  onChange={(v) => set("username", v)}
+                  onBlur={() => mark("username")}
+                  error={inlineErrors.username}
+                  disabled={!isEditing || isSaving || isProfileLoading}
+                  width={width}
+                />
+                <FormField
+                  label="Email"
+                  type="email"
+                  value={form.email}
+                  onChange={(v) => set("email", v)}
+                  onBlur={() => mark("email")}
+                  error={inlineErrors.email}
+                  disabled={!isEditing || isSaving || isProfileLoading}
+                  width={width}
+                />
+              </div>
 
               <div style={getGrid2Styles(width)}>
                 <FormField
@@ -896,56 +1248,88 @@ const getRadioInnerStyles = (checked) => ({
                   value={form.firstName}
                   onChange={(v) => set("firstName", v)}
                   onBlur={() => mark("firstName")}
-                  error={touched.firstName ? errors.firstName : undefined}
+                  error={inlineErrors.firstName}
+                  disabled={!isEditing || isSaving || isProfileLoading}
                   width={width}
                 />
-                <FormField label="Last Name" value={form.lastName} onChange={(v) => set("lastName", v)} width={width} />
+                <FormField
+                  label="Last Name"
+                  value={form.lastName}
+                  onChange={(v) => set("lastName", v)}
+                  onBlur={() => mark("lastName")}
+                  error={inlineErrors.lastName}
+                  disabled={!isEditing || isSaving || isProfileLoading}
+                  width={width}
+                />
               </div>
 
               <div style={getGrid2Styles(width)}>
                 <FormField
-                  label="Email"
-                  type="email"
-                  value={form.email}
-                  onChange={(v) => set("email", v)}
-                  onBlur={() => mark("email")}
-                  error={touched.email ? errors.email : undefined}
+                  label="Phone Number"
+                  value={form.phone}
+                  onChange={(v) => set("phone", v)}
+                  onBlur={() => mark("phone")}
+                  placeholder="Enter phone number"
+                  error={inlineErrors.phone}
+                  disabled={!isEditing || isSaving || isProfileLoading}
                   width={width}
                 />
-                <div style={getFieldStyles(width)}>
-                  <label style={getLabelStyles(width)}>Number</label>
-
-                  <input
-                    type="text"
-                    value={form.phone}
-                    onChange={(e) => set("phone", e.target.value)}
-                    onBlur={() => mark("phone")}
-                    placeholder="Enter phone number"
-                    style={getInputStyles(width)}
-                  />
-
-                  {touched.phone && errors.phone && (
-                    <div style={{ fontSize: 12, color: "#e11d48", marginTop: 4 }}>
-                      {errors.phone}
-                    </div>
-                  )}
-                </div>
-
+                <FormField
+                  label="Address"
+                  value={form.address}
+                  onChange={(v) => set("address", v)}
+                  onBlur={() => mark("address")}
+                  error={inlineErrors.address}
+                  disabled={!isEditing || isSaving || isProfileLoading}
+                  width={width}
+                />
               </div>
 
-              <div style={getFieldStyles(width)}>
-                <label style={getLabelStyles(width)}>Upload Profile Picture</label>
-                <input type="file" ref={fileRef} style={getFileInputStyles(width)} onChange={onPick} accept="image/*" />
-              </div>
+              {isEditing ? (
+                <>
+                  <div style={getFieldStyles(width)}>
+                    <label style={getLabelStyles(width)}>Update Profile Picture</label>
+                    <input
+                      type="file"
+                      ref={fileRef}
+                      style={getFileInputStyles(width)}
+                      onChange={onPick}
+                      accept="image/*"
+                      disabled={isSaving || isProfileLoading}
+                    />
+                    {inlineErrors.avatar ? (
+                      <div style={{ fontSize: 12, color: "#e11d48", marginTop: 4 }}>{inlineErrors.avatar}</div>
+                    ) : null}
+                  </div>
 
-              <button
-                style={hoveredButton === "save" ? getButtonHoverStyles(width) : getButtonStyles(width)}
-                onMouseEnter={() => setHoveredButton("save")}
-                onMouseLeave={() => setHoveredButton(null)}
-                onClick={handleSaveChanges}
-              >
-                Save Changes
-              </button>
+                  <div style={getButtonRowStyles(width)}>
+                    <button
+                      type="button"
+                      style={{
+                        ...(hoveredButton === "save" ? getButtonHoverStyles(width) : getButtonStyles(width)),
+                        opacity: isSaving ? 0.7 : 1,
+                        cursor: isSaving ? "wait" : "pointer",
+                      }}
+                      onMouseEnter={() => setHoveredButton("save")}
+                      onMouseLeave={() => setHoveredButton(null)}
+                      onClick={handleSaveChanges}
+                      disabled={isSaving}
+                    >
+                      {isSaving ? "Saving..." : "Save"}
+                    </button>
+                    <button
+                      type="button"
+                      style={getSecondaryButtonStyles(width, hoveredButton === "cancel")}
+                      onMouseEnter={() => setHoveredButton("cancel")}
+                      onMouseLeave={() => setHoveredButton(null)}
+                      onClick={cancelEdit}
+                      disabled={isSaving}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </>
+              ) : null}
             </section>
 
             <section style={getPreferenceCardStyles(width)}>
@@ -1077,7 +1461,7 @@ const getRadioInnerStyles = (checked) => ({
 
   /* ============ FORM FIELD COMPONENT ============ */
 
-  function FormField({ label, type = "text", value, onChange, onBlur, error, width }) {
+  function FormField({ label, type = "text", value, onChange, onBlur, error, width, disabled = false, placeholder }) {
     return (
       <div style={getFieldStyles(width)}>
         <label style={getLabelStyles(width)}>{label}</label>
@@ -1086,7 +1470,9 @@ const getRadioInnerStyles = (checked) => ({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           onBlur={onBlur}
-          style={getInputStyles(width)}
+          placeholder={placeholder}
+          disabled={disabled}
+          style={getInputStyles(width, disabled, Boolean(error))}
         />
         {error && <div style={{ fontSize: 12, color: "#e11d48", marginTop: 4 }}>{error}</div>}
       </div>

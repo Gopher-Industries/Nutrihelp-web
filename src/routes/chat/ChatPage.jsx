@@ -2,6 +2,10 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import "./ChatPage.css";
 
+/* ---------------- Config ---------------- */
+const AI_BASE_URL = "http://localhost:8000";
+const CHAT_ENDPOINT = `${AI_BASE_URL}/ai-model/chatbot/chat`;
+
 /* ---------------- Utils ---------------- */
 
 function uid() {
@@ -21,6 +25,7 @@ function formatTime(d) {
 export default function ChatPage() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [draft, setDraft] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const messagesRef = useRef(null);
 
   const navLinks = useMemo(
@@ -43,19 +48,25 @@ export default function ChatPage() {
     []
   );
 
-  const [messages, setMessages] = useState(() => [
-    { id: uid(), side: "left", text: "Hey There!", time: "Today, 8:30pm" },
-    { id: uid(), side: "left", text: "How are you?", time: "Today, 8:30pm" },
-    { id: uid(), side: "right", text: "Hello!", time: "Today, 8:33pm" },
-    { id: uid(), side: "right", text: "I am fine and how are you?", time: "Today, 8:34pm" },
-    {
-      id: uid(),
-      side: "left",
-      text: "I would like some advice on my calorie intake!",
-      time: "Today, 8:36pm",
-    },
-    { id: uid(), side: "right", text: "Yes sure!", time: "Today, 8:58pm" },
-  ]);
+  const [messages, setMessages] = useState(() => {
+    try {
+      const saved = localStorage.getItem("nh-messages");
+      return saved ? JSON.parse(saved) : [
+        {
+          id: uid(),
+          side: "left",
+          text: "Hi! I'm your NutriHelp assistant. Ask me anything about nutrition, meals, or your health goals.",
+          time: formatTime(new Date()),
+        },
+      ];
+    } catch {
+      return [];
+    }
+  });
+
+  useEffect(() => {
+    localStorage.setItem("nh-messages", JSON.stringify(messages));
+  }, [messages]);
 
   useEffect(() => {
     if (messagesRef.current) {
@@ -69,16 +80,105 @@ export default function ChatPage() {
     return () => window.removeEventListener("keydown", esc);
   }, []);
 
-  function sendMessage(e) {
+  async function callChatbot(userMessage) {
+    const response = await fetch(CHAT_ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ query: userMessage }),
+    });
+
+    if (!response.ok) {
+      const err = new Error("Backend error");
+      err.type = "network";
+      err.status = response.status;
+      throw err;
+    }
+
+    const data = await response.json();
+    const reply = data.msg || data.message || String(data);
+
+    if (!reply || reply.trim() === "") {
+      const err = new Error("Empty response");
+      err.type = "empty";
+      throw err;
+    }
+
+    return reply;
+  }
+
+  async function sendMessage(e) {
     if (e) e.preventDefault();
     const text = draft.trim();
-    if (!text) return;
+    if (!text || isLoading) return;
 
-    setMessages((prev) => [
-      ...prev,
-      { id: uid(), side: "right", text, time: formatTime(new Date()) },
-    ]);
+    const userMsg = {
+      id: uid(),
+      side: "right",
+      text,
+      time: formatTime(new Date()),
+    };
+    setMessages((prev) => [...prev, userMsg]);
     setDraft("");
+    const ta = document.querySelector(".nh-inputWrap textarea");
+    if (ta) ta.style.height = "auto";
+    setIsLoading(true);
+
+    try {
+      const botReply = await callChatbot(text);
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: uid(),
+          side: "left",
+          text: botReply,
+          time: formatTime(new Date()),
+        },
+      ]);
+    } catch (err) {
+      console.error("Chatbot error:", err);
+
+      const errorText = err.type === "empty"
+        ? "The assistant returned an empty response. Please try again."
+        : err.type === "network"
+        ? `Connection failed (${err.status ?? "no response"}). Check your server.`
+        : "Something went wrong. Please try again.";
+
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: uid(),
+          side: "left",
+          text: errorText,
+          time: formatTime(new Date()),
+          isError: true,
+        },
+      ]);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  async function clearHistory() {
+    localStorage.removeItem("nh-messages");
+    setMessages(
+      [
+        {
+          id: uid(),
+          side: "left",
+          text: "Hi! I'm your NutriHelp assistant. Ask me anything about nutrition, meals, or your health goals.",
+          time: formatTime(new Date()),
+        },
+      ]
+    );
+  }
+
+  function formatText(text) {
+    return text.split(/\*\*(.*?)\*\*/g).flatMap((part, i) => {
+      if (i % 2 === 1) return [<strong key={`b${i}`}>{part}</strong>];
+        return part.split(/\*(.*?)\*/g).map((p, j) =>
+          j % 2 === 1 ? <em key={`e${i}-${j}`}>{p}</em> : p
+        );
+    });
   }
 
   return (
@@ -131,27 +231,61 @@ export default function ChatPage() {
       <main className="nh-app">
         <section className="nh-chatCard">
           <div className="nh-chatHeader">
-            <h2>Anon</h2>
+            <h2 className="nh-chatTitle">NutriHelp Assistant</h2>
           </div>
 
           <div className="nh-messages" ref={messagesRef}>
             {messages.map((m) => (
               <div key={m.id} className={`nh-msgRow ${m.side}`}>
                 <div className="nh-msgWrap">
-                  <div className={`nh-bubble ${m.side}`}>{m.text}</div>
+
+                  <div className={`nh-bubble ${m.side} ${m.isError ? "nh-bubble--error" : ""}`}>
+                    {formatText(m.text)}
+                  </div>
+
                   <div className={`nh-meta ${m.side}`}>{m.time}</div>
+
                 </div>
               </div>
             ))}
+
+            {isLoading && (
+              <div className="nh-msgRow left">
+                <div className="nh-msgWrap">
+
+                  <div className="nh-bubble left nh-typing">
+                    <span /><span /><span />
+                  </div>
+
+                  <div className="nh-meta left" style={{ marginTop: "4px", fontStyle: "italic" }}>
+                    Thinking...
+                  </div>
+
+                </div>
+              </div>
+            )}
           </div>
 
           <form className="nh-composer" onSubmit={sendMessage}>
+
+            <button 
+              className="nh-clearBtn"
+              disabled={isLoading}
+              onClick={clearHistory}
+            >
+              Clear History
+            </button>
+
             <div className="nh-inputWrap">
               <textarea
                 value={draft}
                 onChange={(e) => setDraft(e.target.value)}
+                onInput={(e) => {
+                  e.target.style.height = "auto";
+                  e.target.style.height = e.target.scrollHeight + "px";
+                }}
                 placeholder="Type your message here..."
-                rows={1}
+                disabled={isLoading}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && !e.shiftKey) {
                     e.preventDefault();
@@ -161,7 +295,7 @@ export default function ChatPage() {
               />
             </div>
 
-            <button className="nh-sendBtn" type="submit">
+            <button className="nh-sendBtn" type="submit" disabled={isLoading}>
               ➤
             </button>
           </form>

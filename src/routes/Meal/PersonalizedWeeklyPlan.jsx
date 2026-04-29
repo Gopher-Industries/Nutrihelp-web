@@ -1,8 +1,9 @@
 // src/routes/Meal/PersonalizedWeeklyPlan.jsx
 import { useEffect, useState } from 'react';
+import './PersonalizedPlan.css';
 
-const AI_ENDPOINT       = 'http://localhost/api/meal-plan/ai-generate';
-const FEEDBACK_ENDPOINT = (planId) => `http://localhost/api/meal-plan/feedback/${planId}`;
+const AI_ENDPOINT       = `${process.env.REACT_APP_API_BASE_URL || 'http://localhost:8081'}/api/meal-plan/ai-generate`;
+const FEEDBACK_ENDPOINT = (planId) => `${process.env.REACT_APP_API_BASE_URL || 'http://localhost:8081'}/api/meal-plan/feedback/${planId}`;
 
 // Accent colours cycling across day cards
 const DAY_ACCENTS = [
