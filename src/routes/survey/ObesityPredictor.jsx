@@ -1,23 +1,86 @@
 import React, { useState } from "react";
 import "./ObesityPredict.css";
 import { useNavigate } from "react-router-dom";
-import {
-  ERROR_MESSAGES,
-  validatePositiveNumber,
-  validatePositiveFloat,
-} from "../../utils/validationRules";
+import { ERROR_MESSAGES } from "../../utils/validationRules";
 import FieldError from "../../components/FieldError";
 import { toast } from "react-toastify";
+import { API_BASE_URL } from "../../services/baseApi";
+
+const FIELD_RANGES = {
+  age: { min: 1, max: 120, label: "Age must be between 1 and 120" },
+  height: { min: 0.5, max: 2.5, label: "Height must be between 0.5 m and 2.5 m" },
+  weight: { min: 10, max: 300, label: "Weight must be between 10 kg and 300 kg" },
+  vegetables: { min: 0, max: 5, label: "Vegetable consumption frequency must be between 0 and 5" },
+  meals: { min: 1, max: 10, label: "Meals per day must be between 1 and 10" },
+  water: { min: 0, max: 10, label: "Water intake must be between 0 and 10 liters" },
+  activity: { min: 0, max: 10, label: "Physical activity must be between 0 and 10" },
+  screen_time: { min: 0, max: 24, label: "Screen time must be between 0 and 24 hours" },
+};
+
+const ERROR_FIELD_MAP = {
+  Gender: 'gender',
+  Age: 'age',
+  Height: 'height',
+  Weight: 'weight',
+  family_history_with_overweight: 'family_history',
+  FAVC: 'FAVC',
+  FCVC: 'vegetables',
+  NCP: 'meals',
+  CAEC: 'CAEC',
+  SMOKE: 'smoke',
+  CH2O: 'water',
+  SCC: 'monitor',
+  FAF: 'activity',
+  TUE: 'screen_time',
+  CALC: 'alcohol',
+  MTRANS: 'transport'
+};
+
+function validateNumericField(name, value) {
+  if (value === undefined || value === null || value === "") {
+    return ERROR_MESSAGES.REQUIRED;
+  }
+  const num = Number(value);
+  if (isNaN(num)) return "Please enter a valid number";
+  const range = FIELD_RANGES[name];
+  if (range && (num < range.min || num > range.max)) {
+    return range.label;
+  }
+  if (num < 0) return "Value must not be negative";
+  return null;
+}
+
+function mapToBackendPayload(formData) {
+  return {
+    "Gender": formData.gender === 1 ? "Male" : "Female",
+    "Age": formData.age,
+    "Height": formData.height,
+    "Weight": formData.weight,
+    "Any family history of overweight (yes/no)": formData.family_history,
+    "Frequent High Calorie Food Consumption (yes/no)": formData.FAVC,
+    "Consumption of vegetables in meals": formData.vegetables,
+    "Consumption of Food Between Meals": formData.CAEC,
+    "Number of Main Meals": formData.meals,
+    "Daily Water Intake": formData.water,
+    "Do you Smoke?": formData.smoke === 1 ? "yes" : "no",
+    "Do you monitor your daily calories?": formData.monitor,
+    "Physical Activity Frequency": formData.activity,
+    "Time Using Technology Devices Daily": formData.screen_time,
+    "Alcohol Consumption Rate": formData.alcohol,
+    "Mode of Transportation you use": formData.transport,
+  };
+}
 
 export default function ObesityPredict() {
-  console.log("ObesityPredict component loaded, validatePositiveFloat:", typeof validatePositiveFloat);
   const [formData, setFormData] = useState({});
   const [progress, setProgress] = useState(0);
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
 
-  // Grouped Questions
+  const API_URL = `${API_BASE_URL}/medical-report/retrieve`;
+
   const questionGroups = {
     personal: [
       {
@@ -25,23 +88,41 @@ export default function ObesityPredict() {
         name: "gender",
         type: "select",
         options: [
-          ["1", "Male"],
-          ["2", "Female"],
+          [1, "Male"],
+          [2, "Female"],
         ],
       },
       { label: "Age (years)", name: "age", type: "number" },
-      { label: "Height(m)", name: "height", type: "number" },
+      { label: "Height (m)", name: "height", type: "number" },
       { label: "Weight (kg)", name: "weight", type: "number" },
     ],
     food: [
-      { label: "Calorie intake (per day)", name: "calories", type: "number" },
       {
-        label: "Vegetable consumption (0-3)",
+        label: "Frequent consumption of high caloric food?",
+        name: "FAVC",
+        type: "select",
+        options: [
+          ["yes", "Yes"],
+          ["no", "No"],
+        ],
+      },
+      {
+        label: "Vegetable consumption frequency (0-5)",
         name: "vegetables",
         type: "number",
       },
-      { label: "Main meals per day", name: "meals", type: "number" },
-      { label: "Snacks between meals (0–3)", name: "snacks", type: "number" },
+      { label: "Main meals per day (1-10)", name: "meals", type: "number" },
+      {
+        label: "Consumption of food between meals",
+        name: "CAEC",
+        type: "select",
+        options: [
+          ["no", "No"],
+          ["Sometimes", "Sometimes"],
+          ["Frequently", "Frequently"],
+          ["Always", "Always"],
+        ],
+      },
       { label: "Water intake (liters)", name: "water", type: "number" },
       {
         label: "Monitor calorie intake?",
@@ -59,8 +140,8 @@ export default function ObesityPredict() {
         name: "smoke",
         type: "select",
         options: [
-          ["0", "No"],
-          ["1", "Yes"],
+          [0, "No"],
+          [1, "Yes"],
         ],
       },
       {
@@ -68,13 +149,14 @@ export default function ObesityPredict() {
         name: "alcohol",
         type: "select",
         options: [
-          ["0", "Never"],
-          ["1", "Sometimes"],
-          ["2", "Frequently"],
+          ["no", "Never"],
+          ["Sometimes", "Sometimes"],
+          ["Frequently", "Frequently"],
+          ["Always", "Always"],
         ],
       },
       {
-        label: "Physical activity (hours/day)",
+        label: "Physical activity weekly frequency",
         name: "activity",
         type: "number",
       },
@@ -108,13 +190,13 @@ export default function ObesityPredict() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    const floatFields = ['height', 'weight', 'water', 'activity', 'screen_time', 'vegetables', 'meals', 'snacks', 'calories', 'age'];
-    const selectNumericFields = ['gender', 'smoke', 'alcohol'];
-
+    const numericFields = ['height', 'weight', 'water', 'activity', 'screen_time', 'vegetables', 'meals', 'age'];
+    
+    // Convert to number if numeric field, otherwise keep as string (for "yes"/"no", "Sometimes")
     let parsedValue = value;
-    if (floatFields.includes(name)) {
+    if (numericFields.includes(name)) {
       parsedValue = value === '' ? '' : Number(value);
-    } else if (selectNumericFields.includes(name)) {
+    } else if (['gender', 'smoke'].includes(name)) { // These specific ones are integers in backend
       parsedValue = value === '' ? '' : Number(value);
     }
 
@@ -131,20 +213,19 @@ export default function ObesityPredict() {
       setErrors((prev) => ({ ...prev, [name]: undefined }));
     }
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validate all fields
+    if (isSubmitting) return;
+
     const errs = {};
-    const floatFields = ['height', 'weight', 'water', 'activity', 'screen_time', 'vegetables', 'meals', 'snacks', 'calories'];
     allQuestions.forEach((q) => {
       const val = formData[q.name];
       if (val === undefined || val === "") {
         errs[q.name] = ERROR_MESSAGES.REQUIRED;
       } else if (q.type === "number") {
-        const numErr = floatFields.includes(q.name)
-          ? validatePositiveFloat(val)
-          : validatePositiveNumber(val);
+        const numErr = validateNumericField(q.name, val);
         if (numErr) errs[q.name] = numErr;
       }
     });
@@ -158,45 +239,53 @@ export default function ObesityPredict() {
       return;
     }
 
+    setIsSubmitting(true);
     try {
-      // map formData to backend format
-      const payload = {
-        Gender: formData.gender,
-        Age: formData.age,
-        Height: formData.height, // height in meters as per label
-        Weight: formData.weight,
-        family_history_with_overweight: formData.family_history,
-        FAVC: formData.calories,
-        FCVC: formData.vegetables,
-        NCP: formData.meals,
-        CAEC: formData.snacks,
-        SMOKE: formData.smoke,
-        CH2O: formData.water,
-        SCC: formData.monitor,
-        FAF: formData.activity,
-        TUE: formData.screen_time,
-        CALC: formData.alcohol,
-        MTRANS: formData.transport,
-      };
+      const payload = mapToBackendPayload(formData);
 
-      const response = await fetch(
-        "http://localhost:8000/ai-model/medical-report/retrieve",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        },
-      );
-
-      if (!response.ok) throw new Error("API request failed");
-
+      const response = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
       const result = await response.json();
+
+      if (!response.ok) {
+        if (response.status === 422 && result.detail) {
+          const fieldErrors = {};
+          result.detail.forEach((err) => {
+            if (err.loc && err.loc.length > 1) {
+              const backendField = err.loc[err.loc.length - 1];
+              const feField = ERROR_FIELD_MAP[backendField] || backendField;
+              fieldErrors[feField] = err.msg;
+            }
+          });
+          if (Object.keys(fieldErrors).length > 0) {
+            setErrors(fieldErrors);
+            setTouched(
+              allQuestions.reduce((acc, q) => ({ ...acc, [q.name]: true }), {}),
+            );
+          }
+          toast.error("Validation failed. Please check the highlighted fields.");
+          return;
+        }
+
+        if (response.status === 429) {
+          toast.error("Too many requests. Please wait a few minutes before trying again.");
+          return;
+        }
+
+        throw new Error(result.error || result.message || "Server error. Please try again later.");
+      }
+
       localStorage.setItem("ObesityResult", JSON.stringify(result));
       toast.success("Survey submitted successfully!");
       navigate("/survey/result");
     } catch (err) {
       console.error(err);
-      toast.error("Prediction failed. Please try again later.");
+      toast.error(err.message || "Prediction failed. Please check your connection and try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -238,10 +327,7 @@ export default function ObesityPredict() {
                       >
                         <option value="">-- Select --</option>
                         {q.options.map(([val, text]) => (
-                          <option
-                            key={val}
-                            value={q.type === "number" ? Number(val) : val}
-                          >
+                          <option key={val} value={val}>
                             {text}
                           </option>
                         ))}
@@ -271,10 +357,20 @@ export default function ObesityPredict() {
               </div>
             </div>
           ))}
-
           <div className="predict">
-            <button type="submit" className="predict-btn">
-              Predict
+            <button
+              type="submit"
+              className={`predict-btn ${isSubmitting ? "predict-btn--loading" : ""}`}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                <>
+                  <span className="spinner" aria-hidden="true"></span>
+                  Analyzing…
+                </>
+              ) : (
+                "Predict"
+              )}
             </button>
           </div>
         </form>

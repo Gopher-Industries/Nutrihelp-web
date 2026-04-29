@@ -16,7 +16,7 @@ export default function ObesityResult() {
     if (stored) {
       try {
         const parsed = JSON.parse(stored);
-        setResult(parsed.medical_report || parsed);
+        setResult(parsed);
       } catch (e) {
         console.error("Error parsing stored result:", e);
       }
@@ -44,24 +44,25 @@ export default function ObesityResult() {
             <div className="result-row">
               <span className="result-label">⚖️ Obesity Level:</span>
               <span className="result-value">
-                {result.obesity_prediction?.obesity_level || "N/A"}
-                {result.obesity_prediction?.confidence &&
-                  ` (${(result.obesity_prediction.confidence * 100).toFixed(1)}% confidence)`}
+                {result.medical_report?.obesity_level || "N/A"}
+                {result.probability &&
+                  ` (${(result.probability * 100).toFixed(1)}% confidence)`}
               </span>
             </div>
 
-            <div className="result-row">
-              <span className="result-label">🩺 Diabetes Risk:</span>
-              <span className="result-value">
-                {result.diabetes_prediction?.diabetes !== undefined
-                  ? result.diabetes_prediction.diabetes
-                    ? "Positive"
-                    : "Negative"
-                  : "N/A"}
-                {result.diabetes_prediction?.confidence &&
-                  ` (${(result.diabetes_prediction.confidence * 100).toFixed(1)}% confidence)`}
-              </span>
-            </div>
+            {/* Recommendations Section */}
+            {result.recommendations && result.recommendations.length > 0 && (
+              <div className="recommendations-section">
+                <div className="recommendations-heading">📝 Recommended Actions:</div>
+                <ul className="recommendations-list">
+                  {result.recommendations.map((rec, index) => (
+                    <li key={index} className="recommendation-item">
+                      ✅ {rec}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
           <div className="result-buttons">
             <button className="save-btton" onClick={handleDownloadPDF}>
