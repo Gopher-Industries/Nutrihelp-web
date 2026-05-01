@@ -1,9 +1,10 @@
 import "./MealDetail.css";
 
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import { CalendarDays, ChevronLeft, Cloud, Clock3, Moon, Plus, Star, Sun, Users } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { fetchDishImage } from "../../services/dishImageApi";
 
 const DEFAULT_IMAGE = "/images/meal-mock/placeholder.svg";
 const MEAL_SELECTIONS_STORAGE_KEY = "nutrihelp_add_meal_selections_by_date_v1";
@@ -94,6 +95,28 @@ const ALLERGEN_RULES = [
   { keywords: ["nut", "almond"], label: "Tree Nuts" },
 ];
 
+const DISH_IMAGE_RULES = [
+  { keywords: ["noodle soup", "udon", "soba"], src: "/images/meal-mock/chinese.jpg" },
+  { keywords: ["bibimbap", "rice bowl", "donburi", "poke"], src: "/images/meal-mock/rice.jpg" },
+  { keywords: ["spaghetti", "pasta", "carbonara", "bolognese", "lasagna"], src: "/images/meal-mock/italian.jpg" },
+  { keywords: ["salad", "veggie", "vegetable"], src: "/images/meal-mock/salad.jpg" },
+  { keywords: ["steak", "beef", "bbq"], src: "/images/meal-mock/meat.jpg" },
+  { keywords: ["chicken", "teriyaki", "grill"], src: "/images/meal-mock/chicken.jpg" },
+  { keywords: ["fish", "salmon", "tuna", "sushi"], src: "/images/meal-mock/fish.jpg" },
+  { keywords: ["sandwich", "burger", "wrap", "bagel"], src: "/images/meal-mock/sandwich.jpg" },
+  { keywords: ["smoothie", "juice"], src: "/images/meal-mock/smoothie.jpg" },
+  { keywords: ["cake", "dessert", "ice cream"], src: "/images/meal-mock/dessert.jpg" },
+  { keywords: ["oat", "porridge", "cereal"], src: "/images/meal-mock/oatmeal.jpg" },
+];
+
+const DISH_IMAGE_ROTATION = [
+  "/images/meal-mock/rice.jpg",
+  "/images/meal-mock/chinese.jpg",
+  "/images/meal-mock/italian.jpg",
+  "/images/meal-mock/salad.jpg",
+  "/images/meal-mock/chicken.jpg",
+];
+
 function getTodayISO() {
   const now = new Date();
   const local = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
@@ -102,6 +125,60 @@ function getTodayISO() {
 
 function normalize(value) {
   return String(value || "").trim().toLowerCase();
+}
+
+function hashText(value) {
+  return Array.from(String(value || "")).reduce((total, char) => total + char.charCodeAt(0), 0);
+}
+
+function isBlobUrl(value) {
+  return /^blob:/i.test(String(value || ""));
+}
+
+function isDisallowedImageSource(value) {
+  const normalized = normalize(value);
+  return normalized.includes("wikimedia") || normalized.includes("wikipedia");
+}
+
+function resolveDishImageByName(dishName, seed = 0, { allowRotation = true } = {}) {
+  const normalizedDishName = normalize(dishName);
+  if (!normalizedDishName) return null;
+  const matched = DISH_IMAGE_RULES.find((rule) =>
+    rule.keywords.some((keyword) => normalizedDishName.includes(keyword))
+  );
+  if (matched?.src) return matched.src;
+  if (!allowRotation) return null;
+  return DISH_IMAGE_ROTATION[Math.abs(seed) % DISH_IMAGE_ROTATION.length];
+}
+
+function resolveMealImage(meal) {
+  const rawImage = String(meal?.image || "").trim();
+  const dishTitle = meal?.title || meal?.name || "";
+  const hasUsableRawImage = rawImage && !isBlobUrl(rawImage) && !isDisallowedImageSource(rawImage);
+  const resolvedFromName = resolveDishImageByName(dishTitle, hashText(dishTitle), {
+    allowRotation: false,
+  });
+
+  if (hasUsableRawImage) return rawImage;
+  if (resolvedFromName) return resolvedFromName;
+  if (rawImage && !isDisallowedImageSource(rawImage)) return rawImage;
+  const rotatedImage = resolveDishImageByName(dishTitle, hashText(dishTitle), { allowRotation: true });
+  if (rotatedImage) return rotatedImage;
+  return DEFAULT_IMAGE;
+}
+
+function shouldFetchDynamicImage(meal, image) {
+  const imageValue = String(image || "").trim();
+  const isScanMeal =
+    String(meal?.id || "").startsWith("scan-") ||
+    String(meal?.time || "").toLowerCase() === "ai scan";
+
+  return (
+    isScanMeal ||
+    !imageValue ||
+    isBlobUrl(imageValue) ||
+    imageValue.includes("/images/meal-mock/")
+  );
 }
 
 function normalizeMealType(value) {
@@ -127,9 +204,36 @@ function writeStoredSelections(nextValue) {
   if (typeof window === "undefined") return;
   try {
     localStorage.setItem(MEAL_SELECTIONS_STORAGE_KEY, JSON.stringify(nextValue));
+    window.dispatchEvent(new Event("storage"));
   } catch {
     // Ignore storage write issues and keep UX responsive.
   }
+}
+
+function removeDuplicateMealSelections(selectionMap, incomingMeal) {
+  if (!selectionMap || typeof selectionMap !== "object") return {};
+
+  const incomingTitleKey = normalize(incomingMeal?.title || incomingMeal?.name);
+  const incomingMealType = normalizeMealType(incomingMeal?.mealType);
+  const incomingLogEntryKey = normalize(incomingMeal?.logEntryId);
+  const incomingIdKey = normalize(incomingMeal?.id);
+
+  return Object.fromEntries(
+    Object.entries(selectionMap).filter(([entryKey, existingMeal]) => {
+      if (!existingMeal || typeof existingMeal !== "object") return true;
+
+      const existingTitleKey = normalize(existingMeal?.title || existingMeal?.name);
+      const existingMealType = normalizeMealType(existingMeal?.mealType);
+      const existingLogEntryKey = normalize(existingMeal?.logEntryId);
+      const existingIdKey = normalize(existingMeal?.id || entryKey);
+      const sameMealType = existingMealType === incomingMealType;
+      const sameTitle = incomingTitleKey && existingTitleKey === incomingTitleKey;
+      const sameLogEntry = incomingLogEntryKey && existingLogEntryKey === incomingLogEntryKey;
+      const sameId = incomingIdKey && existingIdKey === incomingIdKey;
+
+      return !(sameMealType && (sameTitle || sameLogEntry || sameId));
+    })
+  );
 }
 
 function includesKeyword(source, keywords) {
@@ -194,7 +298,10 @@ function buildDetailFromMeal(meal) {
   return {
     id: meal?.id || "meal-detail",
     title,
-    image: meal?.image || DEFAULT_IMAGE,
+    image: resolveMealImage(meal),
+    imageSource: meal?.imageSource || "",
+    imageAttribution: meal?.imageAttribution || "",
+    imageSourceUrl: meal?.imageSourceUrl || "",
     mealType: type,
     time: meal?.time || "N/A",
     servings: meal?.servings || "N/A",
@@ -217,8 +324,8 @@ function toSelectedMealPayload(detail, selectedMealType, sourceMeal) {
   const titleKey = normalize(detail?.title || sourceMeal?.title || sourceMeal?.name);
   const idKey = normalize(detail?.id || sourceMeal?.id);
   const identityKey =
-    (recipeIdKey && recipeIdKey !== "null" && `recipe:${recipeIdKey}`) ||
     (titleKey && `title:${titleKey}`) ||
+    (recipeIdKey && recipeIdKey !== "null" && `recipe:${recipeIdKey}`) ||
     (idKey && `id:${idKey}`) ||
     `legacy:${Date.now()}`;
   const selectedId = `slot:${identityKey}|${normalizedMealType}`;
@@ -226,14 +333,19 @@ function toSelectedMealPayload(detail, selectedMealType, sourceMeal) {
   return {
     id: selectedId,
     name: detail?.title || sourceMeal?.title || "Meal",
-    recipeId: detail?.recipeId || sourceMeal?.recipeId || sourceMeal?.id || null,
+    recipeId: detail?.recipeId || sourceMeal?.recipeId || null,
+    logEntryId: sourceMeal?.logEntryId || null,
     title: detail?.title || sourceMeal?.title || "Meal",
-    image: detail?.image || sourceMeal?.image || DEFAULT_IMAGE,
+    image: detail?.image || resolveMealImage(sourceMeal),
+    imageSource: detail?.imageSource || sourceMeal?.imageSource || "",
+    imageAttribution: detail?.imageAttribution || sourceMeal?.imageAttribution || "",
+    imageSourceUrl: detail?.imageSourceUrl || sourceMeal?.imageSourceUrl || "",
     time: detail?.time || sourceMeal?.time || "N/A",
     servings: detail?.servings || sourceMeal?.servings || "N/A",
     level: sourceMeal?.level || "Easy",
     mealType: normalizedMealType,
     tags: Array.isArray(detail?.tags) ? detail.tags : [],
+    source: sourceMeal?.source || "",
     description: detail?.description || "",
     nutrition: detail?.nutrition || {},
     ingredients: Array.isArray(detail?.ingredients) ? detail.ingredients : [],
@@ -259,23 +371,62 @@ const MealDetail = () => {
 
   const meal = mealFromState || savedMeal;
   const detail = useMemo(() => buildDetailFromMeal(meal), [meal]);
+  const [dynamicImage, setDynamicImage] = useState(null);
+  const detailImage = dynamicImage?.imageUrl || detail.image;
+  const detailImageSource = dynamicImage?.source || detail.imageSource;
+  const detailImageAttribution = dynamicImage?.attribution || detail.imageAttribution;
+  const detailImageSourceUrl = dynamicImage?.sourceUrl || detail.imageSourceUrl;
+  const enrichedDetail = {
+    ...detail,
+    image: detailImage,
+    imageSource: detailImageSource,
+    imageAttribution: detailImageAttribution,
+    imageSourceUrl: detailImageSourceUrl,
+  };
 
   const [selectedAddTo, setSelectedAddTo] = useState(detail.mealType || "breakfast");
   const [specificDate, setSpecificDate] = useState(todayIso);
   const [isSpecificDayPickerOpen, setIsSpecificDayPickerOpen] = useState(false);
 
+  useEffect(() => {
+    let isActive = true;
+    setDynamicImage(null);
+
+    if (!detail.title || detail.title === "Dish Detail" || !shouldFetchDynamicImage(meal, detail.image)) {
+      return () => {
+        isActive = false;
+      };
+    }
+
+    fetchDishImage(detail.title, {
+      cuisine: Array.isArray(detail.tags) ? detail.tags[0] : "",
+    })
+      .then((result) => {
+        if (isActive && result?.imageUrl) {
+          setDynamicImage(result);
+        }
+      })
+      .catch(() => {});
+
+    return () => {
+      isActive = false;
+    };
+  }, [detail.image, detail.tags, detail.title, meal]);
+
   const handleImageError = (event) => {
+    const fallbackByName = resolveDishImageByName(detail.title, hashText(detail.title));
     event.currentTarget.onerror = null;
-    event.currentTarget.src = DEFAULT_IMAGE;
+    event.currentTarget.src = fallbackByName || DEFAULT_IMAGE;
   };
 
   const handleAddToday = () => {
-    const payload = toSelectedMealPayload(detail, selectedAddTo, meal);
+    const payload = toSelectedMealPayload(enrichedDetail, selectedAddTo, meal);
     const nextSelectionByDate = readStoredSelections();
     const currentDateSelections = nextSelectionByDate[todayIso] || {};
+    const dedupedDateSelections = removeDuplicateMealSelections(currentDateSelections, payload);
 
     nextSelectionByDate[todayIso] = {
-      ...currentDateSelections,
+      ...dedupedDateSelections,
       [payload.id]: payload,
     };
 
@@ -299,12 +450,13 @@ const MealDetail = () => {
   const handleAddToSpecificDate = () => {
     if (!specificDate || specificDate < todayIso) return;
 
-    const payload = toSelectedMealPayload(detail, selectedAddTo, meal);
+    const payload = toSelectedMealPayload(enrichedDetail, selectedAddTo, meal);
     const nextSelectionByDate = readStoredSelections();
     const currentDateSelections = nextSelectionByDate[specificDate] || {};
+    const dedupedDateSelections = removeDuplicateMealSelections(currentDateSelections, payload);
 
     nextSelectionByDate[specificDate] = {
-      ...currentDateSelections,
+      ...dedupedDateSelections,
       [payload.id]: payload,
     };
 
@@ -325,7 +477,7 @@ const MealDetail = () => {
       id: detail.id,
       recipeId: detail.recipeId,
       title: detail.title,
-      image: detail.image,
+      image: detailImage,
       time: detail.time,
       servings: detail.servings,
       level: meal?.level || "Easy",
@@ -334,6 +486,9 @@ const MealDetail = () => {
       nutrition: detail.nutrition,
       ingredients: detail.ingredients,
       description: detail.description,
+      imageSource: detailImageSource,
+      imageAttribution: detailImageAttribution,
+      imageSourceUrl: detailImageSourceUrl,
     };
 
     try {
@@ -365,7 +520,7 @@ const MealDetail = () => {
         <div className="meal-detail-hero">
           <section className="meal-detail-left">
             <div className="meal-detail-image-card">
-              <img src={detail.image} alt={detail.title} loading="lazy" onError={handleImageError} />
+              <img src={detailImage} alt={detail.title} loading="lazy" onError={handleImageError} />
               <span className={`meal-detail-type-badge type-${String(detail.mealType || "").toLowerCase()}`}>
                 {formatMealTypeLabel(detail.mealType)}
               </span>
@@ -378,6 +533,19 @@ const MealDetail = () => {
                 <Star size={18} />
               </button>
             </div>
+            {detailImageSource ? (
+              <p className="meal-detail-image-credit">
+                Photo source:{" "}
+                {detailImageSourceUrl ? (
+                  <a href={detailImageSourceUrl} target="_blank" rel="noreferrer">
+                    {detailImageSource}
+                  </a>
+                ) : (
+                  detailImageSource
+                )}
+                {detailImageAttribution ? ` - ${detailImageAttribution}` : ""}
+              </p>
+            ) : null}
 
             <div className="meal-detail-tag-row">
               {detail.tags.map((tag) => (

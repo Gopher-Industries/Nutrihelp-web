@@ -133,6 +133,66 @@ html, body, #root, .App {
   transform: translateY(-1px);
 }
 
+.upload-section.has-preview {
+  align-items: stretch;
+  justify-content: stretch;
+  padding: 10px;
+  background: rgba(232, 241, 252, 0.75);
+}
+
+.scan-upload-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.scan-upload-preview-wrap {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.scan-upload-preview-img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 14px;
+  border: 1px solid rgba(14, 116, 144, 0.18);
+}
+
+.scan-upload-preview-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(14, 116, 144, 0.14);
+}
+
+.scan-upload-preview-kicker {
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.scan-upload-file-name {
+  color: var(--primary-color);
+  font-size: 0.92rem;
+  line-height: 1.3;
+  word-break: break-word;
+}
+
+.scan-upload-preview-change {
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-align: right;
+}
+
 .upload-section input[type="file"] { display: none; }
 .scan-products-container input{
   background-color: var(--input-background);
@@ -221,6 +281,25 @@ html, body, #root, .App {
   font-weight: 700;
 }
 
+.scan-inline-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.scan-inline-field > span {
+  color: var(--text-secondary);
+  font-size: 0.88rem;
+  font-weight: 800;
+}
+
+.scan-inline-field input,
+.scan-inline-field select {
+  width: 100%;
+  margin: 0 !important;
+}
+
 .scan-image-preview {
   padding: 0 1rem 1.25rem;
 }
@@ -246,6 +325,33 @@ html, body, #root, .App {
   align-items: center;
   gap: 16px;
   padding: 0 1rem;
+}
+
+.scan-status-title-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.scan-back-link-btn {
+  border: 1px solid var(--border-color);
+  background: var(--card-background);
+  color: var(--primary-color);
+  border-radius: 999px;
+  padding: 7px 11px;
+  font-size: 0.82rem;
+  font-weight: 800;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.scan-back-link-btn:hover {
+  background: var(--hover-background);
+}
+
+.scan-back-link-btn:focus-visible {
+  outline: 2px solid rgba(7, 95, 184, 0.35);
+  outline-offset: 2px;
 }
 
 .scan-pill {
@@ -453,6 +559,146 @@ html, body, #root, .App {
   gap: 16px;
 }
 
+.scan-meal-info-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  position: relative;
+}
+
+.scan-log-star-btn {
+  width: 42px;
+  height: 42px;
+  border: 1px solid var(--primary-color);
+  border-radius: 12px;
+  background: var(--card-background);
+  color: var(--primary-color);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.35rem;
+  line-height: 1;
+  font-weight: 900;
+  cursor: pointer;
+  transition: transform 120ms ease, box-shadow 160ms ease, background 160ms ease;
+}
+
+.scan-log-star-btn:hover {
+  transform: translateY(-1px);
+  background: var(--hover-background);
+}
+
+.scan-log-star-btn.active {
+  color: #f59e0b;
+  border-color: #f59e0b;
+  background: rgba(245, 158, 11, 0.12);
+}
+
+.scan-log-star-btn:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.scan-view-detail-btn {
+  border: 1px solid var(--primary-color);
+  background: var(--card-background);
+  color: var(--primary-color);
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-size: 0.86rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.scan-view-detail-btn:hover {
+  background: var(--hover-background);
+}
+
+.scan-view-detail-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.scan-bookmark-tag-dialog {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: min(260px, 82vw);
+  z-index: 35;
+}
+
+.scan-bookmark-tag-dialog-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(14, 116, 144, 0.12);
+  box-shadow: 0 14px 28px rgba(13, 45, 78, 0.16);
+}
+
+.scan-bookmark-tag-header h4 {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+}
+
+.scan-bookmark-tag-header p {
+  margin: 4px 0 0;
+  color: var(--text-secondary);
+  font-size: 0.92rem;
+}
+
+.scan-bookmark-tag-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.scan-bookmark-secondary-btn,
+.scan-bookmark-primary-btn {
+  border-radius: 10px;
+  padding: 8px 11px;
+  font-weight: 800;
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+
+.scan-bookmark-secondary-btn {
+  border: 1px solid var(--border-color);
+  background: #fff;
+  color: var(--text-secondary);
+}
+
+.scan-bookmark-secondary-btn:hover {
+  background: var(--hover-background);
+}
+
+.scan-bookmark-primary-btn {
+  border: 1px solid rgba(7, 95, 184, 0.4);
+  background: linear-gradient(135deg, #075fb8, #108a95);
+  color: #f8fbff;
+}
+
+.scan-bookmark-primary-btn:hover {
+  filter: brightness(1.04);
+}
+
+.scan-bookmark-secondary-btn:disabled,
+.scan-bookmark-primary-btn:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.scan-bookmark-tag-dialog .scan-inline-select {
+  width: 100%;
+  padding: 10px 11px;
+  border-radius: 10px;
+}
+
 .scan-meal-info-header h3 {
   margin: 4px 0 0;
   font-size: 1.3rem;
@@ -537,6 +783,36 @@ html, body, #root, .App {
   color: var(--text-secondary);
 }
 
+.scan-save-options-card {
+  margin: 0 1rem;
+  padding: 20px 22px;
+  border-radius: 22px;
+  background: rgba(14, 116, 144, 0.07);
+  border: 1px solid rgba(14, 116, 144, 0.16);
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(260px, 0.8fr);
+  gap: 18px;
+  align-items: center;
+}
+
+.scan-save-options-card h3 {
+  margin: 4px 0 8px;
+  color: var(--text-primary);
+  font-size: 1.2rem;
+}
+
+.scan-save-options-card p {
+  margin: 0;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.scan-save-options-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
 .scan-meal-log-list {
   display: flex;
   flex-direction: column;
@@ -601,12 +877,18 @@ html, body, #root, .App {
     padding: 0 1rem 1rem;
   }
   .scan-review-banner,
-  .scan-editable-grid {
+  .scan-editable-grid,
+  .scan-save-options-card,
+  .scan-save-options-grid {
     grid-template-columns: 1fr;
   }
   .scan-review-banner {
     flex-direction: column;
     align-items: stretch;
+  }
+  .scan-meal-info-actions {
+    width: 100%;
+    justify-content: flex-start;
   }
   .scan-inline-select,
   .scan-actions-row .upload-button,
@@ -628,4 +910,1041 @@ html, body, #root, .App {
 
 .scan-products-container {
   padding-top: 28px;
+}
+
+/* Refined two-step scan flow */
+.scan-start-page,
+.scan-review-page {
+  --scan-ink: #11243d;
+  --scan-muted: #62748e;
+  --scan-line: rgba(28, 74, 108, 0.14);
+  --scan-blue: #075fb8;
+  --scan-teal: #0e7c86;
+  --scan-surface: rgba(255, 255, 255, 0.92);
+  background:
+    radial-gradient(circle at top left, rgba(14, 124, 134, 0.16), transparent 34rem),
+    linear-gradient(135deg, #f7fbff 0%, #eef5fb 48%, #f9faf7 100%);
+  gap: 22px;
+}
+
+.scan-start-page > * {
+  max-width: 1040px;
+}
+
+.scan-review-page > * {
+  max-width: 1180px;
+}
+
+.scan-flow-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 24px;
+  align-items: end;
+  padding: 34px 38px;
+  border: 1px solid var(--scan-line);
+  border-radius: 32px;
+  background:
+    linear-gradient(135deg, rgba(255,255,255,0.96), rgba(232,244,248,0.88)),
+    radial-gradient(circle at 88% 12%, rgba(7,95,184,0.12), transparent 20rem);
+  box-shadow: 0 24px 70px rgba(24, 45, 74, 0.12);
+}
+
+.scan-flow-eyebrow,
+.scan-upload-copy .scan-review-kicker,
+.scan-empty-review .scan-review-kicker {
+  color: var(--scan-teal);
+  letter-spacing: 0.12em;
+}
+
+.scan-flow-hero h1 {
+  margin: 8px 0 10px;
+  max-width: 720px;
+  color: var(--scan-ink);
+  font-size: clamp(2rem, 4vw, 4.4rem);
+  line-height: 0.98;
+  font-weight: 950;
+  letter-spacing: -0.055em;
+}
+
+.scan-flow-hero p {
+  margin: 0;
+  max-width: 680px;
+  color: var(--scan-muted);
+  font-size: 1.08rem;
+  line-height: 1.65;
+}
+
+.scan-flow-steps {
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.82);
+  border: 1px solid var(--scan-line);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.9);
+}
+
+.scan-flow-steps span {
+  padding: 10px 14px;
+  border-radius: 999px;
+  color: var(--scan-muted);
+  font-size: 0.86rem;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.scan-flow-steps span.active {
+  color: #fff;
+  background: linear-gradient(135deg, var(--scan-teal), var(--scan-blue));
+  box-shadow: 0 10px 22px rgba(7, 95, 184, 0.22);
+}
+
+.scan-products-container {
+  background: var(--scan-surface);
+  border-color: var(--scan-line);
+  box-shadow: 0 18px 55px rgba(24, 45, 74, 0.10);
+  backdrop-filter: blur(14px);
+}
+
+.scan-upload-panel {
+  display: grid;
+  grid-template-columns: minmax(240px, 0.82fr) minmax(360px, 1.18fr);
+  grid-auto-rows: min-content;
+  gap: 22px 28px;
+  padding: 34px;
+  border-radius: 30px;
+  align-items: start;
+}
+
+.scan-upload-copy {
+  grid-row: auto;
+  align-self: start;
+  padding: 12px 8px;
+}
+
+.scan-upload-copy h2,
+.scan-empty-review h2 {
+  margin: 6px 0 12px;
+  color: var(--scan-ink);
+  font-size: clamp(1.8rem, 3vw, 3rem) !important;
+  line-height: 1.05;
+  letter-spacing: -0.045em;
+  padding: 0 !important;
+}
+
+.scan-upload-panel .scan-products-form,
+.scan-upload-panel .scan-actions-row,
+.scan-upload-panel .scan-error,
+.scan-upload-panel .scan-success {
+  grid-column: 2;
+  padding: 0;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.scan-upload-panel .upload-section {
+  min-height: 260px;
+  border: 1.5px dashed rgba(7, 95, 184, 0.34);
+  background:
+    linear-gradient(145deg, rgba(255,255,255,0.88), rgba(229,241,252,0.9));
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.6);
+}
+
+.scan-upload-panel .upload-section.has-preview {
+  min-height: auto;
+  padding: 12px;
+}
+
+.scan-upload-panel .upload-section.has-preview .scan-upload-preview-img {
+  height: clamp(170px, 22vw, 250px);
+}
+
+.scan-upload-panel .upload-section:hover {
+  border-color: var(--scan-blue);
+  box-shadow: 0 18px 44px rgba(7,95,184,0.13);
+}
+
+.scan-upload-panel .upload-section p:first-child {
+  gap: 16px;
+}
+
+.scan-upload-panel .upload-section p:first-child::before {
+  content: "+";
+  display: grid;
+  place-items: center;
+  width: 58px;
+  height: 58px;
+  margin: 0;
+  flex-shrink: 0;
+  border-radius: 18px;
+  color: #fff;
+  background: linear-gradient(135deg, var(--scan-teal), var(--scan-blue));
+  font-size: 2rem;
+  line-height: 1;
+  box-shadow: 0 14px 28px rgba(7,95,184,0.24);
+}
+
+.scan-upload-panel .upload-button,
+.scan-review-page .scan-button-selector {
+  border-radius: 18px;
+  background: linear-gradient(135deg, #075fb8, #108a95);
+  color: #f8fbff;
+  border-color: rgba(7, 95, 184, 0.42);
+  text-shadow: 0 1px 1px rgba(9, 30, 66, 0.2);
+  box-shadow: 0 16px 34px rgba(7, 95, 184, 0.24);
+}
+
+.scan-review-page .scan-button-selector:disabled {
+  color: rgba(248, 251, 255, 0.98);
+  background: linear-gradient(135deg, #6f91c4, #79a8b7);
+  border-color: rgba(92, 127, 173, 0.55);
+  opacity: 1;
+  filter: saturate(0.9);
+}
+
+.scan-review-page .scan-result-card,
+.scan-review-page .scan-summary-card {
+  border-radius: 30px;
+  padding: 30px;
+}
+
+.scan-review-page .scan-result-card {
+  gap: 20px;
+}
+
+.scan-review-page .scan-status-row,
+.scan-review-page .scan-suggestions-header,
+.scan-review-page .scan-topk-list,
+.scan-review-page .scan-result-grid,
+.scan-review-page .scan-meal-log-list,
+.scan-review-page .scan-actions-row {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.scan-review-page .scan-note,
+.scan-review-page .scan-review-banner,
+.scan-review-page .scan-editable-grid,
+.scan-review-page .scan-meal-info-card,
+.scan-review-page .scan-save-options-card,
+.scan-review-page .scan-quality-list,
+.scan-review-page .scan-error,
+.scan-review-page .scan-success {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.scan-review-page .scan-review-banner,
+.scan-review-page .scan-meal-info-card,
+.scan-review-page .scan-save-options-card,
+.scan-review-page .scan-edit-card,
+.scan-review-page .scan-stat,
+.scan-review-page .scan-meta-chip,
+.scan-review-page .scan-meal-info-stat {
+  border-color: var(--scan-line);
+  background: rgba(255,255,255,0.78);
+}
+
+.scan-review-page .scan-save-options-card {
+  background:
+    linear-gradient(135deg, rgba(232, 245, 241, 0.95), rgba(232, 241, 252, 0.88));
+}
+
+.scan-empty-review {
+  padding: 42px;
+  text-align: left;
+}
+
+@media (max-width: 900px) {
+  .scan-flow-hero,
+  .scan-upload-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .scan-flow-hero {
+    padding: 28px 22px;
+    border-radius: 24px;
+  }
+
+  .scan-flow-steps {
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  .scan-upload-copy,
+  .scan-upload-panel .scan-products-form,
+  .scan-upload-panel .scan-actions-row,
+  .scan-upload-panel .scan-error,
+  .scan-upload-panel .scan-success {
+    grid-column: 1;
+  }
+
+  .scan-upload-panel .upload-section {
+    min-height: 240px;
+  }
+
+  .scan-upload-panel .upload-section.has-preview .scan-upload-preview-img {
+    height: 190px;
+  }
+
+  .scan-review-page .scan-result-card,
+  .scan-review-page .scan-summary-card,
+  .scan-upload-panel {
+    padding: 24px 18px;
+  }
+}
+
+/* Unified scan wrapper used by /Scan */
+.scan-method-shell {
+  --scan-ink: #11243d;
+  --scan-muted: #62748e;
+  --scan-line: rgba(28, 74, 108, 0.14);
+  --scan-blue: #075fb8;
+  --scan-teal: #0e7c86;
+  --scan-surface: rgba(255, 255, 255, 0.92);
+  gap: 18px;
+  padding-top: 28px;
+  background:
+    radial-gradient(circle at top left, rgba(14, 124, 134, 0.16), transparent 34rem),
+    linear-gradient(135deg, #f7fbff 0%, #eef5fb 48%, #f9faf7 100%);
+}
+
+.scan-method-shell > * {
+  max-width: 1040px;
+}
+
+.scan-method-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(360px, 0.85fr);
+  gap: 22px;
+  align-items: center;
+  padding: 24px 28px;
+  border: 1px solid var(--scan-line);
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 18px 55px rgba(24, 45, 74, 0.10);
+  backdrop-filter: blur(14px);
+}
+
+.scan-method-copy h1 {
+  margin: 7px 0 8px;
+  color: var(--scan-ink);
+  font-size: clamp(1.65rem, 2.7vw, 2.6rem);
+  line-height: 1.04;
+  letter-spacing: -0.045em;
+  font-weight: 950;
+}
+
+.scan-method-copy p {
+  margin: 0;
+  max-width: 560px;
+  color: var(--scan-muted);
+  line-height: 1.55;
+}
+
+.scan-method-tabs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  padding: 8px;
+  border-radius: 24px;
+  background: #edf5fb;
+  border: 1px solid rgba(7, 95, 184, 0.10);
+}
+
+.scan-method-option {
+  min-height: 78px;
+  border: 1px solid transparent;
+  border-radius: 18px;
+  background: transparent;
+  color: var(--scan-ink);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 5px;
+  padding: 14px 16px;
+  text-align: left;
+  transition: transform .12s ease, box-shadow .18s ease, background .18s ease;
+}
+
+.scan-method-option span {
+  font-size: 0.98rem;
+  font-weight: 950;
+}
+
+.scan-method-option small {
+  color: var(--scan-muted);
+  font-weight: 800;
+}
+
+.scan-method-option.active {
+  color: #fff;
+  background: linear-gradient(135deg, var(--scan-blue), var(--scan-teal));
+  box-shadow: 0 14px 28px rgba(7, 95, 184, 0.22);
+}
+
+.scan-method-option.active small {
+  color: rgba(255,255,255,0.82);
+}
+
+.scan-method-option:hover {
+  transform: translateY(-1px);
+}
+
+.scan-method-shell > .scan-products-page {
+  margin-top: 0;
+}
+
+.scan-method-shell .scan-flow-hero {
+  margin-top: 0;
+}
+
+.scan-method-shell .scan-products-container {
+  background: var(--scan-surface);
+  border-color: var(--scan-line);
+}
+
+.scan-products-page.scan-embedded {
+  background: transparent;
+  padding: 0;
+  min-height: auto;
+  gap: 16px;
+}
+
+.scan-method-guide {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 22px;
+  border-radius: 22px;
+  border: 1px solid var(--scan-line);
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow: 0 12px 34px rgba(24, 45, 74, 0.08);
+  color: var(--scan-muted);
+}
+
+.scan-method-guide strong {
+  color: var(--scan-ink);
+  white-space: nowrap;
+}
+
+.scan-method-guide span {
+  line-height: 1.5;
+}
+
+.scan-method-scanlog {
+  position: relative;
+  overflow: hidden;
+  border-radius: 28px;
+  padding: 28px 30px 24px;
+  background: linear-gradient(150deg, rgba(255, 255, 255, 0.96), rgba(236, 246, 255, 0.92));
+  box-shadow: 0 18px 46px rgba(17, 45, 76, 0.10);
+}
+
+.scan-method-scanlog::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, rgba(14, 124, 134, 0.75), rgba(7, 95, 184, 0.85));
+}
+
+.scan-method-scanlog.is-collapsed {
+  padding-bottom: 16px;
+}
+
+.scan-method-scanlog h2 {
+  margin: 0 !important;
+  padding: 0 !important;
+  font-size: clamp(1.65rem, 2.8vw, 2.2rem) !important;
+  line-height: 1.05;
+  color: var(--scan-ink);
+}
+
+.scan-log-header-row {
+  padding: 0;
+  align-items: flex-start;
+}
+
+.scan-log-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-width: 660px;
+}
+
+.scan-log-kicker {
+  color: var(--scan-teal);
+  font-size: 0.76rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.scan-log-title-group p {
+  margin: 0;
+  color: var(--scan-muted);
+  font-size: 0.96rem;
+  line-height: 1.45;
+}
+
+.scan-log-header-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.scan-log-count-pill {
+  background: rgba(14, 116, 144, 0.16);
+  color: #0e5e7b;
+  border: 1px solid rgba(14, 116, 144, 0.16);
+}
+
+.scan-log-collapse-btn {
+  min-height: 36px;
+  border: 1px solid rgba(16, 59, 94, 0.18);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--scan-ink);
+  padding: 8px 12px;
+  font-size: 0.82rem;
+  font-weight: 800;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: 0 8px 16px rgba(9, 30, 66, 0.08);
+}
+
+.scan-log-collapse-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 7px;
+  background: rgba(7, 95, 184, 0.08);
+  color: #0d4578;
+  font-size: 0.7rem;
+}
+
+.scan-log-collapse-btn:hover {
+  background: #ffffff;
+  transform: translateY(-1px);
+}
+
+.scan-log-collapse-btn:focus-visible {
+  outline: 2px solid rgba(7, 95, 184, 0.35);
+  outline-offset: 2px;
+}
+
+.scan-log-content-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 16px;
+}
+
+.scan-log-collapsed-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.scan-log-collapsed-summary span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 7px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(16, 59, 94, 0.14);
+  color: var(--scan-muted);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.scan-log-collapsed-summary strong {
+  color: var(--scan-ink);
+  font-weight: 900;
+}
+
+.scan-method-scanlog .scan-result-grid {
+  padding: 0;
+}
+
+.scan-method-scanlog .scan-stat {
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid rgba(16, 59, 94, 0.12);
+}
+
+.scan-method-scanlog .scan-stat span {
+  font-size: 0.8rem;
+  margin-bottom: 6px;
+}
+
+.scan-method-scanlog .scan-stat strong {
+  font-size: 1.02rem;
+}
+
+.scan-method-scanlog .scan-muted {
+  margin: 2px 0 0;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.scan-method-scanlog .scan-meal-log-list {
+  padding: 0;
+  gap: 10px;
+}
+
+.scan-method-scanlog .scan-meal-log-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px 14px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(16, 59, 94, 0.12);
+  background: rgba(248, 252, 255, 0.93);
+}
+
+.scan-log-item-main {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.scan-log-item-title {
+  min-width: 0;
+  color: var(--scan-ink);
+  font-size: 1.04rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.scan-method-scanlog .scan-meal-log-item p {
+  margin: 0;
+  color: var(--scan-ink);
+}
+
+.scan-log-item-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  color: var(--scan-muted);
+  font-size: 0.93rem;
+}
+
+.scan-log-item-meta p {
+  margin: 0;
+}
+
+.scan-log-cuisine-chip {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 0;
+  padding: 4px 9px;
+  border-radius: 999px;
+  border: 1px solid rgba(16, 59, 94, 0.14);
+  background: rgba(240, 248, 255, 0.95);
+  color: #0d4f95;
+  font-size: 0.76rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.scan-log-item-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-self: center;
+}
+
+.scan-log-tag-picker {
+  position: relative;
+}
+
+.scan-log-tag-trigger {
+  min-width: 104px;
+  min-height: 40px;
+  border: 1px solid rgba(16, 59, 94, 0.2);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.98);
+  color: var(--scan-ink);
+  padding: 10px 12px;
+  font-size: 0.9rem;
+  font-weight: 800;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.scan-log-tag-trigger:hover {
+  background: rgba(246, 251, 255, 1);
+  border-color: rgba(7, 95, 184, 0.35);
+}
+
+.scan-log-tag-trigger.active {
+  border-color: rgba(7, 95, 184, 0.45);
+  box-shadow: 0 0 0 2px rgba(7, 95, 184, 0.12);
+}
+
+.scan-log-tag-menu {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 8px);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 128px;
+  padding: 6px;
+  border-radius: 12px;
+  border: 1px solid rgba(16, 59, 94, 0.14);
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 16px 28px rgba(13, 45, 78, 0.18);
+  z-index: 20;
+}
+
+.scan-log-tag-option {
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--scan-ink);
+  font-size: 0.86rem;
+  font-weight: 700;
+  line-height: 1;
+  text-align: left;
+  padding: 9px 10px;
+  cursor: pointer;
+}
+
+.scan-log-tag-option:hover {
+  background: rgba(7, 95, 184, 0.08);
+}
+
+.scan-log-tag-option.active {
+  background: rgba(7, 95, 184, 0.13);
+  color: #0d4f95;
+}
+
+.scan-log-action-btn {
+  border: none;
+  border-radius: 12px;
+  padding: 10px 14px;
+  min-width: 92px;
+  min-height: 40px;
+  font-size: 0.95rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+}
+
+.scan-log-delete-btn {
+  min-width: 92px;
+  min-height: 40px;
+  font-size: 0.95rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.01em;
+}
+
+.scan-log-detail-btn {
+  background: rgba(22, 163, 74, 0.12);
+  color: #15803d;
+}
+
+.scan-log-detail-btn:hover {
+  background: rgba(22, 163, 74, 0.2);
+}
+
+.scan-log-recipe-btn {
+  background: rgba(147, 51, 234, 0.12);
+  color: #7e22ce;
+}
+
+.scan-log-recipe-btn:hover {
+  background: rgba(147, 51, 234, 0.2);
+}
+
+.scan-log-delete-btn {
+  margin-left: 2px;
+}
+
+@media (max-width: 900px) {
+  .scan-method-shell {
+    padding-top: 14px;
+  }
+
+  .scan-method-card {
+    grid-template-columns: 1fr;
+    padding: 22px;
+    border-radius: 24px;
+  }
+
+  .scan-method-tabs {
+    grid-template-columns: 1fr;
+  }
+
+  .scan-method-guide {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .scan-method-scanlog {
+    padding: 22px 18px 16px;
+  }
+
+  .scan-log-header-row {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .scan-log-title-group {
+    max-width: 100%;
+  }
+
+  .scan-log-collapse-label {
+    display: none;
+  }
+
+  .scan-log-header-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .scan-log-item-actions {
+    width: 100%;
+    justify-content: flex-start;
+    align-self: auto;
+  }
+  
+  .scan-method-scanlog .scan-meal-log-item {
+    grid-template-columns: 1fr;
+  }
+
+  .scan-log-tag-menu {
+    left: 0;
+    right: auto;
+  }
+}
+
+/* Barcode mode aligned with scan visual system */
+.scan-barcode-flow {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.scan-barcode-flow .scan-products-container {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+}
+
+.scan-barcode-panel,
+.scan-barcode-results-panel {
+  padding: 34px;
+  border-radius: 30px;
+  border-color: var(--scan-line);
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: 0 18px 55px rgba(24, 45, 74, 0.10);
+}
+
+.scan-barcode-copy {
+  margin-bottom: 16px;
+}
+
+.scan-barcode-copy .scan-review-kicker {
+  font-size: 0.82rem;
+  letter-spacing: 0.12em;
+}
+
+.scan-barcode-title {
+  margin: 6px 0 8px;
+  padding: 0 !important;
+  color: var(--scan-ink);
+  font-size: clamp(1.7rem, 3vw, 2.7rem) !important;
+  line-height: 1.06;
+  letter-spacing: -0.045em;
+}
+
+.scan-barcode-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.scan-barcode-label {
+  padding: 0 !important;
+  color: var(--scan-ink);
+  font-size: 0.95rem;
+  font-weight: 900;
+  letter-spacing: 0.01em;
+}
+
+.scan-barcode-input {
+  margin: 0 !important;
+  padding: 16px 18px !important;
+  border-radius: 14px !important;
+  border: 1px solid rgba(24, 58, 92, 0.18) !important;
+  background: rgba(255, 255, 255, 0.96) !important;
+  font-size: 1.03rem;
+  color: var(--scan-ink) !important;
+}
+
+.scan-barcode-submit {
+  margin-top: 14px;
+  width: 100%;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #075fb8, #108a95);
+  box-shadow: 0 16px 34px rgba(7, 95, 184, 0.22);
+}
+
+.scan-barcode-section-title {
+  margin: 0 0 12px;
+  padding: 0 !important;
+  color: var(--scan-ink);
+  text-align: left;
+  font-size: 1.45rem !important;
+  letter-spacing: -0.02em;
+}
+
+.scan-barcode-center-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.scan-barcode-user-allergens {
+  margin-bottom: 16px;
+}
+
+.scan-barcode-info-panel {
+  border: 1px solid rgba(24, 58, 92, 0.15);
+  border-radius: 16px;
+  background: rgba(240, 248, 255, 0.66);
+  padding: 14px 16px;
+}
+
+.scan-barcode-info-panel-warning {
+  background: rgba(255, 244, 229, 0.62);
+  border-color: rgba(217, 119, 6, 0.32);
+}
+
+.scan-barcode-info-title {
+  margin: 0 0 8px;
+  font-size: 0.95rem;
+  font-weight: 900;
+  color: #78350f;
+}
+
+.scan-barcode-info-text {
+  margin: 0;
+  color: var(--scan-ink);
+  line-height: 1.5;
+}
+
+.scan-barcode-detection-result {
+  width: 100%;
+  margin: 6px 0 16px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.scan-barcode-detection-result.safe {
+  color: #065f46;
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(5, 150, 105, 0.24);
+}
+
+.scan-barcode-detection-result.warning {
+  color: #991b1b;
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(220, 38, 38, 0.24);
+}
+
+.scan-barcode-detection-result p {
+  margin: 0;
+}
+
+.scan-barcode-detection-list {
+  margin-top: 8px !important;
+  font-weight: 900;
+}
+
+.scan-barcode-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 1px solid rgba(24, 58, 92, 0.15);
+  border-radius: 18px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.scan-barcode-table tr:not(:last-child) th,
+.scan-barcode-table tr:not(:last-child) td {
+  border-bottom: 1px solid rgba(24, 58, 92, 0.10);
+}
+
+.scan-barcode-table th,
+.scan-barcode-table td {
+  padding: 14px 16px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.scan-barcode-table th {
+  width: 180px;
+  color: var(--scan-ink);
+  font-size: 0.92rem;
+  font-weight: 900;
+  background: rgba(236, 245, 252, 0.7);
+}
+
+.scan-barcode-table td {
+  color: var(--scan-ink);
+  font-size: 0.95rem;
+}
+
+.scan-barcode-ingredient-list {
+  margin: 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+@media (max-width: 900px) {
+  .scan-barcode-panel,
+  .scan-barcode-results-panel {
+    padding: 24px 18px;
+    border-radius: 24px;
+  }
+
+  .scan-barcode-table th,
+  .scan-barcode-table td {
+    display: block;
+    width: 100%;
+  }
 }

@@ -1,17 +1,44 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import "./ScanProducts.css";
+import { useLocation, useNavigate } from "react-router-dom";
 import { scanSingleImage } from "../../../services/imageScanApi";
 import {
-  deleteMealLog,
-  fetchDailyMealSummary,
   fetchNutritionPreview,
   saveScannedMeal,
 } from "../../../services/mealLogApi";
+import { fetchDishImage } from "../../../services/dishImageApi";
+import {
+  SCAN_LOG_UPDATED_EVENT,
+  getScanLogKey,
+  readScanLogEntries,
+  removeScanLogEntry,
+  upsertScanLogEntry,
+} from "../../../utils/scanLogStorage";
 
 const MEAL_TYPES = ["Breakfast", "Lunch", "Dinner", "Snacks"];
+const BOOKMARK_TAG_OPTIONS = [
+  { value: "breakfast", label: "Breakfast" },
+  { value: "lunch", label: "Lunch" },
+  { value: "dinner", label: "Dinner" },
+  { value: "others", label: "Other" },
+];
+const DEFAULT_MEAL_IMAGE = "/images/meal-mock/placeholder.svg";
+const MENU_SELECTIONS_STORAGE_KEY = "nutrihelp_add_meal_selections_by_date_v1";
+const SCAN_REVIEW_STORAGE_KEY = "nutrihelp_scan_review_flow_v1";
+
+function formatLocalDate(date = new Date()) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
 
 function todayString() {
-  return new Date().toISOString().slice(0, 10);
+  return formatLocalDate();
+}
+
+function isBeforeToday(dateValue) {
+  return Boolean(dateValue && dateValue < todayString());
 }
 
 function humanizeLabel(label) {
@@ -22,6 +49,20 @@ function humanizeLabel(label) {
 
 function percent(score) {
   return `${Math.round(Number(score || 0) * 100)}%`;
+}
+
+function isBlobUrl(value) {
+  return /^blob:/i.test(String(value || ""));
+}
+
+function resolveDetailImage({ explicitImage, fallbackImage }) {
+  const safeExplicitImage = String(explicitImage || "").trim();
+  if (safeExplicitImage && !isBlobUrl(safeExplicitImage)) return safeExplicitImage;
+
+  const safeFallbackImage = String(fallbackImage || "").trim();
+  if (safeFallbackImage && !isBlobUrl(safeFallbackImage)) return safeFallbackImage;
+
+  return DEFAULT_MEAL_IMAGE;
 }
 
 function normalizeNutritionPreview(label, nutrition) {
@@ -49,25 +90,315 @@ function hasBlockingPhotoIssue(issues = []) {
   );
 }
 
-function ScanProducts() {
+function normalizeMealTypeForDetail(value) {
+  const normalized = String(value || "").trim().toLowerCase();
+  if (normalized === "breakfast" || normalized === "lunch" || normalized === "dinner") {
+    return normalized;
+  }
+  return "others";
+}
+
+function formatBookmarkTagLabel(value) {
+  const normalized = String(value || "").trim().toLowerCase();
+  if (normalized === "others") return "Other";
+  return normalized ? `${normalized.charAt(0).toUpperCase()}${normalized.slice(1)}` : "Any meal";
+}
+
+function toNonNegativeInteger(value, fallback = null) {
+  if (value === null || value === undefined) return fallback;
+  if (typeof value === "string" && value.trim() === "") return fallback;
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed)) return fallback;
+  return Math.max(0, Math.round(parsed));
+}
+
+function normalizeConfidence(value) {
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed)) return 0;
+  const decimalValue = parsed > 1 ? parsed / 100 : parsed;
+  return Math.max(0, Math.min(1, decimalValue));
+}
+
+function getDefaultScanLabel(scanResult) {
+  if (!scanResult) return "";
+  return scanResult.is_unclear ? "" : scanResult.label || scanResult.topk?.[0]?.label || "";
+}
+
+function readScanReviewPayload(locationState) {
+  if (locationState?.scanFlow?.scanResult) return locationState.scanFlow;
+  if (typeof window === "undefined") return null;
+
+  try {
+    const raw = sessionStorage.getItem(SCAN_REVIEW_STORAGE_KEY);
+    const parsed = raw ? JSON.parse(raw) : null;
+    return parsed?.scanResult ? parsed : null;
+  } catch {
+    return null;
+  }
+}
+
+function writeScanReviewPayload(payload) {
+  if (typeof window === "undefined") return;
+  try {
+    sessionStorage.setItem(SCAN_REVIEW_STORAGE_KEY, JSON.stringify(payload));
+  } catch {
+    // Route state still carries the current scan result if browser storage is full.
+  }
+}
+
+function createImagePreviewDataUrl(file, { maxWidth = 1400, quality = 0.82 } = {}) {
+  return new Promise((resolve) => {
+    if (!file) {
+      resolve("");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onerror = () => resolve("");
+    reader.onload = () => {
+      const image = new Image();
+      image.onerror = () => resolve(String(reader.result || ""));
+      image.onload = () => {
+        const scale = Math.min(1, maxWidth / Math.max(image.width, image.height));
+        const width = Math.max(1, Math.round(image.width * scale));
+        const height = Math.max(1, Math.round(image.height * scale));
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        const context = canvas.getContext("2d");
+
+        if (!context) {
+          resolve(String(reader.result || ""));
+          return;
+        }
+
+        context.drawImage(image, 0, 0, width, height);
+        resolve(canvas.toDataURL("image/jpeg", quality));
+      };
+      image.src = String(reader.result || "");
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function readMenuSelectionsByDate() {
+  if (typeof window === "undefined") return {};
+  try {
+    const raw = localStorage.getItem(MENU_SELECTIONS_STORAGE_KEY);
+    const parsed = raw ? JSON.parse(raw) : {};
+    return parsed && typeof parsed === "object" && !Array.isArray(parsed) ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
+function writeMenuSelectionsByDate(selectionsByDate) {
+  if (typeof window === "undefined") return;
+  localStorage.setItem(MENU_SELECTIONS_STORAGE_KEY, JSON.stringify(selectionsByDate));
+  window.dispatchEvent(new Event("storage"));
+}
+
+function getScanEntryId(entry) {
+  return entry?.id ?? entry?._id ?? entry?.entry_id ?? null;
+}
+
+function buildMenuMealSlotKey(meal, fallback = "") {
+  const recipeIdKey = nutritionKey(meal?.recipeId);
+  const titleKey = nutritionKey(meal?.title || meal?.name);
+  const logEntryKey = nutritionKey(meal?.logEntryId);
+  const idKey = nutritionKey(meal?.id);
+  const fallbackKey = nutritionKey(fallback);
+  const selectedIdentityKey = titleKey
+    ? `title:${titleKey}`
+    : recipeIdKey && recipeIdKey !== "null"
+    ? `recipe:${recipeIdKey}`
+    : logEntryKey
+    ? `scan-log:${logEntryKey}`
+    : idKey
+    ? `id:${idKey}`
+    : fallbackKey
+    ? `legacy:${fallbackKey}`
+    : "";
+
+  if (!selectedIdentityKey) return "";
+  return `slot:${selectedIdentityKey}|${normalizeMealTypeForDetail(meal?.mealType)}`;
+}
+
+function removeDuplicateMealSelections(selectionMap, incomingMeal) {
+  if (!selectionMap || typeof selectionMap !== "object") return {};
+
+  const incomingTitleKey = nutritionKey(incomingMeal?.title || incomingMeal?.name);
+  const incomingMealType = normalizeMealTypeForDetail(incomingMeal?.mealType);
+  const incomingLogEntryKey = nutritionKey(incomingMeal?.logEntryId);
+  const incomingIdKey = nutritionKey(incomingMeal?.id);
+
+  return Object.fromEntries(
+    Object.entries(selectionMap).filter(([entryKey, existingMeal]) => {
+      if (!existingMeal || typeof existingMeal !== "object") return true;
+
+      const existingTitleKey = nutritionKey(existingMeal?.title || existingMeal?.name);
+      const existingMealType = normalizeMealTypeForDetail(existingMeal?.mealType);
+      const existingLogEntryKey = nutritionKey(existingMeal?.logEntryId);
+      const existingIdKey = nutritionKey(existingMeal?.id || entryKey);
+      const sameMealType = existingMealType === incomingMealType;
+      const sameTitle = incomingTitleKey && existingTitleKey === incomingTitleKey;
+      const sameLogEntry = incomingLogEntryKey && existingLogEntryKey === incomingLogEntryKey;
+      const sameId = incomingIdKey && existingIdKey === incomingIdKey;
+
+      return !(sameMealType && (sameTitle || sameLogEntry || sameId));
+    })
+  );
+}
+
+function syncScanMealToMenuStorage(date, meal) {
+  if (!date || !meal) return false;
+
+  try {
+    const currentSelections = readMenuSelectionsByDate();
+    const currentDateMap =
+      currentSelections[date] && typeof currentSelections[date] === "object"
+        ? currentSelections[date]
+        : {};
+    const normalizedMeal = {
+      ...meal,
+      mealType: normalizeMealTypeForDetail(meal.mealType),
+    };
+    const slotKey = buildMenuMealSlotKey(normalizedMeal, `${date}-${normalizedMeal.title}`);
+    if (!slotKey) return false;
+    const dedupedDateMap = removeDuplicateMealSelections(currentDateMap, normalizedMeal);
+
+    writeMenuSelectionsByDate({
+      ...currentSelections,
+      [date]: {
+        ...dedupedDateMap,
+        [slotKey]: normalizedMeal,
+      },
+    });
+
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function buildMenuMealFromScan({
+  entry,
+  activeLabel,
+  selectedMealType,
+  nutritionPreview,
+  scanResult,
+  parsedCalories,
+  requiresConfirmation,
+  selectedLogDate,
+}) {
+  const scanNutrition = scanResult?.nutrition || {};
+  const nutritionSource = nutritionPreview || {};
+  const logEntryId = getScanEntryId(entry);
+  const dishTitle =
+    nutritionSource?.display_name ||
+    scanNutrition?.display_name ||
+    humanizeLabel(entry?.label || activeLabel);
+  const normalizedMealType = normalizeMealTypeForDetail(entry?.meal_type || selectedMealType);
+  const estimatedCalories = toNonNegativeInteger(
+    parsedCalories ??
+      entry?.estimated_calories ??
+      nutritionSource?.estimated_calories ??
+      nutritionSource?.calories ??
+      scanNutrition?.estimated_calories ??
+      scanNutrition?.calories,
+    null
+  );
+
+  return {
+    id: logEntryId ? `scan-${logEntryId}` : `scan-${nutritionKey(dishTitle)}-${Date.now()}`,
+    recipeId: null,
+    logEntryId: logEntryId || null,
+    title: dishTitle,
+    name: dishTitle,
+    image: resolveDetailImage({
+      explicitImage: nutritionSource?.image || scanNutrition?.image || scanResult?.image,
+    }),
+    imageSource: "scan",
+    imageAttribution: "",
+    imageSourceUrl: "",
+    mealType: normalizedMealType,
+    description:
+      nutritionSource?.about ||
+      scanNutrition?.about ||
+      `${dishTitle} was identified from your uploaded food photo and saved from the scan flow.`,
+    time: "AI Scan",
+    servings:
+      entry?.serving_description ||
+      nutritionSource?.serving_description ||
+      scanNutrition?.serving_description ||
+      "1 Serving",
+    level: requiresConfirmation ? "Needs Review" : "Ready",
+    tags: [
+      nutritionSource?.cuisine || scanNutrition?.cuisine || null,
+      requiresConfirmation ? "Needs Review" : "AI Scan",
+      estimatedCalories == null ? "No Estimate" : "Calorie Estimate",
+    ].filter(Boolean),
+    source: "scan_result",
+    date: entry?.date || selectedLogDate,
+    nutrition: {
+      calories: estimatedCalories,
+      carbs: toNonNegativeInteger(
+        nutritionSource?.carbs ?? nutritionSource?.carbohydrates ?? scanNutrition?.carbs ?? scanNutrition?.carbohydrates,
+        null
+      ),
+      protein: toNonNegativeInteger(nutritionSource?.protein ?? scanNutrition?.protein, null),
+      fiber: toNonNegativeInteger(nutritionSource?.fiber ?? scanNutrition?.fiber, null),
+      fat: toNonNegativeInteger(nutritionSource?.fat ?? scanNutrition?.fat, null),
+      sodium: toNonNegativeInteger(nutritionSource?.sodium ?? scanNutrition?.sodium, null),
+    },
+  };
+}
+
+function ScanProducts({ mode = "scan", embedded = false }) {
+  const navigate = useNavigate();
+  const location = useLocation();
   const fileInputRef = useRef(null);
   const activeLabelRef = useRef("");
+  const isReviewMode = mode === "review";
+  const reviewPayload = useMemo(
+    () => (isReviewMode ? readScanReviewPayload(location.state) : null),
+    [isReviewMode, location.state]
+  );
+  const initialScanResult = reviewPayload?.scanResult || null;
+  const initialLabel = getDefaultScanLabel(initialScanResult);
+  const initialNutritionPreview = initialLabel
+    ? normalizeNutritionPreview(initialLabel, initialScanResult?.nutrition)
+    : null;
   const [uploadedImage, setUploadedImage] = useState(null);
-  const [previewUrl, setPreviewUrl] = useState("");
-  const [scanResult, setScanResult] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(reviewPayload?.previewUrl || "");
+  const [scanResult, setScanResult] = useState(initialScanResult);
   const [selectedMealType, setSelectedMealType] = useState("Lunch");
-  const [selectedLabel, setSelectedLabel] = useState("");
-  const [manualLabelInput, setManualLabelInput] = useState("");
-  const [nutritionPreview, setNutritionPreview] = useState(null);
-  const [suggestedNutrition, setSuggestedNutrition] = useState({});
-  const [editedCaloriesInput, setEditedCaloriesInput] = useState("");
-  const [todaySummary, setTodaySummary] = useState(null);
+  const [selectedLogDate, setSelectedLogDate] = useState(() => todayString());
+  const [selectedLabel, setSelectedLabel] = useState(initialLabel);
+  const [manualLabelInput, setManualLabelInput] = useState(initialLabel);
+  const [nutritionPreview, setNutritionPreview] = useState(initialNutritionPreview);
+  const [suggestedNutrition, setSuggestedNutrition] = useState(
+    initialLabel
+      ? {
+          [nutritionKey(initialLabel)]: initialNutritionPreview,
+        }
+      : {}
+  );
+  const [editedCaloriesInput, setEditedCaloriesInput] = useState(
+    initialNutritionPreview?.estimated_calories != null
+      ? String(initialNutritionPreview.estimated_calories)
+      : ""
+  );
+  const [scanLogEntries, setScanLogEntries] = useState(() => readScanLogEntries());
   const [scanError, setScanError] = useState("");
   const [saveMessage, setSaveMessage] = useState("");
   const [isScanning, setIsScanning] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [isRefreshing, setIsRefreshing] = useState(false);
   const [isLoadingNutrition, setIsLoadingNutrition] = useState(false);
+  const [isOpeningDetail, setIsOpeningDetail] = useState(false);
+  const [isSavingScanLog, setIsSavingScanLog] = useState(false);
+  const [isBookmarkTagDialogOpen, setIsBookmarkTagDialogOpen] = useState(false);
+  const [bookmarkTag, setBookmarkTag] = useState(() => normalizeMealTypeForDetail("Lunch"));
 
   const requiresConfirmation = Boolean(scanResult?.is_unclear);
   const hasConfidentScanLabel = Boolean(scanResult?.label && !requiresConfirmation);
@@ -78,7 +409,15 @@ function ScanProducts() {
       manualLabelInput.trim() !== selectedLabel &&
       manualLabelInput.trim() !== scanResult?.label
   );
-  const canSave = Boolean(scanResult && activeLabel && !isLoadingNutrition && !isSaving);
+  const canSave = Boolean(
+    scanResult &&
+      activeLabel &&
+      selectedLogDate &&
+      selectedMealType &&
+      !isBeforeToday(selectedLogDate) &&
+      !isLoadingNutrition &&
+      !isSaving
+  );
   const hasSuggestedMatches = Boolean(scanResult?.topk?.length);
   const hasPhotoIssue = hasBlockingPhotoIssue(scanResult?.quality?.issues || []);
 
@@ -121,18 +460,37 @@ function ScanProducts() {
       ? nutritionPreview.serving_description
         ? `Based on ${nutritionPreview.serving_description}. Calories are still only a rough estimate.`
         : "Calories are only a rough estimate."
-      : "No estimate yet for this dish. You can type your own calories before saving."
+        : "No estimate yet for this dish. You can type your own calories before saving."
     : "Calories are only a rough estimate.";
-
+  const activeScanLogKey = getScanLogKey(activeLabel || displayMealName);
+  const scanLogKeySet = useMemo(
+    () => new Set(scanLogEntries.map((entry) => getScanLogKey(entry.scanKey || entry.title))),
+    [scanLogEntries]
+  );
+  const isInScanLog = Boolean(activeScanLogKey && scanLogKeySet.has(activeScanLogKey));
   useEffect(() => {
     activeLabelRef.current = activeLabel;
   }, [activeLabel]);
 
   useEffect(() => {
-    loadTodaySummary();
+    const syncScanLog = () => {
+      setScanLogEntries(readScanLogEntries());
+    };
+
+    syncScanLog();
+    window.addEventListener(SCAN_LOG_UPDATED_EVENT, syncScanLog);
+    window.addEventListener("storage", syncScanLog);
+    return () => {
+      window.removeEventListener(SCAN_LOG_UPDATED_EVENT, syncScanLog);
+      window.removeEventListener("storage", syncScanLog);
+    };
   }, []);
 
   useEffect(() => {
+    if (isReviewMode) {
+      return undefined;
+    }
+
     if (!uploadedImage) {
       setPreviewUrl("");
       return undefined;
@@ -141,7 +499,7 @@ function ScanProducts() {
     const objectUrl = URL.createObjectURL(uploadedImage);
     setPreviewUrl(objectUrl);
     return () => URL.revokeObjectURL(objectUrl);
-  }, [uploadedImage]);
+  }, [isReviewMode, uploadedImage]);
 
   useEffect(() => {
     if (!scanResult || !activeLabel) {
@@ -181,21 +539,29 @@ function ScanProducts() {
     return () => clearTimeout(timer);
   }, [activeLabel, scanResult, suggestedNutrition]);
 
-  async function loadTodaySummary() {
-    setIsRefreshing(true);
-    try {
-      const summary = await fetchDailyMealSummary(todayString());
-      setTodaySummary(summary);
-    } catch (error) {
-      console.error("Failed to load meal summary:", error);
-    } finally {
-      setIsRefreshing(false);
+  function handleSelectedLogDateChange(event) {
+    const nextDate = event.target.value;
+    setSaveMessage("");
+
+    if (!nextDate) {
+      setSelectedLogDate("");
+      setScanError("Choose a date before saving.");
+      return;
     }
+
+    if (isBeforeToday(nextDate)) {
+      setScanError("Choose today or a future date.");
+      return;
+    }
+
+    setScanError("");
+    setSelectedLogDate(nextDate);
   }
 
   function handleFileUploadChange(event) {
     const file = event.target.files?.[0];
     setUploadedImage(file || null);
+    setIsBookmarkTagDialogOpen(false);
     setScanResult(null);
     setSelectedLabel("");
     setManualLabelInput("");
@@ -251,6 +617,15 @@ function ScanProducts() {
     try {
       const data = await scanSingleImage(uploadedImage, { topk: 3 });
       const defaultLabel = data.is_unclear ? "" : data.label || data.topk?.[0]?.label || "";
+      const reviewPreviewUrl = await createImagePreviewDataUrl(uploadedImage);
+      const scanFlow = {
+        scanResult: data,
+        previewUrl: reviewPreviewUrl,
+        scannedAt: Date.now(),
+      };
+      writeScanReviewPayload(scanFlow);
+      navigate("/scan-review", { state: { scanFlow } });
+
       const defaultPreview = defaultLabel
         ? normalizeNutritionPreview(defaultLabel, data.nutrition)
         : null;
@@ -294,6 +669,7 @@ function ScanProducts() {
   function handleCandidateSelect(label) {
     setSelectedLabel(label);
     setManualLabelInput(label);
+    setIsBookmarkTagDialogOpen(false);
     setSaveMessage("");
     setScanError("");
 
@@ -309,6 +685,120 @@ function ScanProducts() {
     }
   }
 
+  function handleToggleScanLogEntry() {
+    if (!scanResult || !activeLabel) {
+      setScanError("Choose a meal first, then save it to Scan Log.");
+      return;
+    }
+
+    const dishTitle = displayMealName || humanizeLabel(activeLabel);
+    const entryKey = getScanLogKey(activeLabel || dishTitle);
+
+    if (!entryKey) {
+      setScanError("Unable to save this dish to Scan Log.");
+      return;
+    }
+
+    setScanError("");
+    setSaveMessage("");
+
+    if (scanLogKeySet.has(entryKey)) {
+      const nextEntries = removeScanLogEntry(entryKey);
+      setScanLogEntries(nextEntries);
+      setIsBookmarkTagDialogOpen(false);
+      setSaveMessage(`Removed ${dishTitle} from Scan Log.`);
+      return;
+    }
+
+    setBookmarkTag(normalizeMealTypeForDetail(selectedMealType));
+    setIsBookmarkTagDialogOpen(true);
+  }
+
+  function handleCancelBookmarkTag() {
+    if (isSavingScanLog) return;
+    setIsBookmarkTagDialogOpen(false);
+  }
+
+  async function handleConfirmBookmarkTag() {
+    if (!scanResult || !activeLabel) {
+      setScanError("Choose a meal first, then save it to Scan Log.");
+      return;
+    }
+
+    const dishTitle = displayMealName || humanizeLabel(activeLabel);
+    const nutritionSource = nutritionPreview || scanResult?.nutrition || {};
+    const entryKey = getScanLogKey(activeLabel || dishTitle);
+    const normalizedBookmarkTag = normalizeMealTypeForDetail(bookmarkTag);
+
+    if (!entryKey) {
+      setScanError("Unable to save this dish to Scan Log.");
+      return;
+    }
+
+    setScanError("");
+    setIsSavingScanLog(true);
+
+    try {
+      const fallbackImage = resolveDetailImage({
+        explicitImage: nutritionSource?.image || scanResult?.image,
+        fallbackImage: previewUrl,
+      });
+      const fetchedImage = await fetchDishImage(dishTitle, {
+        cuisine: nutritionSource?.cuisine || "",
+      }).catch(() => null);
+      const savedEntries = upsertScanLogEntry({
+        scanKey: entryKey,
+        id: `scanlog-${entryKey}`,
+        label: activeLabel,
+        title: dishTitle,
+        name: dishTitle,
+        image: fetchedImage?.imageUrl || fallbackImage,
+        imageSource: fetchedImage?.source || "scan",
+        imageAttribution: fetchedImage?.attribution || "",
+        imageSourceUrl: fetchedImage?.sourceUrl || "",
+        mealType: normalizedBookmarkTag,
+        source: "scan_log",
+        time: "AI Scan",
+        servings: nutritionSource?.serving_description || "1 Serving",
+        level: requiresConfirmation ? "Needs Review" : "Ready",
+        cuisine: nutritionSource?.cuisine || "",
+        about: nutritionSource?.about || "",
+        confidence: normalizeConfidence(
+          activeLabel === scanResult.label
+            ? scanResult.confidence ?? 0
+            : selectedCandidate?.score ?? 0
+        ),
+        tags: [
+          nutritionSource?.cuisine || null,
+          "Scan Log",
+          requiresConfirmation ? "Needs Review" : "AI Scan",
+        ].filter(Boolean),
+        nutrition: {
+          calories: toNonNegativeInteger(
+            parsedCalories ??
+              nutritionSource?.estimated_calories ??
+              nutritionSource?.calories,
+            null
+          ),
+          carbs: toNonNegativeInteger(nutritionSource?.carbs ?? nutritionSource?.carbohydrates, null),
+          protein: toNonNegativeInteger(nutritionSource?.protein, null),
+          fiber: toNonNegativeInteger(nutritionSource?.fiber, null),
+          fat: toNonNegativeInteger(nutritionSource?.fat, null),
+          sodium: toNonNegativeInteger(nutritionSource?.sodium, null),
+        },
+      });
+      setScanLogEntries(savedEntries);
+      setIsBookmarkTagDialogOpen(false);
+      setSaveMessage(
+        `Saved ${dishTitle} to Scan Log (${formatBookmarkTagLabel(normalizedBookmarkTag)}).`
+      );
+    } catch {
+      setScanError("Failed to update Scan Log.");
+    } finally {
+      setIsSavingScanLog(false);
+    }
+  }
+
   async function handleSaveMeal() {
     if (!scanResult) {
       setScanError("Scan an image before saving a meal.");
@@ -316,6 +806,10 @@ function ScanProducts() {
     }
     if (!activeLabel) {
       setScanError("Choose or edit a dish name before saving.");
+      return;
+    }
+    if (!selectedLogDate || isBeforeToday(selectedLogDate)) {
+      setScanError("Choose today or a future date before saving.");
       return;
     }
     if (editedCaloriesInput.trim() !== "" && !Number.isFinite(Number(editedCaloriesInput))) {
@@ -328,14 +822,15 @@ function ScanProducts() {
     setSaveMessage("");
 
     try {
+      const confidenceValue =
+        activeLabel === scanResult.label
+          ? scanResult.confidence ?? 0
+          : selectedCandidate?.score ?? 0;
       const payload = {
-        date: todayString(),
+        date: selectedLogDate,
         meal_type: selectedMealType,
         label: activeLabel,
-        confidence:
-          activeLabel === scanResult.label
-            ? scanResult.confidence ?? 0
-            : selectedCandidate?.score ?? 0,
+        confidence: normalizeConfidence(confidenceValue),
         estimated_calories: parsedCalories,
         serving_description: nutritionPreview?.serving_description ?? null,
         recommendation: scanResult.recommendation || "",
@@ -349,9 +844,44 @@ function ScanProducts() {
       };
 
       const response = await saveScannedMeal(payload);
-      setTodaySummary(response.daily_summary);
+      const savedEntry = response.entry || payload;
+      const savedDate = savedEntry.date || selectedLogDate;
+      const savedMealBase = buildMenuMealFromScan({
+        entry: savedEntry,
+        activeLabel,
+        selectedMealType,
+        nutritionPreview,
+        scanResult,
+        parsedCalories,
+        requiresConfirmation,
+        selectedLogDate: savedDate,
+      });
+      let savedMeal = savedMealBase;
+
+      try {
+        const dishImage = await fetchDishImage(savedMealBase.title, {
+          cuisine: nutritionPreview?.cuisine || scanResult?.nutrition?.cuisine || "",
+        });
+
+        if (dishImage?.imageUrl) {
+          savedMeal = {
+            ...savedMealBase,
+            image: dishImage.imageUrl,
+            imageSource: dishImage.source || savedMealBase.imageSource,
+            imageAttribution: dishImage.attribution || savedMealBase.imageAttribution,
+            imageSourceUrl: dishImage.sourceUrl || savedMealBase.imageSourceUrl,
+          };
+        }
+      } catch {
+        // Image enrichment should not block saving the meal.
+      }
+
+      const syncedToMenu = syncScanMealToMenuStorage(savedDate, savedMeal);
+
       setSaveMessage(
-        `Saved ${humanizeLabel(response.entry.label)} to ${response.entry.meal_type}.`
+        `Saved ${humanizeLabel(savedEntry.label)} to ${savedEntry.meal_type || selectedMealType} on ${
+          savedDate
+        }${syncedToMenu ? " and added it to your menu." : "."}`
       );
     } catch (error) {
       setScanError(error.message || "Failed to save meal log.");
@@ -360,35 +890,140 @@ function ScanProducts() {
     }
   }
 
-  async function handleDeleteEntry(entryId) {
-    try {
-      await deleteMealLog(entryId);
-      await loadTodaySummary();
-    } catch (error) {
-      setScanError(error.message || "Failed to delete meal log entry.");
+  async function handleViewDetail() {
+    if (!scanResult || !activeLabel) {
+      setScanError("Scan and review a meal before opening details.");
+      return;
     }
+
+    const nutritionSource = nutritionPreview || scanResult?.nutrition || {};
+    const normalizedMealType = normalizeMealTypeForDetail(selectedMealType);
+    const dishTitle = nutritionSource?.display_name || humanizeLabel(activeLabel);
+    const fallbackDetailImage = resolveDetailImage({
+      explicitImage: nutritionSource?.image || scanResult?.image,
+      fallbackImage: previewUrl,
+    });
+    let dishImage = null;
+
+    setIsOpeningDetail(true);
+    try {
+      dishImage = await fetchDishImage(dishTitle, {
+        cuisine: nutritionSource?.cuisine || "",
+      });
+    } catch {
+      dishImage = null;
+    } finally {
+      setIsOpeningDetail(false);
+    }
+
+    const mealPayload = {
+      id: `scan-${nutritionKey(activeLabel)}-${Date.now()}`,
+      recipeId: null,
+      title: dishTitle,
+      name: dishTitle,
+      image: dishImage?.imageUrl || fallbackDetailImage,
+      imageSource: dishImage?.source || "fallback",
+      imageAttribution: dishImage?.attribution || "",
+      imageSourceUrl: dishImage?.sourceUrl || "",
+      mealType: normalizedMealType,
+      description:
+        nutritionSource?.about ||
+        `${dishTitle} was identified from your uploaded food photo and prepared for review.`,
+      time: "AI Scan",
+      servings: nutritionSource?.serving_description || "1 Serving",
+      level: requiresConfirmation ? "Needs Review" : "Ready",
+      tags: [
+        nutritionSource?.cuisine || null,
+        requiresConfirmation ? "Needs Review" : "AI Verified",
+        nutritionSource?.available === false ? "No Estimate" : "Calorie Estimate",
+      ].filter(Boolean),
+      nutrition: {
+        calories: toNonNegativeInteger(
+          parsedCalories ??
+            nutritionSource?.estimated_calories ??
+            nutritionSource?.calories,
+          null
+        ),
+        carbs: toNonNegativeInteger(nutritionSource?.carbs ?? nutritionSource?.carbohydrates, null),
+        protein: toNonNegativeInteger(nutritionSource?.protein, null),
+        fiber: toNonNegativeInteger(nutritionSource?.fiber, null),
+        fat: toNonNegativeInteger(nutritionSource?.fat, null),
+        sodium: toNonNegativeInteger(nutritionSource?.sodium, null),
+      },
+    };
+
+    try {
+      sessionStorage.setItem("selectedMealDetail", JSON.stringify(mealPayload));
+    } catch {
+      // Ignore storage write issues and continue navigation.
+    }
+
+    navigate("/dish/detail", { state: { meal: mealPayload } });
+  }
+
+  function handleBackFromReview() {
+    if (typeof window !== "undefined" && window.history.length > 1) {
+      navigate(-1);
+      return;
+    }
+    navigate("/scan-products");
   }
 
   return (
-    <div className="scan-products-page">
-      <div className="scan-products-container">
-        <h1>Scan a Meal</h1>
-        <p className="scan-muted">
-          Upload a food photo to detect the dish, estimate rough calories, and save
-          it into today&apos;s meal log.
-        </p>
+    <div
+      className={`scan-products-page ${isReviewMode ? "scan-review-page" : "scan-start-page"} ${
+        embedded ? "scan-embedded" : ""
+      }`}
+    >
+      {!embedded ? (
+      <section className="scan-flow-hero">
+        <div>
+          <span className="scan-flow-eyebrow">AI meal scanner</span>
+          <h1>{isReviewMode ? "Review your scan result" : "Scan a meal in one clean step"}</h1>
+          <p>
+            {isReviewMode
+              ? "Confirm the dish, adjust calories if needed, then choose the date and meal slot before saving."
+              : "Upload a food photo. NutriHelp will classify the dish and move you to a focused review screen."}
+          </p>
+        </div>
+        <div className="scan-flow-steps" aria-label="Scan progress">
+          <span className="active">1 Upload</span>
+          <span className={isReviewMode ? "active" : ""}>2 Review</span>
+          <span className={saveMessage ? "active" : ""}>3 Save</span>
+        </div>
+      </section>
+      ) : null}
+
+      {!isReviewMode ? (
+      <div className="scan-products-container scan-upload-panel">
+        <div className="scan-upload-copy">
+          <span className="scan-review-kicker">Food image</span>
+          <h2>Upload a clear photo</h2>
+          <p className="scan-muted">
+            Use a centered photo with the full dish visible. Avoid blurry shots, packaging-only images, or heavy shadows.
+          </p>
+        </div>
 
         <div className="scan-products-form">
-          <label className="scan-products-label">Food Image</label>
           <div
-            className="upload-section"
+            className={`upload-section ${previewUrl ? "has-preview" : ""}`}
             onClick={() => fileInputRef.current?.click()}
             style={{ cursor: "pointer" }}
           >
-            <div>
-              <p>Click to Upload Image</p>
-              {uploadedImage ? <p className="file-name">Image added: {uploadedImage.name}</p> : null}
-            </div>
+            {previewUrl ? (
+              <div className="scan-upload-preview-wrap">
+                <img src={previewUrl} alt="Uploaded preview" className="scan-upload-preview-img" />
+                <div className="scan-upload-preview-meta">
+                  <span className="scan-upload-preview-kicker">Image added</span>
+                  <strong className="scan-upload-file-name">{uploadedImage?.name || "Uploaded image"}</strong>
+                </div>
+                <span className="scan-upload-preview-change">Click to change image</span>
+              </div>
+            ) : (
+              <div className="scan-upload-empty-state">
+                <p>Click to Upload Image</p>
+              </div>
+            )}
             <input
               ref={fileInputRef}
               id="file-upload"
@@ -400,25 +1035,7 @@ function ScanProducts() {
           </div>
         </div>
 
-        {previewUrl ? (
-          <div className="scan-image-preview">
-            <img src={previewUrl} alt="Uploaded preview" className="scan-preview-img" />
-          </div>
-        ) : null}
-
         <div className="scan-actions-row">
-          <select
-            className="scan-inline-select"
-            value={selectedMealType}
-            onChange={(event) => setSelectedMealType(event.target.value)}
-          >
-            {MEAL_TYPES.map((mealType) => (
-              <option key={mealType} value={mealType}>
-                {mealType}
-              </option>
-            ))}
-          </select>
-
           <button className="upload-button" onClick={handleImageUpload} disabled={isScanning}>
             {isScanning ? "Scanning..." : "Analyze Image"}
           </button>
@@ -427,11 +1044,30 @@ function ScanProducts() {
         {scanError ? <p className="scan-error">{scanError}</p> : null}
         {saveMessage ? <p className="scan-success">{saveMessage}</p> : null}
       </div>
+      ) : null}
 
-      {scanResult ? (
+      {isReviewMode && !scanResult ? (
+        <div className="scan-products-container scan-empty-review">
+          <span className="scan-review-kicker">No scan loaded</span>
+          <h2>Start from a meal photo first</h2>
+          <p className="scan-muted">
+            The review page needs a scan result. Upload a new image and NutriHelp will bring you back here automatically.
+          </p>
+          <button type="button" className="upload-button" onClick={() => navigate("/scan-products")}>
+            Back to Scan
+          </button>
+        </div>
+      ) : null}
+
+      {isReviewMode && scanResult ? (
         <div className="scan-products-container scan-result-card">
-          <div className="scan-status-row">
-            <h2>Scan Result</h2>
+          <div className="scan-status-row scan-status-row--result">
+            <div className="scan-status-title-wrap">
+              <button type="button" className="scan-back-link-btn" onClick={handleBackFromReview}>
+                ← Back
+              </button>
+              <h2>Scan Result</h2>
+            </div>
             <span className={`scan-pill ${requiresConfirmation ? "warn" : "ok"}`}>
               {requiresConfirmation ? "Needs Review" : "Looks Good"}
             </span>
@@ -520,9 +1156,70 @@ function ScanProducts() {
                 <span className="scan-review-kicker">About this meal</span>
                 <h3>{displayMealName}</h3>
               </div>
-              {nutritionPreview?.cuisine ? (
-                <span className="scan-pill info">{nutritionPreview.cuisine}</span>
-              ) : null}
+              <div className="scan-meal-info-actions">
+                {nutritionPreview?.cuisine ? (
+                  <span className="scan-pill info">{nutritionPreview.cuisine}</span>
+                ) : null}
+                <button
+                  type="button"
+                  className="scan-view-detail-btn"
+                  onClick={handleViewDetail}
+                  disabled={isOpeningDetail}
+                >
+                  {isOpeningDetail ? "Finding image..." : "View detail"}
+                </button>
+                <button
+                  type="button"
+                  className={`scan-log-star-btn ${isInScanLog ? "active" : ""}`}
+                  onClick={handleToggleScanLogEntry}
+                  disabled={isSavingScanLog}
+                  title={isInScanLog ? "Remove from Scan Log" : "Save to Scan Log"}
+                >
+                  {isInScanLog ? "★" : "☆"}
+                </button>
+
+                {isBookmarkTagDialogOpen ? (
+                  <div className="scan-bookmark-tag-dialog" role="dialog" aria-modal="false">
+                    <div className="scan-bookmark-tag-dialog-content">
+                      <div className="scan-bookmark-tag-header">
+                        <h4>Bookmark tag</h4>
+                      </div>
+                      <label className="scan-inline-field">
+                        <span>Choose tag</span>
+                        <select
+                          className="scan-inline-select"
+                          value={bookmarkTag}
+                          onChange={(event) => setBookmarkTag(event.target.value)}
+                        >
+                          {BOOKMARK_TAG_OPTIONS.map((option) => (
+                            <option key={option.value} value={option.value}>
+                              {option.label}
+                            </option>
+                          ))}
+                        </select>
+                      </label>
+                      <div className="scan-bookmark-tag-actions">
+                        <button
+                          type="button"
+                          className="scan-bookmark-secondary-btn"
+                          onClick={handleCancelBookmarkTag}
+                          disabled={isSavingScanLog}
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          type="button"
+                          className="scan-bookmark-primary-btn"
+                          onClick={handleConfirmBookmarkTag}
+                          disabled={isSavingScanLog}
+                        >
+                          {isSavingScanLog ? "Saving..." : "Save"}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ) : null}
+              </div>
             </div>
 
             <p className="scan-meal-info-copy">{mealAboutText}</p>
@@ -573,76 +1270,53 @@ function ScanProducts() {
             </ul>
           ) : null}
 
+          <div className="scan-save-options-card">
+            <div>
+              <span className="scan-review-kicker">Save settings</span>
+              <h3>Choose when this meal should be logged</h3>
+              <p>
+                This scan result will be saved to the selected date and meal slot, not forced into today&apos;s menu.
+              </p>
+            </div>
+            <div className="scan-save-options-grid">
+              <label className="scan-inline-field">
+                <span>Date</span>
+                <input
+                  type="date"
+                  value={selectedLogDate}
+                  min={todayString()}
+                  onChange={handleSelectedLogDateChange}
+                />
+              </label>
+              <label className="scan-inline-field">
+                <span>Meal</span>
+                <select
+                  className="scan-inline-select"
+                  value={selectedMealType}
+                  onChange={(event) => {
+                    setSelectedMealType(event.target.value);
+                    setSaveMessage("");
+                    setScanError("");
+                  }}
+                >
+                  {MEAL_TYPES.map((mealType) => (
+                    <option key={mealType} value={mealType}>
+                      {mealType}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </div>
+          </div>
+
           <div className="scan-actions-row">
             <button className="scan-button-selector" onClick={handleSaveMeal} disabled={!canSave}>
-              {isSaving ? "Saving..." : `Save to ${selectedMealType}`}
+              {isSaving ? "Saving..." : `Save to ${selectedMealType} on ${selectedLogDate || "selected date"}`}
             </button>
           </div>
         </div>
       ) : null}
 
-      <div className="scan-products-container scan-summary-card">
-        <div className="scan-status-row">
-          <h2>Today&apos;s Meal Log</h2>
-          <span className="scan-pill info">
-            {isRefreshing ? "Refreshing..." : todayString()}
-          </span>
-        </div>
-
-        <div className="scan-result-grid">
-          <div className="scan-stat">
-            <span>Total calories</span>
-            <strong>{todaySummary?.total_calories ?? 0} kcal</strong>
-          </div>
-          <div className="scan-stat">
-            <span>Logged meals</span>
-            <strong>{todaySummary?.entry_count ?? 0}</strong>
-          </div>
-          <div className="scan-stat">
-            <span>Breakfast/Lunch</span>
-            <strong>
-              {(todaySummary?.meal_type_breakdown?.Breakfast ?? 0)}/
-              {(todaySummary?.meal_type_breakdown?.Lunch ?? 0)}
-            </strong>
-          </div>
-          <div className="scan-stat">
-            <span>Dinner/Snacks</span>
-            <strong>
-              {(todaySummary?.meal_type_breakdown?.Dinner ?? 0)}/
-              {(todaySummary?.meal_type_breakdown?.Snacks ?? 0)}
-            </strong>
-          </div>
-        </div>
-
-        {!todaySummary?.meals?.length ? (
-          <p className="scan-muted">No scanned meals have been saved for today yet.</p>
-        ) : (
-          <div className="scan-meal-log-list">
-            {todaySummary.meals.map((meal) => (
-              <div key={meal.id} className="scan-meal-log-item">
-                <div>
-                  <strong>{humanizeLabel(meal.label)}</strong>
-                  <p>
-                    {meal.meal_type} · {meal.estimated_calories ?? "?"} kcal · confidence{" "}
-                    {percent(meal.confidence)}
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  className="scan-delete-btn"
-                  onClick={() => handleDeleteEntry(meal.id)}
-                >
-                  Remove
-                </button>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-
-      <button className="view-history-button" onClick={loadTodaySummary}>
-        Refresh Today&apos;s Log
-      </button>
     </div>
   );
 }

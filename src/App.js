@@ -31,6 +31,7 @@ import UserProfilePage from "./routes/UI-Only-Pages/UserProfilePage/userprofile"
 import Home from "./routes/Home/Home";
 import DietaryRequirements from "./routes/UI-Only-Pages/DietaryRequirements/DietaryRequirements";
 import ScanProducts from "./routes/UI-Only-Pages/ScanProducts/ScanProducts";
+import ScanMealReview from "./routes/UI-Only-Pages/ScanProducts/ScanMealReview";
 import Menu from "./routes/UI-Only-Pages/Menu/Menu";
 import Recipe from "./routes/MyRecipe/Recipe";
 import Appointment from "./routes/UI-Only-Pages/Appointment/Appointment";
@@ -246,6 +247,14 @@ function App() {
           element={
             <AuthenticateRoute>
               <ScanProducts />
+            </AuthenticateRoute>
+          }
+        />
+        <Route
+          path="scan-review"
+          element={
+            <AuthenticateRoute>
+              <ScanMealReview />
             </AuthenticateRoute>
           }
         />

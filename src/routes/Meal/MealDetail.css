@@ -135,6 +135,22 @@
   border-color: #145ab8;
 }
 
+.meal-detail-image-credit {
+  margin: 8px 2px 0;
+  color: #667085;
+  font-size: 0.78rem;
+}
+
+.meal-detail-image-credit a {
+  color: #145ab8;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.meal-detail-image-credit a:hover {
+  text-decoration: underline;
+}
+
 .meal-detail-tag-row {
   margin-top: 12px;
   display: flex;

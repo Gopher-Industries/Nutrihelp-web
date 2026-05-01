@@ -8,13 +8,18 @@ import {
 } from "../../utils/validationRules";
 import FieldError from "../../components/FieldError";
 import { toast } from "react-toastify";
+import {
+  API_BASE_URL,
+  buildSurveyPayload,
+  getApiErrorMessage,
+} from "./surveyApi";
 
 export default function ObesityPredict() {
-  console.log("ObesityPredict component loaded, validatePositiveFloat:", typeof validatePositiveFloat);
   const [formData, setFormData] = useState({});
   const [progress, setProgress] = useState(0);
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
 
   // Grouped Questions
@@ -30,19 +35,74 @@ export default function ObesityPredict() {
         ],
       },
       { label: "Age (years)", name: "age", type: "number" },
-      { label: "Height(m)", name: "height", type: "number" },
-      { label: "Weight (kg)", name: "weight", type: "number" },
+      {
+        label: "Height (metres)",
+        name: "height",
+        type: "number",
+        placeholder: "e.g. 1.67",
+        helperText: "Enter height in metres. Example: 167 cm = 1.67 m.",
+        min: 0.5,
+        max: 2.5,
+        step: 0.01,
+      },
+      {
+        label: "Weight (kg)",
+        name: "weight",
+        type: "number",
+        placeholder: "e.g. 70",
+        min: 10,
+        max: 300,
+        step: 0.1,
+      },
     ],
     food: [
-      { label: "Calorie intake (per day)", name: "calories", type: "number" },
+      {
+        label: "Do you frequently eat high-calorie foods?",
+        name: "favc",
+        type: "select",
+        options: [
+          ["1", "Yes"],
+          ["0", "No"],
+        ],
+      },
       {
         label: "Vegetable consumption (0-3)",
         name: "vegetables",
         type: "number",
+        placeholder: "e.g. 2",
+        min: 0,
+        max: 5,
+        step: 0.1,
       },
-      { label: "Main meals per day", name: "meals", type: "number" },
-      { label: "Snacks between meals (0–3)", name: "snacks", type: "number" },
-      { label: "Water intake (liters)", name: "water", type: "number" },
+      {
+        label: "Main meals per day",
+        name: "meals",
+        type: "number",
+        placeholder: "e.g. 3",
+        min: 0,
+        max: 10,
+        step: 1,
+      },
+      {
+        label: "Snacks between meals",
+        name: "caec",
+        type: "select",
+        options: [
+          ["0", "Never"],
+          ["1", "Sometimes"],
+          ["2", "Frequently"],
+          ["3", "Always"],
+        ],
+      },
+      {
+        label: "Water intake (litres)",
+        name: "water",
+        type: "number",
+        placeholder: "e.g. 2",
+        min: 0,
+        max: 10,
+        step: 0.1,
+      },
       {
         label: "Monitor calorie intake?",
         name: "monitor",
@@ -77,8 +137,20 @@ export default function ObesityPredict() {
         label: "Physical activity (hours/day)",
         name: "activity",
         type: "number",
+        placeholder: "e.g. 1",
+        min: 0,
+        max: 10,
+        step: 0.1,
       },
-      { label: "Screen time (hours/day)", name: "screen_time", type: "number" },
+      {
+        label: "Screen time (hours/day)",
+        name: "screen_time",
+        type: "number",
+        placeholder: "e.g. 3",
+        min: 0,
+        max: 24,
+        step: 0.1,
+      },
       {
         label: "Family history of overweight",
         name: "family_history",
@@ -105,14 +177,27 @@ export default function ObesityPredict() {
 
   const allQuestions = Object.values(questionGroups).flat();
   const totalQuestions = allQuestions.length;
+  const numberRanges = {
+    age: { min: 1, max: 119, message: "Please enter an age between 1 and 119." },
+    height: { min: 0.5, max: 2.5, message: "Height must be entered in metres, between 0.5 and 2.5." },
+    weight: { min: 10, max: 300, message: "Please enter a weight between 10 and 300 kg." },
+    vegetables: { min: 0, max: 5, message: "Vegetable consumption must be between 0 and 5." },
+    meals: { min: 0, max: 10, message: "Main meals per day must be between 0 and 10." },
+    water: { min: 0, max: 10, message: "Water intake must be between 0 and 10 litres." },
+    activity: { min: 0, max: 10, message: "Physical activity must be between 0 and 10 hours per day." },
+    screen_time: { min: 0, max: 24, message: "Screen time must be between 0 and 24 hours per day." },
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    const floatFields = ['height', 'weight', 'water', 'activity', 'screen_time', 'vegetables', 'meals', 'snacks', 'calories', 'age'];
-    const selectNumericFields = ['gender', 'smoke', 'alcohol'];
+    const floatFields = ['height', 'weight', 'water', 'activity', 'screen_time', 'vegetables'];
+    const integerFields = ['age', 'meals'];
+    const selectNumericFields = ['gender', 'smoke', 'alcohol', 'favc', 'caec'];
 
     let parsedValue = value;
     if (floatFields.includes(name)) {
+      parsedValue = value === '' ? '' : Number(value);
+    } else if (integerFields.includes(name)) {
       parsedValue = value === '' ? '' : Number(value);
     } else if (selectNumericFields.includes(name)) {
       parsedValue = value === '' ? '' : Number(value);
@@ -131,22 +216,51 @@ export default function ObesityPredict() {
       setErrors((prev) => ({ ...prev, [name]: undefined }));
     }
   };
+
+  const validateField = (name, value) => {
+    if (value === undefined || value === "") return ERROR_MESSAGES.REQUIRED;
+
+    switch (name) {
+      case "age":
+      case "meals":
+        if (validatePositiveNumber(value)) return validatePositiveNumber(value);
+        break;
+      case "height":
+      case "weight":
+      case "water":
+      case "activity":
+      case "screen_time":
+        if (validatePositiveFloat(value)) return validatePositiveFloat(value);
+        break;
+      case "vegetables": {
+        const floatError = validatePositiveFloat(value);
+        if (floatError) return floatError;
+        break;
+      }
+      default:
+        break;
+    }
+
+    const range = numberRanges[name];
+    if (range) {
+      const numericValue = Number(value);
+      if (Number.isNaN(numericValue) || numericValue < range.min || numericValue > range.max) {
+        return range.message;
+      }
+    }
+
+    return null;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (isSubmitting) return;
 
-    // Validate all fields
     const errs = {};
-    const floatFields = ['height', 'weight', 'water', 'activity', 'screen_time', 'vegetables', 'meals', 'snacks', 'calories'];
     allQuestions.forEach((q) => {
       const val = formData[q.name];
-      if (val === undefined || val === "") {
-        errs[q.name] = ERROR_MESSAGES.REQUIRED;
-      } else if (q.type === "number") {
-        const numErr = floatFields.includes(q.name)
-          ? validatePositiveFloat(val)
-          : validatePositiveNumber(val);
-        if (numErr) errs[q.name] = numErr;
-      }
+      const fieldError = validateField(q.name, val);
+      if (fieldError) errs[q.name] = fieldError;
     });
 
     if (Object.keys(errs).length > 0) {
@@ -159,28 +273,11 @@ export default function ObesityPredict() {
     }
 
     try {
-      // map formData to backend format
-      const payload = {
-        Gender: formData.gender,
-        Age: formData.age,
-        Height: formData.height, // height in meters as per label
-        Weight: formData.weight,
-        family_history_with_overweight: formData.family_history,
-        FAVC: formData.calories,
-        FCVC: formData.vegetables,
-        NCP: formData.meals,
-        CAEC: formData.snacks,
-        SMOKE: formData.smoke,
-        CH2O: formData.water,
-        SCC: formData.monitor,
-        FAF: formData.activity,
-        TUE: formData.screen_time,
-        CALC: formData.alcohol,
-        MTRANS: formData.transport,
-      };
+      const payload = buildSurveyPayload(formData);
+      setIsSubmitting(true);
 
       const response = await fetch(
-        "http://localhost:8000/ai-model/medical-report/retrieve",
+        `${API_BASE_URL}/api/medical-report/retrieve`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -188,15 +285,25 @@ export default function ObesityPredict() {
         },
       );
 
-      if (!response.ok) throw new Error("API request failed");
+      if (!response.ok) {
+        throw new Error(
+          await getApiErrorMessage(
+            response,
+            "Prediction failed. Please try again later."
+          )
+        );
+      }
 
       const result = await response.json();
       localStorage.setItem("ObesityResult", JSON.stringify(result));
+      localStorage.setItem("ObesitySurveyData", JSON.stringify(payload));
       toast.success("Survey submitted successfully!");
       navigate("/survey/result");
     } catch (err) {
       console.error(err);
-      toast.error("Prediction failed. Please try again later.");
+      toast.error(err.message || "Prediction failed. Please try again later.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -226,6 +333,7 @@ export default function ObesityPredict() {
                       <select
                         name={q.name}
                         onChange={handleChange}
+                        disabled={isSubmitting}
                         onBlur={() =>
                           setTouched((prev) => ({ ...prev, [q.name]: true }))
                         }
@@ -250,7 +358,12 @@ export default function ObesityPredict() {
                       <input
                         type={q.type}
                         name={q.name}
+                        placeholder={q.placeholder}
+                        min={q.min}
+                        max={q.max}
+                        step={q.step}
                         onChange={handleChange}
+                        disabled={isSubmitting}
                         onBlur={() =>
                           setTouched((prev) => ({ ...prev, [q.name]: true }))
                         }
@@ -262,6 +375,9 @@ export default function ObesityPredict() {
                         value={formData[q.name] || ""}
                       />
                     )}
+                    {q.helperText ? (
+                      <div className="field-helper">{q.helperText}</div>
+                    ) : null}
                     <FieldError
                       error={errors[q.name]}
                       touched={touched[q.name]}
@@ -273,8 +389,8 @@ export default function ObesityPredict() {
           ))}
 
           <div className="predict">
-            <button type="submit" className="predict-btn">
-              Predict
+            <button type="submit" className="predict-btn" disabled={isSubmitting}>
+              {isSubmitting ? "Predicting..." : "Predict"}
             </button>
           </div>
         </form>

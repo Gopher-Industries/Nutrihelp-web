@@ -16,6 +16,8 @@ import {
   Trash2,
   Users,
 } from "lucide-react";
+import { fetchDishImage } from "../../services/dishImageApi";
+import { readScanLogEntries, SCAN_LOG_UPDATED_EVENT } from "../../utils/scanLogStorage";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import PersonalizedPlanForm from "./PersonalizedPlanForm";
@@ -26,6 +28,7 @@ const FILTERS = [
   { key: "lunch", label: "Lunch" },
   { key: "dinner", label: "Dinner" },
   { key: "others", label: "Others" },
+  { key: "scan", label: "Scan" },
   { key: "all", label: "All" },
   { key: "selected", label: "Selected" },
 ];
@@ -81,63 +84,263 @@ function getMealGridColumns() {
 }
 
 const IMAGE_FALLBACK_SRC = "/images/meal-mock/placeholder.svg";
+const DYNAMIC_IMAGE_ENRICHMENT_STORAGE_KEY = "nutrihelp_meal_image_enrichment_queue_v1";
 
-const IMAGE_RULES = [
-  { keywords: ["oatmeal", "oat"], src: "/images/meal-mock/oatmeal-bowl.jpg" },
-  { keywords: ["yogurt", "parfait", "chia"], src: "/images/symptom_assessment/chia_seeds_yogurt.jpg" },
-  { keywords: ["quinoa", "buddha"], src: "/images/meal-mock/quinoa.jpg" },
-  { keywords: ["teriyaki", "chicken", "turkey", "wrap"], src: "/images/meal-mock/chicken.jpg" },
-  { keywords: ["lentil"], src: "/images/symptom_assessment/lentil_soup.jpg" },
-  { keywords: ["curry", "masala"], src: "/images/meal-mock/indian.jpg" },
-  { keywords: ["salmon"], src: "/images/symptom_assessment/grilled_salmon.jpg" },
-  { keywords: ["tuna", "salad", "nicoise"], src: "/images/meal-mock/salad.jpg" },
-  { keywords: ["avocado", "toast", "bagel", "sandwich"], src: "/images/meal-mock/avocado.jpg" },
-  { keywords: ["egg", "omelette"], src: "/images/meal-mock/omelette.jpg" },
-  { keywords: ["smoothie", "juice"], src: "/images/meal-mock/smoothie.jpg" },
-  { keywords: ["pancake"], src: "/images/meal-mock/dessert.jpg" },
-  { keywords: ["shrimp", "pad thai"], src: "/images/meal-mock/thai.jpg" },
-  { keywords: ["steak", "meat"], src: "/images/meal-mock/meat.jpg" },
-  { keywords: ["ramen", "pasta"], src: "/images/meal-mock/italian.jpg" },
-  { keywords: ["hummus", "veggie", "vegetable"], src: "/images/meal-mock/vegetables.jpg" },
-  { keywords: ["fruit", "mango", "pineapple", "banana"], src: "/images/symptom_assessment/hydrating_fruits.jpg" },
-  { keywords: ["nuts"], src: "/images/symptom_assessment/nuts_seeds.jpg" },
-  { keywords: ["chocolate"], src: "/images/symptom_assessment/dark_chocolate.jpg" },
-];
-
-const IMAGE_ROTATION = [
-  "/images/meal-mock/oatmeal.jpg",
-  "/images/meal-mock/salad.jpg",
-  "/images/meal-mock/salmon.jpg",
-  "/images/meal-mock/vegetables.jpg",
-  "/images/meal-mock/quinoa.jpg",
-  "/images/meal-mock/rice.jpg",
-  "/images/meal-mock/chicken.jpg",
-  "/images/meal-mock/avocado.jpg",
-];
-
-const foodImage = (query, seed = 0) => {
-  const normalized = String(query || "").toLowerCase();
-  const matchedRule = IMAGE_RULES.find(({ keywords }) =>
-    keywords.some((keyword) => normalized.includes(keyword)),
-  );
-
-  if (matchedRule?.src) {
-    return matchedRule.src;
-  }
-
-  return IMAGE_ROTATION[Math.abs(seed) % IMAGE_ROTATION.length];
+const UNSPLASH_MOCK_MEAL_IMAGES = {
+  "rec-1": {
+    image: "https://images.unsplash.com/photo-1585218308917-a1657a10c5ae?ixid=M3w5MzY4NDV8MHwxfHNlYXJjaHwxfHxPYXRtZWFsJTIwd2l0aCUyMEJsdWViZXJyaWVzJTIwZm9vZCUyMGRpc2h8ZW58MXwwfHx8MTc3NzMxMDgwM3ww&ixlib=rb-4.1.0&auto=format&fit=crop&w=1400&q=85",
+    sourceUrl: "https://unsplash.com/photos/blue-berries-on-brown-ceramic-bowl-qQl4Ga5NjMA",
+    attribution: "Yehor Milohrodskyi",
+    alt: "blue berries on brown ceramic bowl"
+  },
+  "rec-2": {
+    image: "https://images.unsplash.com/photo-1593450298063-4e08a162a437?ixid=M3w5MzY4NDV8MHwxfHNlYXJjaHwxfHxHcmVlayUyMFlvZ3VydCUyMFBhcmZhaXQlMjBmb29kJTIwZGlzaHxlbnwxfDB8fHwxNzc3MzEwODA0fDA&ixlib=rb-4.1.0&auto=format&fit=crop&w=1400&q=85",
+    sourceUrl: "https://unsplash.com/photos/ice-cream-with-sliced-lemon-on-white-ceramic-plate-uTOUS5_guHg",
+    attribution: "Daniel Cabriles",
+    alt: "ice cream with sliced lemon on white ceramic plate"
+  },
+  "rec-3": {
+    image: "https://images.unsplash.com/photo-1580683750935-cecfc7ea57f0?ixid=M3w5MzY4NDV8MHwxfHNlYXJjaHwxfHxRdWlub2ElMjBTYWxtb24lMjBCb3dsJTIwZm9vZCUyMGRpc2h8ZW58MXwwfHx8MTc3NzMxMDgwNHww&ixlib=rb-4.1.0&auto=format&fit=crop&w=1400&q=85",
+    sourceUrl: "https://unsplash.com/photos/vegetable-salad-on-blue-ceramic-bowl-dcUigR5qrD4",
+    attribution: "Anton Jansson",
+    alt: "vegetable salad on blue ceramic bowl"
+  },
+  "rec-4": {
+    image: "https://images.unsplash.com/photo-1771384552858-feb0574f958d?ixid=M3w5MzY4NDV8MHwxfHNlYXJjaHwxfHxDaGlja2VuJTIwVGVyaXlha2klMjBSaWNlJTIwQm93bCUyMGZvb2QlMjBkaXNofGVufDF8MHx8fDE3NzczMTA4MDV8MA&ixlib=rb-4.1.0&auto=format&fit=crop&w=1400&q=85",
+    sourceUrl: "https://unsplash.com/photos/a-delicious-meal-of-grilled-salmon-with-rice-and-vegetables-fahnPDK0GQA",
+    attribution: "Jonathan Majam",
+    alt: "A delicious meal of grilled salmon with rice and vegetables"
+  },
+  "rec-5": {
+    image: "https://images.unsplash.com/photo-1767114915989-c6ab3c8fc42e?ixid=M3w5MzY4NDV8MHwxfHNlYXJjaHwxfHxMZW50aWwlMjAlMjYlMjBWZWdldGFibGUlMjBDdXJyeSUyMGZvb2QlMjBkaXNofGVufDF8MHx8fDE3NzczMTA4MDZ8MA&ixlib=rb-4.1.0&auto=format&fit=crop&w=1400&q=85",
+    sourceUrl: "https://unsplash.com/photos/three-bowls-of-indian-food-with-rice-and-spices-aq8v45EwCa0",
+    attribution: "Chetanya Sharma",
+    alt: "Three bowls of indian food with rice and spices"
+  },
+  "rec-6": {
+    image: "https://images.unsplash.com/photo-1573691843386-8b311aefa811?ixid=M3w5MzY4NDV8MHwxfHNlYXJjaHwxfHxHcmlsbGVkJTIwU2FsbW9uJTIwJTI2JTIwQXNwYXJhZ3VzJTIwZm9vZCUyMGRpc2h8ZW58MXwwfHx8MTc3NzMxMDgwN3ww&ixlib=rb-4.1.0&auto=format&fit=crop&w=1400&q=85",
+    sourceUrl: "https://unsplash.com/photos/plate-of-asparagus-beside-fork-i31hiD8LINA",
+    attribution: "Tim Bish",
+    alt: "plate of asparagus beside fork"
+  },
+  "rec-7": {
+    image: "https://images.unsplash.com/photo-1631606517999-3778ba6f7d0b?ixid=M3w5MzY4NDV8MHwxfHNlYXJjaHwxfHxNYW5nbyUyMENoaWElMjBQdWRkaW5nJTIwZm9vZCUyMGRpc2h8ZW58MXwwfHx8MTc3NzMxMDgwOHww&ixlib=rb-4.1.0&auto=format&fit=crop&w=1400&q=85",
+    sourceUrl: "https://unsplash.com/photos/a-glass-filled-with-a-drink-sitting-on-top-of-a-wooden-table-xMTdy87_bPs",
+    attribution: "Alexey Demidov",
+    alt: "a glass filled with a drink sitting on top of a wooden table"
+  },
+  "rec-8": {
+    image: "https://images.unsplash.com/photo-1732216714035-90972b82b6c0?ixid=M3w5MzY4NDV8MHwxfHNlYXJjaHwxfHxIdW1tdXMlMjBWZWdnaWUlMjBTbmFjayUyMFBsYXRlJTIwZm9vZCUyMGRpc2h8ZW58MXwwfHx8MTc3NzMxMDgwOXww&ixlib=rb-4.1.0&auto=format&fit=crop&w=1400&q=85",
+    sourceUrl: "https://unsplash.com/photos/a-person-dipping-dip-into-a-bowl-of-vegetables-ekPs0NUwLzU",
+    attribution: "Amber BC",
+    alt: "A person dipping dip into a bowl of vegetables"
+  },
+  "meal-1": {
+    image: "https://images.unsplash.com/photo-1559753475-d6165680861f?ixid=M3w5MzY4NDV8MHwxfHNlYXJjaHwxfHxBdm9jYWRvJTIwVG9hc3QlMjB3aXRoJTIwUG9hY2hlZCUyMEVnZyUyMGZvb2QlMjBkaXNofGVufDF8MHx8fDE3NzczMTA4MDl8MA&ixlib=rb-4.1.0&auto=format&fit=crop&w=1400&q=85",
+    sourceUrl: "https://unsplash.com/photos/plate-of-cooked-food-F2bvs85qmCU",
+    attribution: "Fatema Enayath",
+    alt: "plate of cooked food"
+  },
+  "meal-2": {
+    image: "https://images.unsplash.com/photo-1626026670784-5f4550b9d01e?ixid=M3w5MzY4NDV8MHwxfHNlYXJjaHwxfHxTcGluYWNoJTIwTXVzaHJvb20lMjBPbWVsZXR0ZSUyMGZvb2QlMjBkaXNofGVufDF8MHx8fDE3NzczMTA4MTB8MA&ixlib=rb-4.1.0&auto=format&fit=crop&w=1400&q=85",
+    sourceUrl: "https://unsplash.com/photos/green-vegetable-on-white-ceramic-bowl-dM7JCxPvr8o",
+    attribution: "Mikey Frost",
+    alt: "green vegetable on white ceramic bowl"
+  },
+  "meal-3": {
+    image: "https://images.unsplash.com/photo-1570696516188-ade861b84a49?ixid=M3w5MzY4NDV8MHwxfHNlYXJjaHwxfHxCZXJyeSUyMEJhbmFuYSUyMFNtb290aGllJTIwZm9vZCUyMGRpc2h8ZW58MXwwfHx8MTc3NzMxMDgxMXww&ixlib=rb-4.1.0&auto=format&fit=crop&w=1400&q=85",
+    sourceUrl: "https://unsplash.com/photos/pink-smoothie-hsTwPUzFegQ",
+    attribution: "Denis",
+    alt: "pink smoothie"
+  },
+  "meal-4": {
+    image: "https://images.unsplash.com/photo-1613939490799-4a500f7120b7?ixid=M3w5MzY4NDV8MHwxfHNlYXJjaHwxfHxTbW9rZWQlMjBTYWxtb24lMjBCYWdlbCUyMGZvb2QlMjBkaXNofGVufDF8MHx8fDE3NzczMTA4MTJ8MA&ixlib=rb-4.1.0&auto=format&fit=crop&w=1400&q=85",
+    sourceUrl: "https://unsplash.com/photos/sliced-tomato-and-green-vegetable-on-white-ceramic-plate-Q-rJdmXfpQo",
+    attribution: "Patrick Perkins",
+    alt: "sliced tomato and green vegetable on white ceramic plate"
+  },
+  "meal-5": {
+    image: "https://images.unsplash.com/photo-1496568554266-bc8a06b4d8b5?ixid=M3w5MzY4NDV8MHwxfHNlYXJjaHwxfHxQcm90ZWluJTIwUGFuY2FrZXMlMjBmb29kJTIwZGlzaHxlbnwxfDB8fHwxNzc3MzEwODEzfDA&ixlib=rb-4.1.0&auto=format&fit=crop&w=1400&q=85",
+    sourceUrl: "https://unsplash.com/photos/shallow-focus-photography-of-pancake-with-strawberries-and-blueberries-on-top-CKipn7XSyEU",
+    attribution: "Piotr Chrobot",
+    alt: "shallow focus photography of pancake with strawberries and blueberries on top"
+  },
+  "meal-6": {
+    image: "https://images.unsplash.com/photo-1565843671519-32c5e41ba754?ixid=M3w5MzY4NDV8MHwxfHNlYXJjaHwxfHxDaGlhJTIwU2VlZCUyMFB1ZGRpbmclMjBmb29kJTIwZGlzaHxlbnwxfDB8fHwxNzc3MzEwODE0fDA&ixlib=rb-4.1.0&auto=format&fit=crop&w=1400&q=85",
+    sourceUrl: "https://unsplash.com/photos/clear-drinking-glass-Jwz8ZMxhoSs",
+    attribution: "Marc Mintel",
+    alt: "clear drinking glass"
+  },
+  "meal-7": {
+    image: "https://images.unsplash.com/photo-1631021967255-898a52176fea?ixid=M3w5MzY4NDV8MHwxfHNlYXJjaHwxfHxDaGlja2VuJTIwQ2Flc2FyJTIwV3JhcCUyMGZvb2QlMjBkaXNofGVufDF8MHx8fDE3NzczMTA4MTV8MA&ixlib=rb-4.1.0&auto=format&fit=crop&w=1400&q=85",
+    sourceUrl: "https://unsplash.com/photos/white-ceramic-plate-with-green-vegetable-and-meat-dish-Ztwy9M_vDZg",
+    attribution: "Vije Vijendranath",
+    alt: "white ceramic plate with green vegetable and meat dish"
+  },
+  "meal-8": {
+    image: "https://images.unsplash.com/photo-1580683750935-cecfc7ea57f0?ixid=M3w5MzY4NDV8MHwxfHNlYXJjaHwxfHxRdWlub2ElMjBTYWxtb24lMjBCb3dsJTIwZm9vZCUyMGRpc2h8ZW58MXwwfHx8MTc3NzMxMDgwNHww&ixlib=rb-4.1.0&auto=format&fit=crop&w=1400&q=85",
+    sourceUrl: "https://unsplash.com/photos/vegetable-salad-on-blue-ceramic-bowl-dcUigR5qrD4",
+    attribution: "Anton Jansson",
+    alt: "vegetable salad on blue ceramic bowl"
+  },
+  "meal-9": {
+    image: "https://images.unsplash.com/photo-1729708475167-71a6eb3cd741?ixid=M3w5MzY4NDV8MHwxfHNlYXJjaHwxfHxTaHJpbXAlMjBQYWQlMjBUaGFpJTIwZm9vZCUyMGRpc2h8ZW58MXwwfHx8MTc3NzMxMDgxNnww&ixlib=rb-4.1.0&auto=format&fit=crop&w=1400&q=85",
+    sourceUrl: "https://unsplash.com/photos/a-plate-of-food-with-shrimp-rice-and-lime-m-NH87VbQK0",
+    attribution: "Antonio Araujo",
+    alt: "A plate of food with shrimp, rice, and lime"
+  },
+  "meal-10": {
+    image: "https://images.unsplash.com/photo-1624801111298-28ae6b0c2242?ixid=M3w5MzY4NDV8MHwxfHNlYXJjaHwxfHxUdW5hJTIwTmljb2lzZSUyMFNhbGFkJTIwZm9vZCUyMGRpc2h8ZW58MXwwfHx8MTc3NzMxMDgxNnww&ixlib=rb-4.1.0&auto=format&fit=crop&w=1400&q=85",
+    sourceUrl: "https://unsplash.com/photos/vegetable-salad-on-white-ceramic-plate-Tac7_RQFFh4",
+    attribution: "tommao wang",
+    alt: "vegetable salad on white ceramic plate"
+  },
+  "meal-11": {
+    image: "https://images.unsplash.com/photo-1628191010210-a59de33e5941?ixid=M3w5MzY4NDV8MHwxfHNlYXJjaHwxfHxUdXJrZXklMjBWZWdnaWUlMjBTYW5kd2ljaCUyMGZvb2QlMjBkaXNofGVufDF8MHx8fDE3NzczMTA4MTd8MA&ixlib=rb-4.1.0&auto=format&fit=crop&w=1400&q=85",
+    sourceUrl: "https://unsplash.com/photos/burger-with-lettuce-and-tomato-U0BzBTt-5so",
+    attribution: "Hillshire Farm",
+    alt: "burger with lettuce and tomato"
+  },
+  "meal-12": {
+    image: "https://images.unsplash.com/photo-1680990999782-ba7fe26e4d0b?ixid=M3w5MzY4NDV8MHwxfHNlYXJjaHwxfHxNZWRpdGVycmFuZWFuJTIwQnVkZGhhJTIwQm93bCUyMGZvb2QlMjBkaXNofGVufDF8MHx8fDE3NzczMTA4MTd8MA&ixlib=rb-4.1.0&auto=format&fit=crop&w=1400&q=85",
+    sourceUrl: "https://unsplash.com/photos/a-white-plate-topped-with-meatballs-and-a-salad-WVoLfiKbYBQ",
+    attribution: "Zoshua Colah",
+    alt: "a white plate topped with meatballs and a salad"
+  },
+  "meal-13": {
+    image: "https://images.unsplash.com/photo-1649366095449-128ddc5ac76f?ixid=M3w5MzY4NDV8MHwxfHNlYXJjaHwxfHxMZW1vbiUyMEhlcmIlMjBCYWtlZCUyMFNhbG1vbiUyMGZvb2QlMjBkaXNofGVufDF8MHx8fDE3NzczMTA4MTh8MA&ixlib=rb-4.1.0&auto=format&fit=crop&w=1400&q=85",
+    sourceUrl: "https://unsplash.com/photos/a-white-bowl-filled-with-sliced-up-lemons-and-broccoli-1tfY-1x5kV0",
+    attribution: "Hyeonyoung Yang",
+    alt: "a white bowl filled with sliced up lemons and broccoli"
+  },
+  "meal-14": {
+    image: "https://images.unsplash.com/photo-1565557623262-b51c2513a641?ixid=M3w5MzY4NDV8MHwxfHNlYXJjaHwxfHxDaGlja2VuJTIwVGlra2ElMjBNYXNhbGElMjBmb29kJTIwZGlzaHxlbnwxfDB8fHwxNzc3MzEwODE5fDA&ixlib=rb-4.1.0&auto=format&fit=crop&w=1400&q=85",
+    sourceUrl: "https://unsplash.com/photos/roti-and-meat-slices-with-sauce-on-plate-ZSukCSw5VV4",
+    attribution: "amirali mirhashemian",
+    alt: "roti and meat slices with sauce on plate"
+  },
+  "meal-15": {
+    image: "https://images.unsplash.com/photo-1695720247911-817755ad7d02?ixid=M3w5MzY4NDV8MHwxfHNlYXJjaHwxfHxWZWdldGFibGUlMjBDb2NvbnV0JTIwQ3VycnklMjBmb29kJTIwZGlzaHxlbnwxfDB8fHwxNzc3MzEwODIwfDA&ixlib=rb-4.1.0&auto=format&fit=crop&w=1400&q=85",
+    sourceUrl: "https://unsplash.com/photos/a-yellow-bowl-filled-with-rice-and-vegetables-1xsOZ-wzl3I",
+    attribution: "Markus Winkler",
+    alt: "a yellow bowl filled with rice and vegetables"
+  },
+  "meal-16": {
+    image: "https://images.unsplash.com/photo-1709096723102-327e4187cc15?ixid=M3w5MzY4NDV8MHwxfHNlYXJjaHwxfHxHYXJsaWMlMjBCdXR0ZXIlMjBTaHJpbXAlMjBQYXN0YSUyMGZvb2QlMjBkaXNofGVufDF8MHx8fDE3NzczMTA4MjF8MA&ixlib=rb-4.1.0&auto=format&fit=crop&w=1400&q=85",
+    sourceUrl: "https://unsplash.com/photos/a-white-bowl-filled-with-pasta-and-shrimp-pktPLU9H37g",
+    attribution: "David Trinks",
+    alt: "a white bowl filled with pasta and shrimp"
+  },
+  "meal-17": {
+    image: "https://images.unsplash.com/photo-1676300185292-e23bb3db50fa?ixid=M3w5MzY4NDV8MHwxfHNlYXJjaHwxfHxHcmlsbGVkJTIwU3RlYWslMjAlMjYlMjBWZWdldGFibGVzJTIwZm9vZCUyMGRpc2h8ZW58MXwwfHx8MTc3NzMxMDgyMnww&ixlib=rb-4.1.0&auto=format&fit=crop&w=1400&q=85",
+    sourceUrl: "https://unsplash.com/photos/a-white-plate-topped-with-meat-and-veggies-wkms_RlOuDU",
+    attribution: "Orkun Orcan",
+    alt: "a white plate topped with meat and veggies"
+  },
+  "meal-18": {
+    image: "https://images.unsplash.com/photo-1742633882711-ef7b3cee63d7?ixid=M3w5MzY4NDV8MHwxfHNlYXJjaHwxfHxNaXNvJTIwUmFtZW4lMjBCb3dsJTIwZm9vZCUyMGRpc2h8ZW58MXwwfHx8MTc3NzMxMDgyMnww&ixlib=rb-4.1.0&auto=format&fit=crop&w=1400&q=85",
+    sourceUrl: "https://unsplash.com/photos/delicious-ramen-bowl-with-pork-and-noodles-iEm6W1jxa3k",
+    attribution: "Allen Y",
+    alt: "Delicious ramen bowl with pork and noodles."
+  },
+  "meal-19": {
+    image: "https://images.unsplash.com/photo-1543340713-1bf56d3d1b68?ixid=M3w5MzY4NDV8MHwxfHNlYXJjaHwxfHxIdW1tdXMlMjAlMjYlMjBWZWdnaWUlMjBQbGF0ZSUyMGZvb2QlMjBkaXNofGVufDF8MHx8fDE3NzczMTA4MjN8MA&ixlib=rb-4.1.0&auto=format&fit=crop&w=1400&q=85",
+    sourceUrl: "https://unsplash.com/photos/plate-of-cooked-food-with-vegetable-sQDTlaADDGM",
+    attribution: "Louis Hansel",
+    alt: "plate of cooked food with vegetable"
+  },
+  "meal-20": {
+    image: "https://images.unsplash.com/photo-1578554814282-785ed35be0a3?ixid=M3w5MzY4NDV8MHwxfHNlYXJjaHwxfHxGcnVpdCUyMCUyNiUyMFlvZ3VydCUyMEN1cCUyMGZvb2QlMjBkaXNofGVufDF8MHx8fDE3NzczMTA4MjR8MA&ixlib=rb-4.1.0&auto=format&fit=crop&w=1400&q=85",
+    sourceUrl: "https://unsplash.com/photos/cup-of-strawberry-infoZsRZvvo",
+    attribution: "Redd Francisco",
+    alt: "cup of strawberry"
+  },
+  "meal-21": {
+    image: "https://images.unsplash.com/photo-1633983053464-be76e8a86899?ixid=M3w5MzY4NDV8MHwxfHNlYXJjaHwxfHxEYXJrJTIwQ2hvY29sYXRlJTIwT2F0JTIwQml0ZXMlMjBmb29kJTIwZGlzaHxlbnwxfDB8fHwxNzc3MzEwODI1fDA&ixlib=rb-4.1.0&auto=format&fit=crop&w=1400&q=85",
+    sourceUrl: "https://unsplash.com/photos/a-plate-of-cookies-next-to-a-glass-of-milk-pgMH1J_WgRk",
+    attribution: "American Heritage Chocolate",
+    alt: "a plate of cookies next to a glass of milk"
+  },
+  "meal-22": {
+    image: "https://images.unsplash.com/photo-1639667870348-ac4c31dd31f9?ixid=M3w5MzY4NDV8MHwxfHNlYXJjaHwxfHxDb3R0YWdlJTIwQ2hlZXNlJTIwd2l0aCUyMFBpbmVhcHBsZSUyMGZvb2QlMjBkaXNofGVufDF8MHx8fDE3NzczMTA4MjV8MA&ixlib=rb-4.1.0&auto=format&fit=crop&w=1400&q=85",
+    sourceUrl: "https://unsplash.com/photos/a-plate-of-food-on-a-wooden-table-y39xLLiWEpg",
+    attribution: "Luis Covarrubias",
+    alt: "a plate of food on a wooden table"
+  },
+  "meal-23": {
+    image: "https://images.unsplash.com/photo-1543158181-1274e5362710?ixid=M3w5MzY4NDV8MHwxfHNlYXJjaHwxfHxNaXhlZCUyME51dHMlMjAlMjYlMjBEcmllZCUyMEZydWl0JTIwZm9vZCUyMGRpc2h8ZW58MXwwfHx8MTc3NzMxMDgyNnww&ixlib=rb-4.1.0&auto=format&fit=crop&w=1400&q=85",
+    sourceUrl: "https://unsplash.com/photos/cooked-beans-pUa1On18Jno",
+    attribution: "Maksim Shutov",
+    alt: "cooked beans"
+  },
+  "meal-24": {
+    image: "https://images.unsplash.com/photo-1730231218047-aee2e8fe894d?ixid=M3w5MzY4NDV8MHwxfHNlYXJjaHwxfHxHcmVlbiUyMERldG94JTIwSnVpY2UlMjBmb29kJTIwZGlzaHxlbnwxfDB8fHwxNzc3MzEwODI3fDA&ixlib=rb-4.1.0&auto=format&fit=crop&w=1400&q=85",
+    sourceUrl: "https://unsplash.com/photos/a-table-topped-with-plates-of-food-and-a-drink-W7H41s5M_-A",
+    attribution: "Ruyan Ayten",
+    alt: "A table topped with plates of food and a drink"
+  },
 };
+
+function getMockMealImage(id) {
+  return UNSPLASH_MOCK_MEAL_IMAGES[id]?.image || IMAGE_FALLBACK_SRC;
+}
+
+function getMockMealImageMeta(id) {
+  return UNSPLASH_MOCK_MEAL_IMAGES[id] || {};
+}
 
 const handleMealImageError = (event) => {
   event.currentTarget.onerror = null;
   event.currentTarget.src = IMAGE_FALLBACK_SRC;
 };
 
+function shouldEnrichMealImage(meal) {
+  const imageValue = String(meal?.image || "").trim();
+  const isScanMeal =
+    String(meal?.id || "").startsWith("scan-") ||
+    String(meal?.time || "").toLowerCase() === "ai scan";
+
+  return (
+    isScanMeal &&
+    (!imageValue ||
+      imageValue.startsWith("blob:") ||
+      imageValue.includes("/images/meal-mock/") ||
+      imageValue === IMAGE_FALLBACK_SRC)
+  );
+}
+
+function getImageEnrichmentKey(date, entryId, meal) {
+  return [date, entryId, normalize(meal?.title || meal?.name)].filter(Boolean).join("|");
+}
+
+function readImageEnrichmentQueue() {
+  if (typeof window === "undefined") return {};
+  try {
+    const raw = sessionStorage.getItem(DYNAMIC_IMAGE_ENRICHMENT_STORAGE_KEY);
+    const parsed = raw ? JSON.parse(raw) : {};
+    return parsed && typeof parsed === "object" ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
+function writeImageEnrichmentQueue(queue) {
+  if (typeof window === "undefined") return;
+  try {
+    sessionStorage.setItem(DYNAMIC_IMAGE_ENRICHMENT_STORAGE_KEY, JSON.stringify(queue));
+  } catch {
+    // Ignore queue persistence issues.
+  }
+}
+
 const recommendedMeals = [
   {
     id: "rec-1",
     title: "Oatmeal with Blueberries",
-    image: foodImage("oatmeal blueberries breakfast bowl", 101),
+    image: getMockMealImage("rec-1"),
+    imageSource: "Unsplash",
+    imageAttribution: getMockMealImageMeta("rec-1").attribution || "",
+    imageSourceUrl: getMockMealImageMeta("rec-1").sourceUrl || "",
     time: "8 mins",
     servings: "1 Serving",
     level: "Easy",
@@ -147,7 +350,10 @@ const recommendedMeals = [
   {
     id: "rec-2",
     title: "Greek Yogurt Parfait",
-    image: foodImage("greek yogurt parfait berries granola", 102),
+    image: getMockMealImage("rec-2"),
+    imageSource: "Unsplash",
+    imageAttribution: getMockMealImageMeta("rec-2").attribution || "",
+    imageSourceUrl: getMockMealImageMeta("rec-2").sourceUrl || "",
     time: "7 mins",
     servings: "1 Serving",
     level: "Easy",
@@ -157,7 +363,10 @@ const recommendedMeals = [
   {
     id: "rec-3",
     title: "Quinoa Salmon Bowl",
-    image: foodImage("quinoa salmon bowl healthy", 103),
+    image: getMockMealImage("rec-3"),
+    imageSource: "Unsplash",
+    imageAttribution: getMockMealImageMeta("rec-3").attribution || "",
+    imageSourceUrl: getMockMealImageMeta("rec-3").sourceUrl || "",
     time: "22 mins",
     servings: "2 Servings",
     level: "Easy",
@@ -167,7 +376,10 @@ const recommendedMeals = [
   {
     id: "rec-4",
     title: "Chicken Teriyaki Rice Bowl",
-    image: foodImage("chicken teriyaki rice bowl", 104),
+    image: getMockMealImage("rec-4"),
+    imageSource: "Unsplash",
+    imageAttribution: getMockMealImageMeta("rec-4").attribution || "",
+    imageSourceUrl: getMockMealImageMeta("rec-4").sourceUrl || "",
     time: "25 mins",
     servings: "2 Servings",
     level: "Medium",
@@ -177,7 +389,10 @@ const recommendedMeals = [
   {
     id: "rec-5",
     title: "Lentil & Vegetable Curry",
-    image: foodImage("lentil vegetable curry", 105),
+    image: getMockMealImage("rec-5"),
+    imageSource: "Unsplash",
+    imageAttribution: getMockMealImageMeta("rec-5").attribution || "",
+    imageSourceUrl: getMockMealImageMeta("rec-5").sourceUrl || "",
     time: "28 mins",
     servings: "2 Servings",
     level: "Medium",
@@ -187,7 +402,10 @@ const recommendedMeals = [
   {
     id: "rec-6",
     title: "Grilled Salmon & Asparagus",
-    image: foodImage("grilled salmon asparagus dinner", 106),
+    image: getMockMealImage("rec-6"),
+    imageSource: "Unsplash",
+    imageAttribution: getMockMealImageMeta("rec-6").attribution || "",
+    imageSourceUrl: getMockMealImageMeta("rec-6").sourceUrl || "",
     time: "24 mins",
     servings: "2 Servings",
     level: "Easy",
@@ -197,7 +415,10 @@ const recommendedMeals = [
   {
     id: "rec-7",
     title: "Mango Chia Pudding",
-    image: foodImage("mango chia pudding", 107),
+    image: getMockMealImage("rec-7"),
+    imageSource: "Unsplash",
+    imageAttribution: getMockMealImageMeta("rec-7").attribution || "",
+    imageSourceUrl: getMockMealImageMeta("rec-7").sourceUrl || "",
     time: "10 mins",
     servings: "1 Serving",
     level: "Easy",
@@ -207,7 +428,10 @@ const recommendedMeals = [
   {
     id: "rec-8",
     title: "Hummus Veggie Snack Plate",
-    image: foodImage("hummus veggie plate snack", 108),
+    image: getMockMealImage("rec-8"),
+    imageSource: "Unsplash",
+    imageAttribution: getMockMealImageMeta("rec-8").attribution || "",
+    imageSourceUrl: getMockMealImageMeta("rec-8").sourceUrl || "",
     time: "6 mins",
     servings: "1 Serving",
     level: "Easy",
@@ -220,7 +444,10 @@ const mockAllMeals = [
   {
     id: "meal-1",
     title: "Avocado Toast with Poached Egg",
-    image: foodImage("avocado toast poached egg", 201),
+    image: getMockMealImage("meal-1"),
+    imageSource: "Unsplash",
+    imageAttribution: getMockMealImageMeta("meal-1").attribution || "",
+    imageSourceUrl: getMockMealImageMeta("meal-1").sourceUrl || "",
     time: "12 Mins",
     servings: "1 Serving",
     level: "Easy",
@@ -230,7 +457,10 @@ const mockAllMeals = [
   {
     id: "meal-2",
     title: "Spinach Mushroom Omelette",
-    image: foodImage("spinach mushroom omelette", 202),
+    image: getMockMealImage("meal-2"),
+    imageSource: "Unsplash",
+    imageAttribution: getMockMealImageMeta("meal-2").attribution || "",
+    imageSourceUrl: getMockMealImageMeta("meal-2").sourceUrl || "",
     time: "14 Mins",
     servings: "1 Serving",
     level: "Easy",
@@ -240,7 +470,10 @@ const mockAllMeals = [
   {
     id: "meal-3",
     title: "Berry Banana Smoothie",
-    image: foodImage("berry banana smoothie", 203),
+    image: getMockMealImage("meal-3"),
+    imageSource: "Unsplash",
+    imageAttribution: getMockMealImageMeta("meal-3").attribution || "",
+    imageSourceUrl: getMockMealImageMeta("meal-3").sourceUrl || "",
     time: "6 Mins",
     servings: "1 Serving",
     level: "Easy",
@@ -250,7 +483,10 @@ const mockAllMeals = [
   {
     id: "meal-4",
     title: "Smoked Salmon Bagel",
-    image: foodImage("smoked salmon bagel", 204),
+    image: getMockMealImage("meal-4"),
+    imageSource: "Unsplash",
+    imageAttribution: getMockMealImageMeta("meal-4").attribution || "",
+    imageSourceUrl: getMockMealImageMeta("meal-4").sourceUrl || "",
     time: "10 Mins",
     servings: "1 Serving",
     level: "Easy",
@@ -260,7 +496,10 @@ const mockAllMeals = [
   {
     id: "meal-5",
     title: "Protein Pancakes",
-    image: foodImage("protein pancakes", 205),
+    image: getMockMealImage("meal-5"),
+    imageSource: "Unsplash",
+    imageAttribution: getMockMealImageMeta("meal-5").attribution || "",
+    imageSourceUrl: getMockMealImageMeta("meal-5").sourceUrl || "",
     time: "18 Mins",
     servings: "2 Servings",
     level: "Medium",
@@ -270,7 +509,10 @@ const mockAllMeals = [
   {
     id: "meal-6",
     title: "Chia Seed Pudding",
-    image: foodImage("chia seed pudding", 206),
+    image: getMockMealImage("meal-6"),
+    imageSource: "Unsplash",
+    imageAttribution: getMockMealImageMeta("meal-6").attribution || "",
+    imageSourceUrl: getMockMealImageMeta("meal-6").sourceUrl || "",
     time: "8 Mins",
     servings: "1 Serving",
     level: "Easy",
@@ -280,7 +522,10 @@ const mockAllMeals = [
   {
     id: "meal-7",
     title: "Chicken Caesar Wrap",
-    image: foodImage("chicken caesar wrap", 207),
+    image: getMockMealImage("meal-7"),
+    imageSource: "Unsplash",
+    imageAttribution: getMockMealImageMeta("meal-7").attribution || "",
+    imageSourceUrl: getMockMealImageMeta("meal-7").sourceUrl || "",
     time: "20 Mins",
     servings: "2 Servings",
     level: "Medium",
@@ -290,7 +535,10 @@ const mockAllMeals = [
   {
     id: "meal-8",
     title: "Quinoa Salmon Bowl",
-    image: foodImage("quinoa salmon bowl", 208),
+    image: getMockMealImage("meal-8"),
+    imageSource: "Unsplash",
+    imageAttribution: getMockMealImageMeta("meal-8").attribution || "",
+    imageSourceUrl: getMockMealImageMeta("meal-8").sourceUrl || "",
     time: "24 Mins",
     servings: "2 Servings",
     level: "Medium",
@@ -300,7 +548,10 @@ const mockAllMeals = [
   {
     id: "meal-9",
     title: "Shrimp Pad Thai",
-    image: foodImage("shrimp pad thai", 209),
+    image: getMockMealImage("meal-9"),
+    imageSource: "Unsplash",
+    imageAttribution: getMockMealImageMeta("meal-9").attribution || "",
+    imageSourceUrl: getMockMealImageMeta("meal-9").sourceUrl || "",
     time: "27 Mins",
     servings: "2 Servings",
     level: "Medium",
@@ -310,7 +561,10 @@ const mockAllMeals = [
   {
     id: "meal-10",
     title: "Tuna Nicoise Salad",
-    image: foodImage("tuna nicoise salad", 210),
+    image: getMockMealImage("meal-10"),
+    imageSource: "Unsplash",
+    imageAttribution: getMockMealImageMeta("meal-10").attribution || "",
+    imageSourceUrl: getMockMealImageMeta("meal-10").sourceUrl || "",
     time: "15 Mins",
     servings: "2 Servings",
     level: "Easy",
@@ -320,7 +574,10 @@ const mockAllMeals = [
   {
     id: "meal-11",
     title: "Turkey Veggie Sandwich",
-    image: foodImage("turkey veggie sandwich", 211),
+    image: getMockMealImage("meal-11"),
+    imageSource: "Unsplash",
+    imageAttribution: getMockMealImageMeta("meal-11").attribution || "",
+    imageSourceUrl: getMockMealImageMeta("meal-11").sourceUrl || "",
     time: "10 Mins",
     servings: "1 Serving",
     level: "Easy",
@@ -330,7 +587,10 @@ const mockAllMeals = [
   {
     id: "meal-12",
     title: "Mediterranean Buddha Bowl",
-    image: foodImage("mediterranean buddha bowl", 212),
+    image: getMockMealImage("meal-12"),
+    imageSource: "Unsplash",
+    imageAttribution: getMockMealImageMeta("meal-12").attribution || "",
+    imageSourceUrl: getMockMealImageMeta("meal-12").sourceUrl || "",
     time: "22 Mins",
     servings: "2 Servings",
     level: "Medium",
@@ -340,7 +600,10 @@ const mockAllMeals = [
   {
     id: "meal-13",
     title: "Lemon Herb Baked Salmon",
-    image: foodImage("baked salmon lemon herbs", 213),
+    image: getMockMealImage("meal-13"),
+    imageSource: "Unsplash",
+    imageAttribution: getMockMealImageMeta("meal-13").attribution || "",
+    imageSourceUrl: getMockMealImageMeta("meal-13").sourceUrl || "",
     time: "26 Mins",
     servings: "2 Servings",
     level: "Medium",
@@ -350,7 +613,10 @@ const mockAllMeals = [
   {
     id: "meal-14",
     title: "Chicken Tikka Masala",
-    image: foodImage("chicken tikka masala", 214),
+    image: getMockMealImage("meal-14"),
+    imageSource: "Unsplash",
+    imageAttribution: getMockMealImageMeta("meal-14").attribution || "",
+    imageSourceUrl: getMockMealImageMeta("meal-14").sourceUrl || "",
     time: "35 Mins",
     servings: "3 Servings",
     level: "Hard",
@@ -360,7 +626,10 @@ const mockAllMeals = [
   {
     id: "meal-15",
     title: "Vegetable Coconut Curry",
-    image: foodImage("vegetable coconut curry", 215),
+    image: getMockMealImage("meal-15"),
+    imageSource: "Unsplash",
+    imageAttribution: getMockMealImageMeta("meal-15").attribution || "",
+    imageSourceUrl: getMockMealImageMeta("meal-15").sourceUrl || "",
     time: "30 Mins",
     servings: "3 Servings",
     level: "Medium",
@@ -370,7 +639,10 @@ const mockAllMeals = [
   {
     id: "meal-16",
     title: "Garlic Butter Shrimp Pasta",
-    image: foodImage("garlic butter shrimp pasta", 216),
+    image: getMockMealImage("meal-16"),
+    imageSource: "Unsplash",
+    imageAttribution: getMockMealImageMeta("meal-16").attribution || "",
+    imageSourceUrl: getMockMealImageMeta("meal-16").sourceUrl || "",
     time: "29 Mins",
     servings: "2 Servings",
     level: "Medium",
@@ -380,7 +652,10 @@ const mockAllMeals = [
   {
     id: "meal-17",
     title: "Grilled Steak & Vegetables",
-    image: foodImage("grilled steak vegetables", 217),
+    image: getMockMealImage("meal-17"),
+    imageSource: "Unsplash",
+    imageAttribution: getMockMealImageMeta("meal-17").attribution || "",
+    imageSourceUrl: getMockMealImageMeta("meal-17").sourceUrl || "",
     time: "32 Mins",
     servings: "2 Servings",
     level: "Hard",
@@ -390,7 +665,10 @@ const mockAllMeals = [
   {
     id: "meal-18",
     title: "Miso Ramen Bowl",
-    image: foodImage("miso ramen bowl", 218),
+    image: getMockMealImage("meal-18"),
+    imageSource: "Unsplash",
+    imageAttribution: getMockMealImageMeta("meal-18").attribution || "",
+    imageSourceUrl: getMockMealImageMeta("meal-18").sourceUrl || "",
     time: "33 Mins",
     servings: "2 Servings",
     level: "Hard",
@@ -400,7 +678,10 @@ const mockAllMeals = [
   {
     id: "meal-19",
     title: "Hummus & Veggie Plate",
-    image: foodImage("hummus veggie plate", 219),
+    image: getMockMealImage("meal-19"),
+    imageSource: "Unsplash",
+    imageAttribution: getMockMealImageMeta("meal-19").attribution || "",
+    imageSourceUrl: getMockMealImageMeta("meal-19").sourceUrl || "",
     time: "7 Mins",
     servings: "1 Serving",
     level: "Easy",
@@ -410,7 +691,10 @@ const mockAllMeals = [
   {
     id: "meal-20",
     title: "Fruit & Yogurt Cup",
-    image: foodImage("fruit yogurt cup", 220),
+    image: getMockMealImage("meal-20"),
+    imageSource: "Unsplash",
+    imageAttribution: getMockMealImageMeta("meal-20").attribution || "",
+    imageSourceUrl: getMockMealImageMeta("meal-20").sourceUrl || "",
     time: "5 Mins",
     servings: "1 Serving",
     level: "Easy",
@@ -420,7 +704,10 @@ const mockAllMeals = [
   {
     id: "meal-21",
     title: "Dark Chocolate Oat Bites",
-    image: foodImage("dark chocolate oat bites", 221),
+    image: getMockMealImage("meal-21"),
+    imageSource: "Unsplash",
+    imageAttribution: getMockMealImageMeta("meal-21").attribution || "",
+    imageSourceUrl: getMockMealImageMeta("meal-21").sourceUrl || "",
     time: "9 Mins",
     servings: "2 Servings",
     level: "Easy",
@@ -430,7 +717,10 @@ const mockAllMeals = [
   {
     id: "meal-22",
     title: "Cottage Cheese with Pineapple",
-    image: foodImage("cottage cheese pineapple", 222),
+    image: getMockMealImage("meal-22"),
+    imageSource: "Unsplash",
+    imageAttribution: getMockMealImageMeta("meal-22").attribution || "",
+    imageSourceUrl: getMockMealImageMeta("meal-22").sourceUrl || "",
     time: "4 Mins",
     servings: "1 Serving",
     level: "Easy",
@@ -440,7 +730,10 @@ const mockAllMeals = [
   {
     id: "meal-23",
     title: "Mixed Nuts & Dried Fruit",
-    image: foodImage("mixed nuts dried fruit", 223),
+    image: getMockMealImage("meal-23"),
+    imageSource: "Unsplash",
+    imageAttribution: getMockMealImageMeta("meal-23").attribution || "",
+    imageSourceUrl: getMockMealImageMeta("meal-23").sourceUrl || "",
     time: "3 Mins",
     servings: "1 Serving",
     level: "Easy",
@@ -450,7 +743,10 @@ const mockAllMeals = [
   {
     id: "meal-24",
     title: "Green Detox Juice",
-    image: foodImage("green detox juice", 224),
+    image: getMockMealImage("meal-24"),
+    imageSource: "Unsplash",
+    imageAttribution: getMockMealImageMeta("meal-24").attribution || "",
+    imageSourceUrl: getMockMealImageMeta("meal-24").sourceUrl || "",
     time: "6 Mins",
     servings: "1 Serving",
     level: "Easy",
@@ -500,8 +796,14 @@ function includesQuery(item, query) {
   return haystack.includes(query);
 }
 
+function isScanLogMeal(item) {
+  const sourceKey = normalize(item?.source);
+  return sourceKey === "scan_log" || normalize(item?.id).startsWith("scanlog-");
+}
+
 function matchesMealFilter(item, activeFilter) {
   if (activeFilter === "all") return true;
+  if (activeFilter === "scan") return isScanLogMeal(item);
   return normalize(item.mealType) === activeFilter;
 }
 
@@ -520,7 +822,13 @@ function normalizeMealType(value) {
 
 function parseRequestedMealFilter(value) {
   const normalized = normalize(value);
-  if (normalized === "breakfast" || normalized === "lunch" || normalized === "dinner" || normalized === "others") {
+  if (
+    normalized === "breakfast" ||
+    normalized === "lunch" ||
+    normalized === "dinner" ||
+    normalized === "others" ||
+    normalized === "scan"
+  ) {
     return normalized;
   }
   if (normalized === "snack" || normalized === "snacks" || normalized === "other") return "others";
@@ -566,11 +874,16 @@ function resolveInitialPlanDate(location) {
 }
 
 function getMealIdentityKey(meal, fallback = "") {
-  const recipeIdKey = normalize(meal?.recipeId);
-  if (recipeIdKey && recipeIdKey !== "null") return `recipe:${recipeIdKey}`;
+  if (isScanLogMeal(meal)) {
+    const scanKey = normalize(meal?.scanKey || meal?.title || meal?.name || meal?.id);
+    if (scanKey) return `scan:${scanKey}`;
+  }
 
   const titleKey = normalize(meal?.title || meal?.name);
   if (titleKey) return `title:${titleKey}`;
+
+  const recipeIdKey = normalize(meal?.recipeId);
+  if (recipeIdKey && recipeIdKey !== "null") return `recipe:${recipeIdKey}`;
 
   const idKey = normalize(meal?.id);
   if (idKey) return `id:${idKey}`;
@@ -581,12 +894,62 @@ function getMealIdentityKey(meal, fallback = "") {
   return "";
 }
 
+function mapScanLogEntryToMeal(entry, index = 0) {
+  const title = entry?.title || entry?.name || entry?.label || `Scan dish ${index + 1}`;
+  const mealType = normalizeMealType(entry?.mealType);
+  const estimatedCalories = Number.isFinite(Number(entry?.nutrition?.calories))
+    ? Math.max(0, Math.round(Number(entry.nutrition.calories)))
+    : null;
+
+  return {
+    id: entry?.id || `scanlog-${normalize(title) || index}`,
+    scanKey: normalize(entry?.scanKey || title),
+    recipeId: null,
+    title,
+    name: title,
+    image: entry?.image || IMAGE_FALLBACK_SRC,
+    imageSource: entry?.imageSource || "Scan Log",
+    imageAttribution: entry?.imageAttribution || "",
+    imageSourceUrl: entry?.imageSourceUrl || "",
+    time: entry?.time || "AI Scan",
+    servings: entry?.servings || "1 Serving",
+    level: entry?.level || "Ready",
+    mealType,
+    source: "scan_log",
+    description: entry?.about || `${title} saved from Scan Log for quick reuse.`,
+    tags: [
+      entry?.cuisine || null,
+      estimatedCalories != null ? `${estimatedCalories} kcal` : null,
+      "Scan Log",
+    ].filter(Boolean),
+    nutrition: entry?.nutrition || null,
+    savedAt: entry?.savedAt || entry?.updatedAt || "",
+  };
+}
+
 function getMealSlotKey(meal, fallback = "") {
   const identityKey = getMealIdentityKey(meal, fallback);
   if (!identityKey) return "";
 
   const mealTypeKey = normalizeMealType(meal?.mealType);
   return `slot:${identityKey}|${mealTypeKey}`;
+}
+
+function hasUsableSelectedMealImage(meal) {
+  const imageValue = String(meal?.image || meal?.imageUrl || "").trim();
+  return Boolean(
+    imageValue &&
+      !imageValue.startsWith("blob:") &&
+      !imageValue.includes("/images/meal-mock/placeholder")
+  );
+}
+
+function getSelectedMealScore(meal) {
+  return (
+    (hasUsableSelectedMealImage(meal) ? 10 : 0) +
+    (meal?.description ? 2 : 0) +
+    (meal?.nutrition && typeof meal.nutrition === "object" ? 1 : 0)
+  );
 }
 
 function normalizeSelectionMap(selectionMap) {
@@ -600,7 +963,13 @@ function normalizeSelectionMap(selectionMap) {
       mealType: normalizeMealType(meal?.mealType),
     };
     const selectionKey = getMealSlotKey(normalizedMeal, `${entryKey || index}`);
-    if (!selectionKey || normalizedMap[selectionKey]) return;
+    if (!selectionKey) return;
+    if (
+      normalizedMap[selectionKey] &&
+      getSelectedMealScore(normalizedMap[selectionKey]) > getSelectedMealScore(normalizedMeal)
+    ) {
+      return;
+    }
     normalizedMap[selectionKey] = normalizedMeal;
   });
 
@@ -676,6 +1045,9 @@ const Meal = () => {
   const [mealSelectionsByDate, setMealSelectionsByDate] = useState(() =>
     normalizeSelectionsByDate(readSelectionsByDateFromStorage()),
   );
+  const [scanLogMeals, setScanLogMeals] = useState(() =>
+    readScanLogEntries().map((entry, index) => mapScanLogEntryToMeal(entry, index)),
+  );
 
   const [activeTab, setActiveTab] = useState('addMeal');
   const [planFilters, setPlanFilters] = useState(null);
@@ -697,6 +1069,21 @@ const Meal = () => {
       setSelectedDate(requestedDate);
     }
   }, [selectedDate, location.key, location.search]);
+
+  useEffect(() => {
+    const syncScanMeals = () => {
+      const latest = readScanLogEntries().map((entry, index) => mapScanLogEntryToMeal(entry, index));
+      setScanLogMeals(latest);
+    };
+
+    syncScanMeals();
+    window.addEventListener(SCAN_LOG_UPDATED_EVENT, syncScanMeals);
+    window.addEventListener("storage", syncScanMeals);
+    return () => {
+      window.removeEventListener(SCAN_LOG_UPDATED_EVENT, syncScanMeals);
+      window.removeEventListener("storage", syncScanMeals);
+    };
+  }, []);
 
   const normalizedQuery = normalize(query);
 
@@ -771,22 +1158,22 @@ const Meal = () => {
 
   const filteredAllMeals = useMemo(
     () =>
-      mockAllMeals.filter(
+      [...scanLogMeals, ...mockAllMeals].filter(
         (item) =>
           matchesMealFilter(item, activeFilter) && includesQuery(item, normalizedQuery),
       ),
-    [activeFilter, normalizedQuery],
+    [activeFilter, normalizedQuery, scanLogMeals],
   );
 
   const searchableMeals = useMemo(() => {
     const uniqueByTitle = new Map();
-    [...recommendedMeals, ...mockAllMeals].forEach((meal) => {
+    [...recommendedMeals, ...scanLogMeals, ...mockAllMeals].forEach((meal) => {
       const titleKey = normalize(meal?.title);
       if (!titleKey || uniqueByTitle.has(titleKey)) return;
       uniqueByTitle.set(titleKey, meal);
     });
     return Array.from(uniqueByTitle.values());
-  }, []);
+  }, [scanLogMeals]);
 
   const searchSuggestions = useMemo(() => {
     if (!normalizedQuery) return [];
@@ -900,6 +1287,68 @@ const Meal = () => {
   useEffect(() => {
     if (typeof window === "undefined") return;
     localStorage.setItem(MEAL_SELECTIONS_STORAGE_KEY, JSON.stringify(mealSelectionsByDate));
+  }, [mealSelectionsByDate]);
+
+  useEffect(() => {
+    const queue = readImageEnrichmentQueue();
+    const jobs = [];
+
+    Object.entries(mealSelectionsByDate).forEach(([date, mealMap]) => {
+      Object.entries(normalizeSelectionMap(mealMap)).forEach(([entryId, meal]) => {
+        if (!shouldEnrichMealImage(meal)) return;
+        const jobKey = getImageEnrichmentKey(date, entryId, meal);
+        if (queue[jobKey]) return;
+
+        queue[jobKey] = "pending";
+        jobs.push({ date, entryId, meal, jobKey });
+      });
+    });
+
+    if (jobs.length === 0) return;
+
+    writeImageEnrichmentQueue(queue);
+
+    jobs.slice(0, 6).forEach(({ date, entryId, meal, jobKey }) => {
+      fetchDishImage(meal.title || meal.name, {
+        cuisine: Array.isArray(meal.tags) ? meal.tags[0] : "",
+      })
+        .then((result) => {
+          const nextQueue = readImageEnrichmentQueue();
+          if (!result?.imageUrl) {
+            nextQueue[jobKey] = "missing";
+            writeImageEnrichmentQueue(nextQueue);
+            return;
+          }
+
+          nextQueue[jobKey] = "done";
+          writeImageEnrichmentQueue(nextQueue);
+
+          setMealSelectionsByDate((previousByDate) => {
+            const dateMap = normalizeSelectionMap(previousByDate[date] || {});
+            const currentMeal = dateMap[entryId];
+            if (!currentMeal || !shouldEnrichMealImage(currentMeal)) return previousByDate;
+
+            return {
+              ...previousByDate,
+              [date]: {
+                ...dateMap,
+                [entryId]: {
+                  ...currentMeal,
+                  image: result.imageUrl,
+                  imageSource: result.source || currentMeal.imageSource || "",
+                  imageAttribution: result.attribution || currentMeal.imageAttribution || "",
+                  imageSourceUrl: result.sourceUrl || currentMeal.imageSourceUrl || "",
+                },
+              },
+            };
+          });
+        })
+        .catch(() => {
+          const nextQueue = readImageEnrichmentQueue();
+          nextQueue[jobKey] = "failed";
+          writeImageEnrichmentQueue(nextQueue);
+        });
+    });
   }, [mealSelectionsByDate]);
 
   useEffect(() => {
@@ -1282,6 +1731,7 @@ const Meal = () => {
     0,
   );
   const isSelectedView = activeFilter === "selected";
+  const isScanLogView = activeFilter === "scan";
   const isTodaySelected = selectedDate === todayISO;
   const dateDisplayLabel = isTodaySelected ? "Today" : selectedDate;
 
@@ -1578,134 +2028,138 @@ const Meal = () => {
               </section>
             ) : (
               <>
-                <section className="add-meal-section">
-                  <h2 className="section-title">Recommended Meals</h2>
+                {!isScanLogView ? (
+                  <section className="add-meal-section">
+                    <h2 className="section-title">Recommended Meals</h2>
 
-                  {filteredRecommended.length === 0 ? (
-                    <p className="empty-state">No recommended meals found for the selected filter.</p>
-                  ) : (
-                    <div className="recommended-row-shell">
-                      <div className="recommended-row" ref={recommendedRowRef}>
-                        {filteredRecommended.map((meal) => {
-                          const mealSlotKey = getMealSlotKey(
-                            meal,
-                            meal.id || meal.recipeId || meal.title,
-                          );
-                          const mealIdentityKey = getMealIdentityKey(
-                            meal,
-                            meal.id || meal.recipeId || meal.title,
-                          );
-                          const isSelectedInCurrentSlot =
-                            Boolean(mealSlotKey) && selectedSlotKeySet.has(mealSlotKey);
-                          const isSelected =
-                            isSelectedInCurrentSlot ||
-                            (Boolean(mealIdentityKey) && selectedIdentityKeySet.has(mealIdentityKey));
-                          const isSelectedDish =
-                            Boolean(selectedDishKey) &&
-                            Boolean(mealIdentityKey) &&
-                            selectedDishKey === mealIdentityKey;
+                    {filteredRecommended.length === 0 ? (
+                      <p className="empty-state">No recommended meals found for the selected filter.</p>
+                    ) : (
+                      <div className="recommended-row-shell">
+                        <div className="recommended-row" ref={recommendedRowRef}>
+                          {filteredRecommended.map((meal) => {
+                            const mealSlotKey = getMealSlotKey(
+                              meal,
+                              meal.id || meal.recipeId || meal.title,
+                            );
+                            const mealIdentityKey = getMealIdentityKey(
+                              meal,
+                              meal.id || meal.recipeId || meal.title,
+                            );
+                            const isSelectedInCurrentSlot =
+                              Boolean(mealSlotKey) && selectedSlotKeySet.has(mealSlotKey);
+                            const isSelected =
+                              isSelectedInCurrentSlot ||
+                              (Boolean(mealIdentityKey) && selectedIdentityKeySet.has(mealIdentityKey));
+                            const isSelectedDish =
+                              Boolean(selectedDishKey) &&
+                              Boolean(mealIdentityKey) &&
+                              selectedDishKey === mealIdentityKey;
 
-                          return (
-                            <article
-                              key={meal.id}
-                              className={`recommend-card ${isSelected ? "selected" : ""} ${isSelectedDish ? "selected-dish" : ""}`}
-                              onClick={() => toggleMealSelection(meal)}
-                            >
-                              <div className="recommend-image-wrap">
-                                <img
-                                  src={meal.image}
-                                  alt={meal.title}
-                                  loading="lazy"
-                                  onError={handleMealImageError}
-                                />
-                                <span className={`meal-type-badge type-${normalize(meal.mealType)}`}>
-                                  {formatMealTypeLabel(meal.mealType)}
-                                </span>
-                                {isSelected ? (
-                                  <span className="selected-check" aria-label="Selected">
-                                    <span className="selected-check-icon" aria-hidden="true">
-                                      <Check size={13} strokeWidth={3} />
+                            return (
+                              <article
+                                key={meal.id}
+                                className={`recommend-card ${isSelected ? "selected" : ""} ${isSelectedDish ? "selected-dish" : ""}`}
+                                onClick={() => toggleMealSelection(meal)}
+                              >
+                                <div className="recommend-image-wrap">
+                                  <img
+                                    src={meal.image}
+                                    alt={meal.title}
+                                    loading="lazy"
+                                    onError={handleMealImageError}
+                                  />
+                                  <span className={`meal-type-badge type-${normalize(meal.mealType)}`}>
+                                    {formatMealTypeLabel(meal.mealType)}
+                                  </span>
+                                  {isSelected ? (
+                                    <span className="selected-check" aria-label="Selected">
+                                      <span className="selected-check-icon" aria-hidden="true">
+                                        <Check size={13} strokeWidth={3} />
+                                      </span>
+                                      <span className="selected-check-label">Selected</span>
                                     </span>
-                                    <span className="selected-check-label">Selected</span>
+                                  ) : null}
+                                  <span className="recommend-time">
+                                    <Clock3 size={13} />
+                                    {meal.time}
                                   </span>
-                                ) : null}
-                                <span className="recommend-time">
-                                  <Clock3 size={13} />
-                                  {meal.time}
-                                </span>
-                              </div>
+                                </div>
 
-                              <div className="recommend-content">
-                                <h3>{meal.title}</h3>
-                                <div className="recipe-meta recommend-meta">
-                                  <span>
-                                    <Clock3 size={16} />
-                                    {meal.time || "N/A"}
-                                  </span>
-                                  <span>
-                                    <Users size={16} />
-                                    {meal.servings || "N/A"}
-                                  </span>
-                                  <span>
-                                    <BarChart3 size={16} />
-                                    {meal.level || "Easy"}
-                                  </span>
+                                <div className="recommend-content">
+                                  <h3>{meal.title}</h3>
+                                  <div className="recipe-meta recommend-meta">
+                                    <span>
+                                      <Clock3 size={16} />
+                                      {meal.time || "N/A"}
+                                    </span>
+                                    <span>
+                                      <Users size={16} />
+                                      {meal.servings || "N/A"}
+                                    </span>
+                                    <span>
+                                      <BarChart3 size={16} />
+                                      {meal.level || "Easy"}
+                                    </span>
+                                  </div>
+                                  <div className="recommend-tags">
+                                    {(Array.isArray(meal.tags) ? meal.tags : []).map((tag) => (
+                                      <span key={`${meal.id}-${tag}`}>{tag}</span>
+                                    ))}
+                                  </div>
+                                  <div className="meal-card-actions recommend-card-actions">
+                                    <button
+                                      type="button"
+                                      className="add-meal-action-btn add-meal-detail-btn"
+                                      onClick={(event) => {
+                                        event.stopPropagation();
+                                        handleViewDetail(meal);
+                                      }}
+                                    >
+                                      View Detail
+                                    </button>
+                                    <button
+                                      type="button"
+                                      className="add-meal-action-btn add-meal-recipe-btn"
+                                      onClick={(event) => {
+                                        event.stopPropagation();
+                                        handleViewRecipe(meal);
+                                      }}
+                                    >
+                                      View Recipe
+                                    </button>
+                                  </div>
                                 </div>
-                                <div className="recommend-tags">
-                                  {(Array.isArray(meal.tags) ? meal.tags : []).map((tag) => (
-                                    <span key={`${meal.id}-${tag}`}>{tag}</span>
-                                  ))}
-                                </div>
-                                <div className="meal-card-actions recommend-card-actions">
-                                  <button
-                                    type="button"
-                                    className="add-meal-action-btn add-meal-detail-btn"
-                                    onClick={(event) => {
-                                      event.stopPropagation();
-                                      handleViewDetail(meal);
-                                    }}
-                                  >
-                                    View Detail
-                                  </button>
-                                  <button
-                                    type="button"
-                                    className="add-meal-action-btn add-meal-recipe-btn"
-                                    onClick={(event) => {
-                                      event.stopPropagation();
-                                      handleViewRecipe(meal);
-                                    }}
-                                  >
-                                    View Recipe
-                                  </button>
-                                </div>
-                              </div>
-                            </article>
-                          );
-                        })}
+                              </article>
+                            );
+                          })}
+                        </div>
+
+                        <button
+                          type="button"
+                          className="recommended-scrollbar-track"
+                          ref={recommendedScrollbarTrackRef}
+                          onClick={handleRecommendedScrollbarTrackClick}
+                          aria-label="Scroll recommended meals"
+                        >
+                          <span
+                            className="recommended-scrollbar-thumb"
+                            style={{
+                              width: `${recommendedScrollbar.thumbWidthPx}px`,
+                              left: `${RECOMMENDED_SCROLLBAR_INSET + recommendedScrollbar.thumbOffsetPx}px`,
+                            }}
+                          />
+                        </button>
                       </div>
-
-                      <button
-                        type="button"
-                        className="recommended-scrollbar-track"
-                        ref={recommendedScrollbarTrackRef}
-                        onClick={handleRecommendedScrollbarTrackClick}
-                        aria-label="Scroll recommended meals"
-                      >
-                        <span
-                          className="recommended-scrollbar-thumb"
-                          style={{
-                            width: `${recommendedScrollbar.thumbWidthPx}px`,
-                            left: `${RECOMMENDED_SCROLLBAR_INSET + recommendedScrollbar.thumbOffsetPx}px`,
-                          }}
-                        />
-                      </button>
-                    </div>
-                  )}
-                </section>
+                    )}
+                  </section>
+                ) : null}
 
                 <section className="add-meal-section">
                   <div className="section-title-row">
-                    <h2 className="section-title">All Meals & Recipes</h2>
+                    <h2 className="section-title">
+                      {isScanLogView ? "Saved Scan Meals" : "All Meals & Recipes"}
+                    </h2>
                     <button
                       type="button"
                       className="clear-selected-btn"
@@ -1718,7 +2172,11 @@ const Meal = () => {
                   </div>
 
                   {filteredAllMeals.length === 0 ? (
-                    <p className="empty-state">No meals matched your search.</p>
+                    <p className="empty-state">
+                      {isScanLogView
+                        ? "No dishes in Scan Log yet. Save dishes from Scan page using the star button."
+                        : "No meals matched your search."}
+                    </p>
                   ) : (
                     <div className="all-meals-wrap">
                       <div className="all-meals-grid">
