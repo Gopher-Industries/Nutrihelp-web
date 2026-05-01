@@ -84,6 +84,142 @@ class MealPlanApi extends BaseApi {
             throw error;
         }
     }
+
+    async saveAiMealSuggestion(meal) {
+        if (!this.getAuthToken()) {
+            const err = new Error('Please log in to save meals to your plan.');
+            err.status = 401;
+            throw err;
+        }
+        const url = `${this.baseURL}/mealplan/ai-suggestion`;
+        let response;
+        try {
+            response = await fetch(url, {
+                method: 'POST',
+                headers: this.getHeaders(),
+                body: JSON.stringify(meal)
+            });
+        } catch (networkErr) {
+            console.error('[saveAiMealSuggestion] Network error:', networkErr);
+            const err = new Error('Could not connect to server.');
+            err.status = 0;
+            throw err;
+        }
+        if (!response.ok) {
+            const body = await response.json().catch(() => ({}));
+            console.error('[saveAiMealSuggestion] HTTP', response.status, 'from', url, body);
+            if (response.status === 401) {
+                const err = new Error('Please log in to save meals to your plan.');
+                err.status = 401;
+                throw err;
+            }
+            if (response.status === 429) {
+                const until = body.blockedUntil ? new Date(body.blockedUntil).toLocaleTimeString() : null;
+                const message = until
+                    ? `Too many requests — try again after ${until}.`
+                    : (body.error || 'Too many requests. Please wait a moment and try again.');
+                const err = new Error(message);
+                err.status = 429;
+                throw err;
+            }
+            const message = body.message || body.error || body.detail || body.msg
+                || (response.status === 400 ? 'Validation error. Please check your input.' : 'Something went wrong, please try again.');
+            const err = new Error(message);
+            err.status = response.status;
+            throw err;
+        }
+        return await response.json();
+    }
+
+    async getAiMealSuggestions() {
+        if (!this.getAuthToken()) {
+            const err = new Error('User not authenticated');
+            err.status = 401;
+            throw err;
+        }
+        const url = `${this.baseURL}/mealplan/ai-suggestion`;
+        let response;
+        try {
+            response = await fetch(url, {
+                method: 'GET',
+                headers: this.getHeaders()
+            });
+        } catch (networkErr) {
+            console.error('[getAiMealSuggestions] Network error:', networkErr);
+            const err = new Error('Could not connect to server.');
+            err.status = 0;
+            throw err;
+        }
+        if (!response.ok) {
+            const body = await response.json().catch(() => ({}));
+            console.error('[getAiMealSuggestions] HTTP', response.status, 'from', url, body);
+            if (response.status === 401) {
+                const err = new Error('Session expired. Please log in again.');
+                err.status = 401;
+                throw err;
+            }
+            if (response.status === 429) {
+                const until = body.blockedUntil ? new Date(body.blockedUntil).toLocaleTimeString() : null;
+                const message = until
+                    ? `Too many requests — try again after ${until}.`
+                    : (body.error || 'Too many requests. Please wait a moment and try again.');
+                const err = new Error(message);
+                err.status = 429;
+                throw err;
+            }
+            const message = body.message || body.error || body.detail || body.msg || 'Something went wrong, please try again.';
+            const err = new Error(message);
+            err.status = response.status;
+            throw err;
+        }
+        const data = await response.json();
+        return data.data?.items || [];
+    }
+
+    async deleteAiMealSuggestion(id) {
+        if (!this.getAuthToken()) {
+            const err = new Error('User not authenticated');
+            err.status = 401;
+            throw err;
+        }
+        const url = `${this.baseURL}/mealplan/ai-suggestion`;
+        let response;
+        try {
+            response = await fetch(url, {
+                method: 'DELETE',
+                headers: this.getHeaders(),
+                body: JSON.stringify({ id })
+            });
+        } catch (networkErr) {
+            console.error('[deleteAiMealSuggestion] Network error:', networkErr);
+            const err = new Error('Could not connect to server.');
+            err.status = 0;
+            throw err;
+        }
+        if (!response.ok) {
+            const body = await response.json().catch(() => ({}));
+            console.error('[deleteAiMealSuggestion] HTTP', response.status, 'from', url, body);
+            if (response.status === 401) {
+                const err = new Error('Session expired. Please log in again.');
+                err.status = 401;
+                throw err;
+            }
+            if (response.status === 429) {
+                const until = body.blockedUntil ? new Date(body.blockedUntil).toLocaleTimeString() : null;
+                const message = until
+                    ? `Too many requests — try again after ${until}.`
+                    : (body.error || 'Too many requests. Please wait a moment and try again.');
+                const err = new Error(message);
+                err.status = 429;
+                throw err;
+            }
+            const message = body.message || body.error || body.detail || body.msg || 'Something went wrong, please try again.';
+            const err = new Error(message);
+            err.status = response.status;
+            throw err;
+        }
+        return await response.json();
+    }
 }
 
 export const mealPlanApi = new MealPlanApi();
