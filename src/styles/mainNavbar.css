@@ -16,15 +16,14 @@
   box-shadow: var(--card-shadow-hover);
 }
 
-/* FULL WIDTH */
+/* ALIGN WITH PAGE CONTAINER */
 .main-nav {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
-  width: 100%;
-  max-width: none;
-  margin: 0;
+  gap: 24px;
+  width: min(1440px, 92vw);
+  margin: 0 auto;
   height: 64px;
 }
 
@@ -405,7 +404,7 @@
 }
 
 /* Breakpoint */
-@media (max-width: 900px) {
+@media (max-width: 768px) {
   .nav-desktop {
     display: none;
   }

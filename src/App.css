@@ -38,7 +38,32 @@ body,
 }
 
 .App-link:hover {
-  color: var(--text-link-hover);
+  color: var(--primary-hover);
+}
+
+/* Dark mode specific styles */
+.dark-mode .App {
+  background: linear-gradient(135deg, var(--background-color) 0%, var(--background-secondary) 100%);
+}
+
+.dark-mode .App-header {
+  background-color: var(--card-background);
+  border-bottom: 1px solid var(--border-color);
+}
+
+/* Global body styles */
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--background-color);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.dark-mode body {
+  background-color: var(--background-color);
 }
 
 code {

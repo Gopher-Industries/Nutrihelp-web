@@ -136,7 +136,7 @@ const MainNavbar = () => {
               Home
             </Link>
 
-            <Link to="/Scan" className="nav-link nav-link-icon">
+            <Link to="/scan" className="nav-link nav-link-icon">
               <span className="nav-icon" aria-hidden="true">
                 <BarcodeIcon />
               </span>
