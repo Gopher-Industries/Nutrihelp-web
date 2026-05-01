@@ -13,9 +13,11 @@ import {
   Trash2,
   Users,
 } from "lucide-react";
+import { fetchDishImage } from "../../services/dishImageApi";
 import "./DailyPlanEdit.css";
 
 const STORAGE_KEY = "nutrihelp_add_meal_selections_by_date_v1";
+const IMAGE_ENRICHMENT_STORAGE_KEY = "nutrihelp_daily_plan_image_enrichment_queue_v1";
 
 const MONTHS = [
   "Jan",
@@ -71,6 +73,45 @@ function normalize(value) {
   return String(value || "").trim().toLowerCase();
 }
 
+function shouldEnrichMealImage(meal) {
+  const imageValue = String(meal?.image || "").trim();
+  const isScanMeal =
+    String(meal?.id || "").startsWith("scan-") ||
+    String(meal?.time || "").toLowerCase() === "ai scan";
+
+  return (
+    isScanMeal &&
+    (!imageValue ||
+      imageValue.startsWith("blob:") ||
+      imageValue.includes("/images/meal-mock/") ||
+      imageValue === IMAGE_FALLBACK)
+  );
+}
+
+function getImageEnrichmentKey(date, entryId, meal) {
+  return [date, entryId, normalize(meal?.title || meal?.name)].filter(Boolean).join("|");
+}
+
+function readImageEnrichmentQueue() {
+  if (typeof window === "undefined") return {};
+  try {
+    const raw = sessionStorage.getItem(IMAGE_ENRICHMENT_STORAGE_KEY);
+    const parsed = raw ? JSON.parse(raw) : {};
+    return parsed && typeof parsed === "object" ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
+function writeImageEnrichmentQueue(queue) {
+  if (typeof window === "undefined") return;
+  try {
+    sessionStorage.setItem(IMAGE_ENRICHMENT_STORAGE_KEY, JSON.stringify(queue));
+  } catch {
+    // Ignore queue persistence issues.
+  }
+}
+
 function normalizeMealType(value) {
   const normalized = normalize(value);
   if (normalized === "breakfast" || normalized === "lunch" || normalized === "dinner") {
@@ -112,13 +153,82 @@ function shiftDate(isoDate, offset) {
   return toISODate(date);
 }
 
+function hasUsableMealImage(meal) {
+  const imageValue = String(meal?.image || meal?.imageUrl || "").trim();
+  return Boolean(
+    imageValue &&
+      !imageValue.startsWith("blob:") &&
+      !imageValue.includes("/images/meal-mock/placeholder")
+  );
+}
+
+function getMealDisplayScore(meal) {
+  const nutrition = meal?.nutrition && typeof meal.nutrition === "object" ? meal.nutrition : {};
+  return (
+    (hasUsableMealImage(meal) ? 10 : 0) +
+    (meal?.description ? 2 : 0) +
+    (parseNumber(nutrition.calories) > 0 ? 1 : 0)
+  );
+}
+
+function getCanonicalMealKey(meal, fallback = "") {
+  const mealType = normalizeMealType(meal?.mealType);
+  const titleKey = normalize(meal?.title || meal?.name);
+  const recipeIdKey = normalize(meal?.recipeId);
+  const idKey = normalize(meal?.id || fallback);
+  const identityKey =
+    titleKey ||
+    (recipeIdKey && recipeIdKey !== "null" ? recipeIdKey : "") ||
+    idKey ||
+    normalize(fallback);
+
+  return identityKey ? `${mealType}|${identityKey}` : "";
+}
+
+function dedupeSelectionMap(selectionMap) {
+  if (!selectionMap || typeof selectionMap !== "object") return {};
+
+  const bestByKey = {};
+  Object.entries(selectionMap).forEach(([entryKey, meal]) => {
+    if (!meal || typeof meal !== "object") return;
+
+    const normalizedMeal = {
+      ...meal,
+      mealType: normalizeMealType(meal?.mealType),
+    };
+    const canonicalKey = getCanonicalMealKey(normalizedMeal, entryKey);
+    if (!canonicalKey) return;
+
+    const score = getMealDisplayScore(normalizedMeal);
+    const current = bestByKey[canonicalKey];
+    if (!current || score >= current.score) {
+      bestByKey[canonicalKey] = { entryKey, meal: normalizedMeal, score };
+    }
+  });
+
+  return Object.fromEntries(
+    Object.values(bestByKey).map(({ entryKey, meal }) => [entryKey, meal])
+  );
+}
+
+function dedupeSelectionsByDate(selectionsByDate) {
+  if (!selectionsByDate || typeof selectionsByDate !== "object") return {};
+
+  return Object.fromEntries(
+    Object.entries(selectionsByDate).map(([date, selectionMap]) => [
+      date,
+      dedupeSelectionMap(selectionMap),
+    ])
+  );
+}
+
 function readSelectionsByDate() {
   if (typeof window === "undefined") return {};
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return {};
     const parsed = JSON.parse(raw);
-    return parsed && typeof parsed === "object" ? parsed : {};
+    return parsed && typeof parsed === "object" ? dedupeSelectionsByDate(parsed) : {};
   } catch {
     return {};
   }
@@ -260,6 +370,68 @@ export default function DailyPlanEdit() {
   useEffect(() => {
     if (typeof window === "undefined") return;
     localStorage.setItem(STORAGE_KEY, JSON.stringify(selectionsByDate));
+  }, [selectionsByDate]);
+
+  useEffect(() => {
+    const queue = readImageEnrichmentQueue();
+    const jobs = [];
+
+    Object.entries(selectionsByDate).forEach(([date, mealMap]) => {
+      Object.entries(mealMap || {}).forEach(([entryId, meal]) => {
+        if (!shouldEnrichMealImage(meal)) return;
+        const jobKey = getImageEnrichmentKey(date, entryId, meal);
+        if (queue[jobKey]) return;
+
+        queue[jobKey] = "pending";
+        jobs.push({ date, entryId, meal, jobKey });
+      });
+    });
+
+    if (jobs.length === 0) return;
+
+    writeImageEnrichmentQueue(queue);
+
+    jobs.slice(0, 6).forEach(({ date, entryId, meal, jobKey }) => {
+      fetchDishImage(meal.title || meal.name, {
+        cuisine: Array.isArray(meal.tags) ? meal.tags[0] : "",
+      })
+        .then((result) => {
+          const nextQueue = readImageEnrichmentQueue();
+          if (!result?.imageUrl) {
+            nextQueue[jobKey] = "missing";
+            writeImageEnrichmentQueue(nextQueue);
+            return;
+          }
+
+          nextQueue[jobKey] = "done";
+          writeImageEnrichmentQueue(nextQueue);
+
+          setSelectionsByDate((previousByDate) => {
+            const dateMap = { ...(previousByDate[date] || {}) };
+            const currentMeal = dateMap[entryId];
+            if (!currentMeal || !shouldEnrichMealImage(currentMeal)) return previousByDate;
+
+            return {
+              ...previousByDate,
+              [date]: {
+                ...dateMap,
+                [entryId]: {
+                  ...currentMeal,
+                  image: result.imageUrl,
+                  imageSource: result.source || currentMeal.imageSource || "",
+                  imageAttribution: result.attribution || currentMeal.imageAttribution || "",
+                  imageSourceUrl: result.sourceUrl || currentMeal.imageSourceUrl || "",
+                },
+              },
+            };
+          });
+        })
+        .catch(() => {
+          const nextQueue = readImageEnrichmentQueue();
+          nextQueue[jobKey] = "failed";
+          writeImageEnrichmentQueue(nextQueue);
+        });
+    });
   }, [selectionsByDate]);
 
   const handleMonthChange = (event) => {

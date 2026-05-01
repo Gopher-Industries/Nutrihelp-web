@@ -681,3 +681,100 @@
     font-size: 0.9rem;
   }
 }
+
+.meal-recipe-nutrition-card {
+  margin-bottom: 1rem;
+}
+
+.meal-recipe-nutrition-grid {
+  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.meal-recipe-nutrition-grid > div {
+  border: 1px solid #d8e1ef;
+  border-radius: 0.75rem;
+  background: #f8fbff;
+  padding: 0.75rem;
+  min-height: 5.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.35rem;
+}
+
+.meal-recipe-nutrition-grid > div span {
+  color: #475569;
+  font-size: 0.9rem;
+}
+
+.meal-recipe-nutrition-grid > div strong {
+  color: #0f2f57;
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.meal-recipe-portion-card {
+  margin-bottom: 1rem;
+}
+
+.meal-recipe-portion-grid {
+  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.meal-recipe-portion-grid > div {
+  border: 1px solid #d8e1ef;
+  border-radius: 0.75rem;
+  background: #f8fbff;
+  padding: 0.75rem;
+  min-height: 5.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.35rem;
+}
+
+.meal-recipe-portion-grid > div span {
+  color: #475569;
+  font-size: 0.9rem;
+}
+
+.meal-recipe-portion-grid > div strong {
+  color: #0f2f57;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.meal-recipe-portion-note {
+  margin-top: 0.85rem;
+  color: #475569;
+  font-size: 0.94rem;
+  line-height: 1.45;
+}
+
+@media (max-width: 1140px) {
+  .meal-recipe-nutrition-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 860px) {
+  .meal-recipe-nutrition-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .meal-recipe-portion-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .meal-recipe-nutrition-grid {
+    grid-template-columns: 1fr;
+  }
+}

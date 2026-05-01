@@ -13,7 +13,7 @@ function ScanBarcode() {
 
   // Access user_id from the context
   const [barcodeInput, setBarcodeInput] = useState('');
-  const [showBarcodeInfo, setShowBarcodeInfo] = useState('none');
+  const [showBarcodeInfo, setShowBarcodeInfo] = useState(false);
 
   // Scan result: barcode information
   const [barcodeResult, setBarcodeResult] = useState('');
@@ -74,24 +74,30 @@ function ScanBarcode() {
 
         setUserAllergen(data.user_allergen_ingredients);
 
-        setShowBarcodeInfo('block');
+        setShowBarcodeInfo(true);
         handleFetchResult("Get barcode data successful!", toast.success);
       } else {
         const data = await response.json();
-        setShowBarcodeInfo('none');
+        setShowBarcodeInfo(false);
         handleFetchResult(data.error || "Failed to fetch data. Please check your input and try again later.", toast.warning);
       }
     } catch (error) {
       console.error("Error fetching data:", error.message);
-      setShowBarcodeInfo('none');
+      setShowBarcodeInfo(false);
       handleFetchResult("Failed to fetch data. An error occurred: " + error.message, toast.error);
     }
   };
 
   return (
-    <div>
-      <div className="scan-products-container">
-        <h1 className="mt-0 text-left">Enter Barcode Number</h1>
+    <div className="scan-barcode-flow">
+      <section className="scan-products-container scan-barcode-panel">
+        <div className="scan-barcode-copy">
+          <span className="scan-review-kicker">Barcode scan</span>
+          <h2 className="scan-barcode-title">Enter barcode number</h2>
+          <p className="scan-muted">
+            Enter the full number exactly as shown on the package to fetch product and ingredient data.
+          </p>
+        </div>
         <BarcodeInputForm
           value={barcodeInput}
           handleOnchange={(val) => {
@@ -103,22 +109,24 @@ function ScanBarcode() {
           touched={barcodeTouched}
           handleSubmit={handleBarcodeScanning}
         />
-      </div>
+      </section>
 
       {/* Barcode Information */}
-      <div className="scan-products-container" style={{ display: showBarcodeInfo }}>
+      {showBarcodeInfo ? (
+      <section className="scan-products-container scan-barcode-results-panel">
         {/* Allergen information */}
         <UserAllergenInformation isLoggedIn={user_id != undefined} userAllergen={userAllergen} />
 
         {/* Barcode information */}
-        <h1 className="mt-0 text-center">Barcode Information</h1>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <h2 className="scan-barcode-section-title">Barcode information</h2>
+        <div className="scan-barcode-center-row">
           <DetectionResult isLoggedIn={user_id != undefined} hasAllergen={hasAllergen} matchingAllergens={matchingAllergens} />
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div className="scan-barcode-center-row">
           <BarcodeInformation barcodeResult={barcodeResult} productName={productName} barcodeIngredients={barcodeIngredients} />
         </div>
-      </div>
+      </section>
+      ) : null}
     </div>
   );
 }

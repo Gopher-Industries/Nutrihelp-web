@@ -18,50 +18,27 @@ export default function FitnessRoadmap() {
   ];
 
   useEffect(() => {
-    // Restore from localStorage if saved, else fetch from backend
     const cached = localStorage.getItem('FitnessPlan');
     if (cached) {
-      setData(JSON.parse(cached));
-      setLoading(false);
-      return;
+      try {
+        const parsed = JSON.parse(cached);
+        setData(parsed);
+        setLoading(false);
+        return;
+      } catch (err) {
+        console.error('Error parsing FitnessPlan:', err);
+      }
     }
 
-    const stored = localStorage.getItem('ObesityResult');
-    if (!stored) {
-      setError('⚠️ No medical report found. Please complete the questionnaire first.');
-      setLoading(false);
-      return;
-    }
-    const parsed = JSON.parse(stored);
-
-    fetch('http://localhost:8000/ai-model/medical-report/plan/generate', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        medical_report: parsed.medical_report,
-        n_results: 3,
-        max_tokens: 1200,
-        temperature: 0.2,
-      }),
-    })
-      .then(async (res) => {
-        if (!res.ok) throw new Error(`Server responded with ${res.status}`);
-        return res.json();
-      })
-      .then((resp) => {
-        setData(resp);
-        localStorage.setItem('FitnessPlan', JSON.stringify(resp));
-        setLoading(false);
-      })
-      .catch((err) => {
-        setError(err.message);
-        setLoading(false);
-      });
+    setError('⚠️ No fitness plan found. Please complete the survey and generate your plan first.');
+    setLoading(false);
   }, []);
 
   if (loading) return <p>Loading plan…</p>;
   if (error) return <p>{error}</p>;
-  if (!data) return null;
+  if (!data || !data.weekly_plan || data.weekly_plan.length === 0) {
+    return <p>⚠️ No weekly plan data available.</p>;
+  }
 
   const week = data.weekly_plan[weekIndex];
 
@@ -77,7 +54,7 @@ export default function FitnessRoadmap() {
   dailyMap[d] = details;
 });
 
-  const workoutToday = dailyMap[day] || 'Rest day';
+const workoutToday = dailyMap[day] || 'Rest day';
 
   // new part
   // --- Progress stats ---
