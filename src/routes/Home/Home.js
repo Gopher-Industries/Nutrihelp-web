@@ -80,7 +80,7 @@ const Home = () => {
       description:
         "Scan a product to analyse nutrition and receive an easy-to-understand breakdown.",
       image: "/images/7.jpg",
-      route: "/ScanProducts",
+      route: "/scan",
       cta: "Try Scanner →",
     },
   ];
