@@ -42,6 +42,7 @@ import Scan from "./routes/ScanBarcode/Scan.jsx"
 import MFAform from "./routes/MFA/MFAform";
 import Dashboard from "./routes/NewMenu/Dashboard";
 import AuthenticateRoute from "./routes/AuthenticateRoute/AuthenticateRoute";
+import InternalAdminRoute from "./routes/AuthenticateRoute/InternalAdminRoute";
 import MainNavbar from "./components/MainNavbar";
 import FAQ from "./routes/FAQ/faq";
 import NutritionCalculator from "./routes/UI-Only-Pages/NutritionCalculator/NutritionCalculator";
@@ -70,6 +71,7 @@ import AuthCallback from "./pages/AuthCallback";
 import DailyPlanEdit from "./routes/DailyPlan/DailyPlanEdit";
 import Account from "./routes/Account/Account.js";
 import TextToSpeechControl from "./components/TextToSpeech/TextToSpeech";
+import AdminAuditDashboard from "./routes/AdminAudit/AdminAuditDashboard";
 import { isAuthPath } from "./utils/ttsRouteUtils";
 /* -------------------------------
    GLOBAL AUTHENTICATED LAYOUT
@@ -385,6 +387,15 @@ function App() {
             <AuthenticateRoute>
               <Dashboard />
             </AuthenticateRoute>
+          }
+        />
+
+        <Route
+          path="/admin/integration-audit"
+          element={
+            <InternalAdminRoute>
+              <AdminAuditDashboard />
+            </InternalAdminRoute>
           }
         />
 
