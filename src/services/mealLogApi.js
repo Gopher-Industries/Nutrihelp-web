@@ -11,20 +11,50 @@ function buildQuery(params) {
   return serialized ? `?${serialized}` : "";
 }
 
+function normalizeUserId(value) {
+  if (value === undefined || value === null || value === "") return undefined;
+  return String(value);
+}
+
+function formatValidationPath(location = []) {
+  const parts = Array.isArray(location) ? location : [location];
+  return parts.filter((part) => part !== "body" && part !== "query").join(".");
+}
+
+function formatApiError(data, fallbackMessage) {
+  const baseMessage = data?.detail || data?.error || fallbackMessage;
+  const details = data?.details || data?.detail;
+
+  if (!Array.isArray(details)) {
+    return String(baseMessage || fallbackMessage);
+  }
+
+  const detailMessage = details
+    .map((item) => {
+      const path = formatValidationPath(item?.loc);
+      return path ? `${path}: ${item?.msg}` : item?.msg;
+    })
+    .filter(Boolean)
+    .join("; ");
+
+  return detailMessage ? `${baseMessage}: ${detailMessage}` : String(baseMessage || fallbackMessage);
+}
+
 class MealLogApi extends AIBaseApi {
   async saveScannedMeal(payload) {
+    const currentUserId = normalizeUserId(payload.user_id || this.getCurrentUserId());
     const response = await fetch(`${this.baseURL}/ai-model/meals/log-scan`, {
       method: "POST",
       headers: this.getHeaders(),
       body: JSON.stringify({
         ...payload,
-        user_id: payload.user_id || this.getCurrentUserId() || undefined,
+        user_id: currentUserId,
       }),
     });
 
     const data = await response.json().catch(() => null);
     if (!response.ok) {
-      throw new Error(data?.detail || data?.error || "Failed to save meal log.");
+      throw new Error(formatApiError(data, "Failed to save meal log."));
     }
     return data;
   }
@@ -39,7 +69,7 @@ class MealLogApi extends AIBaseApi {
 
     const data = await response.json().catch(() => null);
     if (!response.ok) {
-      throw new Error(data?.detail || data?.error || "Failed to fetch daily summary.");
+      throw new Error(formatApiError(data, "Failed to fetch daily summary."));
     }
     return data;
   }
@@ -53,7 +83,7 @@ class MealLogApi extends AIBaseApi {
     );
     const data = await response.json().catch(() => null);
     if (!response.ok) {
-      throw new Error(data?.detail || data?.error || "Failed to fetch meal logs.");
+      throw new Error(formatApiError(data, "Failed to fetch meal logs."));
     }
     return data;
   }
@@ -69,7 +99,7 @@ class MealLogApi extends AIBaseApi {
     );
     const data = await response.json().catch(() => null);
     if (!response.ok) {
-      throw new Error(data?.detail || data?.error || "Failed to delete meal log.");
+      throw new Error(formatApiError(data, "Failed to delete meal log."));
     }
     return data;
   }
@@ -84,7 +114,7 @@ class MealLogApi extends AIBaseApi {
     );
     const data = await response.json().catch(() => null);
     if (!response.ok) {
-      throw new Error(data?.detail || data?.error || "Failed to fetch meal plan context.");
+      throw new Error(formatApiError(data, "Failed to fetch meal plan context."));
     }
     return data;
   }
@@ -95,7 +125,7 @@ class MealLogApi extends AIBaseApi {
     );
     const data = await response.json().catch(() => null);
     if (!response.ok) {
-      throw new Error(data?.detail || data?.error || "Failed to preview calories.");
+      throw new Error(formatApiError(data, "Failed to preview calories."));
     }
     return data;
   }

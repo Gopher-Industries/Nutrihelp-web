@@ -6,17 +6,17 @@ const Card = ({ item, imageMapping }) => {
   const navigate = useNavigate();
   const itemName = item?.name || item?.title || 'Meal';
   const itemData = imageMapping[itemName] || {};
-  const displayedImage = itemData.image || item?.image || item?.imageUrl || '/images/meal-mock/placeholder.svg';
-  const displayedTitle = itemData.title || item?.title || item?.name || 'Meal';
+  const displayedImage = item?.image || item?.imageUrl || itemData.image || '/images/meal-mock/placeholder.svg';
+  const displayedTitle = item?.title || item?.name || itemData.title || 'Meal';
   const displayedDescription =
-    itemData.description ||
     item?.description ||
+    itemData.description ||
     `${displayedTitle} is included in your meal plan for today.`;
 
   const mealPayload = {
     ...item,
     id: item?.id || item?.recipeId || displayedTitle,
-    recipeId: item?.recipeId || item?.id || null,
+    recipeId: item?.recipeId || null,
     title: item?.title || item?.name || displayedTitle,
     name: item?.name || item?.title || displayedTitle,
     image: item?.image || item?.imageUrl || displayedImage,

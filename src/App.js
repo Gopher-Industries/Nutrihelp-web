@@ -31,6 +31,7 @@ import UserProfilePage from "./routes/UI-Only-Pages/UserProfilePage/userprofile"
 import Home from "./routes/Home/Home";
 import DietaryRequirements from "./routes/UI-Only-Pages/DietaryRequirements/DietaryRequirements";
 import ScanProducts from "./routes/UI-Only-Pages/ScanProducts/ScanProducts";
+import ScanMealReview from "./routes/UI-Only-Pages/ScanProducts/ScanMealReview";
 import Menu from "./routes/UI-Only-Pages/Menu/Menu";
 import Recipe from "./routes/MyRecipe/Recipe";
 import Appointment from "./routes/UI-Only-Pages/Appointment/Appointment";
@@ -41,6 +42,7 @@ import Scan from "./routes/ScanBarcode/Scan.jsx"
 import MFAform from "./routes/MFA/MFAform";
 import Dashboard from "./routes/NewMenu/Dashboard";
 import AuthenticateRoute from "./routes/AuthenticateRoute/AuthenticateRoute";
+import InternalAdminRoute from "./routes/AuthenticateRoute/InternalAdminRoute";
 import MainNavbar from "./components/MainNavbar";
 import FAQ from "./routes/FAQ/faq";
 import NutritionCalculator from "./routes/UI-Only-Pages/NutritionCalculator/NutritionCalculator";
@@ -69,6 +71,7 @@ import AuthCallback from "./pages/AuthCallback";
 import DailyPlanEdit from "./routes/DailyPlan/DailyPlanEdit";
 import Account from "./routes/Account/Account.js";
 import TextToSpeechControl from "./components/TextToSpeech/TextToSpeech";
+import AdminAuditDashboard from "./routes/AdminAudit/AdminAuditDashboard";
 import { isAuthPath } from "./utils/ttsRouteUtils";
 /* -------------------------------
    GLOBAL AUTHENTICATED LAYOUT
@@ -250,6 +253,14 @@ function App() {
           }
         />
         <Route
+          path="scan-review"
+          element={
+            <AuthenticateRoute>
+              <ScanMealReview />
+            </AuthenticateRoute>
+          }
+        />
+        <Route
           path="food-details/:foodName"
           element={
             <AuthenticateRoute>
@@ -376,6 +387,15 @@ function App() {
             <AuthenticateRoute>
               <Dashboard />
             </AuthenticateRoute>
+          }
+        />
+
+        <Route
+          path="/admin/integration-audit"
+          element={
+            <InternalAdminRoute>
+              <AdminAuditDashboard />
+            </InternalAdminRoute>
           }
         />
 
