@@ -100,6 +100,16 @@ function CanonicalMealRedirect() {
   );
 }
 
+function RouteScrollToTop() {
+  const location = useLocation();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  }, [location.pathname]);
+
+  return null;
+}
+
 import WeeklyMealPlanPage from './routes/Meal/WeeklyMealPlanPage';
 
 function App() {
@@ -111,6 +121,7 @@ function App() {
 
   return (
     <Router>
+      <RouteScrollToTop />
       {/* Show navbar only on allowed pages */}
       <GlobalAuthenticatedLayout />
 

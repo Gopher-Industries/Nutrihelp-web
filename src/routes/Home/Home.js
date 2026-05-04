@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from "react";
+import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { UserContext } from "../../context/user.context";
 import "./Home.css";
 import { faker } from "@faker-js/faker";
@@ -208,6 +208,7 @@ const Home = () => {
 
   const [activeReview, setActiveReview] = useState(0);
   const [swiperInstance, setSwiperInstance] = useState(null);
+  const aboutSectionRef = useRef(null);
 
   const onAssistant = () => {
     navigate(currentUser ? "/chat" : "/login");
@@ -224,6 +225,47 @@ const Home = () => {
 
     return () => {
       window.removeEventListener("orientationchange", lockHeroMaxWidth);
+    };
+  }, []);
+
+  useEffect(() => {
+    const aboutSection = aboutSectionRef.current;
+    if (!aboutSection) return undefined;
+
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReducedMotion) {
+      aboutSection.style.setProperty("--about-progress", "1");
+      return undefined;
+    }
+
+    let rafId = null;
+    const updateAboutProgress = () => {
+      const rect = aboutSection.getBoundingClientRect();
+      const viewportHeight = window.innerHeight || 1;
+      const triggerRange = viewportHeight * 0.85;
+
+      const enterProgress = (viewportHeight - rect.top) / triggerRange;
+      const exitProgress = rect.bottom / triggerRange;
+      const rawProgress = Math.min(enterProgress, exitProgress);
+      const progress = Math.max(0, Math.min(1, rawProgress));
+
+      aboutSection.style.setProperty("--about-progress", progress.toFixed(4));
+      rafId = null;
+    };
+
+    const queueUpdate = () => {
+      if (rafId !== null) return;
+      rafId = window.requestAnimationFrame(updateAboutProgress);
+    };
+
+    queueUpdate();
+    window.addEventListener("scroll", queueUpdate, { passive: true });
+    window.addEventListener("resize", queueUpdate);
+
+    return () => {
+      window.removeEventListener("scroll", queueUpdate);
+      window.removeEventListener("resize", queueUpdate);
+      if (rafId !== null) window.cancelAnimationFrame(rafId);
     };
   }, []);
 
@@ -385,7 +427,12 @@ const Home = () => {
         </section>
 
         {/* == ABOUT == */}
-        <section id="about" className="home-about" aria-label="About NutriHelp">
+        <section
+          id="about"
+          ref={aboutSectionRef}
+          className="home-about"
+          aria-label="About NutriHelp"
+        >
           <div className="home-container about-spotlight">
             <div className="about-spotlight-copy">
               <h2 className="about-spotlight-title">Your personal nutritionist</h2>

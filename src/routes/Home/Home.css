@@ -384,6 +384,15 @@ textarea:focus {
   }
 }
 
+@media (max-width: 1560px) and (min-width: 1101px) {
+  .home-hero-title {
+    font-size: clamp(3.6rem, 6.9vw, 6.6rem);
+    white-space: normal;
+    flex-wrap: wrap;
+    row-gap: 0.06em;
+  }
+}
+
 .home-hero-right-image {
   width: 100%;
   height: auto;
@@ -403,9 +412,9 @@ textarea:focus {
 
 .hero-right-berry {
   position: absolute;
-  width: clamp(111px, 5.8vw, 133px);
-  height: clamp(111px, 5.8vw, 133px);
-  animation: hero-blueberry-float 5.4s ease-in-out infinite;
+  width: clamp(126px, 6.6vw, 156px);
+  height: clamp(126px, 6.6vw, 156px);
+  animation: hero-blueberry-float 4.2s linear infinite;
 }
 
 .hero-right-berry img {
@@ -433,7 +442,7 @@ textarea:focus {
     transform: translateY(0) rotate(-4deg);
   }
   50% {
-    transform: translateY(-11px) rotate(4deg);
+    transform: translate(9px, -15px) rotate(2deg);
   }
   100% {
     transform: translateY(0) rotate(-4deg);
@@ -747,6 +756,7 @@ textarea:focus {
 }
 
 .home-about {
+  --about-progress: 0;
   padding: 0;
   background: #edf3fb;
 }
@@ -806,6 +816,76 @@ textarea:focus {
   aspect-ratio: 1 / 1;
   object-fit: cover;
   box-shadow: 0 24px 48px rgba(20, 56, 108, 0.24);
+}
+
+/* == About Scroll Motion == */
+.about-spotlight-copy,
+.about-spotlight-media,
+.about-spotlight-title,
+.about-spotlight-text,
+.about-spotlight-main,
+.about-spotlight-accent {
+  will-change: transform, opacity, filter;
+  transition-property: transform, opacity, filter;
+  transition-timing-function: linear;
+  transition-duration: 90ms;
+}
+
+.about-spotlight-copy {
+  opacity: calc(0.18 + var(--about-progress, 0) * 0.82);
+  transform: none;
+  filter: none;
+}
+
+.about-spotlight-title {
+  opacity: calc(0.12 + var(--about-progress, 0) * 0.88);
+  transform: translateX(calc((1 - var(--about-progress, 0)) * -56px))
+    translateY(calc((1 - var(--about-progress, 0)) * -34px));
+  filter: blur(calc((1 - var(--about-progress, 0)) * 8px));
+}
+
+.about-spotlight-text {
+  opacity: calc(0.12 + var(--about-progress, 0) * 0.88);
+  transform: translateX(calc((1 - var(--about-progress, 0)) * -46px))
+    translateY(calc((1 - var(--about-progress, 0)) * 34px));
+  filter: blur(calc((1 - var(--about-progress, 0)) * 6px));
+}
+
+.about-spotlight-media {
+  opacity: calc(0.2 + var(--about-progress, 0) * 0.8);
+  transform: none;
+  filter: none;
+}
+
+.about-spotlight-main {
+  opacity: calc(0.14 + var(--about-progress, 0) * 0.86);
+  transform: translateX(calc((1 - var(--about-progress, 0)) * 58px))
+    translateY(calc((1 - var(--about-progress, 0)) * -36px))
+    scale(calc(0.93 + var(--about-progress, 0) * 0.07));
+  filter: blur(calc((1 - var(--about-progress, 0)) * 8px));
+}
+
+.about-spotlight-accent {
+  opacity: calc(0.08 + var(--about-progress, 0) * 0.92);
+  transform: translateX(calc((1 - var(--about-progress, 0)) * 54px))
+    translateY(calc((1 - var(--about-progress, 0)) * 34px))
+    scale(calc(0.88 + var(--about-progress, 0) * 0.12))
+    rotate(calc((1 - var(--about-progress, 0)) * 5deg));
+  filter: blur(calc((1 - var(--about-progress, 0)) * 8px));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .about-spotlight-copy,
+  .about-spotlight-media,
+  .about-spotlight-title,
+  .about-spotlight-text,
+  .about-spotlight-main,
+  .about-spotlight-accent {
+    transition: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+    filter: none !important;
+  }
 }
 
 /* == Services == */
@@ -2542,7 +2622,7 @@ textarea:focus {
   }
 
   .super-snack-visual {
-    min-height: 450px;
+    min-height: 510px;
   }
 
   .super-snack-bg {
@@ -2552,7 +2632,7 @@ textarea:focus {
   .super-snack-plate {
     left: 50%;
     --plate-translate-x: -56%;
-    bottom: 190px;
+    bottom: 208px;
     width: min(78vw, 350px);
   }
 
@@ -2998,7 +3078,7 @@ textarea:focus {
   }
 
   .super-snack-visual {
-    min-height: 420px;
+    min-height: 460px;
   }
 
   .super-snack-bg {
@@ -3007,7 +3087,7 @@ textarea:focus {
 
   .super-snack-plate {
     --plate-translate-x: -54%;
-    bottom: 154px;
+    bottom: 168px;
     width: min(82vw, 300px);
   }
 
@@ -3035,7 +3115,7 @@ textarea:focus {
 
   .super-snack-plate {
     width: min(84vw, 270px);
-    bottom: 148px;
+    bottom: 152px;
   }
 }
 
