@@ -1,26 +1,36 @@
-export const API_BASE_URL =
-  process.env.REACT_APP_API_BASE_URL || "http://localhost:80";
+import { BaseApi } from "../../services/baseApi";
 
-const toNumber = (value) =>
-  value === undefined || value === null || value === "" ? value : Number(value);
+const baseApiInstance = new BaseApi();
+export const API_BASE_URL = baseApiInstance.baseURL;
+
+const toInt = (value) => {
+  if (value === undefined || value === null || value === "") return undefined;
+  const num = Number(value);
+  return Number.isInteger(num) ? num : Math.round(num);
+};
+
+const toFloat = (value) => {
+  if (value === undefined || value === null || value === "") return undefined;
+  return Number(value);
+};
 
 export const buildSurveyPayload = (formData) => ({
-  Gender: toNumber(formData.gender),
-  Age: toNumber(formData.age),
-  Height: toNumber(formData.height),
-  Weight: toNumber(formData.weight),
-  family_history_with_overweight: formData.family_history,
-  FAVC: toNumber(formData.favc),
-  FCVC: toNumber(formData.vegetables),
-  NCP: toNumber(formData.meals),
-  CAEC: toNumber(formData.caec),
-  SMOKE: toNumber(formData.smoke),
-  CH2O: toNumber(formData.water),
-  SCC: formData.monitor,
-  FAF: toNumber(formData.activity),
-  TUE: toNumber(formData.screen_time),
-  CALC: toNumber(formData.alcohol),
-  MTRANS: formData.transport,
+  Gender: toInt(formData.Gender),
+  Age: toFloat(formData.Age),
+  Height: toFloat(formData.Height),
+  Weight: toFloat(formData.Weight),
+  family_history_with_overweight: formData.family_history_with_overweight,
+  FAVC: toInt(formData.FAVC),
+  FCVC: toFloat(formData.FCVC),
+  NCP: toFloat(formData.NCP),
+  CAEC: toInt(formData.CAEC),
+  SMOKE: toInt(formData.SMOKE),
+  CH2O: toFloat(formData.CH2O),
+  SCC: formData.SCC,
+  FAF: toFloat(formData.FAF),
+  TUE: toFloat(formData.TUE),
+  CALC: toInt(formData.CALC),
+  MTRANS: formData.MTRANS,
 });
 
 const describeErrorObject = (data) => {

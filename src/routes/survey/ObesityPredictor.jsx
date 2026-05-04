@@ -11,33 +11,33 @@ import {
 } from "./surveyApi";
 
 const FIELD_RANGES = {
-  age: { min: 1, max: 119, label: "Age must be between 1 and 119" },
-  height: { min: 0.5, max: 2.5, label: "Height must be between 0.5 m and 2.5 m" },
-  weight: { min: 10, max: 300, label: "Weight must be between 10 kg and 300 kg" },
-  vegetables: { min: 0, max: 5, label: "Vegetable consumption frequency must be between 0 and 5" },
-  meals: { min: 1, max: 10, label: "Meals per day must be between 1 and 10" },
-  water: { min: 0, max: 10, label: "Water intake must be between 0 and 10 liters" },
-  activity: { min: 0, max: 10, label: "Physical activity must be between 0 and 10" },
-  screen_time: { min: 0, max: 24, label: "Screen time must be between 0 and 24 hours" },
+  Age: { min: 1, max: 119, label: "Age must be between 1 and 119" },
+  Height: { min: 0.5, max: 2.5, label: "Height must be between 0.5 m and 2.5 m" },
+  Weight: { min: 10, max: 300, label: "Weight must be between 10 kg and 300 kg" },
+  FCVC: { min: 0, max: 5, label: "Vegetable consumption frequency must be between 0 and 5" },
+  NCP: { min: 1, max: 10, label: "Meals per day must be between 1 and 10" },
+  CH2O: { min: 0, max: 10, label: "Water intake must be between 0 and 10 liters" },
+  FAF: { min: 0, max: 10, label: "Physical activity must be between 0 and 10" },
+  TUE: { min: 0, max: 24, label: "Screen time must be between 0 and 24 hours" },
 };
 
 const ERROR_FIELD_MAP = {
-  Gender: 'gender',
-  Age: 'age',
-  Height: 'height',
-  Weight: 'weight',
-  family_history_with_overweight: 'family_history',
-  FAVC: 'favc',
-  FCVC: 'vegetables',
-  NCP: 'meals',
-  CAEC: 'caec',
-  SMOKE: 'smoke',
-  CH2O: 'water',
-  SCC: 'monitor',
-  FAF: 'activity',
-  TUE: 'screen_time',
-  CALC: 'alcohol',
-  MTRANS: 'transport'
+  Gender: 'Gender',
+  Age: 'Age',
+  Height: 'Height',
+  Weight: 'Weight',
+  family_history_with_overweight: 'family_history_with_overweight',
+  FAVC: 'FAVC',
+  FCVC: 'FCVC',
+  NCP: 'NCP',
+  CAEC: 'CAEC',
+  SMOKE: 'SMOKE',
+  CH2O: 'CH2O',
+  SCC: 'SCC',
+  FAF: 'FAF',
+  TUE: 'TUE',
+  CALC: 'CALC',
+  MTRANS: 'MTRANS'
 };
 
 function validateNumericField(name, value) {
@@ -66,17 +66,17 @@ export default function ObesityPredict() {
     personal: [
       {
         label: "Gender",
-        name: "gender",
+        name: "Gender",
         type: "select",
         options: [
           [1, "Male"],
           [2, "Female"],
         ],
       },
-      { label: "Age (years)", name: "age", type: "number" },
+      { label: "Age (years)", name: "Age", type: "number" },
       {
         label: "Height (metres)",
-        name: "height",
+        name: "Height",
         type: "number",
         placeholder: "e.g. 1.67",
         helperText: "Enter height in metres. Example: 167 cm = 1.67 m.",
@@ -86,7 +86,7 @@ export default function ObesityPredict() {
       },
       {
         label: "Weight (kg)",
-        name: "weight",
+        name: "Weight",
         type: "number",
         placeholder: "e.g. 70",
         min: 10,
@@ -97,7 +97,7 @@ export default function ObesityPredict() {
     food: [
       {
         label: "Do you frequently eat high-calorie foods?",
-        name: "favc",
+        name: "FAVC",
         type: "select",
         options: [
           [1, "Yes"],
@@ -106,7 +106,7 @@ export default function ObesityPredict() {
       },
       {
         label: "Vegetable consumption frequency (0-5)",
-        name: "vegetables",
+        name: "FCVC",
         type: "number",
         placeholder: "e.g. 2",
         min: 0,
@@ -115,7 +115,7 @@ export default function ObesityPredict() {
       },
       {
         label: "Main meals per day",
-        name: "meals",
+        name: "NCP",
         type: "number",
         placeholder: "e.g. 3",
         min: 0,
@@ -124,7 +124,7 @@ export default function ObesityPredict() {
       },
       {
         label: "Snacks between meals",
-        name: "caec",
+        name: "CAEC",
         type: "select",
         options: [
           [0, "Never"],
@@ -135,7 +135,7 @@ export default function ObesityPredict() {
       },
       {
         label: "Water intake (litres)",
-        name: "water",
+        name: "CH2O",
         type: "number",
         placeholder: "e.g. 2",
         min: 0,
@@ -144,7 +144,7 @@ export default function ObesityPredict() {
       },
       {
         label: "Monitor calorie intake?",
-        name: "monitor",
+        name: "SCC",
         type: "select",
         options: [
           ["yes", "Yes"],
@@ -155,7 +155,7 @@ export default function ObesityPredict() {
     lifestyle: [
       {
         label: "Do you smoke?",
-        name: "smoke",
+        name: "SMOKE",
         type: "select",
         options: [
           [0, "No"],
@@ -164,7 +164,7 @@ export default function ObesityPredict() {
       },
       {
         label: "Alcohol consumption",
-        name: "alcohol",
+        name: "CALC",
         type: "select",
         options: [
           [0, "Never"],
@@ -174,7 +174,7 @@ export default function ObesityPredict() {
       },
       {
         label: "Physical activity weekly frequency",
-        name: "activity",
+        name: "FAF",
         type: "number",
         placeholder: "e.g. 1",
         min: 0,
@@ -183,7 +183,7 @@ export default function ObesityPredict() {
       },
       {
         label: "Screen time (hours/day)",
-        name: "screen_time",
+        name: "TUE",
         type: "number",
         placeholder: "e.g. 3",
         min: 0,
@@ -192,7 +192,7 @@ export default function ObesityPredict() {
       },
       {
         label: "Family history of overweight",
-        name: "family_history",
+        name: "family_history_with_overweight",
         type: "select",
         options: [
           ["yes", "Yes"],
@@ -201,7 +201,7 @@ export default function ObesityPredict() {
       },
       {
         label: "Mode of transportation",
-        name: "transport",
+        name: "MTRANS",
         type: "select",
         options: [
           ["Automobile", "Automobile"],
@@ -219,9 +219,9 @@ export default function ObesityPredict() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    const floatFields = ['height', 'weight', 'water', 'activity', 'screen_time', 'vegetables'];
-    const integerFields = ['age', 'meals'];
-    const selectNumericFields = ['gender', 'smoke', 'alcohol', 'favc', 'caec'];
+    const floatFields = ['Height', 'Weight', 'CH2O', 'FAF', 'TUE', 'FCVC'];
+    const integerFields = ['Age', 'NCP'];
+    const selectNumericFields = ['Gender', 'SMOKE', 'CALC', 'FAVC', 'CAEC'];
 
     let parsedValue = value;
     if (floatFields.includes(name)) {
@@ -284,7 +284,7 @@ export default function ObesityPredict() {
 
       if (!response.ok) {
         const result = await response.json().catch(() => ({}));
-        if (response.status === 422 && result.detail) {
+        if (response.status === 422 && Array.isArray(result.detail)) {
           const fieldErrors = {};
           result.detail.forEach((err) => {
             if (err.loc && err.loc.length > 1) {

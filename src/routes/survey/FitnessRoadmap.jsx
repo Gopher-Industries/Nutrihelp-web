@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './fitnessroadmap1.css';
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 
-
-export default function FitnessRoadmap() {
+const FitnessRoadmap = () => {
   const [data, setData] = useState(null);
   const [weekIndex, setWeekIndex] = useState(0);
   const [day, setDay] = useState('Monday');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [unlockedWeek, setUnlockedWeek] = useState(0); // Week 1 unlocked by default
+  const [unlockedWeek, setUnlockedWeek] = useState(0);
+  const navigate = useNavigate();
 
   const daysOfWeek = [
     'Monday','Tuesday','Wednesday',
@@ -22,20 +23,35 @@ export default function FitnessRoadmap() {
     if (cached) {
       try {
         const parsed = JSON.parse(cached);
-        setData(parsed);
-        setLoading(false);
-        return;
+        if (parsed && parsed.weekly_plan && parsed.weekly_plan.length > 0) {
+          setData(parsed);
+          setLoading(false);
+          return;
+        }
       } catch (err) {
         console.error('Error parsing FitnessPlan:', err);
       }
     }
 
-    setError('⚠️ No fitness plan found. Please complete the survey and generate your plan first.');
+    setError('⚠️ No active fitness plan found. Please complete the medical survey to generate your personalised roadmap.');
     setLoading(false);
   }, []);
 
-  if (loading) return <p>Loading plan…</p>;
-  if (error) return <p>{error}</p>;
+  if (loading) return (
+    <div className="roadmap-loading">
+      <div className="spinner"></div>
+      <p>Loading your roadmap...</p>
+    </div>
+  );
+
+  if (error) return (
+    <div className="roadmap-error">
+      <h2>{error}</h2>
+      <button className="back-btn" onClick={() => navigate('/survey')}>
+        Go to Survey
+      </button>
+    </div>
+  );
   if (!data || !data.weekly_plan || data.weekly_plan.length === 0) {
     return <p>⚠️ No weekly plan data available.</p>;
   }
@@ -218,4 +234,6 @@ const ringsData = data.weekly_plan.map((w, i) => {
     </div>
     
   );
-}
+};
+
+export default FitnessRoadmap;
