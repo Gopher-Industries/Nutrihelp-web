@@ -1030,6 +1030,7 @@ const Meal = () => {
   const [gridColumns, setGridColumns] = useState(() => getMealGridColumns());
   const [widgetFabBottom, setWidgetFabBottom] = useState(DEFAULT_WIDGET_BOTTOM);
   const [isWidgetMenuOpen, setIsWidgetMenuOpen] = useState(false);
+  const [isNutritionCollapsed, setIsNutritionCollapsed] = useState(true);
   const [selectedDate, setSelectedDate] = useState(() => resolveInitialPlanDate(location) || getTodayISO());
   const dateInputRef = useRef(null);
   const searchWrapRef = useRef(null);
@@ -1205,6 +1206,21 @@ const Meal = () => {
   const rowsPerPage = 3;
   const itemsPerPage = gridColumns * rowsPerPage;
   const totalPages = Math.max(1, Math.ceil(filteredAllMeals.length / itemsPerPage));
+  const paginationTokens = useMemo(() => {
+    if (totalPages <= 7) {
+      return Array.from({ length: totalPages }, (_, index) => ({
+        type: "page",
+        value: index + 1,
+      }));
+    }
+
+    return [
+      { type: "page", value: 1 },
+      { type: "page", value: 2 },
+      { type: "ellipsis", value: "ellipsis" },
+      { type: "page", value: totalPages },
+    ];
+  }, [totalPages]);
 
   const paginatedAllMeals = useMemo(() => {
     const startIndex = (currentPage - 1) * itemsPerPage;
@@ -2283,8 +2299,20 @@ const Meal = () => {
                           </button>
 
                           <div className="pagination-index-list">
-                            {Array.from({ length: totalPages }, (_, index) => {
-                              const pageNumber = index + 1;
+                            {paginationTokens.map((token, index) => {
+                              if (token.type === "ellipsis") {
+                                return (
+                                  <span
+                                    key={`ellipsis-${index}`}
+                                    className="pagination-ellipsis"
+                                    aria-hidden="true"
+                                  >
+                                    ...
+                                  </span>
+                                );
+                              }
+
+                              const pageNumber = token.value;
                               const isActive = currentPage === pageNumber;
 
                               return (
@@ -2319,7 +2347,23 @@ const Meal = () => {
 
           <aside className="add-meal-sidebar">
             <div className="nutrition-panel">
-              <h3>Nutritional Value</h3>
+              <div className="nutrition-panel-header">
+                <h3>Nutritional Value</h3>
+                <button
+                  type="button"
+                  className="nutrition-toggle-btn"
+                  onClick={() => setIsNutritionCollapsed((prev) => !prev)}
+                  aria-expanded={!isNutritionCollapsed}
+                  aria-controls="nutrition-panel-content"
+                >
+                  {isNutritionCollapsed ? "Expand" : "Collapse"}
+                </button>
+              </div>
+
+              <div
+                id="nutrition-panel-content"
+                className={`nutrition-panel-content ${isNutritionCollapsed ? "collapsed" : ""}`}
+              >
               <div className="nutrition-section selected-dish-nutrition">
                 <h4>Selected Dish Nutrition</h4>
                 {selectedDish ? (
@@ -2399,6 +2443,7 @@ const Meal = () => {
                 <button type="button" onClick={() => navigate("/weekly-plan")}>
                   View Full Weekly Meal Plan
                 </button>
+              </div>
               </div>
             </div>
           </aside>
