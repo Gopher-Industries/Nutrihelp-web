@@ -3,6 +3,27 @@ import { Link, useNavigate } from "react-router-dom";
 import html2pdf from "html2pdf.js";
 import "./predictionresult.css";
 import { API_BASE_URL, getApiErrorMessage } from "./surveyApi";
+import { toast } from "react-toastify"; // Added for toast calls used in the file
+
+const humanizePredictionLabel = (value) => {
+  if (!value) return "N/A";
+  const cleaned = String(value).replace(/_/g, " ");
+  return cleaned.replace(/\bLevel I\b/, "Level I").replace(/\bLevel II\b/, "Level II");
+};
+
+const renderConfidence = (value) => {
+  if (value === undefined || value === null || Number.isNaN(Number(value))) {
+    return "";
+  }
+  return `${(Number(value) * 100).toFixed(1)}% model confidence`;
+};
+
+const renderDiabetesResult = (value) => {
+  if (value === undefined) return "Not available";
+  return value
+    ? "Potential diabetes risk signal detected"
+    : "No diabetes risk signal detected";
+};
 
 const getObesityRiskLevel = (level) => {
   if (!level) return { label: "N/A", class: "risk-unknown" };
