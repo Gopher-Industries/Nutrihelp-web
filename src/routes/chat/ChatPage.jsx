@@ -1,5 +1,6 @@
 // chat/ChatPage.jsx
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import { FaMicrophone, FaStop, FaSpinner } from "react-icons/fa";
 import "./ChatPage.css";
 
 /* ---------------- Config ---------------- */
@@ -27,6 +28,12 @@ export default function ChatPage() {
   const [draft, setDraft] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const messagesRef = useRef(null);
+
+  // voice recording states
+  const [isRecording, setIsRecording] = useState(false);
+  const [isTranscribing, setIsTranscribing] = useState(false);
+  const mediaRecorderRef = useRef(null);
+  const chunksRef = useRef([]);
 
   const navLinks = useMemo(
     () => [
@@ -181,6 +188,91 @@ export default function ChatPage() {
     });
   }
 
+  // AI013: start recording voice from mic
+  async function startRecording() {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mediaRecorder = new MediaRecorder(stream, { mimeType: "audio/webm" });
+      mediaRecorderRef.current = mediaRecorder;
+      chunksRef.current = [];
+
+      mediaRecorder.ondataavailable = (e) => {
+        if (e.data.size > 0) chunksRef.current.push(e.data);
+      };
+
+      mediaRecorder.onstop = async () => {
+        stream.getTracks().forEach((track) => track.stop());
+        const audioBlob = new Blob(chunksRef.current, { type: "audio/webm" });
+        await handleVoiceMessage(audioBlob);
+      };
+
+      mediaRecorder.start();
+      setIsRecording(true);
+    } catch (err) {
+      alert("Please allow microphone access to use voice input.");
+    }
+  }
+
+  // AI013: stop recording voice
+  function stopRecording() {
+    if (mediaRecorderRef.current && isRecording) {
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
+    }
+  }
+
+  // AI013: send audio to /transcribe, get text, then send text to chatbot
+  async function handleVoiceMessage(audioBlob) {
+    setIsTranscribing(true);
+    try {
+      const formData = new FormData();
+      formData.append("audio", audioBlob, "recording.webm");
+
+      const transcribeRes = await fetch(`${AI_BASE_URL}/ai-model/chatbot/transcribe`, {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!transcribeRes.ok) throw new Error("Transcription failed");
+      const { transcript } = await transcribeRes.json();
+
+      const userMsg = {
+        id: uid(),
+        side: "right",
+        text: transcript,
+        time: formatTime(new Date()),
+      };
+      setMessages((prev) => [...prev, userMsg]);
+      setIsTranscribing(false);
+      setIsLoading(true);
+
+      const botReply = await callChatbot(transcript);
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: uid(),
+          side: "left",
+          text: botReply,
+          time: formatTime(new Date()),
+        },
+      ]);
+    } catch (err) {
+      console.error("Voice chat error:", err);
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: uid(),
+          side: "left",
+          text: `Voice input failed: ${err.message}`,
+          time: formatTime(new Date()),
+        },
+      ]);
+    } finally {
+      setIsTranscribing(false);
+      setIsLoading(false);
+    }
+  }
+
   return (
     <div className="nh-root">
       {/* ---------- Topbar ---------- */}
@@ -249,6 +341,15 @@ export default function ChatPage() {
               </div>
             ))}
 
+            {/* AI013: show transcribing status */}
+            {isTranscribing && (
+              <div className="nh-msgRow left">
+                <div className="nh-msgWrap">
+                  <div className="nh-bubble left">Listening...</div>
+                </div>
+              </div>
+            )}
+
             {isLoading && (
               <div className="nh-msgRow left">
                 <div className="nh-msgWrap">
@@ -268,7 +369,7 @@ export default function ChatPage() {
 
           <form className="nh-composer" onSubmit={sendMessage}>
 
-            <button 
+            <button
               className="nh-clearBtn"
               disabled={isLoading}
               onClick={clearHistory}
@@ -294,6 +395,20 @@ export default function ChatPage() {
                 }}
               />
             </div>
+
+            {/* AI013: mic button */}
+            <button
+              type="button"
+              className="nh-sendBtn"
+              disabled={isLoading || isTranscribing}
+              onClick={isRecording ? stopRecording : startRecording}
+              style={{
+                backgroundColor: isRecording ? "#ef4444" : isTranscribing ? "#9ca3af" : "#4b0fa8",
+                animation: isRecording ? "pulse 1.5s infinite" : "none",
+              }}
+            >
+              {isTranscribing ? <FaSpinner /> : isRecording ? <FaStop /> : <FaMicrophone />}
+            </button>
 
             <button className="nh-sendBtn" type="submit" disabled={isLoading}>
               ➤
