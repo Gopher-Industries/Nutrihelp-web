@@ -224,7 +224,7 @@ const FitnessInput = ({ onProfileSaved }) => {
       // Sends the data to the backend API using fetch
       try {
         const response = await fetch(
-          "http://localhost:8080/api/fitness-journey",
+          `${process.env.REACT_APP_API_BASE_URL || 'http://localhost:8081'}/api/fitness-journey`,
           {
             method: "POST",
             headers: {

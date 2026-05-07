@@ -32,13 +32,82 @@ function getTodayISO() {
   return local.toISOString().slice(0, 10);
 }
 
+function hasUsableMealImage(meal) {
+  const imageValue = String(meal?.image || meal?.imageUrl || "").trim();
+  return Boolean(
+    imageValue &&
+      !imageValue.startsWith("blob:") &&
+      !imageValue.includes("/images/meal-mock/placeholder")
+  );
+}
+
+function getMealDisplayScore(meal) {
+  const nutrition = meal?.nutrition && typeof meal.nutrition === "object" ? meal.nutrition : {};
+  return (
+    (hasUsableMealImage(meal) ? 10 : 0) +
+    (meal?.description ? 2 : 0) +
+    (parseNumber(nutrition.calories) > 0 ? 1 : 0)
+  );
+}
+
+function getCanonicalMealKey(meal, fallback = "") {
+  const mealType = normalizeMealType(meal?.mealType);
+  const titleKey = normalize(meal?.title || meal?.name);
+  const recipeIdKey = normalize(meal?.recipeId);
+  const idKey = normalize(meal?.id || fallback);
+  const identityKey =
+    titleKey ||
+    (recipeIdKey && recipeIdKey !== "null" ? recipeIdKey : "") ||
+    idKey ||
+    normalize(fallback);
+
+  return identityKey ? `${mealType}|${identityKey}` : "";
+}
+
+function dedupeSelectionMap(selectionMap) {
+  if (!selectionMap || typeof selectionMap !== "object") return {};
+
+  const bestByKey = {};
+  Object.entries(selectionMap).forEach(([entryKey, meal]) => {
+    if (!meal || typeof meal !== "object") return;
+
+    const normalizedMeal = {
+      ...meal,
+      mealType: normalizeMealType(meal?.mealType),
+    };
+    const canonicalKey = getCanonicalMealKey(normalizedMeal, entryKey);
+    if (!canonicalKey) return;
+
+    const score = getMealDisplayScore(normalizedMeal);
+    const current = bestByKey[canonicalKey];
+    if (!current || score >= current.score) {
+      bestByKey[canonicalKey] = { entryKey, meal: normalizedMeal, score };
+    }
+  });
+
+  return Object.fromEntries(
+    Object.values(bestByKey).map(({ entryKey, meal }) => [entryKey, meal])
+  );
+}
+
+function dedupeSelectionsByDate(selectionsByDate) {
+  if (!selectionsByDate || typeof selectionsByDate !== "object") return {};
+
+  return Object.fromEntries(
+    Object.entries(selectionsByDate).map(([date, selectionMap]) => [
+      date,
+      dedupeSelectionMap(selectionMap),
+    ])
+  );
+}
+
 function readSelectionsByDate() {
   if (typeof window === "undefined") return {};
   try {
     const raw = localStorage.getItem(MEAL_SELECTIONS_STORAGE_KEY);
     if (!raw) return {};
     const parsed = JSON.parse(raw);
-    return parsed && typeof parsed === "object" ? parsed : {};
+    return parsed && typeof parsed === "object" ? dedupeSelectionsByDate(parsed) : {};
   } catch {
     return {};
   }
@@ -108,6 +177,14 @@ const Dashboard = () => {
     };
   }, []);
 
+  useEffect(() => {
+    try {
+      localStorage.setItem(MEAL_SELECTIONS_STORAGE_KEY, JSON.stringify(selectionsByDate));
+    } catch {
+      // Menu rendering should continue even if localStorage is unavailable.
+    }
+  }, [selectionsByDate]);
+
   const selectedItems = useMemo(() => {
     const todayMap = selectionsByDate[todayIso] || {};
     return Object.values(todayMap);
@@ -122,6 +199,8 @@ const Dashboard = () => {
     }),
     [selectedItems],
   );
+
+  const addMealTab = useMemo(() => (activeTab === "snack" ? "others" : activeTab), [activeTab]);
 
   const totalNutrition = useMemo(
     () =>
@@ -177,6 +256,13 @@ const Dashboard = () => {
         <div className="today-row">
           <div className="today-align-grid">
             <div className="today-text">Today · {todayIso}</div>
+            <Link
+              to={`/meal/${addMealTab}?date=${encodeURIComponent(todayIso)}`}
+              state={{ defaultMealType: addMealTab, planDate: todayIso }}
+              className="edit-menu-btn"
+            >
+              Edit Menu
+            </Link>
           </div>
           <div className="today-row-spacer" />
         </div>

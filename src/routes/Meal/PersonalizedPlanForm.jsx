@@ -1,5 +1,6 @@
 // src/routes/Meal/PersonalizedPlanForm.jsx
 import { useState } from 'react';
+import './PersonalizedPlan.css';
 
 const DIET_TYPES = [
   { value: 'balanced', label: 'Balanced' },
@@ -386,44 +387,38 @@ export default function PersonalizedPlanForm({ onGenerate, onExport, loading = f
         </div>
       </CollapsibleSection>
 
-      <div className="personalize-actions" style={{ display: 'flex', gap: 12, marginTop: 20 }}>
-        <button
-          type="submit"
-          className="btn-primary-solid"
-          disabled={loading}
-          style={{ minHeight: 48, fontSize: '1.125rem' }}
-        >
-          {loading ? (
-            <>
-              <span
-                aria-hidden="true"
-                style={{
-                  display: 'inline-block',
-                  width: 16,
-                  height: 16,
-                  border: '2px solid #ffffff',
-                  borderTopColor: 'transparent',
-                  borderRadius: '50%',
-                  animation: 'spin 0.8s linear infinite',
-                  marginRight: 8,
-                  verticalAlign: 'middle',
-                }}
-              />
-              Generating plan...
-            </>
-          ) : 'Generate My 7-Day Plan'}
-        </button>
-
-        {onExport && (
+      <div className="personalize-generate-bar">
+        <div className="personalize-generate-hint">
+          Reviewed your preferences? Generate your personalised 7-day AI meal plan.
+        </div>
+        <div className="personalize-actions">
           <button
-            type="button"
-            className="export-btn"
-            onClick={onExport}
-            style={{ minHeight: 48 }}
+            type="submit"
+            className="btn-primary-solid personalize-generate-btn"
+            disabled={loading}
           >
-            Export as PDF
+            {loading ? (
+              <>
+                <span className="pp-spinner" aria-hidden="true" />
+                Generating plan…
+              </>
+            ) : (
+              <>
+                ✨ Generate My 7-Day Plan
+              </>
+            )}
           </button>
-        )}
+
+          {onExport && (
+            <button
+              type="button"
+              className="export-btn"
+              onClick={onExport}
+            >
+              Export as PDF
+            </button>
+          )}
+        </div>
       </div>
     </form>
   );

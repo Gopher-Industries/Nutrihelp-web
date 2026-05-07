@@ -1,5 +1,7 @@
+const API_BASE = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8081';
+
 /*export async function fetchRecipes(user_id) {
-  const response = await fetch("http://localhost:80/api/recipe", {
+  const response = await fetch(`${API_BASE}/api/recipe`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -14,7 +16,7 @@
 }*/
 
 export async function fetchRecipes(user_id) {
-  const res = await fetch("http://localhost:80/api/recipe", {
+  const res = await fetch(`${API_BASE}/api/recipe`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ user_id }),

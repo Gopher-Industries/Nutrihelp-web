@@ -57,6 +57,8 @@ body {
 
 .today-align-grid {
   width: 100%;
+  min-height: 46px;
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -67,9 +69,34 @@ body {
   font-size: clamp(0.875rem, 3.5vw, 1.125rem);
   font-weight: 700;
   color: var(--text-primary);
+  margin: 0;
 }
 
-.today-row-spacer {}
+.edit-menu-btn {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
+  padding: 8px 18px;
+  border-radius: 999px;
+  border: 1px solid var(--primary-color);
+  background: rgba(0, 91, 187, 0.08);
+  color: var(--primary-color);
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.edit-menu-btn:hover {
+  background: var(--primary-color);
+  border-color: var(--primary-color);
+  color: var(--text-inverse);
+}
 
 /* Row 2: meal + water */
 .meal-water-row {
@@ -228,6 +255,18 @@ body {
   .today-row {
     grid-template-columns: 1fr;
     gap: 12px;
+  }
+
+  .today-align-grid {
+    min-height: auto;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .edit-menu-btn {
+    position: static;
+    transform: none;
+    width: 100%;
   }
 
   .meal-water-row {

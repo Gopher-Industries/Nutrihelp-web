@@ -783,6 +783,18 @@
   gap: 8px;
 }
 
+.pagination-ellipsis {
+  min-width: 24px;
+  height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #55637a;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
 .pagination-nav:hover:not(:disabled),
 .pagination-index:hover {
   border-color: rgba(0, 91, 187, 0.4);
@@ -1046,6 +1058,30 @@
   font-size: 26px;
   line-height: 1.15;
   letter-spacing: -0.02em;
+}
+
+.nutrition-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.nutrition-toggle-btn {
+  display: none;
+  min-height: 32px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(0, 91, 187, 0.3);
+  background: #f0f6ff;
+  color: #0c5bb8;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.nutrition-panel-content {
+  display: block;
 }
 
 .nutrition-section {
@@ -1332,13 +1368,25 @@
 }
 
 @media (max-width: 900px) {
+  .add-meal-page {
+    padding: 14px 12px 36px;
+  }
+
+  .add-meal-breadcrumb {
+    margin-bottom: 10px;
+    font-size: 12px;
+    gap: 8px;
+  }
+
   .add-meal-search {
-    height: 58px;
+    height: 50px;
     border-radius: 13px;
+    padding: 0 14px;
+    gap: 10px;
   }
 
   .add-meal-search input {
-    font-size: 16px;
+    font-size: 15px;
   }
 
   .add-meal-search-wrap {
@@ -1351,13 +1399,13 @@
   }
 
   .filter-chip {
-    min-width: 100px;
-    height: 42px;
-    font-size: 15px;
+    min-width: 88px;
+    height: 36px;
+    font-size: 13px;
   }
 
   .section-title {
-    font-size: 27px;
+    font-size: 22px;
   }
 
   .section-title-row {
@@ -1365,18 +1413,56 @@
   }
 
   .clear-selected-btn {
-    min-height: 38px;
-    padding: 0 12px;
-    font-size: 13px;
+    min-height: 34px;
+    padding: 0 10px;
+    font-size: 12px;
   }
 
   .recommend-card {
-    flex: 0 0 260px;
+    flex: 0 0 228px;
+    min-height: 316px;
   }
 
   .all-meals-grid {
     grid-template-columns: 1fr;
     gap: 18px;
+  }
+
+  .all-meals-pagination {
+    width: 100%;
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .pagination-index-list {
+    width: auto;
+    max-width: none;
+    overflow: visible;
+    justify-content: center;
+    padding: 0;
+  }
+
+  .pagination-index {
+    flex: 0 0 auto;
+    min-width: 34px;
+    height: 32px;
+    font-size: 12px;
+  }
+
+  .pagination-nav {
+    min-width: 72px;
+    height: 32px;
+    font-size: 12px;
+    padding: 0 8px;
+  }
+
+  .pagination-ellipsis {
+    min-width: 18px;
+    height: 32px;
+    font-size: 14px;
   }
 
   .selected-dish-card {
@@ -1385,7 +1471,7 @@
   }
 
   .selected-dish-thumb {
-    height: 96px;
+    height: 84px;
   }
 
   .selected-dish-actions {
@@ -1398,63 +1484,170 @@
   }
 
   .all-meal-image-wrap {
-    height: 220px;
+    height: 184px;
   }
 
   .all-meal-content h3 {
-    font-size: 23px;
+    font-size: 19px;
   }
 
   .recipe-meta span {
-    font-size: 16px;
+    font-size: 13px;
   }
 
   .add-meal-action-btn {
-    min-height: 42px;
-    font-size: 14px;
+    min-height: 38px;
+    font-size: 13px;
   }
 
   .nutrition-panel h3 {
-    font-size: 24px;
-    margin-bottom: 14px;
+    font-size: 20px;
+    margin-bottom: 10px;
   }
 
   .nutrition-panel {
-    padding: 24px 20px 20px;
-  }
-
-  .nutrition-section {
-    margin-top: 16px;
     padding: 16px 14px 14px;
   }
 
+  .nutrition-section {
+    margin-top: 10px;
+    padding: 12px 11px 10px;
+  }
+
   .nutrition-section h4 {
-    font-size: 18px;
+    font-size: 15px;
   }
 
   .nutrition-kpi-list li,
   .nutrition-kpi-list strong {
-    font-size: 16px;
+    font-size: 14px;
   }
 
   .nutrition-kpi-list li {
-    min-height: 50px;
+    min-height: 40px;
   }
 
   .panel-action-list {
-    margin-top: 20px;
-    gap: 12px;
+    margin-top: 12px;
+    gap: 8px;
   }
 
   .panel-action-list button {
-    min-height: 50px;
-    font-size: 15px;
+    min-height: 40px;
+    font-size: 13px;
+  }
+
+  .widget-fab-stack {
+    right: 12px;
+  }
+
+  .widget-fab-actions {
+    width: 132px;
+    height: 132px;
+  }
+
+  .widget-fab-action,
+  .widget-fab-main {
+    width: 42px;
+    height: 42px;
   }
 }
 
 @media (max-width: 640px) {
+  .add-meal-page {
+    padding: 10px 10px 30px;
+    overflow-x: clip;
+  }
+
+  .add-meal-breadcrumb {
+    display: none;
+  }
+
+  .add-meal-toolbar {
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .add-meal-main .add-meal-section + .add-meal-section {
+    margin-top: 18px;
+  }
+
+  .section-title {
+    font-size: 20px;
+  }
+
+  .all-meals-wrap {
+    gap: 10px;
+  }
+
+  .all-meal-card {
+    border-radius: 14px;
+    min-height: auto;
+  }
+
+  .all-meal-image-wrap {
+    height: 160px;
+  }
+
+  .all-meal-content {
+    padding: 10px 10px 12px;
+  }
+
+  .all-meal-content h3 {
+    font-size: 17px;
+    min-height: 0;
+  }
+
+  .recipe-meta {
+    margin: 8px 0 10px;
+    gap: 8px 10px;
+  }
+
+  .recipe-meta span {
+    font-size: 12px;
+  }
+
+  .meal-card-actions {
+    gap: 8px;
+  }
+
+  .add-meal-action-btn {
+    min-height: 36px;
+    font-size: 12px;
+    border-radius: 9px;
+  }
+
+  .nutrition-toggle-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .nutrition-panel-content.collapsed {
+    display: none;
+  }
+
+  .pagination-index {
+    min-width: 34px;
+    height: 32px;
+    font-size: 12px;
+  }
+
+  .pagination-nav {
+    min-width: 72px;
+    height: 32px;
+    font-size: 12px;
+    padding: 0 8px;
+  }
+
+  .pagination-ellipsis {
+    min-width: 18px;
+    height: 32px;
+    font-size: 14px;
+  }
+
   .selected-meal-group {
-    padding: 12px;
+    padding: 10px;
   }
 
   .selected-dish-card {
@@ -1463,7 +1656,7 @@
   }
 
   .selected-dish-thumb {
-    height: 172px;
+    height: 148px;
   }
 
   .selected-dish-actions {
@@ -1472,6 +1665,54 @@
 
   .selected-dish-actions .add-meal-action-btn,
   .selected-remove-btn {
-    min-height: 42px;
+    min-height: 36px;
+  }
+}
+
+/* ── Page-level tab switcher ─────────────────────────────────────────────── */
+.meal-tab-switcher {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  border-bottom: 2px solid var(--line);
+  padding-bottom: 0;
+}
+
+.meal-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 20px;
+  border: none;
+  border-bottom: 3px solid transparent;
+  background: transparent;
+  color: var(--ink-soft);
+  font-family: inherit;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: -2px;
+  transition: color 0.18s ease, border-color 0.18s ease;
+  white-space: nowrap;
+}
+
+.meal-tab-btn:hover {
+  color: var(--ink-strong);
+}
+
+.meal-tab-btn.active {
+  color: var(--brand);
+  border-bottom-color: var(--brand);
+}
+
+/* ── Personalized plan section ───────────────────────────────────────────── */
+.personalized-plan-section {
+  padding-top: 8px;
+}
+
+@media (max-width: 640px) {
+  .meal-tab-btn {
+    padding: 8px 14px;
+    font-size: 0.875rem;
   }
 }

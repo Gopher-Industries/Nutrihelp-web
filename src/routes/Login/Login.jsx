@@ -142,6 +142,7 @@ export default function Login() {
 
       localStorage.setItem("user_session", JSON.stringify(userSession))
       localStorage.setItem("auth_token", token)
+      localStorage.removeItem("sso_session")
 
       // ✅ Set global context (if used)
       if (typeof setCurrentUser === "function") {

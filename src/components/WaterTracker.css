@@ -6,18 +6,288 @@
   margin: 1.5em auto;
   box-shadow: var(--card-shadow);
   border: 1px solid var(--border-color);
+  width: 100%;
+  max-width: 320px;
+  transition: all 0.3s ease;
 }
 
 .water-tracker h3 {
   color: var(--primary-color);
   font-weight: bold;
   margin-bottom: 0.5em;
+  font-size: 1.25rem;
 }
 
-.water-tracker p {
-  font-size: 1em;
-  margin-bottom: 1.8em !important;
+.hydration-coach-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #eef2f5;
+  border: 1px solid #dde3e9;
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-bottom: 14px;
+}
+
+.coach-title {
+  font-size: 1.02rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.coach-switch {
+  position: relative;
+  display: inline-block;
+  width: 42px;
+  height: 24px;
+}
+
+.coach-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.coach-slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background-color: #cfd6dd;
+  border-radius: 999px;
+  transition: background-color 0.2s ease;
+}
+
+.coach-slider::before {
+  content: "";
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  left: 3px;
+  top: 3px;
+  background-color: #ffffff;
+  border-radius: 50%;
+  transition: transform 0.2s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.coach-switch input:checked + .coach-slider {
+  background-color: #1565c0;
+}
+
+.coach-switch input:checked + .coach-slider::before {
+  transform: translateX(18px);
+}
+
+.emotion-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 1.5em;
+  padding: 1em;
+  border-radius: 8px;
+  transition: background-color 0.4s ease;
+}
+
+/* Let the stage background colors blend softly with the parent background or use transparent to keep original layout style */
+.emotion-display.stage-sad {
+  background-color: rgba(255, 0, 0, 0.03);
+}
+.emotion-display.stage-neutral {
+  background-color: rgba(255, 165, 0, 0.03);
+}
+.emotion-display.stage-excited {
+  background-color: rgba(0, 255, 0, 0.03);
+}
+.emotion-display.stage-medal {
+  background-color: rgba(255, 215, 0, 0.1);
+  border: 1px solid rgba(255, 215, 0, 0.4);
+}
+
+.hydration-orb-wrap {
+  position: relative;
+  width: 124px;
+  height: 124px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.orb-sparkle {
+  position: absolute;
+  z-index: 6;
+  font-size: 2.5rem;
+  line-height: 1;
+  filter: drop-shadow(0 1px 1px rgba(15, 23, 42, 0.25));
+  animation: sparklePulse 1.6s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.orb-sparkle-top-left {
+  top: -8px;
+  left: -15px;
+}
+
+.orb-sparkle-bottom-right {
+  right: -15px;
+  bottom: -7px;
+  animation-delay: 0.35s;
+}
+
+.hydration-orb {
+  position: relative;
+  width: 124px;
+  height: 124px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid #d4dee8;
+  background: radial-gradient(circle at 30% 25%, #eef3f8 0%, #dce4ec 100%);
+  box-shadow:
+    inset 0 8px 18px rgba(255, 255, 255, 0.45),
+    inset 0 -10px 14px rgba(148, 163, 184, 0.18),
+    0 10px 20px rgba(2, 8, 23, 0.12);
+  isolation: isolate;
+}
+
+.hydration-orb-water {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, #8fd2ff 0%, #4aa9ff 45%, #227ae6 100%);
+  transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+.orb-wave {
+  position: absolute;
+  left: -28%;
+  width: 156%;
+  height: 34px;
+  border-radius: 42%;
+  top: -15px;
+}
+
+.orb-wave-back {
+  background: rgba(211, 241, 255, 0.6);
+  animation: waveDrift 7.2s linear infinite;
+}
+
+.orb-wave-front {
+  background: rgba(145, 208, 255, 0.85);
+  top: -11px;
+  animation: waveDriftReverse 4.8s linear infinite;
+}
+
+.hydration-orb-shine {
+  position: absolute;
+  width: 46px;
+  height: 46px;
+  left: 20px;
+  top: 16px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.62) 0%, rgba(255, 255, 255, 0) 72%);
+  z-index: 2;
+  pointer-events: none;
+}
+
+.hydration-orb-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #ffffff;
+  text-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.45),
+    0 0 6px rgba(30, 64, 175, 0.2);
+  pointer-events: none;
+}
+
+.confetti-burst {
+  position: absolute;
+  inset: -46px;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.confetti-piece {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 8px;
+  height: 14px;
+  border-radius: 2px;
+  background: var(--confetti-color);
+  opacity: 0;
+  transform: translate(-50%, -50%) rotate(var(--rot));
+  animation: confettiBurst var(--duration) cubic-bezier(0.14, 0.84, 0.42, 1) forwards;
+  animation-delay: var(--delay);
+  box-shadow: 0 0 0.5px rgba(15, 23, 42, 0.4);
+}
+
+@keyframes waveDrift {
+  0% { transform: translateX(-10%) rotate(0deg); }
+  50% { transform: translateX(4%) rotate(1.2deg); }
+  100% { transform: translateX(-10%) rotate(0deg); }
+}
+
+@keyframes waveDriftReverse {
+  0% { transform: translateX(6%) rotate(0deg); }
+  50% { transform: translateX(-8%) rotate(-1.1deg); }
+  100% { transform: translateX(6%) rotate(0deg); }
+}
+
+@keyframes confettiBurst {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.35) rotate(var(--rot));
+  }
+  12% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(calc(-50% + var(--tx)), calc(-50% + var(--ty))) scale(0.95) rotate(calc(var(--rot) + var(--spin)));
+  }
+}
+
+@keyframes sparklePulse {
+  0% {
+    transform: scale(0.8) rotate(-8deg);
+    opacity: 0.65;
+  }
+  50% {
+    transform: scale(1.15) rotate(6deg);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.8) rotate(-8deg);
+    opacity: 0.65;
+  }
+}
+
+.medal-animation {
+  animation: popMedal 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+}
+
+@keyframes popMedal {
+  0% { transform: scale(0); opacity: 0; }
+  80% { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.microcopy {
+  font-size: 1.05rem;
   color: var(--text-primary);
+  font-weight: 500;
+  margin: 0;
+  min-height: 2.85em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
 }
 
 .tracker-controls {
@@ -36,20 +306,47 @@
   font-size: 1.2em;
   border-radius: 5px;
   cursor: pointer;
+  transition: transform 0.1s;
+}
+
+.tracker-controls button:disabled {
+  background-color: var(--border-color);
+  cursor: not-allowed;
+  transform: none;
+}
+
+.tracker-controls button:active:not(:disabled) {
+  transform: scale(0.95);
 }
 
 .tracker-controls span {
   font-size: 1.2em;
   font-weight: 600;
   color: var(--text-primary);
+  min-width: 60px;
 }
 
+/* Original Glass Elements Restored */
 .glass-display {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(5, 30px);
+  grid-auto-rows: 50px;
   justify-content: center;
   gap: 10px;
-  flex-wrap: wrap;
   margin-top: 18px !important;
+}
+
+/* Keep 8 cups in a stable 5 + 3 layout instead of 7 + 1 wrapping */
+.glass-display .glass:nth-child(6) {
+  grid-column: 2;
+}
+
+.glass-display .glass:nth-child(7) {
+  grid-column: 3;
+}
+
+.glass-display .glass:nth-child(8) {
+  grid-column: 4;
 }
 
 .glass {
@@ -67,4 +364,21 @@
   background: linear-gradient(to top, var(--primary-color) 80%, transparent 80%);
   transform: scale(1.05);
   box-shadow: inset 0 0 5px rgba(0, 119, 204, 0.4);
+}
+
+.reminder-status {
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  text-align: center;
+  line-height: 1.4;
+}
+
+.reminder-status p {
+  margin: 0;
+}
+
+.reminder-status small {
+  display: block;
+  margin-top: 6px;
+  color: var(--text-secondary, #6b7280);
 }

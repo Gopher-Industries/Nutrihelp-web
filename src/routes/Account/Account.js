@@ -17,7 +17,7 @@ function Account() {
         if (userId) params.append('user_id', userId);
         if (date) params.append('created_at', date);
 
-        const response = await fetch(`http://localhost:80/api/account?${params.toString()}`);
+        const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:8081'}/api/account?${params.toString()}`);
         if (!response.ok) {
           throw new Error("Failed to fetch meal plan data");
         }
