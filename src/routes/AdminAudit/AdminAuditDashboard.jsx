@@ -70,12 +70,120 @@ function SummaryCard({ label, value, hint }) {
   );
 }
 
+function buildRouteKey(route) {
+  return `${route.frontendRoute}::${route.componentName}`;
+}
+
+function LayerStatusCard({ label, layer }) {
+  if (!layer) return null;
+
+  return (
+    <div className="admin-audit-layer-card">
+      <div className="admin-audit-layer-card-head">
+        <strong>{label}</strong>
+        <StatusPill value={layer.status || "unknown"} />
+      </div>
+      {layer.issues?.length ? (
+        <ul className="admin-audit-layer-issues">
+          {layer.issues.map((issue) => (
+            <li key={`${label}-${issue}`}>{issue}</li>
+          ))}
+        </ul>
+      ) : (
+        <div className="admin-audit-muted">No active issues detected for this layer.</div>
+      )}
+    </div>
+  );
+}
+
+function ClassificationTags({ values = [] }) {
+  if (!values.length) {
+    return <span className="admin-audit-muted">No extra classifications.</span>;
+  }
+
+  return (
+    <div className="admin-audit-flow-tags">
+      {values.map((value) => (
+        <StatusPill key={value} value={value} />
+      ))}
+    </div>
+  );
+}
+
+function ContractValidationCard({ entry }) {
+  if (!entry) return null;
+
+  return (
+    <div className="admin-audit-layer-card">
+      <div className="admin-audit-layer-card-head">
+        <strong>{entry.endpoint}</strong>
+        <StatusPill value={entry.status || "unknown"} />
+      </div>
+      <div className="admin-audit-muted">Required: {entry.requiredFields?.length ? entry.requiredFields.join(", ") : "—"}</div>
+      <div className="admin-audit-muted">
+        Missing: {entry.missingFields?.length ? entry.missingFields.join(", ") : "None"}
+      </div>
+      <div className="admin-audit-muted">
+        Optional missing: {entry.optionalMissingFields?.length ? entry.optionalMissingFields.join(", ") : "None"}
+      </div>
+      <div className="admin-audit-muted">
+        Aliases detected: {entry.detectedAliases?.length ? entry.detectedAliases.join(", ") : "None"}
+      </div>
+      {entry.renamedFields?.length ? (
+        <ul className="admin-audit-layer-issues">
+          {entry.renamedFields.map((item) => (
+            <li key={`${entry.endpoint}-${item.expectedField}`}>
+              Expected <code>{item.expectedField}</code> but found alias {item.detectedAliases.join(", ")}
+            </li>
+          ))}
+        </ul>
+      ) : null}
+    </div>
+  );
+}
+
+function DataQualityCard({ entry }) {
+  if (!entry) return null;
+
+  return (
+    <div className="admin-audit-layer-card">
+      <div className="admin-audit-layer-card-head">
+        <strong>{entry.endpoint}</strong>
+        <StatusPill value={entry.status || "unknown"} />
+      </div>
+      <div className="admin-audit-muted">Captured: {formatDateTime(entry.capturedAt)}</div>
+      <div className="admin-audit-muted">
+        Missing values: {entry.missingValues?.length ? entry.missingValues.join(", ") : "None"}
+      </div>
+      <div className="admin-audit-muted">
+        Empty arrays: {entry.emptyArrays?.length ? entry.emptyArrays.join(", ") : "None"}
+      </div>
+      <div className="admin-audit-muted">
+        Blank strings: {entry.blankStrings?.length ? entry.blankStrings.join(", ") : "None"}
+      </div>
+      {entry.notes?.length ? (
+        <ul className="admin-audit-layer-issues">
+          {entry.notes.map((note) => (
+            <li key={`${entry.endpoint}-${note}`}>{note}</li>
+          ))}
+        </ul>
+      ) : null}
+      {entry.sampleBody ? (
+        <pre className="admin-audit-sample-preview">
+          {JSON.stringify(entry.sampleBody, null, 2)}
+        </pre>
+      ) : null}
+    </div>
+  );
+}
+
 const AdminAuditDashboard = () => {
   const [overview, setOverview] = useState(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState("");
   const [repositoryFilter, setRepositoryFilter] = useState("all");
+  const [selectedRouteKey, setSelectedRouteKey] = useState("");
 
   useEffect(() => {
     let cancelled = false;
@@ -157,10 +265,25 @@ const AdminAuditDashboard = () => {
     );
   }, [repositoryFilter, repositorySummary]);
   const routeAudit = useMemo(() => overview?.routeAudit || [], [overview]);
+  const selectedRoute = useMemo(
+    () => routeAudit.find((route) => buildRouteKey(route) === selectedRouteKey) || routeAudit[0] || null,
+    [routeAudit, selectedRouteKey]
+  );
   const recentErrors = useMemo(() => overview?.recentErrors || [], [overview]);
   const unusedBackendRoutes = useMemo(() => overview?.unusedRoutes?.backend || [], [overview]);
   const emptyFrontendRoutes = useMemo(() => overview?.unusedRoutes?.frontend || [], [overview]);
   const aiServices = useMemo(() => Object.values(overview?.health?.aiServices || {}), [overview]);
+
+  useEffect(() => {
+    if (!routeAudit.length) {
+      if (selectedRouteKey) setSelectedRouteKey("");
+      return;
+    }
+
+    if (!selectedRouteKey || !routeAudit.some((route) => buildRouteKey(route) === selectedRouteKey)) {
+      setSelectedRouteKey(buildRouteKey(routeAudit[0]));
+    }
+  }, [routeAudit, selectedRouteKey]);
 
   return (
     <main className="admin-audit-shell">
@@ -205,11 +328,14 @@ const AdminAuditDashboard = () => {
             <SummaryCard label="Frontend Routes" value={overview.summary.totalFrontendRoutes} />
             <SummaryCard label="Backend Endpoints" value={overview.summary.totalBackendRoutes} />
             <SummaryCard label="Connected Routes" value={overview.summary.connectedRoutes} />
+            <SummaryCard label="Direct AI Routes" value={overview.summary.directAiRoutes} hint={`Requires auth: ${overview.summary.requiresAuthRoutes}`} />
+            <SummaryCard label="Degraded Routes" value={overview.summary.degradedRoutes} hint={`Contract mismatch: ${overview.summary.contractMismatchRoutes}`} />
+            <SummaryCard label="Bad Data Routes" value={overview.summary.badDataRoutes} hint="Captured runtime samples with missing or empty payload fields" />
             <SummaryCard label="Chatbot API Requests" value={overview.summary.chatbotRequests} hint={`AI calls: ${overview.summary.chatbotAiCalls}`} />
             <SummaryCard label="Recent Errors" value={overview.summary.recentErrorCount} />
             <SummaryCard label="Unused Backend Routes" value={overview.summary.unusedBackendRoutes} hint={`Empty frontend routes: ${overview.summary.emptyFrontendRoutes}`} />
             <SummaryCard label="Repos Running" value={overview.summary.repositoriesRunning} hint={`Code only: ${overview.summary.repositoriesCodeOnly}`} />
-            <SummaryCard label="Repos Attention Needed" value={overview.summary.repositoriesNotLoaded + overview.summary.repositoriesNotRunning} hint={`Not loaded: ${overview.summary.repositoriesNotLoaded} • Not running: ${overview.summary.repositoriesNotRunning}`} />
+            <SummaryCard label="Repos Attention Needed" value={overview.summary.repositoriesNotLoaded + overview.summary.repositoriesNotRunning} hint={`Not loaded: ${overview.summary.repositoriesNotLoaded} • Not running: ${overview.summary.repositoriesNotRunning} • Stale routes: ${overview.summary.staleRoutes}`} />
           </section>
 
           <section className="admin-audit-panels">
@@ -295,7 +421,7 @@ const AdminAuditDashboard = () => {
                         <span>{formatDateTime(entry.timestamp || entry.created_at || entry.at)}</span>
                       </div>
                       <div className="admin-audit-muted">
-                        {entry.category || entry.type || "unknown"} {entry.code ? `• ${entry.code}` : ""}
+                        <StatusPill value={entry.layer || "unknown"} /> {entry.category || entry.type || "unknown"} {entry.code ? `• ${entry.code}` : ""}
                       </div>
                     </div>
                   ))
@@ -322,6 +448,150 @@ const AdminAuditDashboard = () => {
             </article>
           </section>
 
+          {selectedRoute ? (
+            <section className="admin-audit-panel admin-audit-detail-panel">
+              <div className="admin-audit-panel-header">
+                <div>
+                  <h2>Route Flow Detail</h2>
+                  <div className="admin-audit-muted">
+                    {selectedRoute.frontendRoute} • {selectedRoute.componentFile || selectedRoute.componentName}
+                  </div>
+                </div>
+                <div className="admin-audit-detail-statuses">
+                  <StatusPill value={selectedRoute.status} />
+                  <span className="admin-audit-muted">
+                    API activity {selectedRoute.activity?.totalApiRequests || 0} • AI calls {selectedRoute.activity?.totalAiCalls || 0}
+                  </span>
+                </div>
+              </div>
+
+              <div className="admin-audit-flow-grid">
+                <div className="admin-audit-flow-column">
+                  <span className="admin-audit-flow-label">Frontend</span>
+                  <strong>{selectedRoute.componentName}</strong>
+                  <div className="admin-audit-muted">{selectedRoute.componentFile || "Component file unavailable"}</div>
+                  <div className="admin-audit-flow-tags">
+                    <span className="admin-audit-flow-tag">{selectedRoute.frontendRoute}</span>
+                  </div>
+                </div>
+
+                <div className="admin-audit-flow-column">
+                  <span className="admin-audit-flow-label">API</span>
+                  {selectedRoute.flow?.api?.length ? (
+                    selectedRoute.flow.api.map((entry) => (
+                      <div key={entry.endpoint} className="admin-audit-flow-block">
+                        <div className="admin-audit-flow-head">
+                          <strong>{entry.endpoint}</strong>
+                          <StatusPill value={entry.status} />
+                        </div>
+                        <div className="admin-audit-muted">
+                          {entry.group} • {entry.moduleFile || "No module file"}
+                        </div>
+                        <div className="admin-audit-muted">
+                          Requests: {entry.requestStats?.total || 0} • Last status: {entry.requestStats?.lastStatusCode || "—"} • Last seen: {formatDateTime(entry.requestStats?.lastCalledAt)}
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="admin-audit-muted">No backend hop detected for this route.</div>
+                  )}
+                </div>
+
+                <div className="admin-audit-flow-column">
+                  <span className="admin-audit-flow-label">AI</span>
+                  {selectedRoute.flow?.ai?.length ? (
+                    selectedRoute.flow.ai.map((entry) => (
+                      <div key={entry.endpoint} className="admin-audit-flow-block">
+                        <div className="admin-audit-flow-head">
+                          <strong>{entry.endpoint}</strong>
+                          <StatusPill value={entry.status} />
+                        </div>
+                        <div className="admin-audit-muted">
+                          Services: {entry.services?.length ? entry.services.join(", ") : "No monitor match yet"}
+                        </div>
+                        <div className="admin-audit-muted">
+                          Calls: {entry.totalCalls || 0} • Failures: {entry.failures || 0} • Last failure: {formatDateTime(entry.lastFailureAt)}
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="admin-audit-muted">No AI hop detected for this route.</div>
+                  )}
+                </div>
+              </div>
+
+              <div className="admin-audit-layer-grid">
+                <LayerStatusCard label="Frontend Layer" layer={selectedRoute.layerHealth?.frontend} />
+                <LayerStatusCard label="API Layer" layer={selectedRoute.layerHealth?.api} />
+                <LayerStatusCard label="AI Layer" layer={selectedRoute.layerHealth?.ai} />
+              </div>
+
+              <div className="admin-audit-layer-card">
+                <div className="admin-audit-layer-card-head">
+                  <strong>Classifications</strong>
+                  <StatusPill value={selectedRoute.authMode || "public"} />
+                </div>
+                <ClassificationTags values={selectedRoute.classifications || []} />
+              </div>
+
+              <div className="admin-audit-contract-grid">
+                <div className="admin-audit-panel-header">
+                  <strong>Contract Validation</strong>
+                  <span>{selectedRoute.contractValidation?.backend?.length || 0} backend contract checks</span>
+                </div>
+                {selectedRoute.contractValidation?.backend?.length ? (
+                  <div className="admin-audit-layer-grid">
+                    {selectedRoute.contractValidation.backend.map((entry) => (
+                      <ContractValidationCard key={entry.endpoint} entry={entry} />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="admin-audit-muted">No backend contract checks apply to this route.</div>
+                )}
+              </div>
+
+              <div className="admin-audit-contract-grid">
+                <div className="admin-audit-panel-header">
+                  <strong>Runtime Data Quality</strong>
+                  <span>{selectedRoute.flow?.api?.length || 0} sampled endpoint checks</span>
+                </div>
+                {selectedRoute.flow?.api?.length ? (
+                  <div className="admin-audit-layer-grid">
+                    {selectedRoute.flow.api.map((entry) => (
+                      <DataQualityCard key={`${entry.endpoint}-data-quality`} entry={entry.dataQuality} />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="admin-audit-muted">No backend data samples apply to this route yet.</div>
+                )}
+              </div>
+
+              <div className="admin-audit-related-failures">
+                <div className="admin-audit-panel-header">
+                  <strong>Related Failures</strong>
+                  <span>{selectedRoute.relatedFailures?.length || 0} linked signals</span>
+                </div>
+                {selectedRoute.relatedFailures?.length ? (
+                  <div className="admin-audit-list">
+                    {selectedRoute.relatedFailures.map((entry, index) => (
+                      <div key={`${entry.layer}-${entry.message}-${index}`} className="admin-audit-error-row">
+                        <div className="admin-audit-error-head">
+                          <strong>{entry.message}</strong>
+                          <span>{formatDateTime(entry.at)}</span>
+                        </div>
+                        <div className="admin-audit-muted">
+                          <StatusPill value={entry.layer} /> <StatusPill value={entry.status} />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="admin-audit-muted">No route-specific failures are linked in the current snapshot.</div>
+                )}
+              </div>
+            </section>
+          ) : null}
+
           <section className="admin-audit-panel">
             <div className="admin-audit-panel-header">
               <h2>Route Audit Table</h2>
@@ -341,7 +611,11 @@ const AdminAuditDashboard = () => {
                 </thead>
                 <tbody>
                   {routeAudit.map((row) => (
-                    <tr key={`${row.frontendRoute}-${row.componentName}`}>
+                    <tr
+                      key={`${row.frontendRoute}-${row.componentName}`}
+                      className={buildRouteKey(row) === buildRouteKey(selectedRoute || {}) ? "is-selected" : ""}
+                      onClick={() => setSelectedRouteKey(buildRouteKey(row))}
+                    >
                       <td>{row.frontendRoute}</td>
                       <td>{row.componentFile || row.componentName}</td>
                       <td>
@@ -351,7 +625,19 @@ const AdminAuditDashboard = () => {
                         {row.aiServices.length === 0 ? "—" : row.aiServices.join(", ")}
                       </td>
                       <td><StatusPill value={row.status} /></td>
-                      <td>{row.notes || "—"}</td>
+                      <td>
+                        {row.notes || "—"}
+                        <div className="admin-audit-row-layer-pills">
+                          <StatusPill value={row.layerHealth?.frontend?.status || "unknown"} />
+                          <StatusPill value={row.layerHealth?.api?.status || "not-applicable"} />
+                          <StatusPill value={row.layerHealth?.ai?.status || "not-applicable"} />
+                        </div>
+                        <div className="admin-audit-row-layer-pills">
+                          {(row.classifications || []).map((value) => (
+                            <StatusPill key={`${row.frontendRoute}-${value}`} value={value} />
+                          ))}
+                        </div>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
