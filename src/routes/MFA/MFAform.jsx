@@ -20,7 +20,7 @@ export default function MFAform() {
   const unwrapApiData = (payload) => (payload && typeof payload === "object" && "data" in payload ? payload.data : payload)
 
   // prefer explicit email/password passed from previous route, otherwise use user.email (if available)
-  const { email: locEmail, password: locPassword } = location.state || {}
+  const { email: locEmail, password: locPassword, rememberMe = false } = location.state || {}
   const email = locEmail || currentUser?.email || ""
   const password = locPassword || ""
 
@@ -105,26 +105,38 @@ export default function MFAform() {
 
       if (resp.ok) {
         const user = payload?.user || data.user
-        const token = payload?.token || data.token
+        const accessToken =
+          payload?.session?.accessToken || payload?.accessToken || payload?.token || data.token
+        const refreshToken =
+          payload?.session?.refreshToken || payload?.refreshToken || data.refreshToken || ""
+        const expiresIn =
+          payload?.session?.expiresIn || payload?.expiresIn || data.expiresIn || 0
+        const tokenType =
+          payload?.session?.tokenType || payload?.tokenType || data.tokenType || "Bearer"
 
-        if (!user || !token) {
+        if (!user || !accessToken) {
           setError("Login session is incomplete. Please try signing in again.")
           return
         }
 
         const userSession = {
           id: user.user_id,
+          user_id: user.user_id,
           email: user.email,
           name: user.name,
-          token,
+          role: user.role || user.user_roles?.role_name || "user",
+          token: accessToken,
           provider: "email_mfa",
         }
 
-        localStorage.setItem("user_session", JSON.stringify(userSession))
-        localStorage.setItem("auth_token", token)
-
         if (typeof setCurrentUser === "function") {
-          setCurrentUser(userSession)
+          setCurrentUser(userSession, {
+            persist: rememberMe,
+            accessToken,
+            refreshToken,
+            expiresIn,
+            tokenType,
+          })
         }
 
         navigate("/home")
