@@ -15,6 +15,7 @@ import {
 } from "../../utils/validationRules";
 import FieldError from "../../components/FieldError";
 import { toast } from "react-toastify";
+import { API_BASE_URL, parseJsonSafe } from "../../utils/authApi";
 
 export default function SignUp() {
   const [showPassword, setShowPassword] = useState(false);
@@ -35,20 +36,12 @@ export default function SignUp() {
   };
 
   const handleAppleSignup = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "apple",
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback?mode=signup`,
-      },
-    });
-
-    if (error) {
-      setServerError(error.message);
-    }
+    const message = "Apple sign-in is not configured in this sprint build yet.";
+    setServerError(message);
+    toast.info(message);
   };
 
   const navigate = useNavigate();
-  const API_BASE = "http://localhost:8080";
 
   const validate = (values) => {
     const err = {};
@@ -91,106 +84,107 @@ export default function SignUp() {
     validate,
     async (values) => {
       setServerError("");
+      try {
+        const payload = {
+          name: `${values.firstName} ${values.lastName}`.trim(),
+          email: values.email.trim().toLowerCase(),
+          password: values.password,
+          contact_number: values.phone || "0412345678",
+          address: "Placeholder address 123",
+        };
 
-      const payload = {
-        name: `${values.firstName} ${values.lastName}`.trim(),
-        email: values.email.trim().toLowerCase(),
-        password: values.password,
-        contact_number: values.phone || "0412345678",
-        address: "Placeholder address 123",
-      };
+        const res = await fetch(`${API_BASE_URL}/api/signup`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
 
-      const res = await fetch(`${API_BASE}/api/signup`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+        if (!res.ok) {
+          const text = await res.text();
+          let msg = `Sign up failed (HTTP ${res.status})`;
+          try {
+            const data = JSON.parse(text);
 
-      if (!res.ok) {
-        const text = await res.text();
-        let msg = `Sign up failed (HTTP ${res.status})`;
-        try {
-          const data = JSON.parse(text);
-
-          // Handles specific known string error cases from the backend for better UX.
-          if (typeof data.error === "string") {
-            if (
-              data.error.toLowerCase().includes("user already exists") ||
-              data.error.toLowerCase().includes("email already")
-            ) {
-              setErrors({
-                email: "An account with this email already exists.",
-              });
-              return;
+            if (typeof data.error === "string") {
+              if (
+                data.error.toLowerCase().includes("user already exists") ||
+                data.error.toLowerCase().includes("email already")
+              ) {
+                setErrors({
+                  email: "An account with this email already exists.",
+                });
+                return;
+              }
+              if (
+                data.error.toLowerCase().includes("weak_password") ||
+                data.error.toLowerCase().includes("weak password")
+              ) {
+                setErrors({
+                  password:
+                    "Password is too weak. Please choose a stronger password.",
+                });
+                return;
+              }
             }
-            if (
-              data.error.toLowerCase().includes("weak_password") ||
-              data.error.toLowerCase().includes("weak password")
-            ) {
-              setErrors({
-                password:
-                  "Password is too weak. Please choose a stronger password.",
-              });
-              return;
-            }
-          }
 
-          // Maps the backend errors — supports both { param, msg } and { field, message } formats — to the frontend form fields for better error display...
-          if (data.errors && Array.isArray(data.errors)) {
-            const fieldErrors = {};
-            data.errors.forEach((err) => {
-              // This Supports both the { param, msg } and { field, message } formats.
-              const rawField = err.param || err.path || err.field;
-              const errMsg = err.msg || err.message;
+            if (data.errors && Array.isArray(data.errors)) {
+              const fieldErrors = {};
+              data.errors.forEach((err) => {
+                const rawField = err.param || err.path || err.field;
+                const errMsg = err.msg || err.message;
 
-              if (rawField === "email") fieldErrors.email = errMsg;
-              if (rawField === "password") {
-                if (errMsg && errMsg.toLowerCase().includes("weak")) {
-                  fieldErrors.password =
-                    "Password is too weak. Please choose a stronger password.";
-                } else {
-                  fieldErrors.password = errMsg;
+                if (rawField === "email") fieldErrors.email = errMsg;
+                if (rawField === "password") {
+                  if (errMsg && errMsg.toLowerCase().includes("weak")) {
+                    fieldErrors.password =
+                      "Password is too weak. Please choose a stronger password.";
+                  } else {
+                    fieldErrors.password = errMsg;
+                  }
                 }
-              }
-              if (rawField === "contact_number" || rawField === "phone") {
-                fieldErrors.phone = errMsg;
-              }
-              if (rawField === "name") {
-                // here the name maps to firstName / lastName on the frontend.
-                fieldErrors.firstName = fieldErrors.firstName ?? errMsg;
-                fieldErrors.lastName = fieldErrors.lastName ?? errMsg;
-              }
-              if (rawField === "address") {
-                // This address is a hidden placeholder field — show as general server error since user can't correct it.
-                msg = errMsg || msg;
-              }
-            });
+                if (rawField === "contact_number" || rawField === "phone") {
+                  fieldErrors.phone = errMsg;
+                }
+                if (rawField === "name") {
+                  fieldErrors.firstName = fieldErrors.firstName ?? errMsg;
+                  fieldErrors.lastName = fieldErrors.lastName ?? errMsg;
+                }
+                if (rawField === "address") {
+                  msg = errMsg || msg;
+                }
+              });
 
-            if (Object.keys(fieldErrors).length > 0) {
-              setErrors(fieldErrors);
-              return;
+              if (Object.keys(fieldErrors).length > 0) {
+                setErrors(fieldErrors);
+                return;
+              }
             }
+
+            msg = data.error || data.message || msg;
+          } catch {
+            if (text) msg = text;
           }
 
-          msg = data.error || data.message || msg;
-        } catch {
-          if (text) msg = text;
+          setServerError(msg);
+          return;
         }
-        // Here The Unknown or server errors shown as form-level general error since they are not tied to specific fields.
-        setServerError(msg);
-        return;
-      }
 
-      if (res.status === 201 || res.status === 200) {
-        toast.success(
-          "Account created successfully. Please login to continue.",
+        if (res.status === 201 || res.status === 200) {
+          toast.success(
+            "Account created successfully. Please login to continue.",
+          );
+          navigate("/login");
+          return;
+        }
+
+        const data = await parseJsonSafe(res);
+        setServerError(data.error || `Sign up failed (HTTP ${res.status})`);
+      } catch (error) {
+        console.error("Sign up request failed:", error);
+        setServerError(
+          "Unable to reach the server. Please check that the API is running and try again.",
         );
-        navigate("/login");
-        return;
       }
-
-      const data = await res.json().catch(() => ({}));
-      throw new Error(data.error || `Sign up failed (HTTP ${res.status})`);
     },
   );
 

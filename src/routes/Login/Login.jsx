@@ -12,6 +12,7 @@ import { UserContext } from "../../context/user.context"
 import { useDarkMode } from "../DarkModeToggle/DarkModeContext"
 import { supabase } from "../../supabaseClient"
 import { useNavigate, useLocation } from "react-router-dom"
+import { API_BASE_URL } from "../../utils/authApi"
 
 function startInactivityWatcher({ enabled, seconds = 30, onTimeout }) {
   if (window.__idleInterval) {
@@ -66,7 +67,8 @@ export default function Login() {
   const { setCurrentUser } = useContext(UserContext)
   const { darkMode } = useDarkMode()
   const navigate = useNavigate()
-  const API_BASE = "http://localhost:80"
+
+  const unwrapApiData = (payload) => (payload && typeof payload === "object" && "data" in payload ? payload.data : payload)
 
   const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -105,17 +107,18 @@ export default function Login() {
 
     try {
       // ✅ Use backend API for login (matches backend's bcrypt-based auth)
-      const res = await fetch(`${API_BASE}/api/login`, {
+      const res = await fetch(`${API_BASE_URL}/api/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: email.trim().toLowerCase(), password }),
       })
 
       const data = await res.json()
+      const payload = unwrapApiData(data)
 
       // Handle MFA required (202 status) - redirect to MFA page
       if (res.status === 202) {
-        toast.info(data.message || "MFA token sent to your email")
+        toast.info(payload?.message || data.message || "MFA token sent to your email")
         navigate("/mfa", { state: { email: email.trim().toLowerCase(), password } })
         return
       }
@@ -125,8 +128,8 @@ export default function Login() {
         return
       }
 
-      const user = data.user
-      const token = data.token
+      const user = payload?.user || data.user
+      const token = payload?.token || data.token
 
       // ✅ Save session with JWT token
       const userSession = {
@@ -139,6 +142,7 @@ export default function Login() {
 
       localStorage.setItem("user_session", JSON.stringify(userSession))
       localStorage.setItem("auth_token", token)
+      localStorage.removeItem("sso_session")
 
       // ✅ Set global context (if used)
       if (typeof setCurrentUser === "function") {

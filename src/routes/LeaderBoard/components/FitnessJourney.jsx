@@ -16,7 +16,7 @@
 //   useEffect(() => {
 //     const fetchFitnessData = async () => {
 //       try {
-//         const res = await fetch("http://localhost:80/api/fitness-Journey");
+//         const res = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:8081'}/api/fitness-Journey`);
 //         const data = await res.json();
 //         setFitnessData(Array.isArray(data) ? data[data.length - 1] : data);
 //       } catch (error) {
@@ -129,7 +129,7 @@ const FitnessJourney = () => {
   useEffect(() => {
     const fetchFitnessData = async () => {
       try {
-        const res = await fetch("http://localhost:80/api/fitness-Journey");
+        const res = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:8081'}/api/fitness-Journey`);
         const data = await res.json();
         setFitnessData(Array.isArray(data) ? data[data.length - 1] : data);
       } catch (error) {

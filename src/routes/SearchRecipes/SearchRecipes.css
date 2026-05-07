@@ -226,7 +226,7 @@
 }
  
 
-.section-title {
+.search-recipes-page .section-title {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -238,7 +238,7 @@
 }
  
 
-.section-title::before {
+.search-recipes-page .section-title::before {
   content: "";
   width: 8px;
   height: 8px;
@@ -247,7 +247,7 @@
   box-shadow: 0 0 0 3px #005BBB;
 }
  
-.section-title::after {
+.search-recipes-page .section-title::after {
   content: none;
 }
  
@@ -317,7 +317,7 @@
     padding: 8px 20px;
   }
 
-  .section-title {
+  .search-recipes-page .section-title {
     font-size: 1.15rem;
   }
 
@@ -325,5 +325,3 @@
     height: 120px;
   }
 }
- 
- 

@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { API_BASE_URL, parseJsonSafe } from "../../utils/authApi";
 
 export default function ForgotPassword() {
   const navigate = useNavigate();
@@ -26,13 +27,13 @@ export default function ForgotPassword() {
 
     setLoading(true);
     try {
-      const res = await fetch("/api/password/request-reset", {
+      const res = await fetch(`${API_BASE_URL}/api/password/request-reset`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: emailInput.trim().toLowerCase() }),
       });
       if (!res.ok) {
-        const d = await res.json().catch(() => ({}));
+        const d = await parseJsonSafe(res);
         throw new Error(d.error || d.message || `Request failed (HTTP ${res.status})`);
       }
       setServerMsg("If that email exists, a code was sent. Check your inbox.");

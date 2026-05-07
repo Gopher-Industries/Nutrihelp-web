@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { API_BASE_URL, parseJsonSafe } from "../../utils/authApi";
 
 export default function ForgotPasswordVerify() {
   const location = useLocation();
@@ -78,17 +79,22 @@ export default function ForgotPasswordVerify() {
 
     setLoading(true);
     try {
-      const res = await fetch("/api/password/verify-code", {
+      const res = await fetch(`${API_BASE_URL}/api/password/verify-code`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, code: full }),
       });
       if (!res.ok) {
-        const d = await res.json().catch(() => ({}));
+        const d = await parseJsonSafe(res);
         throw new Error(d.error || d.message || "Invalid code");
       }
-      // navigate to reset - pass code if you want
-      navigate("/forgot/reset", { state: { email, code: full } });
+      const data = await parseJsonSafe(res);
+      navigate("/forgot/reset", {
+        state: {
+          email,
+          resetToken: data.resetToken,
+        },
+      });
     } catch (err) {
       setVerifyError(err.message || "Verification failed");
       setCode(["", "", "", "", "", ""]);
@@ -109,13 +115,13 @@ export default function ForgotPasswordVerify() {
     setServerMsg("");
     setVerifyError("");
     try {
-      const res = await fetch("/api/password/request-reset", {
+      const res = await fetch(`${API_BASE_URL}/api/password/request-reset`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
       });
       if (!res.ok) {
-        const d = await res.json().catch(() => ({}));
+        const d = await parseJsonSafe(res);
         throw new Error(d.error || d.message || "Unable to resend code");
       }
       setServerMsg("A new code was sent to your email.");

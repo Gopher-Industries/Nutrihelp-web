@@ -7,16 +7,16 @@ const VoiceNavigation = () => {
   const commands = [
     { keywords: ["home"], path: "/home" },
     { keywords: ["login", "sign in"], path: "/login" },
-    { keywords: ["sign up", "register"], path: "/signUp" },
-    { keywords: ["forgot", "reset password"], path: "/forgotPassword" },
+    { keywords: ["sign up", "register"], path: "/signup" },
+    { keywords: ["forgot", "reset password"], path: "/forgot" },
     { keywords: ["faq", "questions", "help"], path: "/faq" },
-    { keywords: ["create", "add recipe"], path: "/createRecipe" },
-    { keywords: ["search", "find recipe"], path: "/searchRecipes" },
-    { keywords: ["preferences"], path: "/yourPreferences" },
-    { keywords: ["profile", "user"], path: "/userProfile" },
-    { keywords: ["appointment", "booking"], path: "/Appointment" },
-    { keywords: ["dietary", "requirements"], path: "/dietaryRequirements" },
-    { keywords: ["scan", "barcode", "product"], path: "/ScanProducts" },
+    { keywords: ["create", "add recipe"], path: "/create-recipe" },
+    { keywords: ["search", "find recipe"], path: "/search-recipes" },
+    { keywords: ["preferences"], path: "/your-preferences" },
+    { keywords: ["profile", "user"], path: "/user-profile" },
+    { keywords: ["appointment", "booking"], path: "/appointment" },
+    { keywords: ["dietary", "requirements"], path: "/dietary-requirements" },
+    { keywords: ["scan", "barcode", "product"], path: "/scan-products" },
     { keywords: ["menu", "workout"], path: "/menu" },
     { keywords: ["recipe", "recipes"], path: "/recipe" },
     { keywords: ["meal", "track meal"], path: "/meal" },
@@ -126,5 +126,3 @@ const VoiceNavigation = () => {
 };
  
 export default VoiceNavigation;
- 
- 

@@ -3,10 +3,11 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
+import { API_BASE_URL, parseJsonSafe } from "../../utils/authApi";
 
 /**
  * ForgotPasswordReset.jsx
- * - Expects location.state.email (and optionally code)
+ * - Expects location.state.email and resetToken
  * - Submits new password to POST /api/password/reset
  */
 
@@ -15,10 +16,11 @@ export default function ForgotPasswordReset() {
   const navigate = useNavigate();
 
   const providedEmail = (location && location.state && location.state.email) || "";
-  const providedCode = (location && location.state && location.state.code) || "";
+  const providedResetToken =
+    (location && location.state && location.state.resetToken) || "";
 
   const [email] = useState(providedEmail);
-  const [code] = useState(providedCode);
+  const [resetToken] = useState(providedResetToken);
 
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -42,6 +44,10 @@ export default function ForgotPasswordReset() {
       setServerMsg("Missing email — cannot reset.");
       return;
     }
+    if (!resetToken) {
+      setServerMsg("Missing reset token — please verify your code again.");
+      return;
+    }
     if (password !== confirmPassword) {
       setServerMsg("Passwords do not match.");
       return;
@@ -54,14 +60,14 @@ export default function ForgotPasswordReset() {
 
     setLoading(true);
     try {
-      const body = { email, code, newPassword: password };
-      const res = await fetch("/api/password/reset", {
+      const body = { email, resetToken, newPassword: password };
+      const res = await fetch(`${API_BASE_URL}/api/password/reset`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
       if (!res.ok) {
-        const d = await res.json().catch(() => ({}));
+        const d = await parseJsonSafe(res);
         throw new Error(d.error || d.message || `Reset failed (HTTP ${res.status})`);
       }
       setServerMsg("Password updated! Redirecting to login...");

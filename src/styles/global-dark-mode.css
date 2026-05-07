@@ -2,23 +2,23 @@
 
 /* CSS Variables for Light Mode */
 :root {
-  /* Primary Colors */
-  --primary-color: #005BBB;
-  --primary-hover: #004A99;
-  --primary-light: #E8F1FF;
-  --primary-dark: #003D7A;
-  
-  /* Secondary/Accent Colors */
-  --accent-color: #667eea;
-  --accent-hover: #5a6fd6;
-  --accent-light: #e8ebff;
+  /* Primary Colors - FE05A Green Brand (Updated to Figma Spec) */
+  --primary-color: #005F27;
+  --primary-hover: #004D20;
+  --primary-light: #E8F5E9;
+  --primary-dark: #003D1A;
+
+  /* Accent Colors (Figma Spec) */
+  --primary-blue: #005492;
+  --heading-navy: #1C2B4A;
+  --surface-branding: #1A6DB5;
   
   /* Background Colors */
   --background-color: #FFFFFF;
   --background-secondary: #FAFAFA;
   --background-tertiary: #F5F5F5;
-  --background-page: #f8fbff;
-  --background-hero: #d8edfd;
+  --background-page: #F0FDF4;
+  --background-hero: #DCFCE7;
   --background-hover: #e9ecef;
   
   /* Card and Container Colors */
@@ -31,55 +31,73 @@
   --text-secondary: #5A5A5A;
   --text-muted: #7A7A7A;
   --text-inverse: #FFFFFF;
-  --text-heading: #333333;
-  --text-link: #005BBB;
-  --text-link-hover: #003D7A;
+  --text-heading: #1C2B4A; /* Updated to Heading Navy */
+  --text-link: #005F27;
+  --text-link-hover: #003D1A;
   
+  /* Typography (Figma Spec) */
+  --font-heading: 'Manrope', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  
+  /* Spacing Scale (8px based) */
+  --space-xs: 4px;
+  --space-s: 8px;
+  --space-m: 16px;
+  --space-l: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+  --space-3xl: 64px;
+
+  /* Border Radius (Shape Tokens) */
+  --radius-s: 8px;
+  --radius-m: 12px;
+  --radius-pill: 999px;
+
   /* Border Colors */
   --border-color: #e0e0e0;
   --border-color-secondary: #D0D0D0;
   --border-color-light: #f1f5f9;
-  --border-color-focus: #005BBB;
+  --border-color-focus: #005492;
   
   /* Input Colors */
   --input-background: #FFFFFF;
   --input-border: #D0D0D0;
-  --input-border-focus: #005BBB;
+  --input-border-focus: #005492;
   --input-text: #1A1A1A;
   --input-placeholder: #9A9A9A;
   
   /* Button Colors */
-  --button-background: #005BBB;
+  --button-background: #005492;
   --button-background-secondary: #F5F5F5;
   --button-text: #FFFFFF;
   --button-text-secondary: #1A1A1A;
-  --button-border: #005BBB;
-  --button-hover: #004A99;
+  --button-border: #005492;
+  --button-hover: #004070;
   
   /* Navigation Colors */
   --nav-background: #FAFAFA;
   --nav-text: #1A1A1A;
   --nav-hover: rgba(0, 0, 0, 0.05);
-  --nav-active: rgba(0, 91, 187, 0.1);
+  --nav-active: rgba(0, 84, 146, 0.1);
   
-  /* Shadow Colors */
-  --card-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-  --card-shadow-hover: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  /* Shadow Colors (Updated to reflect Figma High Container) */
+  --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --card-shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   --dropdown-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   --box-shadow-light: 0 0 10px rgba(0, 0, 0, 0.1);
   --box-shadow-medium: 0 4px 10px rgba(0, 0, 0, 0.08);
   
   /* Status Colors */
-  --success-color: #1B873E;
+  --success-color: #005F27; /* Success Deep Green */
   --success-light: #d4edda;
-  --success-dark: #156430;
+  --success-dark: #003D1A;
   --warning-color: #CC8A00;
   --warning-light: #fff3cd;
   --warning-dark: #b37a00;
-  --error-color: #CC0000;
+  --error-color: #BA1A1A; /* Error Red from Figma */
   --error-light: #f8d7da;
   --error-dark: #990000;
-  --info-color: #005BBB;
+  --info-color: #005492;
   --info-light: #cce5ff;
   
   /* Hover Colors */
@@ -135,16 +153,33 @@
 
 /* CSS Variables for Dark Mode */
 .dark-mode {
-  /* Primary Colors - Fresh Teal/Cyan */
+  /* Primary Colors - Updated for Dark Mode (Teal/Cyan from Figma) */
   --primary-color: #22D3EE;
   --primary-hover: #67E8F9;
   --primary-light: #164E63;
   --primary-dark: #06B6D4;
   
-  /* Secondary/Accent Colors - Soft Purple */
-  --accent-color: #A78BFA;
-  --accent-hover: #C4B5FD;
-  --accent-light: #3B2E5A;
+  /* Accent Colors */
+  --primary-blue: #38BDF8;
+  --heading-navy: #F1F5F9;
+  
+  /* Typography */
+  --font-heading: 'Manrope', sans-serif;
+  --font-body: 'Inter', sans-serif;
+
+  /* Spacing Scale (Inherited from :root but can be overridden) */
+  --space-xs: 4px;
+  --space-s: 8px;
+  --space-m: 16px;
+  --space-l: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+  --space-3xl: 64px;
+
+  /* Border Radius */
+  --radius-s: 8px;
+  --radius-m: 12px;
+  --radius-pill: 999px;
   
   /* Background Colors - Rich Dark with Blue Undertone */
   --background-color: #0F172A;
@@ -316,15 +351,16 @@
 
 /* Buttons */
 .dark-mode .btn,
-.dark-mode button {
+.dark-mode button:not([class]) {
   background-color: var(--button-background);
   color: var(--button-text);
   border-color: var(--button-border);
 }
 
 .dark-mode .btn:hover,
-.dark-mode button:hover {
+.dark-mode button:not([class]):hover {
   background-color: var(--button-hover);
+  color: var(--button-text);
 }
 
 .dark-mode .btn-secondary {
