@@ -11,10 +11,14 @@ function allowLocalDevAccess() {
 }
 
 const InternalAdminRoute = ({ children }) => {
-  const { currentUser } = useContext(UserContext);
+  const { currentUser, authReady } = useContext(UserContext);
 
   if (allowLocalDevAccess()) {
     return children;
+  }
+
+  if (!authReady) {
+    return null;
   }
 
   if (!currentUser) {

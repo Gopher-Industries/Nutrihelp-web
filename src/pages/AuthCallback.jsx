@@ -71,7 +71,19 @@ export default function AuthCallback() {
             exchangePayload?.token ||
             exchangePayload?.session?.accessToken ||
             ""
-          const backendUser = exchangePayload?.user || null
+          const backendRefreshToken =
+            exchangeData?.refreshToken ||
+            exchangeData?.session?.refreshToken ||
+            ""
+          const backendExpiresIn =
+            exchangeData?.expiresIn ||
+            exchangeData?.session?.expiresIn ||
+            0
+          const backendTokenType =
+            exchangeData?.tokenType ||
+            exchangeData?.session?.tokenType ||
+            "Bearer"
+          const backendUser = exchangeData?.user || null
 
           if (!exchangeRes.ok || !backendToken || !backendUser?.id) {
             throw new Error(
@@ -107,10 +119,14 @@ export default function AuthCallback() {
             supabaseAccessToken,
           }
 
-          localStorage.setItem("auth_token", backendToken)
           localStorage.setItem("sso_session", "google")
-          localStorage.setItem("user_session", JSON.stringify(sessionUser))
-          setCurrentUser(sessionUser, 60 * 60 * 1000)
+          setCurrentUser(sessionUser, {
+            persist: true,
+            accessToken: backendToken,
+            refreshToken: backendRefreshToken,
+            expiresIn: backendExpiresIn,
+            tokenType: backendTokenType,
+          })
 
           navigate(next, { replace: true })
           return
