@@ -10,47 +10,8 @@ import { toast } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 import { UserContext } from "../../context/user.context"
 import { useDarkMode } from "../DarkModeToggle/DarkModeContext"
-import { supabase } from "../../supabaseClient"
 import { useNavigate, useLocation } from "react-router-dom"
 import { API_BASE_URL } from "../../utils/authApi"
-
-function startInactivityWatcher({ enabled, seconds = 30, onTimeout }) {
-  if (window.__idleInterval) {
-    clearInterval(window.__idleInterval)
-    window.__idleInterval = null
-  }
-
-  const EVENTS = ["mousemove", "keydown", "click", "scroll", "touchstart"]
-  const KEY_LAST = "__idle:lastActivity"
-
-  const removeAll = (resetFn) =>
-    EVENTS.forEach((e) => window.removeEventListener(e, resetFn, { passive: true }))
-
-  if (!enabled) {
-    localStorage.removeItem(KEY_LAST)
-    return
-  }
-
-  const resetActivity = () => {
-    localStorage.setItem(KEY_LAST, String(Date.now()))
-  }
-
-  resetActivity()
-  EVENTS.forEach((e) => window.addEventListener(e, resetActivity, { passive: true }))
-
-  window.__idleInterval = setInterval(() => {
-    const last = parseInt(localStorage.getItem(KEY_LAST) || "0", 10)
-    if (!last) return
-    const idleMs = Date.now() - last
-    if (idleMs >= seconds * 1000) {
-      clearInterval(window.__idleInterval)
-      window.__idleInterval = null
-      removeAll(resetActivity)
-      localStorage.removeItem(KEY_LAST)
-      onTimeout?.()
-    }
-  }, 1000)
-}
 
 export default function Login() {
   // Existing UI state (unchanged)
@@ -119,7 +80,13 @@ export default function Login() {
       // Handle MFA required (202 status) - redirect to MFA page
       if (res.status === 202) {
         toast.info(payload?.message || data.message || "MFA token sent to your email")
-        navigate("/mfa", { state: { email: email.trim().toLowerCase(), password } })
+        navigate("/mfa", {
+          state: {
+            email: email.trim().toLowerCase(),
+            password,
+            rememberMe,
+          },
+        })
         return
       }
 
@@ -129,38 +96,41 @@ export default function Login() {
       }
 
       const user = payload?.user || data.user
-      const token = payload?.token || data.token
+      const accessToken =
+        payload?.session?.accessToken || payload?.accessToken || payload?.token || data.token
+      const refreshToken =
+        payload?.session?.refreshToken || payload?.refreshToken || data.refreshToken || ""
+      const expiresIn =
+        payload?.session?.expiresIn || payload?.expiresIn || data.expiresIn || 0
+      const tokenType =
+        payload?.session?.tokenType || payload?.tokenType || data.tokenType || "Bearer"
 
-      // ✅ Save session with JWT token
+      if (!user || !accessToken) {
+        toast.error("Login session is incomplete. Please try again.")
+        return
+      }
+
       const userSession = {
         id: user.user_id,
+        user_id: user.user_id,
         email: user.email,
         name: user.name,
-        token: token,
+        role: user.role || user.user_roles?.role_name || "user",
+        token: accessToken,
         provider: "email",
       }
 
-      localStorage.setItem("user_session", JSON.stringify(userSession))
-      localStorage.setItem("auth_token", token)
       localStorage.removeItem("sso_session")
 
-      // ✅ Set global context (if used)
       if (typeof setCurrentUser === "function") {
-        setCurrentUser(userSession, rememberMe ? 60 * 60 * 1000 : 0)
+        setCurrentUser(userSession, {
+          persist: rememberMe,
+          accessToken,
+          refreshToken,
+          expiresIn,
+          tokenType,
+        })
       }
-
-    // ✅ Optional inactivity logout
-    startInactivityWatcher({
-      enabled: !rememberMe,
-      seconds: 30,
-      onTimeout: async () => {
-        await supabase.auth.signOut()
-        localStorage.removeItem("user_session")
-        setCurrentUser?.(null)
-        toast.info("You were signed out due to inactivity.")
-        navigate("/login")
-      },
-    })
 
     toast.success("Welcome back!")
     navigate("/home")

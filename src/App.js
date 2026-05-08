@@ -115,7 +115,7 @@ function RouteScrollToTop() {
 import WeeklyMealPlanPage from './routes/Meal/WeeklyMealPlanPage';
 
 function App() {
-  const { currentUser } = useContext(UserContext);
+  const { currentUser, authReady } = useContext(UserContext);
 
   useEffect(() => {
     initializeFontSize();
@@ -133,7 +133,7 @@ function App() {
         <Route
           path="/"
           element={
-            currentUser ? <Navigate to="/home" /> : <Navigate to="/login" />
+            !authReady ? null : currentUser ? <Navigate to="/home" /> : <Navigate to="/login" />
           }
         />
 
@@ -152,18 +152,95 @@ function App() {
 
         <Route path="/mfa" element={<MFAform />} />
 
-        <Route path="/home" element={<Home />} />
-        <Route path="/faq" element={<FAQ />} />
-        <Route path="/leaderboard" element={<Leaderboard />} />
-        <Route path="/community" element={<Community />} />
-        <Route path="/chat" element={<ChatPage />} />
-        <Route path="/community/post/:postId" element={<PostDetail />} />
+        <Route
+          path="/home"
+          element={
+            <AuthenticateRoute>
+              <Home />
+            </AuthenticateRoute>
+          }
+        />
+        <Route
+          path="/faq"
+          element={
+            <AuthenticateRoute>
+              <FAQ />
+            </AuthenticateRoute>
+          }
+        />
+        <Route
+          path="/leaderboard"
+          element={
+            <AuthenticateRoute>
+              <Leaderboard />
+            </AuthenticateRoute>
+          }
+        />
+        <Route
+          path="/community"
+          element={
+            <AuthenticateRoute>
+              <Community />
+            </AuthenticateRoute>
+          }
+        />
+        <Route
+          path="/chat"
+          element={
+            <AuthenticateRoute>
+              <ChatPage />
+            </AuthenticateRoute>
+          }
+        />
+        <Route
+          path="/community/post/:postId"
+          element={
+            <AuthenticateRoute>
+              <PostDetail />
+            </AuthenticateRoute>
+          }
+        />
 
-        <Route path="/survey" element={<ObesityPredictor />} />
-        <Route path="/survey/result" element={<Predictionresult />} />
-        <Route path="/roadmap" element={<FitnessRoadmap />} />
-        <Route path="/Scan" element={<Scan />} />
-        <Route path="/scan" element={<Scan />} />
+        <Route
+          path="/survey"
+          element={
+            <AuthenticateRoute>
+              <ObesityPredictor />
+            </AuthenticateRoute>
+          }
+        />
+        <Route
+          path="/survey/result"
+          element={
+            <AuthenticateRoute>
+              <Predictionresult />
+            </AuthenticateRoute>
+          }
+        />
+        <Route
+          path="/roadmap"
+          element={
+            <AuthenticateRoute>
+              <FitnessRoadmap />
+            </AuthenticateRoute>
+          }
+        />
+        <Route
+          path="/Scan"
+          element={
+            <AuthenticateRoute>
+              <Scan />
+            </AuthenticateRoute>
+          }
+        />
+        <Route
+          path="/scan"
+          element={
+            <AuthenticateRoute>
+              <Scan />
+            </AuthenticateRoute>
+          }
+        />
         <Route caseSensitive path="/Meal/*" element={<CanonicalMealRedirect />} />
         <Route
           path="/dish/detail"
@@ -181,7 +258,14 @@ function App() {
             </AuthenticateRoute>
           }
         />
-        <Route path="/account" element={<Account />} />
+        <Route
+          path="/account"
+          element={
+            <AuthenticateRoute>
+              <Account />
+            </AuthenticateRoute>
+          }
+        />
         {/* PRIVATE ROUTES */}
         <Route
           path="/daily-plan-edit"
@@ -349,7 +433,14 @@ function App() {
           }
         />
 
-        <Route path="/weekly-plan" element={<WeeklyMealPlanPage />} />
+        <Route
+          path="/weekly-plan"
+          element={
+            <AuthenticateRoute>
+              <WeeklyMealPlanPage />
+            </AuthenticateRoute>
+          }
+        />
         
 
         <Route path="/auth/callback" element={<AuthCallback />} />
@@ -372,7 +463,14 @@ function App() {
           }
         />
 
-        <Route path="/symptomassessment" element={<SymptomAssessment />} />
+        <Route
+          path="/symptomassessment"
+          element={
+            <AuthenticateRoute>
+              <SymptomAssessment />
+            </AuthenticateRoute>
+          }
+        />
 
         <Route
           path="healthnews"
@@ -446,8 +544,22 @@ function App() {
           }
         />
 
-        <Route path="ScanBarcode" element={<ScanBarcode />} />
-        <Route path="scan" element={<Scan />}/>
+        <Route
+          path="ScanBarcode"
+          element={
+            <AuthenticateRoute>
+              <ScanBarcode />
+            </AuthenticateRoute>
+          }
+        />
+        <Route
+          path="scan"
+          element={
+            <AuthenticateRoute>
+              <Scan />
+            </AuthenticateRoute>
+          }
+        />
       </Routes>
     </Router>
   );
