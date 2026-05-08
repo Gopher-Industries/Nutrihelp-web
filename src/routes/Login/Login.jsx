@@ -12,6 +12,7 @@ import { UserContext } from "../../context/user.context"
 import { useDarkMode } from "../DarkModeToggle/DarkModeContext"
 import { useNavigate, useLocation } from "react-router-dom"
 import { API_BASE_URL } from "../../utils/authApi"
+import { supabase } from "../../supabaseClient"
 
 export default function Login() {
   // Existing UI state (unchanged)
@@ -144,18 +145,31 @@ export default function Login() {
 }
 
   // keep Google sign-in logic from old code (unchanged)
-  const handleGoogleSignIn = async () => {
+  const handleGoogleSignIn = async (event) => {
+    event?.preventDefault()
+
     try {
-      await supabase.auth.signInWithOAuth({
+      const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
           redirectTo: `${window.location.origin}/auth/callback?next=/home`,
           queryParams: { access_type: "offline", prompt: "consent" },
+          skipBrowserRedirect: true,
         },
       })
+
+      if (error) {
+        throw error
+      }
+
+      if (!data?.url) {
+        throw new Error("Google sign-in URL was not returned.")
+      }
+
+      window.location.assign(data.url)
     } catch (err) {
       console.error("Google sign-in error:", err)
-      toast.error("Google sign-in failed. Please try again.")
+      toast.error(err?.message || "Google sign-in failed. Please try again.")
     }
   }
 
