@@ -392,6 +392,8 @@ export default function DailyPlanEdit() {
       .finally(() => { if (mounted) setAiLoading(false); });
     return () => { mounted = false; };
   }, [navigate]);
+
+  useEffect(() => {
     const queue = readImageEnrichmentQueue();
     const jobs = [];
 
