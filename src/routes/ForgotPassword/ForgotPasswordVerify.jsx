@@ -4,10 +4,16 @@ import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { API_BASE_URL, parseJsonSafe } from "../../utils/authApi";
 
+const FORGOT_PASSWORD_EMAIL_KEY = "nutrihelp.forgotPassword.email";
+const FORGOT_PASSWORD_RESET_TOKEN_KEY = "nutrihelp.forgotPassword.resetToken";
+
 export default function ForgotPasswordVerify() {
   const location = useLocation();
   const navigate = useNavigate();
-  const providedEmail = (location && location.state && location.state.email) || "";
+  const providedEmail =
+    (location && location.state && location.state.email) ||
+    sessionStorage.getItem(FORGOT_PASSWORD_EMAIL_KEY) ||
+    "";
 
   const [email] = useState(providedEmail);
   const [code, setCode] = useState(["", "", "", "", "", ""]);
@@ -20,6 +26,12 @@ export default function ForgotPasswordVerify() {
   useEffect(() => {
     setResendTimer(30);
     setCanResend(false);
+  }, [email]);
+
+  useEffect(() => {
+    if (email) {
+      sessionStorage.setItem(FORGOT_PASSWORD_EMAIL_KEY, email);
+    }
   }, [email]);
 
   useEffect(() => {
@@ -88,11 +100,23 @@ export default function ForgotPasswordVerify() {
         const d = await parseJsonSafe(res);
         throw new Error(d.error || d.message || "Invalid code");
       }
-      const data = await parseJsonSafe(res);
+      const payload = await parseJsonSafe(res);
+      const responseData =
+        payload && typeof payload === "object" && payload.data && typeof payload.data === "object"
+          ? payload.data
+          : payload;
+
+      const resetToken = responseData?.resetToken;
+      if (!resetToken) {
+        throw new Error("Reset token was not returned. Please verify the code again.");
+      }
+
+      sessionStorage.setItem(FORGOT_PASSWORD_EMAIL_KEY, email);
+      sessionStorage.setItem(FORGOT_PASSWORD_RESET_TOKEN_KEY, resetToken);
       navigate("/forgot/reset", {
         state: {
           email,
-          resetToken: data.resetToken,
+          resetToken,
         },
       });
     } catch (err) {
