@@ -199,6 +199,92 @@
   border: 1px solid rgba(24, 51, 40, 0.06);
 }
 
+.admin-audit-detail-panel {
+  display: grid;
+  gap: 20px;
+}
+
+.admin-audit-contract-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.admin-audit-detail-statuses {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.admin-audit-flow-grid,
+.admin-audit-layer-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.admin-audit-flow-column,
+.admin-audit-layer-card {
+  padding: 16px;
+  border-radius: 18px;
+  background: #f6faf7;
+  border: 1px solid rgba(24, 51, 40, 0.06);
+}
+
+.admin-audit-flow-label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #2a7c66;
+}
+
+.admin-audit-flow-block + .admin-audit-flow-block {
+  margin-top: 12px;
+}
+
+.admin-audit-flow-head,
+.admin-audit-layer-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+
+.admin-audit-flow-tags,
+.admin-audit-row-layer-pills {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.admin-audit-flow-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(42, 124, 102, 0.1);
+  color: #1b5a48;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.admin-audit-layer-issues {
+  margin: 10px 0 0;
+  padding-left: 18px;
+  color: #26493d;
+}
+
+.admin-audit-related-failures {
+  display: grid;
+  gap: 12px;
+}
+
 .admin-audit-mini-list {
   margin: 10px 0 0;
   padding-left: 18px;
@@ -247,6 +333,49 @@
   color: #4a5961;
 }
 
+.admin-audit-pill-healthy {
+  background: #def5e8;
+  color: #177245;
+}
+
+.admin-audit-pill-warning,
+.admin-audit-pill-idle,
+.admin-audit-pill-not-applicable {
+  background: #fff1d6;
+  color: #9a6700;
+}
+
+.admin-audit-pill-critical,
+.admin-audit-pill-frontend,
+.admin-audit-pill-api,
+.admin-audit-pill-ai {
+  background: #ffe1dd;
+  color: #af3029;
+}
+
+.admin-audit-pill-direct-ai,
+.admin-audit-pill-public {
+  background: #def5e8;
+  color: #177245;
+}
+
+.admin-audit-pill-degraded,
+.admin-audit-pill-bad-data,
+.admin-audit-pill-stale,
+.admin-audit-pill-requires-auth,
+.admin-audit-pill-requires-admin,
+.admin-audit-pill-partial {
+  background: #fff1d6;
+  color: #9a6700;
+}
+
+.admin-audit-pill-contract-mismatch,
+.admin-audit-pill-missing-required-fields,
+.admin-audit-pill-renamed-fields-detected {
+  background: #ffe1dd;
+  color: #af3029;
+}
+
 .admin-audit-health-block {
   padding: 14px 16px;
   border-radius: 18px;
@@ -256,6 +385,41 @@
 
 .admin-audit-table-wrap {
   overflow-x: auto;
+}
+
+.admin-audit-table tbody tr {
+  cursor: pointer;
+  transition: background 140ms ease;
+}
+
+.admin-audit-table tbody tr:hover {
+  background: rgba(42, 124, 102, 0.05);
+}
+
+.admin-audit-table tbody tr.is-selected {
+  background: rgba(42, 124, 102, 0.1);
+}
+
+.admin-audit-sample-preview {
+  margin: 12px 0 0;
+  padding: 12px;
+  border-radius: 14px;
+  background: #eef4f0;
+  color: #183328;
+  font-size: 0.75rem;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 240px;
+  overflow: auto;
+}
+
+@media (max-width: 980px) {
+  .admin-audit-flow-grid,
+  .admin-audit-layer-grid,
+  .admin-audit-panels {
+    grid-template-columns: 1fr;
+  }
 }
 
 .admin-audit-table {

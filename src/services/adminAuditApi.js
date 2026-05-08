@@ -59,7 +59,25 @@ class AdminAuditApi extends BaseApi {
     const useDevLocalEndpoint = isLocalDevAuditMode();
 
     if (useDevLocalEndpoint) {
-      return this.getLiveOverview();
+      const baseURL = getLocalDevBaseURL();
+      const endpoint = `${baseURL}/system/dev/live-audit/run`;
+      const response = await fetch(endpoint, {
+        method: "POST",
+      });
+
+      const payload = await response.json().catch(() => null);
+
+      if (!response.ok || !payload?.success) {
+        throw new Error(payload?.error || "Failed to refresh live integration audit overview");
+      }
+
+      return {
+        ...payload.data,
+        __debug: {
+          endpoint,
+          mode: "dev-live-refresh",
+        },
+      };
     }
 
     const token = this.getAuthToken();
