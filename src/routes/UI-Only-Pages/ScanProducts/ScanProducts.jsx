@@ -13,8 +13,11 @@ const MAX_IMAGE_COUNT = 5;
 const MAX_IMAGE_SIZE_MB = 5;
 const MAX_IMAGE_SIZE_BYTES = MAX_IMAGE_SIZE_MB * 1024 * 1024;
 
-function todayString() {
-  return new Date().toISOString().slice(0, 10);
+function todayString(date = new Date()) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
 }
 
 function humanizeLabel(label) {
@@ -141,7 +144,7 @@ function getSelectedCandidate(scanItem) {
   );
 }
 
-function ScanProducts() {
+function ScanProducts({ mode = "scan", embedded = false } = {}) {
   const fileInputRef = useRef(null);
   const [uploadedImages, setUploadedImages] = useState([]);
   const [previewUrls, setPreviewUrls] = useState([]);
@@ -669,8 +672,16 @@ function ScanProducts() {
     );
   }
 
+  const pageClassName = [
+    "scan-products-page",
+    mode === "review" ? "scan-review-page" : "",
+    embedded ? "scan-embedded" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+
   return (
-    <div className="scan-products-page">
+    <div className={pageClassName}>
       <div className="scan-products-container">
         <h1>Scan a Meal</h1>
         <p className="scan-muted">
@@ -679,7 +690,9 @@ function ScanProducts() {
         </p>
 
         <div className="scan-products-form">
-          <label className="scan-products-label">Food Images</label>
+          <label className="scan-products-label" htmlFor="file-upload">
+            Food Images
+          </label>
           <div
             className="upload-section"
             onClick={() => fileInputRef.current?.click()}
