@@ -72,18 +72,18 @@ export default function AuthCallback() {
             exchangePayload?.session?.accessToken ||
             ""
           const backendRefreshToken =
-            exchangeData?.refreshToken ||
-            exchangeData?.session?.refreshToken ||
+            exchangePayload?.refreshToken ||
+            exchangePayload?.session?.refreshToken ||
             ""
           const backendExpiresIn =
-            exchangeData?.expiresIn ||
-            exchangeData?.session?.expiresIn ||
+            exchangePayload?.expiresIn ||
+            exchangePayload?.session?.expiresIn ||
             0
           const backendTokenType =
-            exchangeData?.tokenType ||
-            exchangeData?.session?.tokenType ||
+            exchangePayload?.tokenType ||
+            exchangePayload?.session?.tokenType ||
             "Bearer"
-          const backendUser = exchangeData?.user || null
+          const backendUser = exchangePayload?.user || null
 
           if (!exchangeRes.ok || !backendToken || !backendUser?.id) {
             throw new Error(
