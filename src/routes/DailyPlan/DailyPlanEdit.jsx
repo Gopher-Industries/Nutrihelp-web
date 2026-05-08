@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { fetchDishImage } from "../../services/dishImageApi";
 import "./DailyPlanEdit.css";
+import mealPlanApi from "../../services/mealPlanApi";
 
 const STORAGE_KEY = "nutrihelp_add_meal_selections_by_date_v1";
 const IMAGE_ENRICHMENT_STORAGE_KEY = "nutrihelp_daily_plan_image_enrichment_queue_v1";
@@ -282,6 +283,10 @@ export default function DailyPlanEdit() {
   const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState(() => toISODate(new Date()));
   const [selectionsByDate, setSelectionsByDate] = useState(() => readSelectionsByDate());
+  const [aiSuggestions, setAiSuggestions] = useState([]);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiError, setAiError] = useState('');
+  const [deletingIds, setDeletingIds] = useState(() => new Set());
 
   const selectedDateObj = useMemo(() => fromISODate(selectedDate), [selectedDate]);
 
@@ -373,6 +378,20 @@ export default function DailyPlanEdit() {
   }, [selectionsByDate]);
 
   useEffect(() => {
+    if (!mealPlanApi.getAuthToken()) return;
+    let mounted = true;
+    setAiLoading(true);
+    setAiError('');
+    mealPlanApi.getAiMealSuggestions()
+      .then((items) => { if (mounted) setAiSuggestions(items); })
+      .catch((err) => {
+        if (!mounted) return;
+        if (err.status === 401) navigate('/login');
+        else setAiError(err.message || 'Failed to load AI meal suggestions.');
+      })
+      .finally(() => { if (mounted) setAiLoading(false); });
+    return () => { mounted = false; };
+  }, [navigate]);
     const queue = readImageEnrichmentQueue();
     const jobs = [];
 
@@ -475,6 +494,41 @@ export default function DailyPlanEdit() {
         planDate: selectedDate,
       },
     });
+  };
+
+  const handleAddAiToDaily = (item, mealType) => {
+    const entryId = `slot:ai:${item.id}|${mealType}`;
+    setSelectionsByDate((prev) => ({
+      ...prev,
+      [selectedDate]: {
+        ...(prev[selectedDate] || {}),
+        [entryId]: {
+          mealType,
+          title: item.name,
+          name: item.name,
+        },
+      },
+    }));
+  };
+
+  const handleDeleteAiSuggestion = async (id) => {
+    setDeletingIds((prev) => new Set([...prev, id]));
+    try {
+      await mealPlanApi.deleteAiMealSuggestion(id);
+      setAiSuggestions((prev) => prev.filter((item) => item.id !== id));
+    } catch (err) {
+      if (err.status === 401) {
+        navigate('/login');
+      } else {
+        setAiError(err.message || 'Failed to remove suggestion. Please try again.');
+      }
+    } finally {
+      setDeletingIds((prev) => {
+        const next = new Set(prev);
+        next.delete(id);
+        return next;
+      });
+    }
   };
 
   const renderMealCard = (section) => {
@@ -642,7 +696,7 @@ export default function DailyPlanEdit() {
 
           <aside className="dpe-right-column">
             <section className="dpe-nutrition-card">
-              <h2>Today’s Nutrition</h2>
+              <h2>Today's Nutrition</h2>
 
               <div className="dpe-kpi-row">
                 <div className="dpe-kpi-head">
@@ -668,8 +722,7 @@ export default function DailyPlanEdit() {
 
               <div className="dpe-kpi-row">
                 <div className="dpe-kpi-head">
-                  <span>Carbohydrates</span>
-                  <strong>{nutritionProgress.carbs}%</strong>
+                  <span>Carbohydrates</span>                  <strong>{nutritionProgress.carbs}%</strong>
                 </div>
                 <div className="dpe-kpi-track carbs">
                   <span style={{ width: `${Math.min(100, Math.max(0, nutritionProgress.carbs))}%` }} />
@@ -699,6 +752,270 @@ export default function DailyPlanEdit() {
               </div>
             </section>
           </aside>
+        </div>
+
+        {/* ── My AI Suggestions ── */}
+        <div style={{ marginTop: 32 }}>
+          <div style={{
+            borderRadius: 14,
+            border: '1px solid var(--border-color)',
+            borderLeft: '5px solid #7B1FA2',
+            overflow: 'hidden',
+            background: 'var(--card-background)',
+          }}>
+            <div style={{
+              padding: '14px 18px',
+              borderBottom: '1px solid var(--border-color)',
+              display: 'flex',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              gap: 8,
+            }}>
+              <h2 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-primary)' }}>
+                My AI Suggestions
+              </h2>
+              <span style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
+                Meals saved from your AI-generated plans
+              </span>
+            </div>
+
+            <div style={{ padding: 16 }}>
+              {aiLoading && (
+                <div style={{ textAlign: 'center', padding: '24px 16px', color: 'var(--text-secondary)', fontSize: '0.9375rem' }}>
+                  Loading saved AI meals...
+                </div>
+              )}
+
+              {aiError && !aiLoading && (
+                <div style={{
+                  padding: '12px 16px',
+                  borderRadius: 8,
+                  background: '#FEF2F2',
+                  color: '#dc2626',
+                  fontSize: '0.9375rem',
+                  marginBottom: 12,
+                }}>
+                  {aiError}
+                </div>
+              )}
+
+              {!aiLoading && !aiError && aiSuggestions.length === 0 && (
+                <div style={{
+                  padding: '32px 16px',
+                  textAlign: 'center',
+                  color: 'var(--text-secondary)',
+                  fontSize: '0.9375rem',
+                  lineHeight: 1.6,
+                }}>
+                  {mealPlanApi.getAuthToken() ? (
+                    <>
+                      No AI meal suggestions saved yet. Generate a meal plan on the{' '}
+                      <button
+                        type="button"
+                        onClick={() => navigate('/meal')}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          color: 'var(--primary-color)',
+                          cursor: 'pointer',
+                          fontWeight: 600,
+                          fontSize: 'inherit',
+                          padding: 0,
+                          textDecoration: 'underline',
+                        }}
+                      >
+                        Meal page
+                      </button>
+                      {' '}to get started.
+                    </>
+                  ) : (
+                    <>
+                      <button
+                        type="button"
+                        onClick={() => navigate('/login')}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          color: 'var(--primary-color)',
+                          cursor: 'pointer',
+                          fontWeight: 600,
+                          fontSize: 'inherit',
+                          padding: 0,
+                          textDecoration: 'underline',
+                        }}
+                      >
+                        Log in
+                      </button>
+                      {' '}to view and save your AI meal suggestions.
+                    </>
+                  )}
+                </div>
+              )}
+
+              {!aiLoading && aiSuggestions.length > 0 && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                  {aiSuggestions.map((item) => (
+                    <article
+                      key={item.id}
+                      style={{
+                        border: '1px solid var(--border-color)',
+                        borderRadius: 10,
+                        padding: 16,
+                        background: 'var(--card-background-secondary)',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: 8,
+                      }}
+                    >
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
+                        <div style={{ flex: 1 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 4 }}>
+                            {item.day && (
+                              <span style={{
+                                fontSize: '0.8125rem',
+                                fontWeight: 600,
+                                padding: '2px 8px',
+                                borderRadius: 999,
+                                background: '#EDE9FE',
+                                color: '#6D28D9',
+                              }}>
+                                {item.day}
+                              </span>
+                            )}
+                            {item.meal_type && (
+                              <span style={{
+                                fontSize: '0.8125rem',
+                                fontWeight: 600,
+                                padding: '2px 8px',
+                                borderRadius: 999,
+                                background: 'var(--background-secondary)',
+                                color: 'var(--text-secondary)',
+                                textTransform: 'capitalize',
+                              }}>
+                                {item.meal_type}
+                              </span>
+                            )}
+                          </div>
+                          <h4 style={{ margin: '0 0 4px', fontSize: '1rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+                            {item.name}
+                          </h4>
+                          {item.description && (
+                            <p style={{ margin: '0 0 4px', fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                              {item.description}
+                            </p>
+                          )}
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteAiSuggestion(item.id)}
+                          disabled={deletingIds.has(item.id)}
+                          aria-label={`Remove ${item.name}`}
+                          style={{
+                            background: deletingIds.has(item.id) ? 'var(--background-secondary)' : '#FEF2F2',
+                            border: '1px solid ' + (deletingIds.has(item.id) ? 'var(--border-color)' : '#FCA5A5'),
+                            borderRadius: 8,
+                            padding: '6px 10px',
+                            cursor: deletingIds.has(item.id) ? 'not-allowed' : 'pointer',
+                            color: deletingIds.has(item.id) ? 'var(--text-secondary)' : '#dc2626',
+                            fontSize: '0.8125rem',
+                            fontWeight: 600,
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 4,
+                            flexShrink: 0,
+                            transition: 'all 0.15s ease',
+                          }}
+                        >
+                          {deletingIds.has(item.id) ? 'Removing...' : (
+                            <>
+                              <Trash2 size={14} />
+                              Remove
+                            </>
+                          )}
+                        </button>
+                      </div>
+
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                        {item.calories != null && (
+                          <span style={{ display: 'inline-flex', alignItems: 'center', padding: '3px 10px', borderRadius: 999, background: '#FFF3CD', color: '#c05c00', fontSize: '0.8125rem', fontWeight: 600 }}>
+                            Cal: {item.calories}
+                          </span>
+                        )}
+                        {item.proteins != null && (
+                          <span style={{ display: 'inline-flex', alignItems: 'center', padding: '3px 10px', borderRadius: 999, background: '#DBEAFE', color: '#1e40af', fontSize: '0.8125rem', fontWeight: 600 }}>
+                            Protein: {item.proteins}
+                          </span>
+                        )}
+                        {item.fats != null && (
+                          <span style={{ display: 'inline-flex', alignItems: 'center', padding: '3px 10px', borderRadius: 999, background: '#FEF9C3', color: '#92400e', fontSize: '0.8125rem', fontWeight: 600 }}>
+                            Fat: {item.fats}
+                          </span>
+                        )}
+                        {item.fiber != null && (
+                          <span style={{ display: 'inline-flex', alignItems: 'center', padding: '3px 10px', borderRadius: 999, background: '#DCFCE7', color: '#166534', fontSize: '0.8125rem', fontWeight: 600 }}>
+                            Fiber: {item.fiber}
+                          </span>
+                        )}
+                        {item.sodium != null && (
+                          <span style={{ display: 'inline-flex', alignItems: 'center', padding: '3px 10px', borderRadius: 999, background: '#F3F4F6', color: '#374151', fontSize: '0.8125rem', fontWeight: 600 }}>
+                            Sodium: {item.sodium}
+                          </span>
+                        )}
+                      </div>
+
+                      {Array.isArray(item.ingredients) && item.ingredients.length > 0 && (
+                        <div>
+                          <p style={{ margin: '0 0 4px', fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-secondary)' }}>
+                            Ingredients:
+                          </p>
+                          <ul style={{ margin: 0, padding: '0 0 0 16px', fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
+                            {item.ingredients.map((ing, i) => (
+                              <li key={i} style={{ padding: '2px 0' }}>
+                                {ing.item}{ing.amount ? ` — ${ing.amount}` : ''}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap', paddingTop: 4 }}>
+                        <span style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)', fontWeight: 500 }}>
+                          Add to today:
+                        </span>
+                        {['breakfast', 'lunch', 'dinner'].map((type) => {
+                          const entryId = `slot:ai:${item.id}|${type}`;
+                          const added = !!(selectionsByDate[selectedDate]?.[entryId]);
+                          return (
+                            <button
+                              key={type}
+                              type="button"
+                              disabled={added}
+                              onClick={() => handleAddAiToDaily(item, type)}
+                              style={{
+                                padding: '4px 12px',
+                                borderRadius: 6,
+                                border: '1px solid ' + (added ? '#16a34a' : 'var(--border-color)'),
+                                background: added ? '#DCFCE7' : 'var(--card-background)',
+                                color: added ? '#166534' : 'var(--text-primary)',
+                                fontSize: '0.8125rem',
+                                fontWeight: 600,
+                                cursor: added ? 'default' : 'pointer',
+                                textTransform: 'capitalize',
+                                transition: 'all 0.15s ease',
+                              }}
+                            >
+                              {added ? `✓ ${type}` : type}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </div>

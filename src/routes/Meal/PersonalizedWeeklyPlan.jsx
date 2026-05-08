@@ -1,5 +1,7 @@
 // src/routes/Meal/PersonalizedWeeklyPlan.jsx
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import mealPlanApi from '../../services/mealPlanApi';
 import './PersonalizedPlan.css';
 
 const AI_ENDPOINT       = `${process.env.REACT_APP_API_BASE_URL || 'http://localhost:8081'}/api/meal-plan/ai-generate`;
@@ -103,8 +105,48 @@ function IngredientToggle({ ingredients }) {
 }
 
 // ── Single meal card ─────────────────────────────────────────────────────────
-function MealCard({ mealType, meal }) {
+function MealCard({ mealType, meal, dayLabel }) {
+  const navigate = useNavigate();
   const sc = sodiumColor(meal?.sodium);
+  const [saveStatus, setSaveStatus] = useState('idle'); // 'idle' | 'saving' | 'saved' | 'error'
+  const [errorMsg, setErrorMsg] = useState('');
+
+  const handleSave = async () => {
+    if (saveStatus === 'saving' || saveStatus === 'saved') return;
+    setSaveStatus('saving');
+    setErrorMsg('');
+    const parseNum = (v) => {
+      if (v == null) return undefined;
+      const n = parseFloat(String(v).replace(/[^0-9.]/g, ''));
+      return Number.isFinite(n) ? n : undefined;
+    };
+    try {
+      await mealPlanApi.saveAiMealSuggestion({
+        meal_type: mealType,
+        day: dayLabel,
+        name: meal?.name,
+        description: meal?.description || undefined,
+        calories: parseNum(meal?.calories),
+        proteins: parseNum(meal?.proteins),
+        fats: parseNum(meal?.fats),
+        sodium: parseNum(meal?.sodium),
+        fiber: parseNum(meal?.fiber),
+        ingredients: Array.isArray(meal?.ingredients) && meal.ingredients.length > 0
+          ? meal.ingredients : undefined,
+      });
+      setSaveStatus('saved');
+    } catch (err) {
+      if (err.status === 401) {
+        navigate('/login');
+        return;
+      }
+      setSaveStatus('error');
+      setErrorMsg(err.message || 'Failed to save. Please try again.');
+    }
+  };
+
+  const isLoggedIn = !!mealPlanApi.getAuthToken();
+
   return (
     <div style={{
       border: '1px solid var(--border-color)',
@@ -158,6 +200,93 @@ function MealCard({ mealType, meal }) {
       </div>
 
       <IngredientToggle ingredients={meal?.ingredients} />
+
+      <div style={{ marginTop: 12 }}>
+        {!isLoggedIn ? (
+          <button
+            type="button"
+            onClick={() => navigate('/login')}
+            style={{
+              padding: '7px 14px',
+              borderRadius: 8,
+              border: '1px solid var(--primary-color)',
+              background: 'transparent',
+              color: 'var(--primary-color)',
+              fontSize: '0.875rem',
+              fontWeight: 600,
+              cursor: 'pointer',
+              minHeight: 36,
+            }}
+          >
+            Log in to save
+          </button>
+        ) : saveStatus === 'saved' ? (
+          <button
+            type="button"
+            disabled
+            style={{
+              padding: '7px 14px',
+              borderRadius: 8,
+              border: 'none',
+              background: '#DCFCE7',
+              color: '#166534',
+              fontSize: '0.875rem',
+              fontWeight: 600,
+              cursor: 'default',
+              minHeight: 36,
+            }}
+          >
+            Added ✓
+          </button>
+        ) : (
+          <button
+            type="button"
+            onClick={handleSave}
+            disabled={saveStatus === 'saving'}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 6,
+              padding: '7px 14px',
+              borderRadius: 8,
+              border: 'none',
+              background: saveStatus === 'saving' ? 'var(--background-secondary)' : 'var(--primary-color)',
+              color: saveStatus === 'saving' ? 'var(--text-secondary)' : '#ffffff',
+              fontSize: '0.875rem',
+              fontWeight: 600,
+              cursor: saveStatus === 'saving' ? 'not-allowed' : 'pointer',
+              opacity: saveStatus === 'saving' ? 0.7 : 1,
+              minHeight: 36,
+              transition: 'all 0.15s ease',
+            }}
+          >
+            {saveStatus === 'saving' ? (
+              <>
+                <span style={{
+                  display: 'inline-block',
+                  width: 12,
+                  height: 12,
+                  border: '2px solid currentColor',
+                  borderTopColor: 'transparent',
+                  borderRadius: '50%',
+                  animation: 'planSpinRing 0.8s linear infinite',
+                }} />
+                Saving...
+              </>
+            ) : 'Add to Daily Plan'}
+          </button>
+        )}
+        {saveStatus === 'error' && errorMsg && (
+          <p style={{
+            color: '#dc2626',
+            fontSize: '0.8125rem',
+            margin: '6px 0 0',
+            lineHeight: 1.4,
+          }}>
+            {errorMsg}
+          </p>
+        )}
+      </div>
     </div>
   );
 }
@@ -195,7 +324,7 @@ function DayCard({ dayPlan, index }) {
         padding: 16,
       }}>
         {['breakfast', 'lunch', 'dinner'].map(mealType => (
-          <MealCard key={mealType} mealType={mealType} meal={dayPlan[mealType]} />
+          <MealCard key={mealType} mealType={mealType} meal={dayPlan[mealType]} dayLabel={dayPlan.day} />
         ))}
       </div>
     </div>
