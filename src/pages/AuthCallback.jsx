@@ -65,10 +65,11 @@ export default function AuthCallback() {
           })
 
           const exchangeData = await parseJsonSafe(exchangeRes)
+          const exchangePayload = exchangeData?.data || exchangeData
           const backendToken =
-            exchangeData?.accessToken ||
-            exchangeData?.token ||
-            exchangeData?.session?.accessToken ||
+            exchangePayload?.accessToken ||
+            exchangePayload?.token ||
+            exchangePayload?.session?.accessToken ||
             ""
           const backendRefreshToken =
             exchangeData?.refreshToken ||
@@ -85,7 +86,11 @@ export default function AuthCallback() {
           const backendUser = exchangeData?.user || null
 
           if (!exchangeRes.ok || !backendToken || !backendUser?.id) {
-            throw new Error(exchangeData?.error || "Unable to complete Google sign-in.")
+            throw new Error(
+              exchangeData?.error?.message ||
+              exchangeData?.error ||
+              "Unable to complete Google sign-in."
+            )
           }
 
           const sessionUser = {
