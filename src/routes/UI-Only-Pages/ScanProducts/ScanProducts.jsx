@@ -51,7 +51,22 @@ function nutritionKey(label) {
 
 function hasBlockingPhotoIssue(issues = []) {
   return issues.some((issue) =>
-    /resolution|blurry|large face|clear food photo/i.test(issue)
+    /resolution|blurry|large face|clear food photo|not a clear food photo|does not appear to contain food|screenshot|interface|illustration|portrait/i.test(issue)
+  );
+}
+
+function hasRetakeReviewOnlyIssue(result) {
+  const issueText = [
+    result?.retake_reason,
+    result?.unclear_reason,
+    ...(result?.quality?.issues || []),
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  return (
+    Boolean(result?.retake_needed) &&
+    /not a clear food photo|does not appear to contain food|screenshot|interface|illustration|portrait|large face/i.test(issueText)
   );
 }
 
@@ -90,7 +105,8 @@ function normalizeScanResponseItem(item) {
 }
 
 function buildScanItem(result, file, previewUrl, index) {
-  const defaultLabel = result.is_unclear
+  const isReviewOnly = hasRetakeReviewOnlyIssue(result);
+  const defaultLabel = result.is_unclear || isReviewOnly
     ? ""
     : result.label || result.topk?.[0]?.label || "";
   const defaultPreview = defaultLabel
@@ -322,6 +338,7 @@ function ScanProducts({ mode = "scan", embedded = false } = {}) {
       setScanItems(items);
 
       items.forEach((scanItem, index) => {
+        const isReviewOnly = hasRetakeReviewOnlyIssue(scanItem.result);
         const suggestionLabels = (scanItem.result.topk || [])
           .map((item) => item.label)
           .filter((label, labelIndex, array) => label && array.indexOf(label) === labelIndex);
@@ -329,6 +346,7 @@ function ScanProducts({ mode = "scan", embedded = false } = {}) {
         suggestionLabels.forEach((label) => {
           void loadNutritionForItem(index, label, {
             applyResult:
+              !isReviewOnly &&
               Boolean(scanItem.selectedLabel) &&
               nutritionKey(label) === nutritionKey(scanItem.selectedLabel),
           });
@@ -462,6 +480,7 @@ function ScanProducts({ mode = "scan", embedded = false } = {}) {
     const selectedCandidate = getSelectedCandidate(scanItem);
     const requiresConfirmation = Boolean(result?.is_unclear);
     const hasConfidentScanLabel = Boolean(result?.label && !requiresConfirmation);
+    const isReviewOnly = hasRetakeReviewOnlyIssue(result);
     const hasSuggestedMatches = Boolean(result?.topk?.length);
     const hasPhotoIssue = hasBlockingPhotoIssue(result?.quality?.issues || []);
     const isManualOverride = Boolean(
@@ -476,19 +495,24 @@ function ScanProducts({ mode = "scan", embedded = false } = {}) {
       : isManualOverride && !selectedCandidate
       ? "Edited by you"
       : percent(selectedCandidate?.score ?? result?.confidence);
-    const photoQualityText = hasPhotoIssue ? "Try another photo" : "Good enough";
-    const nutritionPreview = scanItem.nutritionPreview;
+    const photoQualityText = hasPhotoIssue || isReviewOnly ? "Try another photo" : "Good enough";
+    const nutritionPreview =
+      isReviewOnly && !activeLabel ? null : scanItem.nutritionPreview;
     const hasNutritionEstimate = nutritionPreview?.estimated_calories != null;
     const displayMealName =
       nutritionPreview?.display_name || humanizeLabel(activeLabel) || "Choose a meal";
     const scanReviewTitle = hasConfidentScanLabel
       ? humanizeLabel(result.label)
+      : isReviewOnly
+      ? "No clear food match"
       : hasSuggestedMatches
       ? "Review suggested matches"
       : "No confident food match";
     const mealAboutText =
       nutritionPreview?.about ||
-      (activeLabel
+      (isReviewOnly && !activeLabel
+        ? "This image does not look like a clear food photo. Upload another photo, or type the meal name yourself if this is food."
+        : activeLabel
         ? "Detailed dish information is not available yet for this selection. You can still review the meal name and calories before saving."
         : "AI is not confident enough to choose a dish from this image. Pick one of the suggestions only if it looks right, or type the meal name yourself.");
     const servingHint = nutritionPreview
@@ -530,7 +554,9 @@ function ScanProducts({ mode = "scan", embedded = false } = {}) {
             <h3>{scanReviewTitle}</h3>
             <p>
               {requiresConfirmation
-                ? hasSuggestedMatches
+                ? isReviewOnly
+                  ? "This image does not look like a clear food photo, so AI did not choose a meal automatically. Try another photo, choose a suggestion only if it is right, or type the meal name yourself."
+                  : hasSuggestedMatches
                   ? "AI found possible matches but is not confident enough to confirm one automatically. Pick a suggestion if it looks right, or type the meal name yourself."
                   : "AI is not confident enough to confirm a dish from this image. Try another photo or type the meal name yourself."
                 : "This looks like a strong match. You can still adjust the meal name or calories if the serving looks different."}
@@ -549,7 +575,9 @@ function ScanProducts({ mode = "scan", embedded = false } = {}) {
         </div>
 
         <p className="scan-note friendly">
-          {requiresConfirmation
+          {isReviewOnly
+            ? "Upload another clear food photo for best results. If this is food, you can still choose a suggested match or type the meal name manually before saving."
+            : requiresConfirmation
             ? "Pick one of the similar matches below to start from that dish and its calorie estimate, or type the right meal name yourself. Nothing is locked. You can still review and edit everything before saving."
             : "Check the meal name, dish information, and estimated calories below. If the serving is larger or smaller than usual, update it before saving."}
         </p>

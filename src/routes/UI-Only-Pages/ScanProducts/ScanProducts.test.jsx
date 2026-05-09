@@ -159,4 +159,48 @@ describe('ScanProducts Integration Tests', () => {
             expect(screen.getAllByText(/Orange/i).length).toBeGreaterThan(0);
         });
     });
+
+    test('does not auto-fill meal info for retake review-only scans', async () => {
+        scanMultipleImages.mockResolvedValueOnce({
+            predictions: [{
+                label: 'meat_loaf',
+                confidence: 0.72,
+                retake_needed: true,
+                retake_reason: 'Image appears to be an illustration or portrait, not a clear food photo.',
+                topk: [
+                    { label: 'apple', score: 0.42 },
+                    { label: 'meat_loaf', score: 0.31 },
+                ],
+                matches: [],
+                is_unclear: true,
+                quality: {
+                    issues: [
+                        'Image appears to be an illustration or portrait, not a clear food photo.',
+                    ],
+                },
+                nutrition: {
+                    display_name: 'Meat Loaf',
+                    estimated_calories: 240,
+                    available: true,
+                },
+            }]
+        });
+
+        renderScanProducts();
+
+        const file = new File(['dummy content'], 'not-food.png', { type: 'image/png' });
+        const input = screen.getByLabelText(/Image/i);
+        fireEvent.change(input, { target: { files: [file] } });
+
+        const uploadButton = screen.getByRole('button', { name: /Analyze Image/i });
+        fireEvent.click(uploadButton);
+
+        await waitFor(() => {
+            expect(screen.getByText(/No clear food match/i)).toBeTruthy();
+            expect(screen.getAllByText(/Choose a meal/i).length).toBeGreaterThan(0);
+            expect(screen.getAllByText(/This image does not look like a clear food photo/i).length).toBeGreaterThan(0);
+            expect(screen.getByText(/Apple/i)).toBeTruthy();
+            expect(screen.getByText(/Meat Loaf/i)).toBeTruthy();
+        });
+    });
 });
