@@ -245,12 +245,13 @@ const WaterTracker = () => {
 
     if (currentUser && currentUser.id) {
        try {
-         const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:8081'}/api/water-intake`, {
+         const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'https://localhost:8443'}/api/water-intake`, {
            method: 'POST',
            headers: { 'Content-Type': 'application/json' },
            body: JSON.stringify({
              user_id: currentUser.id,
-             glasses_consumed: newGlasses
+             amount_ml: newGlasses * 250,
+             date: new Date().toISOString().split('T')[0]
            })
          });
          const data = await response.json();
