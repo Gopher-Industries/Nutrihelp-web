@@ -7,7 +7,7 @@ import React, {
   useState,
 } from "react";
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:8081";
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "https://localhost:8443";
 const DEFAULT_SESSION_TTL_MS = 180 * 60 * 1000;
 const DEFAULT_PERSIST_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 const REFRESH_BUFFER_MS = 60 * 1000;

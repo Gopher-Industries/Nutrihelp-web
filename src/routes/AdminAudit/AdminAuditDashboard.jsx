@@ -209,7 +209,7 @@ const AdminAuditDashboard = () => {
         if (!cancelled && !silent) {
           const details = [
             loadError.message || "Failed to load admin audit overview",
-            "Expected API: http://127.0.0.1:8081/api/system/dev/live-audit/overview",
+            "Expected API: https://127.0.0.1:8443/api/system/dev/live-audit/overview",
           ].join(" ");
           setError(details);
         }

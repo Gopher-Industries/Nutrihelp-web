@@ -67,7 +67,7 @@
     avatar: null,
   }
 
-  const API_BASE = process.env.REACT_APP_API_BASE_URL || "http://localhost:8081"
+  const API_BASE = process.env.REACT_APP_API_BASE_URL || "https://localhost:8443"
 
   const EMPTY_PREFERENCES = {
     dietary_requirements: [],

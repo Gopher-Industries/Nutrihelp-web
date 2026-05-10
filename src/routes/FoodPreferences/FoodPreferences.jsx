@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import "./FoodPreferences.css";
 import preferenceHeroPanel from "../../images/mealPlan/banner_image.jpg";
 
-const API_BASE = process.env.REACT_APP_API_BASE_URL || "http://localhost:8081";
+const API_BASE = process.env.REACT_APP_API_BASE_URL || "https://localhost:8443";
 
 const OPTION_METADATA = {
   milk: {

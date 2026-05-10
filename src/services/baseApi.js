@@ -1,9 +1,9 @@
 // Shared base API utilities used by service classes
-const RAW_API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8081';
+const RAW_API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'https://localhost:8443';
 
 const normalizeApiBaseURL = (baseURL, appendApiPath = true) => {
     const normalizedBase = String(baseURL || '').trim().replace(/\/+$/, '');
-    if (!normalizedBase) return appendApiPath ? 'http://localhost:8081/api' : 'http://localhost:8081';
+    if (!normalizedBase) return appendApiPath ? 'https://localhost:8443/api' : 'https://localhost:8443';
     if (!appendApiPath) return normalizedBase;
     if (/\/api(?:\/|$)/i.test(normalizedBase)) return normalizedBase;
     return `${normalizedBase}/api`;

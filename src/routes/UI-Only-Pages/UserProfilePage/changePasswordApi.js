@@ -1,4 +1,4 @@
-const API_BASE = process.env.REACT_APP_API_BASE_URL || "http://localhost:8081";
+const API_BASE = process.env.REACT_APP_API_BASE_URL || "https://localhost:8443";
 const VERIFY_ENDPOINT = `${API_BASE}/api/userpassword/verify`;
 const UPDATE_ENDPOINT = `${API_BASE}/api/userpassword/update`;
 const LEGACY_ENDPOINT = `${API_BASE}/api/userpassword`;

@@ -10,11 +10,11 @@ function isLocalDevAuditMode() {
 
 function getLocalDevBaseURL() {
   if (typeof window === "undefined") {
-    return "http://localhost:8081/api";
+    return "https://localhost:8443/api";
   }
 
   const host = window.location.hostname || "localhost";
-  return `http://${host}:8081/api`;
+  return `https://${host}:8443/api`;
 }
 
 class AdminAuditApi extends BaseApi {
