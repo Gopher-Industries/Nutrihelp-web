@@ -12,46 +12,35 @@ class ScanApi extends BaseApi {
      */
     async uploadForAnalysis(files, isMulti = false) {
         try {
-            const formData = new FormData();
-            
-            // Task 3: Implement request builder for both contracts
-            if (isMulti) {
-                // Multi-image contract (future-proof)
-                files.forEach((file) => {
-                    formData.append('images', file);
+            const selectedFiles = Array.from(files || []).filter(Boolean);
+            const results = [];
+
+            for (const file of selectedFiles) {
+                const formData = new FormData();
+                formData.append('image', file);
+
+                const response = await fetch(`${this.baseURL}/imageClassification`, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        ...(this.getAuthToken() && { 'Authorization': `Bearer ${this.getAuthToken()}` })
+                    }
                 });
-            } else {
-                // Single-image contract (fallback)
-                formData.append('image', files[0]);
-            }
 
-            // Task 1: Use centralized API config
-            // In a real app, this might come from a config file, but here we use BaseApi's baseURL
-            const endpoint = isMulti ? '/imageClassification/multi' : '/imageClassification';
-            const url = `${this.baseURL}${endpoint}`;
-
-            const response = await fetch(url, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    // Note: Browser automatically sets Content-Type for FormData with boundary
-                    ...(this.getAuthToken() && { 'Authorization': `Bearer ${this.getAuthToken()}` })
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw {
+                        status: response.status,
+                        message: errorData.error || errorData.message || 'Failed to classify image(s)',
+                        data: errorData
+                    };
                 }
-            });
 
-            if (!response.ok) {
-                const errorData = await response.json().catch(() => ({}));
-                throw {
-                    status: response.status,
-                    message: errorData.error || errorData.message || 'Failed to classify image(s)',
-                    data: errorData
-                };
+                const data = await response.json();
+                results.push(data);
             }
 
-            const data = await response.json();
-            
-            // Task 4: Implement response mapper to normalize result shape
-            return this.mapScanResponse(data, isMulti);
+            return this.mapScanResponse(results, isMulti || results.length > 1);
         } catch (error) {
             console.error('Scan Analysis Error:', error);
             throw error;
@@ -62,28 +51,26 @@ class ScanApi extends BaseApi {
      * Normalizes the response from different AI contracts
      */
     mapScanResponse(data, isMulti) {
-        // Multi-image contract normalization
-        if (isMulti || (data.predictions && Array.isArray(data.predictions))) {
+        const normalizedItems = (Array.isArray(data) ? data : [data]).map((item) => {
+            const classification = item?.data?.classification || item?.classification || {};
             return {
-                results: (data.predictions || []).map(p => ({
-                    prediction: p.prediction || p.label || 'Unknown',
-                    confidence: p.confidence || 0,
-                    metadata: p.metadata || {}
-                })),
+                prediction: classification.label || classification.rawLabel || 'Unknown',
+                confidence: classification.confidence || 0,
+                metadata: item?.data?.explainability || item?.explainability || {}
+            };
+        });
+
+        if (isMulti) {
+            return {
+                results: normalizedItems,
                 isMulti: true
             };
         }
 
-        // Single-image contract normalization
         return {
-            results: [{
-                prediction: data.prediction || 'Unknown',
-                confidence: data.confidence || 1.0,
-                metadata: data.metadata || {}
-            }],
+            results: normalizedItems,
             isMulti: false,
-            // Keep legacy single prediction field for backward compatibility
-            prediction: data.prediction || 'Unknown'
+            prediction: normalizedItems[0]?.prediction || 'Unknown'
         };
     }
 }
