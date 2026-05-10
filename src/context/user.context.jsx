@@ -8,6 +8,7 @@ import React, {
 } from "react";
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:8081";
+const DEFAULT_SESSION_TTL_MS = 180 * 60 * 1000;
 const DEFAULT_PERSIST_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 const REFRESH_BUFFER_MS = 60 * 1000;
 
@@ -78,7 +79,7 @@ function readStoredUser() {
     toPositiveNumber(candidate.sessionExpiresAt) ||
     toPositiveNumber(localStorage.getItem(KEYS.localExpiry));
 
-  if (localUser && sessionExpiresAt && Date.now() > sessionExpiresAt) {
+  if (sessionExpiresAt && Date.now() > sessionExpiresAt) {
     return null;
   }
 
@@ -158,7 +159,7 @@ function normalizeSessionOptions(input, previousUser) {
   if (typeof input === "number") {
     return {
       persist: input > 0,
-      sessionTtlMs: input > 0 ? input : 0,
+      sessionTtlMs: input > 0 ? input : DEFAULT_SESSION_TTL_MS,
     };
   }
 
@@ -166,9 +167,11 @@ function normalizeSessionOptions(input, previousUser) {
     return {
       persist: Boolean(previousUser?.rememberMe),
       sessionTtlMs:
-        previousUser?.rememberMe && previousUser?.sessionExpiresAt
+        previousUser?.sessionExpiresAt
           ? Math.max(previousUser.sessionExpiresAt - Date.now(), 0)
-          : 0,
+          : previousUser?.rememberMe
+            ? DEFAULT_PERSIST_TTL_MS
+            : DEFAULT_SESSION_TTL_MS,
     };
   }
 
@@ -228,11 +231,10 @@ function buildSessionUser(nextUser, options, previousUser) {
   const persist = resolvedOptions.persist;
   const sessionTtlMs =
     resolvedOptions.sessionTtlMs ||
-    (persist ? DEFAULT_PERSIST_TTL_MS : 0);
+    (persist ? DEFAULT_PERSIST_TTL_MS : DEFAULT_SESSION_TTL_MS);
 
-  const sessionExpiresAt = persist
-    ? resolvedOptions.sessionExpiresAt || Date.now() + sessionTtlMs
-    : 0;
+  const sessionExpiresAt =
+    resolvedOptions.sessionExpiresAt || Date.now() + sessionTtlMs;
 
   return {
     ...merged,
@@ -293,7 +295,7 @@ export const UserProvider = ({ children }) => {
         writeSessionOnly(user);
       }
 
-      if (user.rememberMe && user.sessionExpiresAt > 0) {
+      if (user.sessionExpiresAt > 0) {
         const delay = Math.max(0, user.sessionExpiresAt - Date.now());
         logoutTimerRef.current = setTimeout(() => {
           clearAllSessionStorage();
@@ -356,7 +358,9 @@ export const UserProvider = ({ children }) => {
         storedUser,
         {
           persist: storedUser.rememberMe,
-          sessionTtlMs: storedUser.rememberMe ? DEFAULT_PERSIST_TTL_MS : 0,
+          sessionTtlMs: storedUser.rememberMe
+            ? DEFAULT_PERSIST_TTL_MS
+            : DEFAULT_SESSION_TTL_MS,
           accessToken: session.accessToken,
           refreshToken: session.refreshToken || storedUser.refreshToken,
           tokenType: session.tokenType,
@@ -494,7 +498,7 @@ export const UserProvider = ({ children }) => {
       setCurrentUserState(storedUser);
       if (storedUser) {
         clearTimers();
-        if (storedUser.rememberMe && storedUser.sessionExpiresAt > 0) {
+        if (storedUser.sessionExpiresAt > 0) {
           const delay = Math.max(0, storedUser.sessionExpiresAt - Date.now());
           logoutTimerRef.current = setTimeout(() => {
             clearAllSessionStorage();
