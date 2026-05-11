@@ -55,31 +55,35 @@ function ScanBarcode() {
     }
 
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:8081'}/api/barcode?code=${barcodeInput}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'https://localhost:8443'}/api/barcode/scan`, {
         method: "POST",
-        body: JSON.stringify({ user_id }),
+        body: JSON.stringify({
+          barcode: barcodeInput,
+          user_id,
+        }),
         headers: {
           "Content-Type": "application/json",
         },
       });
 
+      const payload = await response.json();
+
       if (response.ok) {
-        const data = await response.json();
+        const data = payload?.data || {};
         setBarcodeResult(barcodeInput);
-        setProductName(data.product_name);
-        setBarcodeIngredients(data.barcode_ingredients);
+        setProductName(data.productName || data.scan?.item?.name || "");
+        setBarcodeIngredients(data.barcodeIngredients || []);
 
-        setHasAllergen(data.detection_result.hasUserAllergen);
-        setMatchingAllergens(data.detection_result.matchingAllergens);
+        setHasAllergen(Boolean(data.detectionResult?.hasUserAllergen));
+        setMatchingAllergens(data.detectionResult?.matchingAllergens || []);
 
-        setUserAllergen(data.user_allergen_ingredients);
+        setUserAllergen(data.userAllergenIngredients || []);
 
         setShowBarcodeInfo(true);
         handleFetchResult("Get barcode data successful!", toast.success);
       } else {
-        const data = await response.json();
         setShowBarcodeInfo(false);
-        handleFetchResult(data.error || "Failed to fetch data. Please check your input and try again later.", toast.warning);
+        handleFetchResult(payload?.error || "Failed to fetch data. Please check your input and try again later.", toast.warning);
       }
     } catch (error) {
       console.error("Error fetching data:", error.message);
