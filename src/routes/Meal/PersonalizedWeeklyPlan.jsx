@@ -4,8 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import mealPlanApi from '../../services/mealPlanApi';
 import './PersonalizedPlan.css';
 
-const AI_ENDPOINT       = `${process.env.REACT_APP_API_BASE_URL || 'http://localhost:8081'}/api/meal-plan/ai-generate`;
-const FEEDBACK_ENDPOINT = (planId) => `${process.env.REACT_APP_API_BASE_URL || 'http://localhost:8081'}/api/meal-plan/feedback/${planId}`;
+const AI_ENDPOINT       = `${process.env.REACT_APP_API_BASE_URL || 'https://localhost:8443'}/api/meal-plan/ai-generate`;
+const FEEDBACK_ENDPOINT = (planId) => `${process.env.REACT_APP_API_BASE_URL || 'https://localhost:8443'}/api/meal-plan/feedback/${planId}`;
 
 // Accent colours cycling across day cards
 const DAY_ACCENTS = [
