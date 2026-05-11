@@ -24,7 +24,7 @@ const Card = ({ item, imageMapping }) => {
     time: item?.time || 'N/A',
     servings: item?.servings || 'N/A',
     level: item?.level || 'Easy',
-    mealType: item?.mealType || 'others',
+    mealType: item?.mealType || 'other',
     tags: Array.isArray(item?.tags) ? item.tags : [],
   };
 

@@ -9,7 +9,20 @@ function normalizeMealType(value) {
   const mealType = normalize(value);
   if (!mealType) return "";
   if (mealType === "breakfast" || mealType === "lunch" || mealType === "dinner") return mealType;
-  if (mealType === "snack" || mealType === "snacks" || mealType === "other") return "others";
+  if (
+    mealType === "other" ||
+    mealType === "others" ||
+    mealType === "snack" ||
+    mealType === "snacks" ||
+    mealType === "dessert" ||
+    mealType === "desserts" ||
+    mealType === "drink" ||
+    mealType === "drinks" ||
+    mealType === "beverage" ||
+    mealType === "beverages"
+  ) {
+    return "other";
+  }
   return "";
 }
 
@@ -75,7 +88,7 @@ export function normalizeScanLogEntry(entry, fallbackId = "") {
     imageSource: entry?.imageSource || "",
     imageAttribution: entry?.imageAttribution || "",
     imageSourceUrl: entry?.imageSourceUrl || "",
-    // Optional bookmark tag: breakfast/lunch/dinner/others.
+    // Optional bookmark tag: breakfast/lunch/dinner/other.
     mealType: normalizeMealType(entry?.mealType),
     source: "scan_log",
     time: entry?.time || "AI Scan",

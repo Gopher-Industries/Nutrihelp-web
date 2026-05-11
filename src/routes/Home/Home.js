@@ -32,6 +32,14 @@ import {
   Quote,
   ChevronRight,
   ArrowRight,
+  Plus,
+  X,
+  CalendarDays,
+  Search,
+  CheckCircle2,
+  BookOpen,
+  Camera,
+  Layers3,
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { validateEmail, ERROR_MESSAGES } from "../../utils/validationRules";
@@ -42,6 +50,9 @@ const Home = () => {
   const { currentUser } = useContext(UserContext);
   const { darkMode } = useDarkMode();
   const navigate = useNavigate();
+  const [isAddMealGuideOpen, setIsAddMealGuideOpen] = useState(false);
+  const [isWebsiteGuideOpen, setIsWebsiteGuideOpen] = useState(false);
+  const [activeWebsiteGuideTab, setActiveWebsiteGuideTab] = useState("overview");
 
   // Reviews
   const reviews = useMemo(
@@ -90,6 +101,150 @@ const Home = () => {
       cta: "Try Scanner →",
     },
   ];
+
+  const blueMenuCards = [
+    {
+      title: "NutriVital",
+      image: "/images/home-blue-menu/fruit-bowl.jpg",
+      route: "/searchRecipes",
+    },
+    {
+      title: "FitFuel",
+      image: "/images/home-blue-menu/avocado-egg-toast.jpg",
+      route: "/searchRecipes",
+    },
+    {
+      title: "WellnessBites",
+      image: "/images/home-blue-menu/breakfast-platter.jpg",
+      route: "/searchRecipes",
+    },
+    {
+      title: "CleanEats",
+      image: "/images/home-blue-menu/meal-prep.jpg",
+      route: "/searchRecipes",
+    },
+  ];
+
+  const addMealGuideSteps = [
+    {
+      Icon: CalendarDays,
+      title: "1. Choose your planning date",
+      text:
+        "Open Add Meal and use Today, Prev, Next, or the date picker to decide which day you are planning for. Selected dishes are saved by date, so tomorrow's meals stay separate from today's meals.",
+    },
+    {
+      Icon: Search,
+      title: "2. Search the Recipe Library",
+      text:
+        "Use the search bar to find foods, recipes, or meals. Suggestions appear while typing and can match recipe names, meal type, cooking time, and tags from the Recipe Library.",
+    },
+    {
+      Icon: Utensils,
+      title: "3. Filter by meal type",
+      text:
+        "Use the filter chips: Breakfast, Lunch, Dinner, Other, Scan, All, and Selected. Snack, dessert, and drink items are grouped under Other to match the current meal type logic.",
+    },
+    {
+      Icon: BookOpen,
+      title: "4. Review before selecting",
+      text:
+        "Use View Detail to inspect nutrition, description, timing, servings, and tags. Use View Recipe to open the full recipe page with ingredients, instructions, cost estimate, allergens, and meal-planning actions.",
+    },
+    {
+      Icon: CheckCircle2,
+      title: "5. Add meals into your plan",
+      text:
+        "Click a meal card to select it for the active date and meal slot. Selected cards show a Selected badge, and the Selected tab groups chosen dishes by Breakfast, Lunch, Dinner, and Other.",
+    },
+    {
+      Icon: Sparkles,
+      title: "6. Use AI Personalized Plan when needed",
+      text:
+        "Switch to AI Personalized Plan if you want NutriHelp to generate a broader plan from your preferences instead of manually picking every dish.",
+    },
+  ];
+
+  const addMealGuideTips = [
+    "Recipes come from the Recipe Library, including published catalog items and available user/community recipes.",
+    "Scan Log lets you reuse meals saved from product or meal scanning workflows.",
+    "The sidebar summarizes selected meal nutrition such as calories, protein, fats, vitamins, and sodium.",
+    "Use Clear all selected dishes if you want to reset the plan for the active date.",
+  ];
+
+  const websiteGuideTabs = [
+    {
+      key: "overview",
+      label: "Website Overview",
+      Icon: Layers3,
+      title: "A connected nutrition workspace",
+      lead:
+        "NutriHelp combines meal planning, recipe discovery, food scanning, health tools, and assistant support in one guided experience.",
+      points: [
+        "Use the Home page to access the main journeys: planning meals, searching recipes, scanning food, and exploring health tools.",
+        "The navigation bar gives quick access to Scan, Assistant, Settings, Account, and the More menu.",
+        "Most planning features rely on Recipe Library data, so recipes can flow into Add Meal, Recipe detail pages, and planning views.",
+      ],
+      cta: { label: "Explore Services", route: "/health-tools" },
+    },
+    {
+      key: "recipe",
+      label: "Recipe",
+      Icon: BookOpen,
+      title: "Find and review recipes before adding them",
+      lead:
+        "Recipe pages help users understand ingredients, cooking steps, timing, nutrition, allergens, and practical preparation details.",
+      points: [
+        "Search Recipes uses Recipe Library content and lets users filter by cuisine and search by recipe, tag, or meal type.",
+        "A recipe card can open the full recipe detail experience, similar to the View Recipe action in Add Meal.",
+        "Recipe details can include ingredients, instructions, servings, difficulty, nutrition, cost estimates, and allergen warnings.",
+      ],
+      cta: { label: "Search Recipes", route: "/searchRecipes" },
+    },
+    {
+      key: "meal",
+      label: "Meal Planning",
+      Icon: Utensils,
+      title: "Build a daily meal plan from real recipes",
+      lead:
+        "Add Meal lets users choose a date, search the Recipe Library, filter meal types, inspect recipes, and select dishes into a daily plan.",
+      points: [
+        "Use Today, Prev, Next, or the date picker to plan meals for a specific day.",
+        "Filter by Breakfast, Lunch, Dinner, Other, Scan, All, or Selected. Snack, dessert, and drink are grouped into Other.",
+        "Click a meal card to select it, then review selected dishes by meal group and check the nutrition summary sidebar.",
+      ],
+      cta: { label: "Start Meal Planning", route: "/meal" },
+    },
+    {
+      key: "scan",
+      label: "Scan Image",
+      Icon: Camera,
+      title: "Turn scans into practical nutrition decisions",
+      lead:
+        "The scanning flow helps users capture food or product information and turn it into understandable nutrition insights.",
+      points: [
+        "Use Scan from the navigation bar to start image-based or product-based analysis.",
+        "Scan results can support better choices by surfacing nutrition context in a simpler format.",
+        "Saved scan meals can appear in Add Meal through the Scan filter, making scanned items reusable in meal planning.",
+      ],
+      cta: { label: "Open Scanner", route: "/scan" },
+    },
+    {
+      key: "other",
+      label: "Other Services",
+      Icon: Sparkles,
+      title: "Support beyond meals and recipes",
+      lead:
+        "NutriHelp also includes assistant support, dietary needs, health tools, account settings, and personalized planning workflows.",
+      points: [
+        "Assistant provides quick support from the floating button and navigation shortcut.",
+        "Dietary Needs helps users manage allergies, preferences, and nutrition requirements.",
+        "Health Tools and settings help users keep the experience aligned with their personal wellness goals.",
+      ],
+      cta: { label: "View Health Tools", route: "/health-tools" },
+    },
+  ];
+
+  const activeWebsiteGuide = websiteGuideTabs.find((tab) => tab.key === activeWebsiteGuideTab) || websiteGuideTabs[0];
 
   const superSnackBenefits = [
     { Icon: Apple, label: "organic fruits & veggies" },
@@ -229,6 +384,27 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
+    if (!isAddMealGuideOpen && !isWebsiteGuideOpen) return undefined;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") {
+        setIsAddMealGuideOpen(false);
+        setIsWebsiteGuideOpen(false);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isAddMealGuideOpen, isWebsiteGuideOpen]);
+
+  useEffect(() => {
     const aboutSection = aboutSectionRef.current;
     if (!aboutSection) return undefined;
 
@@ -324,8 +500,8 @@ const Home = () => {
                   Your Health. Personalised.
                 </div>
                 <h1 className="home-hero-title">
-                  <span className="hero-title-line1">Empower</span>
-                  <span className="hero-title-line2">Journey</span>
+                  <span className="hero-title-line1">Thrive</span>
+                  <span className="hero-title-line2">Daily</span>
                 </h1>
               </motion.div>
 
@@ -388,7 +564,7 @@ const Home = () => {
                           <ArrowRight size={24} />
                         </span>
                         <span className="hero-btn-text hero-btn-text-start">Get Started</span>
-                        <span className="hero-btn-text hero-btn-text-end">Boost Your Life Style</span>
+                        <span className="hero-btn-text hero-btn-text-end">Start Today</span>
                       </span>
                     </button>
                   </div> */}
@@ -401,8 +577,18 @@ const Home = () => {
                           <ArrowRight size={24} />
                         </span>
                         <span className="hero-btn-text hero-btn-text-start">Get Started</span>
-                        <span className="hero-btn-text hero-btn-text-end">Boost Your Life Style</span>
+                        <span className="hero-btn-text hero-btn-text-end">Start Today</span>
                       </span>
+                    </button>
+                    <button
+                      className="hero-learn-more-btn"
+                      type="button"
+                      onClick={() => {
+                        setActiveWebsiteGuideTab("overview");
+                        setIsWebsiteGuideOpen(true);
+                      }}
+                    >
+                      Learn More
                     </button>
                 </div>
                 {/* <ul className="home-hero-pillars" aria-label="Nutri-help pillars">
@@ -576,6 +762,52 @@ const Home = () => {
                 </SwiperSlide>
               ))}
             </Swiper>
+          </div>
+        </section>
+
+        <section className="home-blue-menu" aria-label="Healthy meals showcase">
+          <div className="home-container">
+            <div className="blue-menu-layout">
+              <article className="blue-menu-copy">
+                <p className="blue-menu-kicker">Curated healthy picks</p>
+                <h2>
+                  Something Healthy
+                  <br />
+                  Something Tasty
+                </h2>
+                <p>
+                  Explore balanced meals built around nutrition goals, satisfying flavor, and everyday routines.
+                  Pick a healthy option, review the recipe, then add it into your meal plan in minutes.
+                </p>
+                <div className="blue-menu-actions">
+                  <button type="button" className="blue-menu-primary" onClick={() => navigate("/meal")}>
+                    Planning Meal
+                  </button>
+                  <button type="button" className="blue-menu-secondary" onClick={() => setIsAddMealGuideOpen(true)}>
+                    Learn More
+                  </button>
+                </div>
+              </article>
+
+              <div className="blue-menu-grid">
+                {blueMenuCards.map((card) => (
+                  <article key={card.title} className="blue-menu-card">
+                    <button
+                      type="button"
+                      className="blue-menu-card-btn"
+                      onClick={() => navigate(card.route)}
+                      aria-label={`View ${card.title}`}
+                    >
+                      <img src={card.image} alt={card.title} loading="lazy" />
+                      <span className="blue-menu-plus" aria-hidden="true">
+                        <Plus size={36} strokeWidth={3} />
+                      </span>
+                      <span className="blue-menu-card-title">{card.title}</span>
+                    </button>
+                  </article>
+                ))}
+              </div>
+            </div>
           </div>
         </section>
 
@@ -804,6 +1036,213 @@ const Home = () => {
           <Bot size={26} aria-hidden="true" />
           <span>Assistant</span>
         </button>
+
+        {isWebsiteGuideOpen ? (
+          <div
+            className="add-meal-guide-modal website-guide-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="website-guide-title"
+            onMouseDown={(event) => {
+              if (event.target === event.currentTarget) {
+                setIsWebsiteGuideOpen(false);
+              }
+            }}
+          >
+            <div className="add-meal-guide-card website-guide-card" onMouseDown={(event) => event.stopPropagation()}>
+              <button
+                type="button"
+                className="add-meal-guide-close"
+                onClick={() => setIsWebsiteGuideOpen(false)}
+                aria-label="Close website guide"
+              >
+                <X size={22} />
+              </button>
+
+              <div className="add-meal-guide-hero website-guide-hero">
+                <span className="add-meal-guide-eyebrow">
+                  {React.createElement(activeWebsiteGuide.Icon, { size: 16 })}
+                  NutriHelp Guide
+                </span>
+                <h2 id="website-guide-title">{activeWebsiteGuide.title}</h2>
+                <p>{activeWebsiteGuide.lead}</p>
+              </div>
+
+              <div className="website-guide-tabs" role="tablist" aria-label="NutriHelp guide sections">
+                {websiteGuideTabs.map(({ key, label, Icon }) => {
+                  const isActive = activeWebsiteGuideTab === key;
+                  return (
+                    <button
+                      key={key}
+                      type="button"
+                      role="tab"
+                      aria-selected={isActive}
+                      className={`website-guide-tab ${isActive ? "active" : ""}`}
+                      onClick={() => setActiveWebsiteGuideTab(key)}
+                    >
+                      <Icon size={17} />
+                      <span>{label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div className="website-guide-content">
+                <div className="website-guide-main">
+                  <span className="website-guide-section-label">{activeWebsiteGuide.label}</span>
+                  <h3>What users can do here</h3>
+                  <div className="website-guide-point-list">
+                    {activeWebsiteGuide.points.map((point, index) => (
+                      <article key={point} className="website-guide-point">
+                        <span>{String(index + 1).padStart(2, "0")}</span>
+                        <p>{point}</p>
+                      </article>
+                    ))}
+                  </div>
+                </div>
+
+                <aside className="website-guide-side">
+                  <div className="website-guide-side-card">
+                    <strong>Recommended next step</strong>
+                    <p>
+                      Use this guide to understand the feature, then open the related page and try the workflow directly.
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsWebsiteGuideOpen(false);
+                        navigate(activeWebsiteGuide.cta.route);
+                      }}
+                    >
+                      {activeWebsiteGuide.cta.label}
+                      <ArrowRight size={17} />
+                    </button>
+                  </div>
+                </aside>
+              </div>
+
+              <div className="add-meal-guide-footer website-guide-footer">
+                <button
+                  type="button"
+                  className="guide-footer-secondary"
+                  onClick={() => setIsWebsiteGuideOpen(false)}
+                >
+                  Close
+                </button>
+                <button
+                  type="button"
+                  className="guide-footer-primary"
+                  onClick={() => {
+                    setIsWebsiteGuideOpen(false);
+                    navigate(activeWebsiteGuide.cta.route);
+                  }}
+                >
+                  {activeWebsiteGuide.cta.label}
+                  <ArrowRight size={18} />
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : null}
+
+        {isAddMealGuideOpen ? (
+          <div
+            className="add-meal-guide-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="add-meal-guide-title"
+            onMouseDown={(event) => {
+              if (event.target === event.currentTarget) {
+                setIsAddMealGuideOpen(false);
+              }
+            }}
+          >
+            <div className="add-meal-guide-card" onMouseDown={(event) => event.stopPropagation()}>
+              <button
+                type="button"
+                className="add-meal-guide-close"
+                onClick={() => setIsAddMealGuideOpen(false)}
+                aria-label="Close Add Meal guide"
+              >
+                <X size={22} />
+              </button>
+
+              <div className="add-meal-guide-hero">
+                <span className="add-meal-guide-eyebrow">
+                  <Utensils size={16} />
+                  Add Meal Guide
+                </span>
+                <h2 id="add-meal-guide-title">How to plan meals with NutriHelp</h2>
+                <p>
+                  Add Meal helps you build a daily meal plan from your Recipe Library, scanned meals,
+                  and AI-assisted planning tools. Follow these steps to use the current flow correctly.
+                </p>
+              </div>
+
+              <div className="add-meal-guide-body">
+                <div className="add-meal-guide-steps">
+                  {addMealGuideSteps.map(({ Icon, title, text }) => (
+                    <article key={title} className="add-meal-guide-step">
+                      <span className="add-meal-guide-step-icon">
+                        <Icon size={22} />
+                      </span>
+                      <div>
+                        <h3>{title}</h3>
+                        <p>{text}</p>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+
+                <aside className="add-meal-guide-side">
+                  <div className="guide-side-card">
+                    <span className="guide-side-label">What to remember</span>
+                    <ul>
+                      {addMealGuideTips.map((tip) => (
+                        <li key={tip}>
+                          <CheckCircle2 size={16} />
+                          <span>{tip}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div className="guide-side-card guide-side-flow">
+                    <span className="guide-side-label">Fastest path</span>
+                    <ol>
+                      <li>Pick date</li>
+                      <li>Search or filter</li>
+                      <li>View detail or recipe</li>
+                      <li>Click card to select</li>
+                      <li>Review Selected tab</li>
+                    </ol>
+                  </div>
+                </aside>
+              </div>
+
+              <div className="add-meal-guide-footer">
+                <button
+                  type="button"
+                  className="guide-footer-secondary"
+                  onClick={() => setIsAddMealGuideOpen(false)}
+                >
+                  Close
+                </button>
+                <button
+                  type="button"
+                  className="guide-footer-primary"
+                  onClick={() => {
+                    setIsAddMealGuideOpen(false);
+                    navigate("/meal");
+                  }}
+                >
+                  Start Planning Meal
+                  <ArrowRight size={18} />
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : null}
       </main>
     </FramerClient>
   );

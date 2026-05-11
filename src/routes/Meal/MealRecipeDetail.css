@@ -1,6 +1,6 @@
 .meal-recipe-page {
   min-height: calc(100vh - 72px);
-  padding: 0.0625rem 0 2.5rem;
+  padding: 3.0625rem 0 2.5rem;
   background: #ffffff;
   font-family: inherit;
   font-size: 1rem;
@@ -126,6 +126,12 @@
 
 .meal-recipe-meta-row .recipe-rating svg {
   color: #f5b301;
+}
+
+.meal-recipe-meta-row .recipe-rating small {
+  color: #315b88;
+  font-size: 0.88rem;
+  font-weight: 700;
 }
 
 .meal-recipe-actions-row {
@@ -515,6 +521,264 @@
   line-height: 1.55;
 }
 
+.meal-recipe-reviews-card {
+  margin-top: 1.25rem;
+  background:
+    radial-gradient(circle at top right, rgba(59, 130, 246, 0.12), transparent 34%),
+    linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+  box-shadow: 0 20px 48px rgba(15, 35, 61, 0.08);
+}
+
+.meal-reviews-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.meal-reviews-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 1.85rem;
+  padding: 0 0.75rem;
+  border-radius: 999px;
+  background: rgba(219, 234, 254, 0.86);
+  color: #0f5cc7;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.meal-reviews-header h2 {
+  margin-top: 0.7rem;
+}
+
+.meal-reviews-header p {
+  margin: 0.45rem 0 0;
+  color: #64748b;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.meal-reviews-score {
+  min-width: 11.25rem;
+  padding: 1rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(250, 204, 21, 0.34);
+  background: rgba(255, 251, 235, 0.82);
+  color: #92400e;
+  text-align: center;
+}
+
+.meal-reviews-score strong {
+  display: block;
+  color: #b45309;
+  font-size: 2.35rem;
+  line-height: 1;
+}
+
+.meal-reviews-score span {
+  display: block;
+  margin-top: 0.35rem;
+  color: #92400e;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.meal-review-stars {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.18rem;
+  color: #cbd5e1;
+}
+
+.meal-review-stars .active,
+.meal-review-stars svg.active {
+  color: #f5b301;
+}
+
+.meal-review-stars.interactive {
+  gap: 0.28rem;
+}
+
+.meal-review-stars.interactive button {
+  border: 0;
+  background: transparent;
+  color: #cbd5e1;
+  padding: 0.15rem;
+  cursor: pointer;
+  transition: transform 0.16s ease, color 0.16s ease;
+}
+
+.meal-review-stars.interactive button.active,
+.meal-review-stars.interactive button:hover,
+.meal-review-stars.interactive button:focus-visible {
+  color: #f5b301;
+  transform: translateY(-1px) scale(1.06);
+}
+
+.meal-review-form {
+  display: grid;
+  gap: 0.9rem;
+  padding: 1rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  background: rgba(255, 255, 255, 0.84);
+}
+
+.meal-review-form label {
+  display: grid;
+  gap: 0.45rem;
+  color: #1e293b;
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
+.meal-review-comment-field textarea {
+  width: 100%;
+  min-height: 7rem;
+  resize: vertical;
+  border: 1px solid rgba(148, 163, 184, 0.42);
+  border-radius: 0.9rem;
+  padding: 0.85rem 0.95rem;
+  color: #172033;
+  background: #ffffff;
+  font: inherit;
+  line-height: 1.5;
+  outline: none;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.meal-review-comment-field textarea:focus {
+  border-color: rgba(0, 91, 187, 0.55);
+  box-shadow: 0 0 0 4px rgba(0, 91, 187, 0.1);
+}
+
+.meal-review-form-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.meal-review-form-footer span {
+  color: #64748b;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.meal-review-form-footer button {
+  border: 1px solid #005bbb;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #005bbb 0%, #0a77de 100%);
+  color: #ffffff;
+  min-height: 2.75rem;
+  padding: 0 1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 12px 24px rgba(0, 91, 187, 0.18);
+}
+
+.meal-review-form-footer button:disabled {
+  opacity: 0.62;
+  cursor: not-allowed;
+}
+
+.meal-reviews-error,
+.meal-reviews-empty {
+  margin: 1rem 0 0;
+  border-radius: 0.9rem;
+  padding: 0.9rem 1rem;
+  font-weight: 700;
+}
+
+.meal-reviews-error {
+  border: 1px solid rgba(248, 113, 113, 0.35);
+  background: rgba(254, 242, 242, 0.9);
+  color: #b91c1c;
+}
+
+.meal-reviews-empty {
+  border: 1px dashed rgba(148, 163, 184, 0.42);
+  background: rgba(248, 250, 252, 0.74);
+  color: #64748b;
+  text-align: center;
+}
+
+.meal-reviews-list {
+  margin-top: 1.15rem;
+  display: grid;
+  gap: 0.85rem;
+}
+
+.meal-review-item {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.85rem;
+  padding: 1rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.meal-review-avatar {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  overflow: hidden;
+  background: linear-gradient(135deg, #0a77de 0%, #005bbb 100%);
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  box-shadow: 0 10px 20px rgba(0, 91, 187, 0.16);
+}
+
+.meal-review-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.meal-review-body {
+  min-width: 0;
+}
+
+.meal-review-topline {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.meal-review-topline strong {
+  display: block;
+  color: #14243d;
+  font-size: 1rem;
+}
+
+.meal-review-topline span {
+  display: block;
+  margin-top: 0.18rem;
+  color: #64748b;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.meal-review-body p {
+  margin: 0.7rem 0 0;
+  color: #334155;
+  line-height: 1.55;
+}
+
 .allergy-dot {
   width: 0.56rem;
   height: 0.56rem;
@@ -589,6 +853,15 @@
 
   .meal-recipe-planner-panel {
     min-width: 18rem;
+  }
+
+  .meal-reviews-header {
+    flex-direction: column;
+  }
+
+  .meal-reviews-score {
+    width: 100%;
+    min-width: 0;
   }
 }
 
@@ -679,6 +952,16 @@
     width: 1.8rem;
     height: 1.8rem;
     font-size: 0.9rem;
+  }
+
+  .meal-review-form-footer,
+  .meal-review-topline {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .meal-review-item {
+    grid-template-columns: 1fr;
   }
 }
 

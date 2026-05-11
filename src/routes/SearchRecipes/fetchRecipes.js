@@ -1,4 +1,4 @@
-const API_BASE = process.env.REACT_APP_API_BASE_URL || 'https://localhost:8443';
+const API_BASE = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8081';
 
 /*export async function fetchRecipes(user_id) {
   const response = await fetch(`${API_BASE}/api/recipe`, {

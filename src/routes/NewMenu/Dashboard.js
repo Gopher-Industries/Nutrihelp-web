@@ -6,14 +6,16 @@ import "./MenuCard.css";
 import "./Menustyles.css";
 import imageMapping from "./importImages.js";
 import WaterTracker from "../../components/WaterTracker";
-
-const MEAL_SELECTIONS_STORAGE_KEY = "nutrihelp_add_meal_selections_by_date_v1";
+import {
+  readMealSelectionsByDateFromStorage,
+  writeMealSelectionsByDateToStorage,
+} from "../../utils/mealSelectionStorage";
 
 const NUTRITION_BY_TYPE = {
   breakfast: { calories: 290, proteins: 16, fats: 9, vitamins: 120, sodium: 180 },
   lunch: { calories: 430, proteins: 26, fats: 14, vitamins: 170, sodium: 360 },
   dinner: { calories: 520, proteins: 32, fats: 18, vitamins: 210, sodium: 460 },
-  others: { calories: 210, proteins: 8, fats: 7, vitamins: 90, sodium: 140 },
+  other: { calories: 210, proteins: 8, fats: 7, vitamins: 90, sodium: 140 },
 };
 
 const LEVEL_FACTOR = {
@@ -102,15 +104,10 @@ function dedupeSelectionsByDate(selectionsByDate) {
 }
 
 function readSelectionsByDate() {
-  if (typeof window === "undefined") return {};
-  try {
-    const raw = localStorage.getItem(MEAL_SELECTIONS_STORAGE_KEY);
-    if (!raw) return {};
-    const parsed = JSON.parse(raw);
-    return parsed && typeof parsed === "object" ? dedupeSelectionsByDate(parsed) : {};
-  } catch {
-    return {};
-  }
+  const rawSelections = readMealSelectionsByDateFromStorage();
+  return rawSelections && typeof rawSelections === "object"
+    ? dedupeSelectionsByDate(rawSelections)
+    : {};
 }
 
 function normalizeMealType(value) {
@@ -118,10 +115,21 @@ function normalizeMealType(value) {
   if (normalized === "breakfast" || normalized === "lunch" || normalized === "dinner") {
     return normalized;
   }
-  if (normalized === "snack" || normalized === "snacks" || normalized === "other") {
-    return "others";
+  if (
+    normalized === "other" ||
+    normalized === "others" ||
+    normalized === "snack" ||
+    normalized === "snacks" ||
+    normalized === "dessert" ||
+    normalized === "desserts" ||
+    normalized === "drink" ||
+    normalized === "drinks" ||
+    normalized === "beverage" ||
+    normalized === "beverages"
+  ) {
+    return "other";
   }
-  return "others";
+  return "other";
 }
 
 function parseNumber(value) {
@@ -179,7 +187,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     try {
-      localStorage.setItem(MEAL_SELECTIONS_STORAGE_KEY, JSON.stringify(selectionsByDate));
+      writeMealSelectionsByDateToStorage(selectionsByDate);
     } catch {
       // Menu rendering should continue even if localStorage is unavailable.
     }
@@ -195,12 +203,12 @@ const Dashboard = () => {
       breakfast: selectedItems.filter((item) => normalizeMealType(item?.mealType) === "breakfast"),
       lunch: selectedItems.filter((item) => normalizeMealType(item?.mealType) === "lunch"),
       dinner: selectedItems.filter((item) => normalizeMealType(item?.mealType) === "dinner"),
-      snack: selectedItems.filter((item) => normalizeMealType(item?.mealType) === "others"),
+      other: selectedItems.filter((item) => normalizeMealType(item?.mealType) === "other"),
     }),
     [selectedItems],
   );
 
-  const addMealTab = useMemo(() => (activeTab === "snack" ? "others" : activeTab), [activeTab]);
+  const addMealTab = useMemo(() => activeTab, [activeTab]);
 
   const totalNutrition = useMemo(
     () =>
@@ -300,11 +308,11 @@ const Dashboard = () => {
 
               <button
                 type="button"
-                className={`nav-tab-btn ${activeTab === "snack" ? "active" : ""}`}
-                onClick={() => setActiveTab("snack")}
-                aria-selected={activeTab === "snack"}
+                className={`nav-tab-btn ${activeTab === "other" ? "active" : ""}`}
+                onClick={() => setActiveTab("other")}
+                aria-selected={activeTab === "other"}
               >
-                Snack
+                Other
               </button>
             </nav>
 

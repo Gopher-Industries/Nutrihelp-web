@@ -1,6 +1,7 @@
-import React, { useMemo, useState } from "react";
+import React, { useContext, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../styles/mainNavbar.css";
+import { UserContext } from "../context/user.context";
 
 const ChevronRight = ({ size = 18 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true">
@@ -42,6 +43,8 @@ const CloseIcon = ({ size = 18 }) => (
 
 const SideMenu = ({ onNavigate, mode = "desktop", onClose }) => {
   const close = () => typeof onNavigate === "function" && onNavigate();
+  const { currentUser } = useContext(UserContext);
+  const isAdmin = String(currentUser?.role || "").toLowerCase() === "admin";
 
   // Desktop Mega Menu
   if (mode === "desktop") {
@@ -121,6 +124,11 @@ const SideMenu = ({ onNavigate, mode = "desktop", onClose }) => {
           <Link to="/community" className="mega-item" onClick={close}>
             Community
           </Link>
+          {isAdmin ? (
+            <Link to="/admin" className="mega-item" onClick={close}>
+              Admin Data Center
+            </Link>
+          ) : null}
         </div>
 
         <div className="mega-footer">
@@ -187,6 +195,7 @@ const SideMenu = ({ onNavigate, mode = "desktop", onClose }) => {
         },
 
         { type: "link", label: "Settings", to: "/settings" },
+        ...(isAdmin ? [{ type: "link", label: "Admin Data Center", to: "/admin" }] : []),
 
         /* {
           type: "submenu",
@@ -215,7 +224,7 @@ const SideMenu = ({ onNavigate, mode = "desktop", onClose }) => {
         { type: "action", label: "Contact Us", action: "contact" },
       ],
     }),
-    []
+    [isAdmin]
   );
 
 

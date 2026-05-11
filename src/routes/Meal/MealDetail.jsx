@@ -5,22 +5,25 @@ import { toast } from "react-toastify";
 import { CalendarDays, ChevronLeft, Cloud, Clock3, Moon, Plus, Star, Sun, Users } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { fetchDishImage } from "../../services/dishImageApi";
+import {
+  readMealSelectionsByDateFromStorage,
+  writeMealSelectionsByDateToStorage,
+} from "../../utils/mealSelectionStorage";
 
 const DEFAULT_IMAGE = "/images/meal-mock/placeholder.svg";
-const MEAL_SELECTIONS_STORAGE_KEY = "nutrihelp_add_meal_selections_by_date_v1";
 
 const NUTRITION_PRESETS = {
   breakfast: { calories: 280, carbs: 45, protein: 10, fiber: 8, fat: 9, sodium: 140 },
   lunch: { calories: 460, carbs: 54, protein: 28, fiber: 10, fat: 14, sodium: 420 },
   dinner: { calories: 520, carbs: 44, protein: 34, fiber: 8, fat: 18, sodium: 470 },
-  others: { calories: 210, carbs: 24, protein: 9, fiber: 6, fat: 8, sodium: 160 },
+  other: { calories: 210, carbs: 24, protein: 9, fiber: 6, fat: 8, sodium: 160 },
 };
 
 const TAGS_BY_TYPE = {
   breakfast: ["Low GI", "High Fiber", "Heart-Healthy", "Energy Boosting"],
   lunch: ["Balanced", "High Protein", "Vitamin-Rich", "Satiating"],
   dinner: ["Muscle Recovery", "Nutrient Dense", "Balanced", "High Protein"],
-  others: ["Light Meal", "Smart Snack", "High Fiber", "Gut-Friendly"],
+  other: ["Light Meal", "Smart Snack", "High Fiber", "Gut-Friendly"],
 };
 
 const ADD_TO_MEAL_OPTIONS = [
@@ -184,29 +187,38 @@ function shouldFetchDynamicImage(meal, image) {
 function normalizeMealType(value) {
   const normalized = normalize(value);
   if (normalized === "breakfast" || normalized === "lunch" || normalized === "dinner") return normalized;
-  if (normalized === "snack" || normalized === "snacks" || normalized === "other") return "others";
-  return "others";
+  if (
+    normalized === "other" ||
+    normalized === "others" ||
+    normalized === "snack" ||
+    normalized === "snacks" ||
+    normalized === "dessert" ||
+    normalized === "desserts" ||
+    normalized === "drink" ||
+    normalized === "drinks" ||
+    normalized === "beverage" ||
+    normalized === "beverages"
+  ) {
+    return "other";
+  }
+  return "other";
+}
+
+function normalizePlanMealType(value) {
+  const normalized = normalizeMealType(value);
+  return normalized === "breakfast" || normalized === "lunch" || normalized === "dinner"
+    ? normalized
+    : "breakfast";
 }
 
 function readStoredSelections() {
-  if (typeof window === "undefined") return {};
-  try {
-    const raw = localStorage.getItem(MEAL_SELECTIONS_STORAGE_KEY);
-    if (!raw) return {};
-    const parsed = JSON.parse(raw);
-    return parsed && typeof parsed === "object" ? parsed : {};
-  } catch {
-    return {};
-  }
+  return readMealSelectionsByDateFromStorage();
 }
 
 function writeStoredSelections(nextValue) {
-  if (typeof window === "undefined") return;
-  try {
-    localStorage.setItem(MEAL_SELECTIONS_STORAGE_KEY, JSON.stringify(nextValue));
+  writeMealSelectionsByDateToStorage(nextValue);
+  if (typeof window !== "undefined") {
     window.dispatchEvent(new Event("storage"));
-  } catch {
-    // Ignore storage write issues and keep UX responsive.
   }
 }
 
@@ -276,7 +288,7 @@ function getDietaryFlags(mealType, title) {
   const flags = new Set(["Balanced"]);
 
   if (mealType === "breakfast") flags.add("Breakfast-Friendly");
-  if (mealType === "others") flags.add("Snack Option");
+  if (mealType === "other") flags.add("Snack Option");
   if (includesKeyword(normalized, ["vegetable", "veggie", "lentil", "hummus"])) flags.add("Plant-Focused");
   if (includesKeyword(normalized, ["salmon", "tuna", "egg", "chicken", "steak", "shrimp"])) flags.add("High Protein");
   if (includesKeyword(normalized, ["salad", "bowl"])) flags.add("Fresh Ingredients");
@@ -285,13 +297,13 @@ function getDietaryFlags(mealType, title) {
 }
 
 function formatMealTypeLabel(mealType) {
-  const normalized = String(mealType || "").trim().toLowerCase();
+  const normalized = normalizeMealType(mealType);
   if (!normalized) return "Meal";
   return normalized.charAt(0).toUpperCase() + normalized.slice(1);
 }
 
 function buildDetailFromMeal(meal) {
-  const type = meal?.mealType || "breakfast";
+  const type = normalizeMealType(meal?.mealType || "breakfast");
   const baseNutrition = NUTRITION_PRESETS[type] || NUTRITION_PRESETS.breakfast;
   const title = meal?.title || "Dish Detail";
 
@@ -384,7 +396,7 @@ const MealDetail = () => {
     imageSourceUrl: detailImageSourceUrl,
   };
 
-  const [selectedAddTo, setSelectedAddTo] = useState(detail.mealType || "breakfast");
+  const [selectedAddTo, setSelectedAddTo] = useState(normalizePlanMealType(detail.mealType || "breakfast"));
   const [specificDate, setSpecificDate] = useState(todayIso);
   const [isSpecificDayPickerOpen, setIsSpecificDayPickerOpen] = useState(false);
 
@@ -521,7 +533,7 @@ const MealDetail = () => {
           <section className="meal-detail-left">
             <div className="meal-detail-image-card">
               <img src={detailImage} alt={detail.title} loading="lazy" onError={handleImageError} />
-              <span className={`meal-detail-type-badge type-${String(detail.mealType || "").toLowerCase()}`}>
+              <span className={`meal-detail-type-badge type-${normalizeMealType(detail.mealType)}`}>
                 {formatMealTypeLabel(detail.mealType)}
               </span>
               <button

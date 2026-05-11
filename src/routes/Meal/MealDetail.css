@@ -110,6 +110,7 @@
   background: linear-gradient(135deg, #a855f7 0%, #7e22ce 100%);
 }
 
+.meal-detail-type-badge.type-other,
 .meal-detail-type-badge.type-others {
   background: linear-gradient(135deg, #64748b 0%, #475569 100%);
 }

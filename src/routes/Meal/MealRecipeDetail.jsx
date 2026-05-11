@@ -10,9 +10,11 @@ import {
   Clock3,
   Cloud,
   Heart,
+  MessageSquare,
   Moon,
   Pencil,
   Printer,
+  Send,
   Share2,
   ShoppingCart,
   Star,
@@ -25,8 +27,12 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import recipeApi from "../../services/recepieApi";
 import { generateDetailedRecipe } from "../../services/aiRecipeDetailApi";
 import { getRecipes } from "../CreateRecipe/data/db/db";
+import { fetchRecipeReviews, submitRecipeReview } from "../../services/recipeReviewApi";
+import {
+  readMealSelectionsByDateFromStorage,
+  writeMealSelectionsByDateToStorage,
+} from "../../utils/mealSelectionStorage";
 
-const MEAL_SELECTIONS_STORAGE_KEY = "nutrihelp_add_meal_selections_by_date_v1";
 const AI_RECIPE_CACHE_STORAGE_KEY = "nutrihelp_ai_recipe_detail_cache_v1";
 const DEFAULT_IMAGE = "/images/meal-mock/placeholder.svg";
 
@@ -40,14 +46,14 @@ const NUTRITION_PRESETS = {
   breakfast: { calories: 285, carbs: 42, protein: 14, fat: 10, fiber: 8, sodium: 180 },
   lunch: { calories: 465, carbs: 53, protein: 29, fat: 14, fiber: 10, sodium: 430 },
   dinner: { calories: 535, carbs: 46, protein: 34, fat: 18, fiber: 9, sodium: 500 },
-  others: { calories: 225, carbs: 25, protein: 10, fat: 8, fiber: 6, sodium: 165 },
+  other: { calories: 225, carbs: 25, protein: 10, fat: 8, fiber: 6, sodium: 165 },
 };
 
 const TAGS_BY_TYPE = {
   breakfast: ["Light", "Morning Energy", "Balanced"],
   lunch: ["Balanced", "High Protein", "Satisfying"],
   dinner: ["Rich Flavor", "Recovery", "Nutrient Dense"],
-  others: ["Quick", "Snack", "Easy Prep"],
+  other: ["Quick", "Snack", "Easy Prep"],
 };
 
 const IMAGE_RULES = [
@@ -435,14 +441,21 @@ function normalize(value) {
 }
 
 function formatMealTypeLabel(mealType) {
-  const normalized = normalize(mealType);
+  const normalized = normalizeMealType(mealType);
   if (!normalized) return "Meal";
   return normalized.charAt(0).toUpperCase() + normalized.slice(1);
 }
 
 function normalizeMealType(value) {
   const normalized = normalize(value);
-  if (["breakfast", "lunch", "dinner", "others"].includes(normalized)) return normalized;
+  if (["breakfast", "lunch", "dinner", "other"].includes(normalized)) return normalized;
+  if (
+    ["others", "snack", "snacks", "dessert", "desserts", "drink", "drinks", "beverage", "beverages"].includes(
+      normalized
+    )
+  ) {
+    return "other";
+  }
   if (["morning"].some((keyword) => normalized.includes(keyword))) return "breakfast";
   if (["noon"].some((keyword) => normalized.includes(keyword))) return "lunch";
   if (["night", "supper"].some((keyword) => normalized.includes(keyword))) return "dinner";
@@ -857,7 +870,8 @@ function parsePortioning(rawPortioning, servingsText, title = "", mealType = "lu
   };
 }
 
-function parseIngredientItems(rawIngredients, title, mealType = "lunch") {
+function parseIngredientItems(rawIngredients, title, mealType = "lunch", options = {}) {
+  const allowFallback = options.allowFallback !== false;
   const isGenericIngredientLabel = (value) => {
     const normalized = normalize(value);
     return [
@@ -870,6 +884,43 @@ function parseIngredientItems(rawIngredients, title, mealType = "lunch") {
       "protein",
     ].includes(normalized);
   };
+
+  if (rawIngredients && typeof rawIngredients === "object" && !Array.isArray(rawIngredients)) {
+    const names = Array.isArray(rawIngredients.name) ? rawIngredients.name : [];
+    const quantities = Array.isArray(rawIngredients.quantity) ? rawIngredients.quantity : [];
+    const costs = Array.isArray(rawIngredients.cost)
+      ? rawIngredients.cost
+      : Array.isArray(rawIngredients.costs)
+        ? rawIngredients.costs
+        : Array.isArray(rawIngredients.estimated_cost_aud)
+          ? rawIngredients.estimated_cost_aud
+          : [];
+    const categories = Array.isArray(rawIngredients.category) ? rawIngredients.category : [];
+
+    const structuredItems = names
+      .map((name, index) => {
+        const normalizedName = String(name || "").trim();
+        if (!normalizedName) return null;
+
+        const rawQuantity = quantities[index];
+        const quantityText = rawQuantity === undefined || rawQuantity === null || rawQuantity === ""
+          ? "NA"
+          : String(rawQuantity).trim();
+        const numericCost = toFiniteNumber(costs[index]);
+
+        return {
+          name: normalizedName,
+          quantity: /^\d+(\.\d+)?$/.test(quantityText) ? `${quantityText} g` : quantityText,
+          cost: numericCost === null ? null : Number(Math.max(0, numericCost).toFixed(2)),
+          note: String(categories[index] || "").trim() || null,
+        };
+      })
+      .filter(Boolean);
+
+    if (structuredItems.length > 0) {
+      return structuredItems.slice(0, 16);
+    }
+  }
 
   const fromObjects = Array.isArray(rawIngredients)
     ? rawIngredients
@@ -918,6 +969,8 @@ function parseIngredientItems(rawIngredients, title, mealType = "lunch") {
       return fromObjects.slice(0, 16);
     }
   }
+
+  if (!allowFallback) return [];
 
   const profile = getRecipeProfile(title, mealType);
   if (Array.isArray(profile?.ingredientItems) && profile.ingredientItems.length > 0) {
@@ -990,6 +1043,8 @@ function parseAllergens(rawAllergens, title = "", mealType = "lunch") {
 }
 
 function shouldEnhanceWithAI(recipe) {
+  if (["user_recipe", "community"].includes(recipe?.sourceType)) return false;
+
   const instructionCount = Array.isArray(recipe.instructions) ? recipe.instructions.length : 0;
   const ingredientCount = Array.isArray(recipe.ingredientItems) ? recipe.ingredientItems.length : 0;
   const hasTemplateInstructions =
@@ -1130,24 +1185,13 @@ function mergeRecipeWithAI(baseRecipe, aiData) {
 }
 
 function readStoredSelections() {
-  if (typeof window === "undefined") return {};
-  try {
-    const raw = localStorage.getItem(MEAL_SELECTIONS_STORAGE_KEY);
-    if (!raw) return {};
-    const parsed = JSON.parse(raw);
-    return parsed && typeof parsed === "object" ? parsed : {};
-  } catch {
-    return {};
-  }
+  return readMealSelectionsByDateFromStorage();
 }
 
 function writeStoredSelections(nextValue) {
-  if (typeof window === "undefined") return;
-  try {
-    localStorage.setItem(MEAL_SELECTIONS_STORAGE_KEY, JSON.stringify(nextValue));
+  writeMealSelectionsByDateToStorage(nextValue);
+  if (typeof window !== "undefined") {
     window.dispatchEvent(new Event("storage"));
-  } catch {
-    // Ignore storage write issues for this optional UX feature.
   }
 }
 
@@ -1184,6 +1228,46 @@ function doesIdMatch(item, routeId) {
   return candidateIds.includes(String(routeId));
 }
 
+function getRecipeSourceType(source) {
+  const explicit = normalize(source?.source || source?.rawRecipe?.source);
+  if (explicit === "community") return "community";
+  if (explicit === "user_recipe" || explicit === "user_created") return "user_recipe";
+  if (explicit === "recipe_library") return "recipe_library";
+
+  if (
+    source?.recipe_visibility ||
+    source?.author_user_id ||
+    source?.author_id ||
+    source?.user_id ||
+    source?.cuisine_id ||
+    source?.preparation_time ||
+    source?.total_servings
+  ) {
+    return "user_recipe";
+  }
+
+  return explicit || "";
+}
+
+function getNutritionSource(source) {
+  const nested = source?.nutrition && typeof source.nutrition === "object" ? source.nutrition : {};
+
+  return {
+    ...nested,
+    calories: nested.calories ?? source?.calories,
+    carbs: nested.carbs ?? nested.carbohydrates ?? source?.carbohydrates,
+    carbohydrates: nested.carbohydrates ?? nested.carbs ?? source?.carbohydrates,
+    protein: nested.protein ?? source?.protein,
+    fat: nested.fat ?? source?.fat,
+    fiber: nested.fiber ?? source?.fiber,
+    sodium: nested.sodium ?? source?.sodium,
+    sugar: nested.sugar ?? source?.sugar,
+    potassium: nested.potassium ?? source?.potassium,
+    calcium: nested.calcium ?? source?.calcium,
+    iron: nested.iron ?? source?.iron,
+  };
+}
+
 function buildRecipeData(source, routeId) {
   const title =
     source?.title ||
@@ -1193,15 +1277,33 @@ function buildRecipeData(source, routeId) {
   const mealType = normalizeMealType(source?.mealType || source?.meal_type || "breakfast");
   const time = formatTime(source?.time || source?.preparation_time);
   const servings = formatServings(source?.servings || source?.total_servings);
+  const sourceType = getRecipeSourceType(source);
+  const explicitServingCount = positiveInt(source?.total_servings ?? source?.servings);
+  const userPortioningSource = ["user_recipe", "community"].includes(sourceType) && explicitServingCount
+    ? {
+        people: explicitServingCount,
+        mealPortions: explicitServingCount,
+        servingSize: servings,
+      }
+    : null;
   const portioning = parsePortioning(
-    source?.portioning || source?.portioning_info || null,
+    userPortioningSource || source?.portioning || source?.portioning_info || null,
     servings,
     title,
     mealType,
   );
   const level = formatLevel(source?.level || source?.difficulty || "Easy");
-  const nutrition = parseNutrition(source?.nutrition, mealType, title);
-  const ingredientItems = parseIngredientItems(source?.ingredients, title, mealType);
+  const nutrition = parseNutrition(getNutritionSource(source), mealType, title);
+  const rawIngredientSource =
+    Array.isArray(source?.ingredientItems) && source.ingredientItems.length > 0
+      ? source.ingredientItems
+      : Array.isArray(source?.ingredient_details) && source.ingredient_details.length > 0
+        ? source.ingredient_details
+        : source?.ingredients;
+  const isUserCreatedRecipe = ["user_recipe", "community"].includes(sourceType);
+  const ingredientItems = parseIngredientItems(rawIngredientSource, title, mealType, {
+    allowFallback: !isUserCreatedRecipe,
+  });
   const ingredients = ingredientItems.map((item) => item.name).filter(Boolean);
   const allergens = parseAllergens(source?.allergens, title, mealType);
   const nutritionDetails = parseNutritionDetails(source?.nutrition_details, nutrition);
@@ -1211,13 +1313,20 @@ function buildRecipeData(source, routeId) {
     : TAGS_BY_TYPE[mealType];
 
   const numericSeed = Number.parseInt(String(routeId).replace(/\D/g, ""), 10);
-  const image = source?.image || resolveImage(title, Number.isNaN(numericSeed) ? 1 : numericSeed);
+  const image =
+    source?.image ||
+    source?.image_url ||
+    source?.uploaded_image_url ||
+    source?.recipe_image_url ||
+    source?.imageUrl ||
+    resolveImage(title, Number.isNaN(numericSeed) ? 1 : numericSeed);
 
   return {
     id: source?.id || routeId || `recipe-${Date.now()}`,
     recipeId: source?.recipeId || source?.recipe_id || source?.id || routeId || null,
     title,
     image,
+    sourceType,
     mealType,
     time,
     servings,
@@ -1268,10 +1377,12 @@ function toSelectedMealPayload(recipe, selectedMealType) {
     ingredientItems: recipe.ingredientItems,
     instructions: recipe.instructions,
     allergens: recipe.allergens,
+    sourceType: recipe.sourceType,
   };
 }
 
 function buildIngredientCostItems(recipe) {
+  const isUserCreatedRecipe = ["user_recipe", "community"].includes(recipe?.sourceType);
   const fallbackCost = (name) => {
     const hash = Array.from(String(name || ""))
       .reduce((total, char) => total + char.charCodeAt(0), 0);
@@ -1295,14 +1406,18 @@ function buildIngredientCostItems(recipe) {
       rule.keywords.some((keyword) => normalizedName.includes(keyword)),
     );
 
-    const quantity = String(item?.quantity || matchedRule?.quantity || "1 portion").trim();
+    const quantity = isUserCreatedRecipe
+      ? String(item?.quantity || "NA").trim()
+      : String(item?.quantity || matchedRule?.quantity || "1 portion").trim();
     const itemCost = toFiniteNumber(item?.cost);
-    const cost = itemCost === null ? matchedRule?.cost || fallbackCost(`${name}-${index}`) : itemCost;
+    const cost = itemCost === null
+      ? (isUserCreatedRecipe ? null : matchedRule?.cost || fallbackCost(`${name}-${index}`))
+      : itemCost;
 
     return {
       name,
-      quantity: quantity || "1 portion",
-      cost: Number(cost.toFixed(2)),
+      quantity: quantity || (isUserCreatedRecipe ? "NA" : "1 portion"),
+      cost: cost === null ? null : Number(cost.toFixed(2)),
       note: item?.note || null,
     };
   }).filter(Boolean);
@@ -1347,7 +1462,65 @@ function buildAllergenWarnings(recipe) {
 }
 
 function formatCost(value) {
-  return `$${Number(value || 0).toFixed(2)}`;
+  const numericValue = toFiniteNumber(value);
+  return numericValue === null ? "NA" : `$${numericValue.toFixed(2)}`;
+}
+
+function getReviewSourceType(recipe) {
+  if (recipe?.sourceType === "community") return "community";
+  if (recipe?.sourceType === "recipe_library") return "recipe_library";
+  return "";
+}
+
+function getReviewRecipeId(recipe) {
+  const parsed = Number(recipe?.recipeId || recipe?.recipe_id);
+  return Number.isInteger(parsed) && parsed > 0 ? parsed : null;
+}
+
+function formatReviewDate(value) {
+  if (!value) return "";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+  return date.toLocaleDateString([], {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+}
+
+function getReviewInitials(name, id) {
+  const words = String(name || "")
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean);
+  if (words.length >= 2) return `${words[0][0]}${words[1][0]}`.toUpperCase();
+  if (words.length === 1) return words[0].slice(0, 2).toUpperCase();
+  return String(id || "U").slice(0, 2).toUpperCase();
+}
+
+function ReviewStars({ value = 0, interactive = false, onChange }) {
+  const rating = Number(value) || 0;
+  return (
+    <div className={`meal-review-stars ${interactive ? "interactive" : ""}`} aria-label={`${rating} out of 5 stars`}>
+      {[1, 2, 3, 4, 5].map((star) => {
+        const active = star <= rating;
+        if (interactive) {
+          return (
+            <button
+              key={star}
+              type="button"
+              className={active ? "active" : ""}
+              onClick={() => onChange?.(star)}
+              aria-label={`Rate ${star} star${star > 1 ? "s" : ""}`}
+            >
+              <Star size={20} fill="currentColor" />
+            </button>
+          );
+        }
+        return <Star key={star} size={16} fill={active ? "currentColor" : "none"} className={active ? "active" : ""} />;
+      })}
+    </div>
+  );
 }
 
 const MealRecipeDetail = () => {
@@ -1365,6 +1538,13 @@ const MealRecipeDetail = () => {
   const [isPlannerOpen, setIsPlannerOpen] = useState(false);
   const [isFavourite, setIsFavourite] = useState(false);
   const [selectedDate, setSelectedDate] = useState(todayIso);
+  const [reviews, setReviews] = useState([]);
+  const [reviewSummary, setReviewSummary] = useState({ averageRating: null, reviewCount: 0 });
+  const [reviewsLoading, setReviewsLoading] = useState(false);
+  const [reviewsError, setReviewsError] = useState("");
+  const [reviewRating, setReviewRating] = useState(0);
+  const [reviewComment, setReviewComment] = useState("");
+  const [reviewSubmitting, setReviewSubmitting] = useState(false);
   const [selectedMealType, setSelectedMealType] = useState(() =>
     normalizePlanMealType(stateMeal?.mealType || stateMeal?.meal_type || "breakfast"),
   );
@@ -1469,7 +1649,10 @@ const MealRecipeDetail = () => {
         }
       }
 
-      if (!resolved) {
+      const shouldRefreshFromRecipeApi =
+        !resolved || ["user_recipe", "community"].includes(resolved.sourceType);
+
+      if (shouldRefreshFromRecipeApi) {
         try {
           const apiRecipes = await recipeApi.getRecepie();
           const matched = Array.isArray(apiRecipes)
@@ -1502,21 +1685,76 @@ const MealRecipeDetail = () => {
     };
   }, [routeId, stateMeal]);
 
+  const reviewContext = useMemo(() => {
+    const sourceType = getReviewSourceType(recipe);
+    const recipeId = getReviewRecipeId(recipe);
+    return sourceType && recipeId ? { sourceType, recipeId } : null;
+  }, [recipe]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadReviews() {
+      if (!reviewContext) {
+        setReviews([]);
+        setReviewSummary({ averageRating: null, reviewCount: 0 });
+        setReviewsError("");
+        return;
+      }
+
+      setReviewsLoading(true);
+      setReviewsError("");
+      try {
+        const result = await fetchRecipeReviews(reviewContext.sourceType, reviewContext.recipeId);
+        if (!isMounted) return;
+        setReviews(result.items || []);
+        setReviewSummary(result.summary || { averageRating: null, reviewCount: 0 });
+      } catch (error) {
+        if (!isMounted) return;
+        setReviews([]);
+        setReviewSummary({ averageRating: null, reviewCount: 0 });
+        setReviewsError(error.message || "Unable to load reviews.");
+      } finally {
+        if (isMounted) setReviewsLoading(false);
+      }
+    }
+
+    loadReviews();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [reviewContext]);
+
   const ingredientCostItems = useMemo(
     () => buildIngredientCostItems(recipe),
     [recipe],
   );
 
   const estimatedTotalCost = useMemo(
-    () => ingredientCostItems.reduce((total, item) => total + item.cost, 0),
+    () => {
+      const pricedItems = ingredientCostItems
+        .map((item) => toFiniteNumber(item.cost))
+        .filter((value) => value !== null);
+      if (pricedItems.length === 0) return null;
+      return pricedItems.reduce((total, value) => total + value, 0);
+    },
     [ingredientCostItems],
   );
+
+  const ingredientCostSourceLabel = ["user_recipe", "community"].includes(recipe.sourceType)
+    ? "(User-provided)"
+    : recipe.aiEnhanced
+      ? "(AI-Generated • Detailed)"
+      : "(Estimated)";
 
   const allergenWarnings = useMemo(() => buildAllergenWarnings(recipe), [recipe]);
   const nutritionDetails = useMemo(
     () => parseNutritionDetails(recipe.nutritionDetails, recipe.nutrition),
     [recipe.nutritionDetails, recipe.nutrition],
   );
+  const hasReviews = Number(reviewSummary.reviewCount || 0) > 0 && Number(reviewSummary.averageRating || 0) > 0;
+  const displayedAverageRating = hasReviews ? Number(reviewSummary.averageRating).toFixed(1) : "";
 
   const handleImageError = (event) => {
     event.currentTarget.onerror = null;
@@ -1613,6 +1851,46 @@ const MealRecipeDetail = () => {
     });
   };
 
+  const handleSubmitReview = async (event) => {
+    event.preventDefault();
+    if (!reviewContext) {
+      toast.info("Reviews are available for public Recipe Library and Community recipes.");
+      return;
+    }
+    if (!reviewRating) {
+      toast.error("Please choose a star rating.");
+      return;
+    }
+    const cleanComment = reviewComment.trim();
+    if (cleanComment.length < 2) {
+      toast.error("Please write a short comment.");
+      return;
+    }
+
+    setReviewSubmitting(true);
+    setReviewsError("");
+    try {
+      await submitRecipeReview({
+        sourceType: reviewContext.sourceType,
+        recipeId: reviewContext.recipeId,
+        rating: reviewRating,
+        comment: cleanComment,
+      });
+      const refreshed = await fetchRecipeReviews(reviewContext.sourceType, reviewContext.recipeId);
+      setReviews(refreshed.items || []);
+      setReviewSummary(refreshed.summary || { averageRating: null, reviewCount: 0 });
+      setReviewRating(0);
+      setReviewComment("");
+      toast.success("Review saved.");
+    } catch (error) {
+      const message = error.message || "Unable to save review.";
+      setReviewsError(message);
+      toast.error(message);
+    } finally {
+      setReviewSubmitting(false);
+    }
+  };
+
   return (
     <div className="meal-recipe-page">
       <div className="meal-recipe-shell">
@@ -1633,10 +1911,13 @@ const MealRecipeDetail = () => {
           <div className="meal-recipe-hero-panel">
             <h1>{recipe.title}</h1>
             <div className="meal-recipe-meta-row">
-              <span className="recipe-rating">
-                <Star size={16} fill="currentColor" />
-                {recipe.rating.toFixed(1)}
-              </span>
+              {hasReviews ? (
+                <span className="recipe-rating">
+                  <Star size={16} fill="currentColor" />
+                  {displayedAverageRating}/5
+                  <small>{reviewSummary.reviewCount} review{reviewSummary.reviewCount > 1 ? "s" : ""}</small>
+                </span>
+              ) : null}
               <span>
                 <Clock3 size={16} />
                 {recipe.time}
@@ -1747,7 +2028,7 @@ const MealRecipeDetail = () => {
           <article className="meal-recipe-card meal-recipe-cost-card">
             <h2>Ingredients & Estimated Cost</h2>
             <p className="meal-recipe-ai-note">
-              {recipe.aiEnhanced ? "(AI-Generated • Detailed)" : "(AI-Generated)"}
+              {ingredientCostSourceLabel}
             </p>
 
             <ul className="meal-recipe-cost-list">
@@ -1765,7 +2046,7 @@ const MealRecipeDetail = () => {
 
             <div className="meal-recipe-total-row">
               <span>Estimated Total Cost</span>
-              <strong>{formatCost(estimatedTotalCost)} AUD</strong>
+              <strong>{estimatedTotalCost === null ? "NA" : `${formatCost(estimatedTotalCost)} AUD`}</strong>
             </div>
 
             <button type="button" className="meal-recipe-shop-btn" onClick={handleShopIngredients}>
@@ -1843,6 +2124,87 @@ const MealRecipeDetail = () => {
             ))}
           </ul>
         </section>
+
+        {reviewContext ? (
+          <section className="meal-recipe-card meal-recipe-reviews-card">
+            <div className="meal-reviews-header">
+              <div>
+                <span className="meal-reviews-kicker">
+                  <MessageSquare size={15} />
+                  Community feedback
+                </span>
+                <h2>Reviews</h2>
+                <p>
+                  {hasReviews
+                    ? `${displayedAverageRating}/5 from ${reviewSummary.reviewCount} review${reviewSummary.reviewCount > 1 ? "s" : ""}`
+                    : "Be the first to review this recipe."}
+                </p>
+              </div>
+              {hasReviews ? (
+                <div className="meal-reviews-score">
+                  <strong>{displayedAverageRating}</strong>
+                  <ReviewStars value={Math.round(Number(reviewSummary.averageRating))} />
+                  <span>{reviewSummary.reviewCount} review{reviewSummary.reviewCount > 1 ? "s" : ""}</span>
+                </div>
+              ) : null}
+            </div>
+
+            <form className="meal-review-form" onSubmit={handleSubmitReview}>
+              <div>
+                <label>Your rating</label>
+                <ReviewStars value={reviewRating} interactive onChange={setReviewRating} />
+              </div>
+              <label className="meal-review-comment-field">
+                Your review
+                <textarea
+                  value={reviewComment}
+                  onChange={(event) => setReviewComment(event.target.value)}
+                  placeholder="Share what worked, taste, texture, portion size, or any tips for others..."
+                  maxLength={1200}
+                />
+              </label>
+              <div className="meal-review-form-footer">
+                <span>{reviewComment.trim().length}/1200 characters</span>
+                <button type="submit" disabled={reviewSubmitting}>
+                  <Send size={16} />
+                  {reviewSubmitting ? "Saving..." : "Post review"}
+                </button>
+              </div>
+            </form>
+
+            {reviewsError ? <p className="meal-reviews-error">{reviewsError}</p> : null}
+
+            <div className="meal-reviews-list">
+              {reviewsLoading ? (
+                <p className="meal-reviews-empty">Loading reviews...</p>
+              ) : reviews.length === 0 ? (
+                <p className="meal-reviews-empty">No reviews yet. Your review can help other users decide.</p>
+              ) : (
+                reviews.map((review) => (
+                  <article key={review.id} className="meal-review-item">
+                    <div className="meal-review-avatar">
+                      {review.userAvatar ? (
+                        <img src={review.userAvatar} alt={review.userName} loading="lazy" />
+                      ) : (
+                        <span>{getReviewInitials(review.userName, review.userId)}</span>
+                      )}
+                    </div>
+                    <div className="meal-review-body">
+                      <div className="meal-review-topline">
+                        <div>
+                          <strong>{review.userName}</strong>
+                          <span>{formatReviewDate(review.createdAt)}</span>
+                        </div>
+                        <ReviewStars value={review.rating} />
+                      </div>
+                      <p>{review.comment}</p>
+                    </div>
+                  </article>
+                ))
+              )}
+            </div>
+          </section>
+        ) : null}
 
         {isLoading ? <p className="meal-recipe-loading">Loading recipe details...</p> : null}
         {isEnhancing ? <p className="meal-recipe-loading">Enhancing with AI for a more realistic recipe...</p> : null}

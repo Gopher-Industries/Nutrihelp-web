@@ -14,7 +14,7 @@ const BOOKMARK_TAG_OPTIONS = [
   { value: 'breakfast', label: 'Breakfast' },
   { value: 'lunch', label: 'Lunch' },
   { value: 'dinner', label: 'Dinner' },
-  { value: 'others', label: 'Other' },
+  { value: 'other', label: 'Other' },
 ];
 
 function normalize(value) {
@@ -42,7 +42,7 @@ function formatDateLabel(isoDate) {
 
 function formatScanLogMealType(value) {
   const normalized = normalize(value);
-  if (normalized === 'others') return 'Other';
+  if (normalized === 'other' || normalized === 'others') return 'Other';
   return normalized ? `${normalized.charAt(0).toUpperCase()}${normalized.slice(1)}` : 'Any meal';
 }
 
@@ -53,7 +53,7 @@ function getScanLogEntryKey(entryOrKey) {
 
 function mapScanLogEntryToMealPayload(entry, index = 0) {
   const title = entry?.title || entry?.name || entry?.label || `Scan dish ${index + 1}`;
-  const mealType = normalize(entry?.mealType) || 'others';
+  const mealType = normalize(entry?.mealType) || 'other';
   return {
     id: entry?.id || `scanlog-${normalize(title) || index}`,
     scanKey: normalize(entry?.scanKey || title),

@@ -28,6 +28,7 @@
     "jspdf": "^3.0.1",
     "jspdf-autotable": "^5.0.2",
     "lucide-react": "^0.483.0",
+    "pg": "^8.20.0",
     "react": "^18.2.0",
     "react-circular-progressbar": "^2.2.0",
     "react-dom": "^18.2.0",
@@ -43,7 +44,8 @@
     "semantic-ui-react": "^2.1.4",
     "supports-color": "^9.4.0",
     "swiper": "^11.2.6",
-    "to-regex-range": "^5.0.1"
+    "to-regex-range": "^5.0.1",
+    "xlsx": "^0.18.5"
   },
   "browserslist": {
     "production": [
