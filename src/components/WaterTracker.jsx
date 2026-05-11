@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext, useRef, useCallback } from "react";
 import { UserContext } from "../context/user.context";
+import BaseApi from "../services/baseApi";
 import "./WaterTracker.css";
 
 const DAILY_GOAL_CUPS = 8;
@@ -151,6 +152,13 @@ const CONFETTI_COLORS = [
   "#eab308",
 ];
 
+const api = new BaseApi();
+
+const getWaterStorageKey = (userId) => {
+  const scope = userId || "guest";
+  return `water_tracker_data.${scope}`;
+};
+
 const CONFETTI_PIECES = Array.from({ length: 28 }, (_, index) => {
   const angle = (index / 28) * Math.PI * 2;
   const radius = 74 + (index % 5) * 10;
@@ -179,15 +187,16 @@ const WaterTracker = () => {
   // Initialize from LocalStorage
   useEffect(() => {
     const today = getLocalDateString();
-    const storedDataStr = localStorage.getItem("water_tracker_data");
+    const userId = currentUser ? String(currentUser.id || currentUser.user_id || "guest") : "guest";
+    const storageKey = getWaterStorageKey(userId);
+    const storedDataStr = localStorage.getItem(storageKey);
     if (storedDataStr) {
       try {
         const storedData = JSON.parse(storedDataStr);
-        const userId = currentUser ? currentUser.id : "guest";
         if (storedData.date === today && storedData.userId === userId) {
           setGlasses(storedData.glasses || 0);
         } else {
-          localStorage.setItem("water_tracker_data", JSON.stringify({
+          localStorage.setItem(storageKey, JSON.stringify({
             date: today,
             userId,
             glasses: 0
@@ -198,13 +207,60 @@ const WaterTracker = () => {
         console.error("Failed to parse water tracker data", e);
       }
     } else {
-      const userId = currentUser ? currentUser.id : "guest";
-      localStorage.setItem("water_tracker_data", JSON.stringify({
+      localStorage.setItem(storageKey, JSON.stringify({
         date: today,
         userId,
         glasses: 0
       }));
     }
+  }, [currentUser]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadRemoteWater = async () => {
+      const currentUserId = currentUser?.id || currentUser?.user_id;
+      if (!currentUserId) return;
+
+      try {
+        const response = await fetch(
+          `${process.env.REACT_APP_API_BASE_URL || 'https://localhost:8443'}/api/water-intake?date=${encodeURIComponent(new Date().toISOString().split('T')[0])}`,
+          {
+            method: "GET",
+            headers: api.getHeaders(),
+          }
+        );
+
+        const payload = await response.json().catch(() => []);
+        if (!response.ok || cancelled) return;
+
+        const rows = Array.isArray(payload) ? payload : [];
+        const amountMl = rows.reduce((maxValue, row) => {
+          const currentValue = Number(row?.amount_ml || 0);
+          return currentValue > maxValue ? currentValue : maxValue;
+        }, 0);
+
+        const remoteGlasses = Math.round(amountMl / 250);
+        setGlasses(remoteGlasses);
+
+        localStorage.setItem(
+          getWaterStorageKey(String(currentUserId)),
+          JSON.stringify({
+            date: getLocalDateString(),
+            userId: String(currentUserId),
+            glasses: remoteGlasses,
+          })
+        );
+      } catch (error) {
+        console.error("Failed to load remote water intake", error);
+      }
+    };
+
+    loadRemoteWater();
+
+    return () => {
+      cancelled = true;
+    };
   }, [currentUser]);
 
   // Sync reminder flag from Settings storage
@@ -236,24 +292,23 @@ const WaterTracker = () => {
     setGlasses(newGlasses);
     
     const today = getLocalDateString();
-    const userId = currentUser ? currentUser.id : "guest";
-    localStorage.setItem("water_tracker_data", JSON.stringify({
+    const userId = currentUser ? String(currentUser.id || currentUser.user_id || "guest") : "guest";
+    localStorage.setItem(getWaterStorageKey(userId), JSON.stringify({
       date: today,
       userId,
       glasses: newGlasses
     }));
 
-    if (currentUser && currentUser.id) {
+    if (currentUser && (currentUser.id || currentUser.user_id)) {
        try {
          const response = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'https://localhost:8443'}/api/water-intake`, {
            method: 'POST',
-           headers: { 'Content-Type': 'application/json' },
-           body: JSON.stringify({
-             user_id: currentUser.id,
-             amount_ml: newGlasses * 250,
-             date: new Date().toISOString().split('T')[0]
-           })
-         });
+            headers: api.getHeaders(),
+            body: JSON.stringify({
+              amount_ml: newGlasses * 250,
+              date: new Date().toISOString().split('T')[0]
+            })
+          });
          const data = await response.json();
          if (!response.ok) {
            throw new Error(data.error || 'Failed to sync water intake');
