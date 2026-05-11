@@ -1,6 +1,36 @@
 const SCAN_LOG_STORAGE_KEY = "nutrihelp_scan_log_v1";
 const SCAN_LOG_UPDATED_EVENT = "nutrihelp:scan-log-updated";
 
+function getCurrentUserScope() {
+  if (typeof window === "undefined") return "guest";
+
+  const candidates = [
+    window.localStorage.getItem("user"),
+    window.localStorage.getItem("user_session"),
+    window.sessionStorage.getItem("user"),
+    window.sessionStorage.getItem("user_session"),
+  ];
+
+  for (const candidate of candidates) {
+    if (!candidate) continue;
+    try {
+      const parsed = JSON.parse(candidate);
+      const userId = parsed?.user_id || parsed?.id || parsed?.uid || parsed?.sub;
+      if (userId) {
+        return `user_${userId}`;
+      }
+    } catch {
+      // Ignore malformed storage entries and continue scanning.
+    }
+  }
+
+  return "guest";
+}
+
+function getScanLogStorageKey() {
+  return `${SCAN_LOG_STORAGE_KEY}.${getCurrentUserScope()}`;
+}
+
 function normalize(value) {
   return String(value || "").trim().toLowerCase();
 }
@@ -30,7 +60,7 @@ function toArray(rawValue) {
 function readRawScanLogEntries() {
   if (typeof window === "undefined") return [];
   try {
-    const raw = localStorage.getItem(SCAN_LOG_STORAGE_KEY);
+    const raw = localStorage.getItem(getScanLogStorageKey());
     const parsed = raw ? JSON.parse(raw) : [];
     return toArray(parsed);
   } catch {
@@ -41,7 +71,7 @@ function readRawScanLogEntries() {
 function writeRawScanLogEntries(entries) {
   if (typeof window === "undefined") return;
   try {
-    localStorage.setItem(SCAN_LOG_STORAGE_KEY, JSON.stringify(entries));
+    localStorage.setItem(getScanLogStorageKey(), JSON.stringify(entries));
     window.dispatchEvent(new Event(SCAN_LOG_UPDATED_EVENT));
   } catch {
     // Ignore storage write errors to keep UI responsive.
