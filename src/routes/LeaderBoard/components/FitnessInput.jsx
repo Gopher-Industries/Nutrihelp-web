@@ -145,6 +145,8 @@ import {
 import FieldError from "../../../components/FieldError";
 import { toast } from "react-toastify";
 
+const FITNESS_JOURNEY_STORAGE_KEY = "fitnessJourneyProfile";
+
 const FitnessInput = ({ onProfileSaved }) => {
   const [currentFitness, setCurrentFitness] = useState({
     weight: "",
@@ -221,29 +223,15 @@ const FitnessInput = ({ onProfileSaved }) => {
         endGoal: targetFitness.endGoal,
       };
 
-      // Sends the data to the backend API using fetch
       try {
-        const response = await fetch(
-          `${process.env.REACT_APP_API_BASE_URL || 'http://localhost:8081'}/api/fitness-journey`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(data),
-          },
-        );
-
-        const result = await response.json();
-
-        if (response.ok) {
-          toast.success("Fitness journey saved successfully!");
-          onProfileSaved(); // If you want to redirect or show something do it here after saving the data successfully...
-        } else {
-          toast.error(`Error: ${result?.error || "Something went wrong"}`);
-        }
+        localStorage.setItem(FITNESS_JOURNEY_STORAGE_KEY, JSON.stringify({
+          ...data,
+          updatedAt: new Date().toISOString(),
+        }));
+        toast.success("Fitness journey saved locally.");
+        onProfileSaved();
       } catch (error) {
-        toast.error(`Network error: ${error.message}`);
+        toast.error(`Unable to save fitness journey: ${error.message}`);
       }
     }
   };

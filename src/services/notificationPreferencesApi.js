@@ -2,7 +2,7 @@
  * API Service for managing user notification preferences
  * Integrates with the extended user preferences API
  */
-const API_BASE_URL = `${process.env.REACT_APP_API_BASE_URL || 'http://localhost:8081'}/api`;
+const API_BASE_URL = `${process.env.REACT_APP_API_BASE_URL || 'https://localhost:8443'}/api`;
 
 class NotificationPreferencesApi {
     constructor() {
@@ -192,12 +192,26 @@ class NotificationPreferencesApi {
                 throw new Error('User ID not found');
             }
 
+            const responsePayload = {
+                user: { userId },
+                ...preferences,
+            };
+
+            const hasUiSettings =
+                preferences?.ui_settings &&
+                typeof preferences.ui_settings === 'object';
+
+            if (!hasUiSettings) {
+                responsePayload.ui_settings = {
+                    language: preferences?.language || 'en',
+                    theme: preferences?.theme || 'light',
+                    font_size: preferences?.font_size || '16px',
+                };
+            }
+
             const response = await this.request('/user/preferences/extended', {
-                method: 'POST',
-                body: JSON.stringify({
-                    user: { userId },
-                    ...preferences
-                })
+                method: 'PUT',
+                body: JSON.stringify(responsePayload)
             });
             
             if (response.success) {
