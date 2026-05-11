@@ -17,7 +17,12 @@ import {
   Users,
 } from "lucide-react";
 import { fetchDishImage } from "../../services/dishImageApi";
+import { fetchRecipeLibraryForAddMeal } from "../../services/recipeLibraryApi";
 import { readScanLogEntries, SCAN_LOG_UPDATED_EVENT } from "../../utils/scanLogStorage";
+import {
+  readMealSelectionsByDateFromStorage,
+  writeMealSelectionsByDateToStorage,
+} from "../../utils/mealSelectionStorage";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import PersonalizedPlanForm from "./PersonalizedPlanForm";
@@ -27,7 +32,7 @@ const FILTERS = [
   { key: "breakfast", label: "Breakfast" },
   { key: "lunch", label: "Lunch" },
   { key: "dinner", label: "Dinner" },
-  { key: "others", label: "Others" },
+  { key: "other", label: "Other" },
   { key: "scan", label: "Scan" },
   { key: "all", label: "All" },
   { key: "selected", label: "Selected" },
@@ -37,10 +42,9 @@ const SELECTED_VIEW_SECTIONS = [
   { key: "breakfast", label: "Breakfast" },
   { key: "lunch", label: "Lunch" },
   { key: "dinner", label: "Dinner" },
-  { key: "others", label: "Snack" },
+  { key: "other", label: "Other" },
 ];
 
-const MEAL_SELECTIONS_STORAGE_KEY = "nutrihelp_add_meal_selections_by_date_v1";
 const DEFAULT_FLOATING_BOTTOM = 18;
 const FLOATING_STACK_GAP = 12;
 const DEFAULT_WIDGET_BOTTOM = DEFAULT_FLOATING_BOTTOM + 48 + FLOATING_STACK_GAP;
@@ -54,16 +58,7 @@ function getTodayISO() {
 }
 
 function readSelectionsByDateFromStorage() {
-  if (typeof window === "undefined") return {};
-
-  try {
-    const raw = localStorage.getItem(MEAL_SELECTIONS_STORAGE_KEY);
-    if (!raw) return {};
-    const parsed = JSON.parse(raw);
-    return parsed && typeof parsed === "object" ? parsed : {};
-  } catch {
-    return {};
-  }
+  return readMealSelectionsByDateFromStorage();
 }
 
 function shiftISODate(isoDate, days) {
@@ -423,7 +418,7 @@ const recommendedMeals = [
     servings: "1 Serving",
     level: "Easy",
     tags: ["Calcium", "Antioxidant"],
-    mealType: "others",
+    mealType: "other",
   },
   {
     id: "rec-8",
@@ -436,7 +431,7 @@ const recommendedMeals = [
     servings: "1 Serving",
     level: "Easy",
     tags: ["High Fiber", "Snack"],
-    mealType: "others",
+    mealType: "other",
   },
 ];
 
@@ -685,7 +680,7 @@ const mockAllMeals = [
     time: "7 Mins",
     servings: "1 Serving",
     level: "Easy",
-    mealType: "others",
+    mealType: "other",
     recipeId: null,
   },
   {
@@ -698,7 +693,7 @@ const mockAllMeals = [
     time: "5 Mins",
     servings: "1 Serving",
     level: "Easy",
-    mealType: "others",
+    mealType: "other",
     recipeId: null,
   },
   {
@@ -711,7 +706,7 @@ const mockAllMeals = [
     time: "9 Mins",
     servings: "2 Servings",
     level: "Easy",
-    mealType: "others",
+    mealType: "other",
     recipeId: null,
   },
   {
@@ -724,7 +719,7 @@ const mockAllMeals = [
     time: "4 Mins",
     servings: "1 Serving",
     level: "Easy",
-    mealType: "others",
+    mealType: "other",
     recipeId: null,
   },
   {
@@ -737,7 +732,7 @@ const mockAllMeals = [
     time: "3 Mins",
     servings: "1 Serving",
     level: "Easy",
-    mealType: "others",
+    mealType: "other",
     recipeId: null,
   },
   {
@@ -750,7 +745,7 @@ const mockAllMeals = [
     time: "6 Mins",
     servings: "1 Serving",
     level: "Easy",
-    mealType: "others",
+    mealType: "other",
     recipeId: null,
   },
 ];
@@ -804,11 +799,11 @@ function isScanLogMeal(item) {
 function matchesMealFilter(item, activeFilter) {
   if (activeFilter === "all") return true;
   if (activeFilter === "scan") return isScanLogMeal(item);
-  return normalize(item.mealType) === activeFilter;
+  return normalizeMealType(item?.mealType) === activeFilter;
 }
 
 function formatMealTypeLabel(mealType) {
-  const normalized = normalize(mealType);
+  const normalized = normalizeMealType(mealType);
   if (!normalized) return "Meal";
   return normalized.charAt(0).toUpperCase() + normalized.slice(1);
 }
@@ -816,8 +811,21 @@ function formatMealTypeLabel(mealType) {
 function normalizeMealType(value) {
   const normalized = normalize(value);
   if (normalized === "breakfast" || normalized === "lunch" || normalized === "dinner") return normalized;
-  if (normalized === "snack" || normalized === "snacks" || normalized === "other") return "others";
-  return "others";
+  if (
+    normalized === "other" ||
+    normalized === "others" ||
+    normalized === "snack" ||
+    normalized === "snacks" ||
+    normalized === "dessert" ||
+    normalized === "desserts" ||
+    normalized === "drink" ||
+    normalized === "drinks" ||
+    normalized === "beverage" ||
+    normalized === "beverages"
+  ) {
+    return "other";
+  }
+  return "other";
 }
 
 function parseRequestedMealFilter(value) {
@@ -826,12 +834,24 @@ function parseRequestedMealFilter(value) {
     normalized === "breakfast" ||
     normalized === "lunch" ||
     normalized === "dinner" ||
-    normalized === "others" ||
+    normalized === "other" ||
     normalized === "scan"
   ) {
     return normalized;
   }
-  if (normalized === "snack" || normalized === "snacks" || normalized === "other") return "others";
+  if (
+    normalized === "others" ||
+    normalized === "snack" ||
+    normalized === "snacks" ||
+    normalized === "dessert" ||
+    normalized === "desserts" ||
+    normalized === "drink" ||
+    normalized === "drinks" ||
+    normalized === "beverage" ||
+    normalized === "beverages"
+  ) {
+    return "other";
+  }
   return null;
 }
 
@@ -993,7 +1013,7 @@ const NUTRITION_BY_TYPE = {
   breakfast: { calories: 290, proteins: 16, fats: 9, vitamins: 120, sodium: 180 },
   lunch: { calories: 430, proteins: 26, fats: 14, vitamins: 170, sodium: 360 },
   dinner: { calories: 520, proteins: 32, fats: 18, vitamins: 210, sodium: 460 },
-  others: { calories: 210, proteins: 8, fats: 7, vitamins: 90, sodium: 140 },
+  other: { calories: 210, proteins: 8, fats: 7, vitamins: 90, sodium: 140 },
 };
 
 const LEVEL_FACTOR = {
@@ -1003,7 +1023,7 @@ const LEVEL_FACTOR = {
 };
 
 function estimateMealNutrition(meal) {
-  const type = normalize(meal?.mealType) || "breakfast";
+  const type = normalizeMealType(meal?.mealType) || "breakfast";
   const level = normalize(meal?.level) || "easy";
   const base = NUTRITION_BY_TYPE[type] || NUTRITION_BY_TYPE.breakfast;
   const factor = LEVEL_FACTOR[level] || 1;
@@ -1049,6 +1069,9 @@ const Meal = () => {
   const [scanLogMeals, setScanLogMeals] = useState(() =>
     readScanLogEntries().map((entry, index) => mapScanLogEntryToMeal(entry, index)),
   );
+  const [recipeLibraryMeals, setRecipeLibraryMeals] = useState([]);
+  const [isRecipeLibraryLoading, setIsRecipeLibraryLoading] = useState(true);
+  const [recipeLibraryError, setRecipeLibraryError] = useState("");
 
   const [activeTab, setActiveTab] = useState('addMeal');
   const [planFilters, setPlanFilters] = useState(null);
@@ -1083,6 +1106,56 @@ const Meal = () => {
     return () => {
       window.removeEventListener(SCAN_LOG_UPDATED_EVENT, syncScanMeals);
       window.removeEventListener("storage", syncScanMeals);
+    };
+  }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadRecipeLibrary = async ({ silent = false } = {}) => {
+      if (!silent) {
+        setIsRecipeLibraryLoading(true);
+        setRecipeLibraryError("");
+      }
+
+      try {
+        const items = await fetchRecipeLibraryForAddMeal({ limit: 500, cacheBust: true });
+        if (!isMounted) return;
+        setRecipeLibraryMeals(items);
+        if (!silent) setRecipeLibraryError("");
+      } catch (error) {
+        if (!isMounted) return;
+        if (!silent) {
+          setRecipeLibraryError(error.message || "Failed to load recipe library.");
+          setRecipeLibraryMeals([]);
+        }
+      } finally {
+        if (isMounted && !silent) setIsRecipeLibraryLoading(false);
+      }
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        loadRecipeLibrary({ silent: true });
+      }
+    };
+
+    const handleFocus = () => {
+      loadRecipeLibrary({ silent: true });
+    };
+
+    loadRecipeLibrary();
+    const pollingId = window.setInterval(() => {
+      loadRecipeLibrary({ silent: true });
+    }, 8000);
+    window.addEventListener("focus", handleFocus);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      isMounted = false;
+      window.clearInterval(pollingId);
+      window.removeEventListener("focus", handleFocus);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, []);
 
@@ -1130,19 +1203,24 @@ const Meal = () => {
       breakfast: [],
       lunch: [],
       dinner: [],
-      others: [],
+      other: [],
     };
 
     selectedMealEntries
       .filter(({ meal }) => includesQuery(meal, normalizedQuery))
       .forEach(({ entryId, meal }) => {
         const mealType = normalizeMealType(meal?.mealType);
-        if (mealType === "breakfast" || mealType === "lunch" || mealType === "dinner" || mealType === "others") {
+        if (
+          mealType === "breakfast" ||
+          mealType === "lunch" ||
+          mealType === "dinner" ||
+          mealType === "other"
+        ) {
           groups[mealType].push({ entryId, meal });
           return;
         }
 
-        groups.others.push({ entryId, meal });
+        groups.other.push({ entryId, meal });
       });
 
     return groups;
@@ -1150,31 +1228,31 @@ const Meal = () => {
 
   const filteredRecommended = useMemo(
     () =>
-      recommendedMeals.filter(
+      recipeLibraryMeals.filter(
         (item) =>
           matchesMealFilter(item, activeFilter) && includesQuery(item, normalizedQuery),
-      ),
-    [activeFilter, normalizedQuery],
+      ).slice(0, 12),
+    [activeFilter, normalizedQuery, recipeLibraryMeals],
   );
 
   const filteredAllMeals = useMemo(
     () =>
-      [...scanLogMeals, ...mockAllMeals].filter(
+      [...scanLogMeals, ...recipeLibraryMeals].filter(
         (item) =>
           matchesMealFilter(item, activeFilter) && includesQuery(item, normalizedQuery),
       ),
-    [activeFilter, normalizedQuery, scanLogMeals],
+    [activeFilter, normalizedQuery, scanLogMeals, recipeLibraryMeals],
   );
 
   const searchableMeals = useMemo(() => {
     const uniqueByTitle = new Map();
-    [...recommendedMeals, ...scanLogMeals, ...mockAllMeals].forEach((meal) => {
+    [...recipeLibraryMeals, ...scanLogMeals].forEach((meal) => {
       const titleKey = normalize(meal?.title);
       if (!titleKey || uniqueByTitle.has(titleKey)) return;
       uniqueByTitle.set(titleKey, meal);
     });
     return Array.from(uniqueByTitle.values());
-  }, [scanLogMeals]);
+  }, [scanLogMeals, recipeLibraryMeals]);
 
   const searchSuggestions = useMemo(() => {
     if (!normalizedQuery) return [];
@@ -1302,7 +1380,7 @@ const Meal = () => {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    localStorage.setItem(MEAL_SELECTIONS_STORAGE_KEY, JSON.stringify(mealSelectionsByDate));
+    writeMealSelectionsByDateToStorage(mealSelectionsByDate);
   }, [mealSelectionsByDate]);
 
   useEffect(() => {
@@ -1975,7 +2053,7 @@ const Meal = () => {
                                       onError={handleMealImageError}
                                     />
                                     <span
-                                      className={`meal-type-badge type-${normalize(meal.mealType)}`}
+                                      className={`meal-type-badge type-${normalizeMealType(meal.mealType)}`}
                                     >
                                       {formatMealTypeLabel(meal.mealType)}
                                     </span>
@@ -2048,7 +2126,11 @@ const Meal = () => {
                   <section className="add-meal-section">
                     <h2 className="section-title">Recommended Meals</h2>
 
-                    {filteredRecommended.length === 0 ? (
+                    {isRecipeLibraryLoading ? (
+                      <p className="empty-state">Loading recipe library meals...</p>
+                    ) : recipeLibraryError ? (
+                      <p className="empty-state">{recipeLibraryError}</p>
+                    ) : filteredRecommended.length === 0 ? (
                       <p className="empty-state">No recommended meals found for the selected filter.</p>
                     ) : (
                       <div className="recommended-row-shell">
@@ -2085,7 +2167,7 @@ const Meal = () => {
                                     loading="lazy"
                                     onError={handleMealImageError}
                                   />
-                                  <span className={`meal-type-badge type-${normalize(meal.mealType)}`}>
+                                  <span className={`meal-type-badge type-${normalizeMealType(meal.mealType)}`}>
                                     {formatMealTypeLabel(meal.mealType)}
                                   </span>
                                   {isSelected ? (
@@ -2187,11 +2269,15 @@ const Meal = () => {
                     </button>
                   </div>
 
-                  {filteredAllMeals.length === 0 ? (
+                  {isRecipeLibraryLoading && !isScanLogView ? (
+                    <p className="empty-state">Loading recipe library meals...</p>
+                  ) : recipeLibraryError && !isScanLogView ? (
+                    <p className="empty-state">{recipeLibraryError}</p>
+                  ) : filteredAllMeals.length === 0 ? (
                     <p className="empty-state">
                       {isScanLogView
                         ? "No dishes in Scan Log yet. Save dishes from Scan page using the star button."
-                        : "No meals matched your search."}
+                        : "No recipe library meals matched your search."}
                     </p>
                   ) : (
                     <div className="all-meals-wrap">
@@ -2228,7 +2314,7 @@ const Meal = () => {
                                   loading="lazy"
                                   onError={handleMealImageError}
                                 />
-                                <span className={`meal-type-badge type-${normalize(meal.mealType)}`}>
+                                <span className={`meal-type-badge type-${normalizeMealType(meal.mealType)}`}>
                                   {formatMealTypeLabel(meal.mealType)}
                                 </span>
                                 {isSelected ? (

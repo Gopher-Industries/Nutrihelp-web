@@ -896,6 +896,7 @@
   background: linear-gradient(135deg, #a855f7 0%, #7e22ce 100%);
 }
 
+.meal-type-badge.type-other,
 .meal-type-badge.type-others {
   background: linear-gradient(135deg, #64748b 0%, #475569 100%);
 }
@@ -997,7 +998,6 @@
 .meal-card-actions {
   display: flex;
   gap: 12px;
-  margin-top: auto;
 }
 
 .add-meal-action-btn {

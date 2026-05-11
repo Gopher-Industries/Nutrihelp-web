@@ -16,8 +16,11 @@ import {
 import { fetchDishImage } from "../../services/dishImageApi";
 import "./DailyPlanEdit.css";
 import mealPlanApi from "../../services/mealPlanApi";
+import {
+  readMealSelectionsByDateFromStorage,
+  writeMealSelectionsByDateToStorage,
+} from "../../utils/mealSelectionStorage";
 
-const STORAGE_KEY = "nutrihelp_add_meal_selections_by_date_v1";
 const IMAGE_ENRICHMENT_STORAGE_KEY = "nutrihelp_daily_plan_image_enrichment_queue_v1";
 
 const MONTHS = [
@@ -45,7 +48,7 @@ const FALLBACK_TAGS = {
   breakfast: ["Balanced Meal", "Heart-Healthy"],
   lunch: ["Full Meal", "High Protein"],
   dinner: ["Light Meal", "Low Fat"],
-  others: ["Snack", "Quick Bite"],
+  other: ["Snack", "Quick Bite"],
 };
 
 const NUTRITION_TARGETS = {
@@ -59,7 +62,7 @@ const NUTRITION_BY_TYPE = {
   breakfast: { calories: 300, protein: 18, carbs: 42, fat: 10 },
   lunch: { calories: 470, protein: 30, carbs: 55, fat: 16 },
   dinner: { calories: 560, protein: 34, carbs: 50, fat: 20 },
-  others: { calories: 210, protein: 8, carbs: 24, fat: 7 },
+  other: { calories: 210, protein: 8, carbs: 24, fat: 7 },
 };
 
 const LEVEL_FACTOR = {
@@ -118,10 +121,21 @@ function normalizeMealType(value) {
   if (normalized === "breakfast" || normalized === "lunch" || normalized === "dinner") {
     return normalized;
   }
-  if (normalized === "snack" || normalized === "snacks" || normalized === "other") {
-    return "others";
+  if (
+    normalized === "other" ||
+    normalized === "others" ||
+    normalized === "snack" ||
+    normalized === "snacks" ||
+    normalized === "dessert" ||
+    normalized === "desserts" ||
+    normalized === "drink" ||
+    normalized === "drinks" ||
+    normalized === "beverage" ||
+    normalized === "beverages"
+  ) {
+    return "other";
   }
-  return "others";
+  return "other";
 }
 
 function parseNumber(value) {
@@ -224,15 +238,8 @@ function dedupeSelectionsByDate(selectionsByDate) {
 }
 
 function readSelectionsByDate() {
-  if (typeof window === "undefined") return {};
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return {};
-    const parsed = JSON.parse(raw);
-    return parsed && typeof parsed === "object" ? dedupeSelectionsByDate(parsed) : {};
-  } catch {
-    return {};
-  }
+  const rawSelections = readMealSelectionsByDateFromStorage();
+  return dedupeSelectionsByDate(rawSelections);
 }
 
 function getMealNutrition(meal) {
@@ -323,7 +330,7 @@ export default function DailyPlanEdit() {
       breakfast: [],
       lunch: [],
       dinner: [],
-      others: [],
+      other: [],
     };
 
     selectedEntries.forEach(({ entryId, meal }) => {
@@ -335,8 +342,8 @@ export default function DailyPlanEdit() {
   }, [selectedEntries]);
 
   const displaySections = useMemo(() => {
-    if ((groupedMeals.others || []).length > 0) {
-      return [...MEAL_SECTIONS, { key: "others", label: "Snacks", icon: Clock3, iconClass: "icon-snack" }];
+    if ((groupedMeals.other || []).length > 0) {
+      return [...MEAL_SECTIONS, { key: "other", label: "Other", icon: Clock3, iconClass: "icon-snack" }];
     }
     return MEAL_SECTIONS;
   }, [groupedMeals]);
@@ -374,7 +381,7 @@ export default function DailyPlanEdit() {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(selectionsByDate));
+    writeMealSelectionsByDateToStorage(selectionsByDate);
   }, [selectionsByDate]);
 
   useEffect(() => {
@@ -553,7 +560,7 @@ export default function DailyPlanEdit() {
             {meals.map(({ entryId, meal }) => {
               const tags = Array.isArray(meal?.tags) && meal.tags.length > 0
                 ? meal.tags.slice(0, 2)
-                : FALLBACK_TAGS[section.key] || FALLBACK_TAGS.others;
+                : FALLBACK_TAGS[section.key] || FALLBACK_TAGS.other;
 
               return (
                 <article key={entryId} className="dpe-selected-meal-card">

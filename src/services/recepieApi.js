@@ -13,6 +13,16 @@ export const cuisineListDB = [{ value: '', label: '', id: 0 }];
 
 export const cookingMethodListDB = [{ value: '', label: '', id: 0 }];
 
+const normalizeLookupRows = (data) => {
+    if (Array.isArray(data)) return data;
+    if (Array.isArray(data?.items)) return data.items;
+    if (Array.isArray(data?.data)) return data.data;
+    if (Array.isArray(data?.cuisines)) return data.cuisines;
+    if (Array.isArray(data?.ingredients)) return data.ingredients;
+    if (Array.isArray(data?.cookingMethods)) return data.cookingMethods;
+    return [];
+};
+
 // Functions to fetch and populate the lists
 export async function getCookingMethodList() {
     try {
@@ -22,12 +32,17 @@ export async function getCookingMethodList() {
         });
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const data = await response.json();
-        data.forEach(element => {
-            cookingMethodListDB.push({ value: element.name, label: element.name, id: element.id });
-        });
+        const mapped = normalizeLookupRows(data).map(element => ({
+            value: element.name,
+            label: element.name,
+            id: element.id
+        }));
+        cookingMethodListDB.splice(0, cookingMethodListDB.length, { value: '', label: '', id: 0 }, ...mapped);
         console.log('Cooking methods were fetched from DB');
+        return [...cookingMethodListDB];
     } catch (error) {
         console.error('Error fetching cooking methods:', error);
+        return [...cookingMethodListDB];
     }
 }
 
@@ -39,13 +54,30 @@ export async function getIngredientsList() {
         });
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const data = await response.json();
-        data.forEach(element => {
-            ingredientListDB.ingredient.push({ value: element.name, label: element.name, id: element.id });
-            ingredientListDB.category.push({ value: element.category, label: element.category, id: element.id });
-        });
+        const rows = normalizeLookupRows(data);
+        ingredientListDB.ingredient.splice(
+            0,
+            ingredientListDB.ingredient.length,
+            { value: '', label: '', id: 0 },
+            ...rows.map(element => ({ value: element.name, label: element.name, id: element.id }))
+        );
+        ingredientListDB.category.splice(
+            0,
+            ingredientListDB.category.length,
+            { value: '', label: '', id: 0 },
+            ...rows.map(element => ({ value: element.category, label: element.category, id: element.id }))
+        );
         console.log('Ingredients were fetched from DB');
+        return {
+            ingredient: [...ingredientListDB.ingredient],
+            category: [...ingredientListDB.category]
+        };
     } catch (error) {
         console.error('Error fetching ingredients:', error);
+        return {
+            ingredient: [...ingredientListDB.ingredient],
+            category: [...ingredientListDB.category]
+        };
     }
 }
 
@@ -57,12 +89,17 @@ export async function getCuisineList() {
         });
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const data = await response.json();
-        data.forEach(element => {
-            cuisineListDB.push({ value: element.name, label: element.name, id: element.id });
-        });
+        const mapped = normalizeLookupRows(data).map(element => ({
+            value: element.name,
+            label: element.name,
+            id: element.id
+        }));
+        cuisineListDB.splice(0, cuisineListDB.length, { value: '', label: '', id: 0 }, ...mapped);
         console.log('Cuisines were fetched from DB');
+        return [...cuisineListDB];
     } catch (error) {
         console.error('Error fetching cuisines:', error);
+        return [...cuisineListDB];
     }
 }
 class RecipeApi extends BaseApi {
@@ -123,7 +160,7 @@ class RecipeApi extends BaseApi {
             // console.log('response headers:', Array.from(response.headers.entries()));
             // console.log('content-length header:', response.headers.get('content-length'));
 
-            if (response.status === 204 || response.headers.get('content-length') === '0') {
+            if (response.status === 204 || response.status === 404 || response.headers.get('content-length') === '0') {
                 return [];
             }
 
@@ -145,10 +182,104 @@ class RecipeApi extends BaseApi {
             throw error;
         }
     }
+
+    async deleteRecepie(recipeId) {
+        try {
+            const userId = this.getCurrentUserId();
+            if (!userId) {
+                throw new Error('User not authenticated');
+            }
+
+            const response = await fetch(`${this.baseURL}/recipe`, {
+                method: 'DELETE',
+                headers: this.getHeaders(),
+                body: JSON.stringify({
+                    user_id: userId,
+                    recipe_id: recipeId
+                })
+            });
+
+            const data = await response.json().catch(() => null);
+            if (!response.ok) {
+                throw new Error(data?.error || `HTTP error! status: ${response.status}`);
+            }
+
+            return data || { message: 'success' };
+        } catch (error) {
+            console.error('Error deleting recepie: ', error);
+            throw error;
+        }
+    }
+
+    async shareToCommunity(recipeId) {
+        try {
+            const userId = this.getCurrentUserId();
+            if (!userId) {
+                throw new Error('User not authenticated');
+            }
+
+            const response = await fetch(`${this.baseURL}/recipe/${recipeId}/share-community`, {
+                method: 'POST',
+                headers: this.getHeaders(),
+                body: JSON.stringify({ user_id: userId })
+            });
+
+            const data = await response.json().catch(() => null);
+            if (!response.ok) {
+                throw new Error(data?.error || `HTTP error! status: ${response.status}`);
+            }
+            return data;
+        } catch (error) {
+            console.error('Error sharing recipe to community: ', error);
+            throw error;
+        }
+    }
+
+    async unshareFromCommunity(recipeId) {
+        try {
+            const userId = this.getCurrentUserId();
+            if (!userId) {
+                throw new Error('User not authenticated');
+            }
+
+            const response = await fetch(`${this.baseURL}/recipe/${recipeId}/unshare-community`, {
+                method: 'POST',
+                headers: this.getHeaders(),
+                body: JSON.stringify({ user_id: userId })
+            });
+
+            const data = await response.json().catch(() => null);
+            if (!response.ok) {
+                throw new Error(data?.error || `HTTP error! status: ${response.status}`);
+            }
+            return data;
+        } catch (error) {
+            console.error('Error stopping community sharing: ', error);
+            throw error;
+        }
+    }
+
+    async getCommunityRecipes(limit = 300) {
+        try {
+            const response = await fetch(`${this.baseURL}/recipe/community?limit=${limit}`, {
+                method: 'GET',
+                headers: this.getHeaders()
+            });
+
+            const data = await response.json().catch(() => null);
+            if (!response.ok) {
+                throw new Error(data?.error || `HTTP error! status: ${response.status}`);
+            }
+            if (Array.isArray(data?.recipes)) return data.recipes;
+            if (Array.isArray(data?.data?.recipes)) return data.data.recipes;
+            return [];
+        } catch (error) {
+            console.error('Error getting community recipes: ', error);
+            throw error;
+        }
+    }
 }
 
 // Export a singleton instance
 export const recipeApi = new RecipeApi();
 export default recipeApi;
-
-

@@ -72,6 +72,8 @@ import DailyPlanEdit from "./routes/DailyPlan/DailyPlanEdit";
 import Account from "./routes/Account/Account.js";
 import TextToSpeechControl from "./components/TextToSpeech/TextToSpeech";
 import AdminAuditDashboard from "./routes/AdminAudit/AdminAuditDashboard";
+import AdminDataCenter from "./routes/Admin/AdminDataCenter";
+import AdminRecipeLibraryPage from "./routes/Admin/AdminRecipeLibraryPage";
 import { isAuthPath } from "./utils/ttsRouteUtils";
 /* -------------------------------
    GLOBAL AUTHENTICATED LAYOUT
@@ -532,6 +534,33 @@ function App() {
             <AuthenticateRoute>
               <Settings />
             </AuthenticateRoute>
+          }
+        />
+
+        <Route
+          path="admin"
+          element={
+            <InternalAdminRoute>
+              <AdminDataCenter />
+            </InternalAdminRoute>
+          }
+        />
+
+        <Route
+          path="admin/recipe-library/:id"
+          element={
+            <InternalAdminRoute>
+              <AdminRecipeLibraryPage />
+            </InternalAdminRoute>
+          }
+        />
+
+        <Route
+          path="admin/recipe-library/:id/edit"
+          element={
+            <InternalAdminRoute>
+              <AdminRecipeLibraryPage mode="edit" />
+            </InternalAdminRoute>
           }
         />
 

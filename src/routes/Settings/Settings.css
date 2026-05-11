@@ -96,7 +96,7 @@
   font-weight: 700;
   margin: 0 !important;
   padding: 20px !important;
-  color: var(--text-inverse);
+  color: white !important;
   line-height: 1.2;
 }
 
@@ -1260,6 +1260,276 @@ May Not need it but can be added for asthetics
   .refresh-btn {
     padding: 8px 16px;
     font-size: 0.9rem;
+  }
+}
+
+/* =========================================================
+   Settings UI Refresh (Blue system, consistent with app)
+   ========================================================= */
+
+.settings-page {
+  background:
+    radial-gradient(circle at 8% 4%, rgba(37, 99, 235, 0.12), transparent 38%),
+    linear-gradient(180deg, #f5f9ff 0%, #edf4ff 48%, #f8fbff 100%);
+  padding: 26px 18px 40px;
+}
+
+.settings-page.dark-mode {
+  background:
+    radial-gradient(circle at 8% 4%, rgba(59, 130, 246, 0.2), transparent 36%),
+    linear-gradient(180deg, #0f172a 0%, #111827 52%, #0b1222 100%);
+}
+
+.settings-container {
+  max-width: 1320px;
+  border: 1px solid #dbe7ff;
+  border-radius: 22px;
+  box-shadow: 0 28px 56px rgba(15, 23, 42, 0.12);
+  overflow: clip;
+}
+
+.settings-page.dark-mode .settings-container {
+  border-color: rgba(96, 165, 250, 0.25);
+  box-shadow: 0 28px 56px rgba(2, 6, 23, 0.55);
+}
+
+.settings-header {
+  background:
+    radial-gradient(circle at 86% 14%, rgba(255, 255, 255, 0.35), transparent 32%),
+    linear-gradient(120deg, #0b4fb0 0%, #1768d4 52%, #338de8 100%);
+  padding: 22px 26px;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.24);
+}
+
+.settings-title {
+  font-size: clamp(1.75rem, 2.4vw, 2.3rem) !important;
+  letter-spacing: -0.03em;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.settings-content {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  padding: 24px;
+  background: transparent;
+}
+
+.settings-section {
+  margin-bottom: 0;
+  padding: 22px;
+  border-radius: 18px;
+  border: 1px solid #d9e6fa;
+  background: linear-gradient(180deg, #ffffff, #f7faff);
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
+}
+
+.settings-page.dark-mode .settings-section {
+  border-color: rgba(96, 165, 250, 0.2);
+  background: linear-gradient(180deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95));
+  box-shadow: 0 12px 30px rgba(2, 6, 23, 0.42);
+}
+
+.settings-section:nth-child(1),
+.settings-section:nth-child(2) {
+  grid-column: span 1;
+}
+
+.settings-section:nth-child(n + 3) {
+  grid-column: span 2;
+}
+
+.section-title {
+  margin: 0 0 10px;
+  font-size: 1.18rem !important;
+  color: #10243f;
+}
+
+.settings-page.dark-mode .section-title {
+  color: #e2ecff;
+}
+
+.section-description {
+  margin-bottom: 18px;
+  font-size: 0.95rem;
+  color: #5e728c;
+}
+
+.settings-page.dark-mode .section-description {
+  color: #9ab0cf;
+}
+
+.theme-mode-selector,
+.font-size-options,
+.notification-options,
+.voice-options,
+.user-preferences {
+  margin-top: 4px;
+}
+
+.mode-button {
+  border: 1px solid #c9dbf5;
+  border-radius: 12px;
+  background: #f9fbff;
+  color: #183153;
+  font-weight: 700;
+  min-height: 46px;
+}
+
+.mode-button:hover {
+  border-color: #2e7adf;
+  background: #f2f8ff;
+}
+
+.mode-button.active {
+  border-color: #1362c4;
+  background: linear-gradient(120deg, #0d61c7 0%, #2d8ae5 100%);
+  color: #ffffff;
+  box-shadow: 0 8px 18px rgba(37, 99, 235, 0.26);
+}
+
+.font-size-option {
+  border: 1px solid #cfe0f7;
+  border-radius: 12px;
+  background: #f9fbff;
+}
+
+.font-size-option:hover {
+  border-color: #2e7adf;
+  background: #f1f7ff;
+}
+
+.font-size-option.selected {
+  border-color: #1362c4;
+  background: linear-gradient(180deg, #ebf4ff, #deeeff);
+  box-shadow: 0 8px 18px rgba(37, 99, 235, 0.2);
+  color: #124f98;
+}
+
+.font-size-preview-container,
+.voice-test-section {
+  border-radius: 12px;
+  border: 1px solid #d4e2f8;
+  background: #f7fbff;
+}
+
+.checkbox-group {
+  padding: 14px 16px;
+  border: 1px solid #deebfb;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  background: #fbfdff;
+}
+
+.checkbox-group:last-child {
+  margin-bottom: 0;
+}
+
+.checkbox-group:hover {
+  border-color: #9cc3f1;
+  background: #f4f9ff;
+}
+
+.notification-list .checkbox-group {
+  min-height: unset;
+}
+
+.language-dropdown,
+.community-feedback-controls input,
+.community-feedback-controls select {
+  border-radius: 12px !important;
+  border: 1px solid #cddff6;
+  background: #ffffff;
+}
+
+.language-dropdown:hover,
+.language-dropdown:focus {
+  border-color: #2e7adf;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.14);
+}
+
+.slider-label span {
+  background: #e9f2ff;
+  color: #0f5eb9;
+  font-weight: 700;
+}
+
+.test-voice-btn,
+.save-settings-btn {
+  background: linear-gradient(120deg, #0d61c7 0%, #2d8ae5 100%);
+  border-radius: 999px;
+  box-shadow: 0 10px 22px rgba(37, 99, 235, 0.26);
+}
+
+.test-voice-btn:hover:not(:disabled),
+.save-settings-btn:hover:not(:disabled) {
+  background: linear-gradient(120deg, #0c58b8 0%, #237cd1 100%);
+}
+
+.cancel-btn {
+  background: #ffffff;
+  color: #0f5eb9;
+  border: 1px solid #9ec3ee;
+  border-radius: 999px;
+  box-shadow: none;
+}
+
+.cancel-btn:hover {
+  background: #f1f7ff;
+  box-shadow: 0 8px 16px rgba(37, 99, 235, 0.14);
+}
+
+.settings-page.dark-mode .mode-button,
+.settings-page.dark-mode .font-size-option,
+.settings-page.dark-mode .checkbox-group,
+.settings-page.dark-mode .font-size-preview-container,
+.settings-page.dark-mode .voice-test-section {
+  background: rgba(30, 41, 59, 0.82);
+  border-color: rgba(148, 163, 184, 0.34);
+  color: #dbeafe;
+}
+
+.settings-page.dark-mode .mode-button.active,
+.settings-page.dark-mode .font-size-option.selected {
+  border-color: #60a5fa;
+  background: linear-gradient(120deg, #1d4ed8 0%, #2563eb 100%);
+  color: #ffffff;
+}
+
+.settings-page.dark-mode .slider-label span {
+  background: rgba(30, 64, 175, 0.34);
+  color: #93c5fd;
+}
+
+@media (max-width: 1100px) {
+  .settings-content {
+    grid-template-columns: 1fr;
+  }
+
+  .settings-section:nth-child(n + 1) {
+    grid-column: span 1;
+  }
+}
+
+@media (max-width: 768px) {
+  .settings-container {
+    border-radius: 16px;
+  }
+
+  .settings-header {
+    padding: 16px 18px;
+  }
+
+  .settings-content {
+    padding: 16px;
+    gap: 14px;
+  }
+
+  .settings-section {
+    padding: 16px;
+    border-radius: 14px;
   }
 }
 

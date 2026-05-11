@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900" role="img" aria-label="Meal image placeholder">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#e8f0ff"/>
+      <stop offset="100%" stop-color="#f7fbff"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="900" fill="url(#bg)"/>
+  <circle cx="600" cy="390" r="140" fill="#d6e6ff"/>
+  <circle cx="600" cy="390" r="90" fill="#b7d2ff"/>
+  <text x="600" y="620" text-anchor="middle" fill="#3366aa" font-family="Arial, sans-serif" font-size="52" font-weight="700">Meal Photo</text>
+  <text x="600" y="690" text-anchor="middle" fill="#5d78a3" font-family="Arial, sans-serif" font-size="34">Image temporarily unavailable</text>
+</svg>

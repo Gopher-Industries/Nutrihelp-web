@@ -4,8 +4,11 @@
   import {
     Activity,
     ArrowRight,
+    Bell,
     BrainCircuit,
     CheckCircle2,
+    CheckCheck,
+    X,
     HeartPulse,
     KeyRound,
     Leaf,
@@ -19,11 +22,13 @@
   import { useNavigate } from "react-router-dom"
   import { toast } from "react-toastify"
   import "react-easy-crop/react-easy-crop.css"
+  import "./userprofile.css"
   import profileLogo from "./NutriHelp-logos_black.png"
   import { UserContext } from "../../../context/user.context"
   import profileApi from "../../../services/profileApi"
   import { supabase } from "../../../supabaseClient"
   import ChangePasswordModal from "./ChangePasswordModal"
+  import { fetchMyNotifications, markMyNotificationsRead } from "../../../services/notificationApi"
 
 
   /* ============ CONSTANTS ============ */
@@ -116,6 +121,24 @@
           .map((value) => toTitleLabel(value))
       ),
     ]
+  }
+
+  const getNotificationTitle = (notification = {}) => {
+    if (notification.type === "recipe_community_approved") return "Recipe approved"
+    if (notification.type === "recipe_community_rejected") return "Recipe not approved"
+    return "Account update"
+  }
+
+  const formatNotificationTime = (value) => {
+    if (!value) return ""
+    const date = new Date(value)
+    if (Number.isNaN(date.getTime())) return ""
+    return date.toLocaleString([], {
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    })
   }
 
   const normalizePreferences = (payload) => {
@@ -600,7 +623,8 @@
     maxWidth: width < 920 ? "100%" : 330,
     padding: width < 768 ? "18px 14px" : "22px 18px",
     position: width < 920 ? "static" : "sticky",
-    top: 24,
+    // Keep the profile sidebar below the fixed main navbar while scrolling.
+    top: width < 1200 ? 98 : 108,
   })
 
   const getAvatarStyles = (width) => ({
@@ -912,6 +936,213 @@
     padding: width < 768 ? 16 : width < 1024 ? 20 : 24,
     border: "1px solid rgba(22, 101, 52, 0.16)",
     boxShadow: "0 18px 40px rgba(15, 23, 42, 0.08)",
+  })
+
+  const getNotificationWidgetStyles = (width) => ({
+    background:
+      "linear-gradient(135deg, rgba(255,255,255,0.98) 0%, rgba(239, 246, 255, 0.92) 58%, rgba(240, 253, 250, 0.9) 100%)",
+    borderRadius: 18,
+    padding: width < 768 ? 16 : width < 1024 ? 20 : 24,
+    border: "1px solid rgba(37, 99, 235, 0.16)",
+    boxShadow: "0 18px 40px rgba(15, 23, 42, 0.08)",
+  })
+
+  const getNotificationWidgetHeaderStyles = (width) => ({
+    display: "flex",
+    alignItems: width < 640 ? "flex-start" : "center",
+    justifyContent: "space-between",
+    flexDirection: width < 640 ? "column" : "row",
+    gap: 14,
+    marginBottom: 16,
+  })
+
+  const getNotificationTitleRowStyles = () => ({
+    display: "flex",
+    alignItems: "center",
+    gap: 12,
+  })
+
+  const getNotificationIconStyles = () => ({
+    width: 44,
+    height: 44,
+    borderRadius: 14,
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    color: "#0f5cc7",
+    background: "linear-gradient(135deg, rgba(219, 234, 254, 0.96), rgba(224, 242, 254, 0.9))",
+    border: "1px solid rgba(59, 130, 246, 0.2)",
+  })
+
+  const getNotificationHeadingStyles = (width) => ({
+    margin: 0,
+    color: "#0f172a",
+    fontSize: width < 768 ? 22 : 26,
+    lineHeight: 1.12,
+    fontWeight: 800,
+  })
+
+  const getNotificationSubTextStyles = () => ({
+    margin: "4px 0 0",
+    color: "#64748b",
+    fontSize: 13,
+    lineHeight: 1.45,
+    fontWeight: 600,
+  })
+
+  const getNotificationActionStyles = (disabled = false) => ({
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    borderRadius: 12,
+    border: "1px solid rgba(37, 99, 235, 0.18)",
+    background: disabled ? "#f8fafc" : "#ffffff",
+    color: disabled ? "#94a3b8" : "#0f5cc7",
+    minHeight: 42,
+    padding: "0 14px",
+    fontSize: 13,
+    fontWeight: 800,
+    cursor: disabled ? "not-allowed" : "pointer",
+    boxShadow: disabled ? "none" : "0 10px 22px rgba(37, 99, 235, 0.1)",
+  })
+
+  const getNotificationListStyles = (width) => ({
+    display: "grid",
+    gap: 10,
+    maxHeight: width < 640 ? 320 : 390,
+    overflowY: "auto",
+    paddingRight: 6,
+    overscrollBehavior: "contain",
+    scrollbarGutter: "stable",
+  })
+
+  const getNotificationItemStyles = (unread = false) => ({
+    display: "grid",
+    gridTemplateColumns: "auto minmax(0, 1fr) auto",
+    alignItems: "center",
+    gap: 12,
+    padding: "13px 14px",
+    borderRadius: 14,
+    border: unread ? "1px solid rgba(37, 99, 235, 0.22)" : "1px solid rgba(148, 163, 184, 0.2)",
+    background: unread ? "rgba(255,255,255,0.96)" : "rgba(248, 250, 252, 0.74)",
+    cursor: "pointer",
+    transition: "border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease",
+  })
+
+  const getNotificationDotStyles = (unread = false) => ({
+    width: 10,
+    height: 10,
+    borderRadius: "50%",
+    background: unread ? "#ef4444" : "#cbd5e1",
+    boxShadow: unread ? "0 0 0 4px rgba(239, 68, 68, 0.12)" : "none",
+  })
+
+  const getNotificationItemTitleStyles = () => ({
+    margin: 0,
+    color: "#0f172a",
+    fontSize: 14,
+    fontWeight: 800,
+  })
+
+  const getNotificationItemTextStyles = () => ({
+    margin: "4px 0 0",
+    color: "#475569",
+    fontSize: 13,
+    lineHeight: 1.45,
+    fontWeight: 600,
+  })
+
+  const getNotificationTimeStyles = () => ({
+    color: "#64748b",
+    fontSize: 12,
+    fontWeight: 800,
+    whiteSpace: "nowrap",
+  })
+
+  const getNotificationEmptyStyles = () => ({
+    borderRadius: 14,
+    border: "1px dashed rgba(148, 163, 184, 0.36)",
+    background: "rgba(255,255,255,0.7)",
+    padding: "18px 16px",
+    color: "#64748b",
+    fontSize: 14,
+    fontWeight: 700,
+    textAlign: "center",
+  })
+
+  const getNotificationModalBackdropStyles = () => ({
+    position: "fixed",
+    inset: 0,
+    zIndex: 3000,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 18,
+    background: "rgba(15, 23, 42, 0.36)",
+    backdropFilter: "blur(10px)",
+  })
+
+  const getNotificationModalStyles = (width) => ({
+    width: "min(560px, 100%)",
+    borderRadius: 22,
+    border: "1px solid rgba(37, 99, 235, 0.18)",
+    background: "linear-gradient(180deg, #ffffff 0%, #f8fbff 100%)",
+    boxShadow: "0 28px 70px rgba(15, 23, 42, 0.28)",
+    padding: width < 640 ? 18 : 24,
+  })
+
+  const getNotificationModalTopStyles = () => ({
+    display: "flex",
+    alignItems: "flex-start",
+    justifyContent: "space-between",
+    gap: 14,
+    marginBottom: 16,
+  })
+
+  const getNotificationModalCloseStyles = () => ({
+    width: 38,
+    height: 38,
+    borderRadius: 12,
+    border: "1px solid rgba(148, 163, 184, 0.24)",
+    background: "#ffffff",
+    color: "#334155",
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    cursor: "pointer",
+  })
+
+  const getNotificationModalBodyStyles = () => ({
+    borderRadius: 16,
+    border: "1px solid rgba(148, 163, 184, 0.2)",
+    background: "rgba(248, 250, 252, 0.8)",
+    padding: 16,
+    color: "#334155",
+    fontSize: 15,
+    lineHeight: 1.62,
+    fontWeight: 600,
+    whiteSpace: "pre-wrap",
+  })
+
+  const getNotificationModalMetaStyles = () => ({
+    display: "flex",
+    flexWrap: "wrap",
+    gap: 8,
+    marginTop: 14,
+  })
+
+  const getNotificationMetaPillStyles = (accent = false) => ({
+    display: "inline-flex",
+    alignItems: "center",
+    minHeight: 30,
+    padding: "0 10px",
+    borderRadius: 999,
+    border: accent ? "1px solid rgba(37, 99, 235, 0.18)" : "1px solid rgba(148, 163, 184, 0.2)",
+    background: accent ? "rgba(219, 234, 254, 0.8)" : "#ffffff",
+    color: accent ? "#0f5cc7" : "#475569",
+    fontSize: 12,
+    fontWeight: 800,
   })
 
   const getPreferenceCardStyles = (width) => ({
@@ -1377,6 +1608,12 @@ const getGoalHintTextStyles = () => ({
     const [preferences, setPreferences] = useState(EMPTY_PREFERENCES)
     const [preferencesLoading, setPreferencesLoading] = useState(true)
     const [preferencesError, setPreferencesError] = useState("")
+    const [accountNotifications, setAccountNotifications] = useState([])
+    const [unreadNotifications, setUnreadNotifications] = useState(0)
+    const [notificationsLoading, setNotificationsLoading] = useState(true)
+    const [notificationsError, setNotificationsError] = useState("")
+    const [isMarkingNotificationsRead, setIsMarkingNotificationsRead] = useState(false)
+    const [selectedNotification, setSelectedNotification] = useState(null)
     const [touched, setTouched] = useState({})
     const [serverFieldErrors, setServerFieldErrors] = useState({})
     const [hoveredButton, setHoveredButton] = useState(null)
@@ -1564,6 +1801,43 @@ const getGoalHintTextStyles = () => ({
       mounted = false
     }
   }, [currentUser, isChangePasswordOpen])
+
+    useEffect(() => {
+      let mounted = true
+
+      const loadNotifications = async () => {
+        setNotificationsLoading(true)
+        setNotificationsError("")
+
+        try {
+          if (!authToken) {
+            setAccountNotifications([])
+            setUnreadNotifications(0)
+            return
+          }
+
+          const result = await fetchMyNotifications(20)
+          if (!mounted) return
+          setAccountNotifications(result.items || [])
+          setUnreadNotifications(Number(result.unreadCount) || 0)
+        } catch (error) {
+          if (!mounted) return
+          setAccountNotifications([])
+          setUnreadNotifications(0)
+          setNotificationsError(error?.message || "Unable to load notifications.")
+        } finally {
+          if (mounted) {
+            setNotificationsLoading(false)
+          }
+        }
+      }
+
+      loadNotifications()
+
+      return () => {
+        mounted = false
+      }
+    }, [authToken, profileReloadKey])
 
     useEffect(() => {
       const handleResize = () => setWidth(window.innerWidth)
@@ -1829,6 +2103,41 @@ const getGoalHintTextStyles = () => ({
       } finally {
         setIsSaving(false)
       }
+    }
+
+    const handleMarkNotificationsRead = async () => {
+      if (!authToken || unreadNotifications <= 0 || isMarkingNotificationsRead) return
+
+      setIsMarkingNotificationsRead(true)
+      setNotificationsError("")
+
+      try {
+        await markMyNotificationsRead()
+        setAccountNotifications((prev) =>
+          prev.map((notification) => ({
+            ...notification,
+            status: "read",
+          }))
+        )
+        setUnreadNotifications(0)
+        window.dispatchEvent(
+          new CustomEvent("nutrihelp:notifications-updated", {
+            detail: { unreadCount: 0 },
+          })
+        )
+        toast.success("Notifications marked as read.")
+      } catch (error) {
+        const message = error?.message || "Unable to mark notifications as read."
+        setNotificationsError(message)
+        toast.error(message)
+      } finally {
+        setIsMarkingNotificationsRead(false)
+      }
+    }
+
+    const openNotificationDetail = (notification) => {
+      if (!notification) return
+      setSelectedNotification(notification)
     }
 
     const completeLogoutAndRedirect = async () => {
@@ -2284,6 +2593,76 @@ const getGoalHintTextStyles = () => ({
               ) : null}
             </section>
 
+            <section style={getNotificationWidgetStyles(width)}>
+              <div style={getNotificationWidgetHeaderStyles(width)}>
+                <div style={getNotificationTitleRowStyles()}>
+                  <span style={getNotificationIconStyles()}>
+                    <Bell size={20} />
+                  </span>
+                  <div>
+                    <div style={getSectionBadgeStyles()}>Account Updates</div>
+                    <h2 style={getNotificationHeadingStyles(width)}>Notifications</h2>
+                    <p style={getNotificationSubTextStyles()}>
+                      {unreadNotifications > 0
+                        ? `${unreadNotifications} unread notification${unreadNotifications > 1 ? "s" : ""}`
+                        : "Everything is up to date"}
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  style={getNotificationActionStyles(
+                    unreadNotifications <= 0 || notificationsLoading || isMarkingNotificationsRead
+                  )}
+                  onClick={handleMarkNotificationsRead}
+                  disabled={unreadNotifications <= 0 || notificationsLoading || isMarkingNotificationsRead}
+                >
+                  <CheckCheck size={16} />
+                  {isMarkingNotificationsRead ? "Updating..." : "Mark as read"}
+                </button>
+              </div>
+
+              {notificationsLoading ? (
+                <div style={getNotificationEmptyStyles()}>Loading notifications...</div>
+              ) : notificationsError ? (
+                <div style={{ ...getNotificationEmptyStyles(), color: "#b91c1c", borderColor: "rgba(248, 113, 113, 0.45)" }}>
+                  {notificationsError}
+                </div>
+              ) : accountNotifications.length === 0 ? (
+                <div style={getNotificationEmptyStyles()}>No account notifications yet.</div>
+              ) : (
+                <div className="profile-notification-scroll" style={getNotificationListStyles(width)}>
+                  {accountNotifications.map((notification) => {
+                    const isUnread = notification.status !== "read"
+                    return (
+                      <article
+                        key={notification.id || notification.createdAt || notification.content}
+                        style={getNotificationItemStyles(isUnread)}
+                        onClick={() => openNotificationDetail(notification)}
+                        role="button"
+                        tabIndex={0}
+                        onKeyDown={(event) => {
+                          if (event.key === "Enter" || event.key === " ") {
+                            event.preventDefault()
+                            openNotificationDetail(notification)
+                          }
+                        }}
+                      >
+                        <span style={getNotificationDotStyles(isUnread)} />
+                        <div>
+                          <h3 style={getNotificationItemTitleStyles()}>{getNotificationTitle(notification)}</h3>
+                          <p style={getNotificationItemTextStyles()}>{notification.content}</p>
+                        </div>
+                        <span style={getNotificationTimeStyles()}>
+                          {formatNotificationTime(notification.createdAt)}
+                        </span>
+                      </article>
+                    )
+                  })}
+                </div>
+              )}
+            </section>
+
             <section style={getInsightPanelStyles(width)}>
               <div>
                 <div style={getSectionBadgeStyles()}>
@@ -2486,6 +2865,81 @@ const getGoalHintTextStyles = () => ({
                   </button>
                 </div>
               </div>
+            </div>
+          ) : null}
+
+          {selectedNotification ? (
+            <div style={getNotificationModalBackdropStyles()} role="dialog" aria-modal="true">
+              <section style={getNotificationModalStyles(width)}>
+                <div style={getNotificationModalTopStyles()}>
+                  <div style={getNotificationTitleRowStyles()}>
+                    <span style={getNotificationIconStyles()}>
+                      <Bell size={20} />
+                    </span>
+                    <div>
+                      <div style={getSectionBadgeStyles()}>Notification Detail</div>
+                      <h2 style={getNotificationHeadingStyles(width)}>
+                        {getNotificationTitle(selectedNotification)}
+                      </h2>
+                      <p style={getNotificationSubTextStyles()}>
+                        {formatNotificationTime(selectedNotification.createdAt) || "No timestamp available"}
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    style={getNotificationModalCloseStyles()}
+                    onClick={() => setSelectedNotification(null)}
+                    aria-label="Close notification detail"
+                  >
+                    <X size={18} />
+                  </button>
+                </div>
+
+                <div style={getNotificationModalBodyStyles()}>{selectedNotification.content}</div>
+
+                <div style={getNotificationModalMetaStyles()}>
+                  <span style={getNotificationMetaPillStyles(selectedNotification.status !== "read")}>
+                    {selectedNotification.status === "read" ? "Read" : "Unread"}
+                  </span>
+                  <span style={getNotificationMetaPillStyles()}>
+                    {selectedNotification.type || "general"}
+                  </span>
+                </div>
+
+                <div style={{ ...getButtonRowStyles(width), justifyContent: "flex-end", marginTop: 18 }}>
+                  <button
+                    type="button"
+                    style={getSecondaryButtonStyles(width, hoveredButton === "notification-close")}
+                    onMouseEnter={() => setHoveredButton("notification-close")}
+                    onMouseLeave={() => setHoveredButton(null)}
+                    onClick={() => setSelectedNotification(null)}
+                  >
+                    Close
+                  </button>
+                  {selectedNotification.status !== "read" ? (
+                    <button
+                      type="button"
+                      style={
+                        hoveredButton === "notification-read"
+                          ? getButtonHoverStyles(width)
+                          : getButtonStyles(width)
+                      }
+                      onMouseEnter={() => setHoveredButton("notification-read")}
+                      onMouseLeave={() => setHoveredButton(null)}
+                      onClick={async () => {
+                        await handleMarkNotificationsRead()
+                        setSelectedNotification((prev) =>
+                          prev ? { ...prev, status: "read" } : prev
+                        )
+                      }}
+                      disabled={isMarkingNotificationsRead}
+                    >
+                      {isMarkingNotificationsRead ? "Updating..." : "Mark as read"}
+                    </button>
+                  ) : null}
+                </div>
+              </section>
             </div>
           ) : null}
 
