@@ -138,3 +138,35 @@
     background: #7B44FF;
     color: white;
 }
+.recommendations-section {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 2px dashed #eee;
+    width: 100%;
+}
+
+.recommendations-heading {
+    font-weight: 800;
+    font-size: 1.2rem;
+    color: #7B44FF;
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.recommendations-list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.recommendation-item {
+    background: #f8f6ff;
+    padding: 12px 15px;
+    border-radius: 8px;
+    color: #444;
+    font-size: 1rem;
+    text-align: left;
+    border-left: 4px solid #7B44FF;
+}

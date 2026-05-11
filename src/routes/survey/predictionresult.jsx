@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import html2pdf from "html2pdf.js";
 import "./predictionresult.css";
 import { API_BASE_URL, getApiErrorMessage } from "./surveyApi";
+import { toast } from "react-toastify"; // Added for toast calls used in the file
 
 const humanizePredictionLabel = (value) => {
   if (!value) return "N/A";
@@ -24,6 +25,41 @@ const renderDiabetesResult = (value) => {
     : "No diabetes risk signal detected";
 };
 
+const getObesityRiskLevel = (level) => {
+  if (!level) return { label: "N/A", class: "risk-unknown" };
+  const l = String(level).toLowerCase();
+  if (l.includes("insufficient") || l.includes("normal")) return { label: level, class: "risk-low" };
+  if (l.includes("overweight")) return { label: level, class: "risk-medium" };
+  if (l.includes("obesity")) return { label: level, class: "risk-high" };
+  return { label: level, class: "risk-medium" };
+};
+
+const getRecommendations = (level) => {
+  const l = String(level || "").toLowerCase();
+  if (l.includes("obesity")) {
+    return [
+      "Consult a healthcare professional for a personalised weight management plan.",
+      "Incorporate 150-300 minutes of moderate-intensity aerobic activity weekly.",
+      "Focus on a high-protein, high-fiber, and portion-controlled diet.",
+      "Monitor daily calorie and water intake strictly."
+    ];
+  }
+  if (l.includes("overweight")) {
+    return [
+      "Aim for at least 150 minutes of physical activity per week.",
+      "Reduce intake of processed sugars and high-calorie snacks.",
+      "Increase vegetable and whole grain consumption.",
+      "Ensure adequate hydration (2-3 litres per day)."
+    ];
+  }
+  return [
+    "Maintain your current balanced diet and regular physical activity.",
+    "Monitor weight monthly to stay within the healthy range.",
+    "Ensure 7-9 hours of quality sleep daily.",
+    "Continue with your active lifestyle and mindfulness practices."
+  ];
+};
+
 export default function ObesityResult() {
   const [result, setResult] = useState(null);
   const resultRef = useRef(null);
@@ -35,45 +71,59 @@ export default function ObesityResult() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // ✅ Read result from localStorage
     const stored = localStorage.getItem("ObesityResult");
     if (stored) {
       try {
         const parsed = JSON.parse(stored);
-        setResult(parsed.medical_report || parsed);
+        // The BFF returns { survey_id, medical_report: { obesity_prediction, diabetes_prediction } }
+        setResult(parsed);
       } catch (e) {
         console.error("Error parsing stored result:", e);
       }
     }
   }, []);
 
+  if (!result) {
+    return (
+      <div className="no-result">
+        <h2>⚠️ No survey results found</h2>
+        <p>It looks like you haven't completed the health survey yet.</p>
+        <button className="back-btn" onClick={() => navigate("/survey")}>
+          ← Start Survey
+        </button>
+      </div>
+    );
+  }
+
+  const medicalReport = result.medical_report || {};
+  const obesityData = medicalReport.obesity_prediction || {};
+  const diabetesData = medicalReport.diabetes_prediction || {};
+  const riskInfo = getObesityRiskLevel(obesityData.obesity_level);
+  const recommendations = getRecommendations(obesityData.obesity_level);
+
   const handleDownloadPDF = () => {
     if (!resultRef.current) return;
-    html2pdf().from(resultRef.current).save("Obesity_Report.pdf");
+    html2pdf().from(resultRef.current).save("Health_Summary_Report.pdf");
   };
 
   const handleCopyLink = () => {
     const url = window.location.href;
     navigator.clipboard.writeText(url).then(() => {
-      alert("🔗 Link copied to clipboard!");
+      toast.success("🔗 Link copied to clipboard!");
     });
   };
 
   const handleStartJourney = async () => {
     if (isSubmittingPlan) return;
 
-    if (targetWeight === "" || daysPerWeek === "" || workoutPlace === "") {
+    if (!targetWeight || !daysPerWeek) {
       alert("Please complete all follow-up fields.");
       return;
     }
 
     const daysValue = Number(daysPerWeek);
     if (Number.isNaN(daysValue) || daysValue < 0 || daysValue > 7) {
-      alert("days_per_week is required and must be between 0 and 7.");
-      return;
-    }
-    if (!(Number(targetWeight) > 0)) {
-      alert("target_weight must be greater than 0.");
+      alert("Days per week must be a number between 0 and 7.");
       return;
     }
 
@@ -85,14 +135,10 @@ export default function ObesityResult() {
 
     try {
       const parsedSurveyData = JSON.parse(storedSurveyData);
-
       const payload = {
         medical_report: result,
         survey_data: {
-          Gender: parsedSurveyData.Gender,
-          Age: parsedSurveyData.Age,
-          Height: parsedSurveyData.Height,
-          Weight: parsedSurveyData.Weight,
+          ...parsedSurveyData,
           days_per_week: daysValue,
           target_weight: Number(targetWeight),
           workout_place: workoutPlace.toLowerCase(),
@@ -102,7 +148,7 @@ export default function ObesityResult() {
       setIsSubmittingPlan(true);
 
       const response = await fetch(
-        `${API_BASE_URL}/api/medical-report/plan`,
+        `${API_BASE_URL}/medical-report/plan`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -124,7 +170,7 @@ export default function ObesityResult() {
       navigate("/roadmap");
     } catch (error) {
       console.error(error);
-      alert(error.message || "Failed to generate fitness plan. Please try again later.");
+      alert(error.message || "Failed to generate fitness plan.");
     } finally {
       setIsSubmittingPlan(false);
     }
@@ -132,122 +178,130 @@ export default function ObesityResult() {
 
   return (
     <div className="full" ref={resultRef}>
-      <div className="prediction-heading">🎯 Your Health Summary</div>
-      {result ? (
-        <div className="result-info-container">
-          <div className="result-card-simple">
-            <div className="result-row">
-              <span className="result-label">⚖️ Weight-related health category:</span>
-              <span className="result-value">
-                <span className="result-main-value">
-                  {humanizePredictionLabel(result.obesity_prediction?.obesity_level)}
-                </span>
-                {result.obesity_prediction?.confidence !== undefined ? (
-                  <span className="result-confidence">
-                    {renderConfidence(result.obesity_prediction?.confidence)}
-                  </span>
-                ) : null}
+      <div className="prediction-heading">🎯 Your Personal Health Summary</div>
+      
+      <div className="result-info-container">
+        <div className="result-card-simple">
+          <div className="result-row">
+            <span className="result-label">⚖️ Weight-Related Status:</span>
+            <span className="result-value">
+              <span className={`result-main-value ${riskInfo.class}`}>
+                {humanizePredictionLabel(riskInfo.label)}
               </span>
-            </div>
+              {obesityData.confidence !== undefined && (
+                <span className="result-confidence">
+                  {renderConfidence(obesityData.confidence)}
+                </span>
+              )}
+            </span>
+          </div>
 
-            <div className="result-row">
-              <span className="result-label">🩺 Diabetes screening result:</span>
-              <span className="result-value">
-                <span className="result-main-value">
-                  {renderDiabetesResult(result.diabetes_prediction?.diabetes)}
-                </span>
-                {result.diabetes_prediction?.confidence !== undefined ? (
-                  <span className="result-confidence">
-                    {renderConfidence(result.diabetes_prediction?.confidence)}
-                  </span>
-                ) : null}
+          <div className="result-row">
+            <span className="result-label">🩺 Diabetes Screening:</span>
+            <span className="result-value">
+              <span className="result-main-value">
+                {renderDiabetesResult(diabetesData.diabetes)}
               </span>
-            </div>
+              {diabetesData.confidence !== undefined && (
+                <span className="result-confidence">
+                  {renderConfidence(diabetesData.confidence)}
+                </span>
+              )}
+            </span>
           </div>
-          <div className="result-note">
-            This summary is an AI-supported wellness estimate and should not be treated as a medical diagnosis.
-            Use it as general guidance and speak with a healthcare professional if you need medical advice.
-          </div>
-          <div className="result-buttons">
-            <button className="save-btton" onClick={handleDownloadPDF}>
-              📄 Save as PDF
-            </button>
-            <button className="copy-btn" onClick={handleCopyLink}>
-              🔗 Copy Share Link
-            </button>
-            <Link to="/survey">
-              <button className="back-btn">← Back to Questionnaire</button>
-            </Link>
+
+          <div className="recommendations-section">
+            <div className="recommendations-heading">📝 Recommended Next Steps:</div>
+            <ul className="recommendations-list">
+              {recommendations.map((rec, index) => (
+                <li key={index} className="recommendation-item">
+                  ✅ {rec}
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
-      ) : (
-        <div className="no-result">
-          <p>No result data available.</p>
-          <Link to="/survey">
-            <button className="back-btn">Take the Survey</button>
-          </Link>
+
+        <div className="result-note">
+          ⚠️ <strong>Medical Disclaimer:</strong> This summary is an AI-powered wellness estimate based on your self-reported data. 
+          It is not a medical diagnosis. Please consult a qualified healthcare professional for medical advice or treatment.
         </div>
-      )}
+
+        <div className="result-buttons">
+          <button className="save-btton" onClick={handleDownloadPDF}>
+            📄 Save as PDF
+          </button>
+          <button className="copy-btn" onClick={handleCopyLink}>
+            🔗 Copy Share Link
+          </button>
+          <button className="back-btn" onClick={() => navigate("/survey")}>
+            ← Retake Survey
+          </button>
+        </div>
+      </div>
 
       <div className="fitness-question">
         {fitnessChoice === null && (
-          <>
-            💪 Would you like a personalised fitness roadmap based on this result?
+          <div className="choice-offer">
+            <h3>💪 Ready to transform?</h3>
+            <p>Get a personalised fitness roadmap based on your results.</p>
             <div className="choice-buttons">
-              <button onClick={() => setFitnessChoice("yes")}>✅ Yes</button>
-              <button onClick={() => setFitnessChoice("no")}>❌ No</button>
+              <button className="choice-yes" onClick={() => setFitnessChoice("yes")}>Yes, Start My Plan</button>
+              <button className="choice-no" onClick={() => setFitnessChoice("no")}>Not Now</button>
             </div>
-          </>
+          </div>
         )}
 
         {fitnessChoice === "yes" && (
           <div className="followup-questions">
-            <p>Great! Let’s get started 🚀</p>
-            <label>
-              1️⃣ What is your target weight?
+            <h3>Customise Your Journey 🚀</h3>
+            <div className="followup-grid">
+              <label>
+              1️⃣ Target Weight (kg)
               <input
                 type="number"
-                placeholder="(kg)"
+                placeholder="e.g. 75"
                 value={targetWeight}
                 onChange={(e) => setTargetWeight(e.target.value)}
               />
-            </label>
-            <label>
-              2️⃣ How many days a week can you exercise?
-              <input
-                type="number"
-                min="0"
-                max="7"
-                placeholder="e.g., 4"
-                value={daysPerWeek}
-                onChange={(e) => setDaysPerWeek(e.target.value)}
-              />
-            </label>
-            <label>
-              3️⃣ Do you prefer home workouts or gym?
-              <select
-                value={workoutPlace}
-                disabled={isSubmittingPlan}
-                onChange={(e) => setWorkoutPlace(e.target.value)}
-              >
-                <option value="Home">Home</option>
-                <option value="Gym">Gym</option>
-              </select>
-            </label>
+              </label>
+              <label>
+                2️⃣ Exercise Frequency (days/week)
+                <input
+                  type="number"
+                  min="1"
+                  max="7"
+                  placeholder="1-7"
+                  value={daysPerWeek}
+                  onChange={(e) => setDaysPerWeek(e.target.value)}
+                />
+              </label>
+              <label>
+                3️⃣ Preferred Workout Location
+                <select
+                  value={workoutPlace}
+                  disabled={isSubmittingPlan}
+                  onChange={(e) => setWorkoutPlace(e.target.value)}
+                >
+                  <option value="Home">Home (No equipment)</option>
+                  <option value="Gym">Gym (Full access)</option>
+                </select>
+              </label>
+            </div>
             <button
               className="start-btn"
               onClick={handleStartJourney}
               disabled={isSubmittingPlan}
             >
-              {isSubmittingPlan ? "Generating Plan..." : "🚀 Start Journey"}
+              {isSubmittingPlan ? "🚀 Generating Your Plan..." : "Generate My Fitness Roadmap"}
             </button>
           </div>
         )}
 
         {fitnessChoice === "no" && (
           <div className="no-journey">
-            <p>That’s okay 👍 You can always start later.</p>
-            <button onClick={() => navigate("/home")}>🏠 Go to Home</button>
+            <p>No problem! You can always generate a plan later from your results page.</p>
+            <button className="home-btn" onClick={() => navigate("/")}>🏠 Back to Home</button>
           </div>
         )}
       </div>
