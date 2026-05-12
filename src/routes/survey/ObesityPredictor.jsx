@@ -73,19 +73,25 @@ export default function ObesityPredict() {
           [2, "Female"],
         ],
       },
-      { label: "Age (years)", name: "Age", type: "number" },
       {
-        label: "Height (metres)",
+        label: "Age",
+        name: "Age",
+        type: "number",
+        placeholder: "e.g. 68",
+        helperText: "Enter your age in years.",
+      },
+      {
+        label: "Height",
         name: "Height",
         type: "number",
         placeholder: "e.g. 1.67",
-        helperText: "Enter height in metres. Example: 167 cm = 1.67 m.",
+        helperText: "Use metres. For example, 167 cm is 1.67 m.",
         min: 0.5,
         max: 2.5,
         step: 0.01,
       },
       {
-        label: "Weight (kg)",
+        label: "Weight",
         name: "Weight",
         type: "number",
         placeholder: "e.g. 70",
@@ -96,31 +102,38 @@ export default function ObesityPredict() {
     ],
     food: [
       {
-        label: "Do you frequently eat high-calorie foods?",
+        label: "How often do you eat high-calorie foods?",
         name: "FAVC",
         type: "select",
         options: [
           [1, "Yes"],
           [0, "No"],
         ],
+        helperText: "Examples include fried foods, sweets, fast food, and sugary drinks.",
       },
       {
-        label: "Vegetable consumption frequency (0-5)",
+        label: "Vegetable intake",
         name: "FCVC",
-        type: "number",
-        placeholder: "e.g. 2",
-        min: 0,
-        max: 5,
-        step: 0.1,
+        type: "select",
+        options: [
+          [0, "Rarely"],
+          [1, "Sometimes"],
+          [2, "Most days"],
+          [3, "With most meals"],
+        ],
+        helperText: "Choose the closest usual pattern.",
       },
       {
         label: "Main meals per day",
         name: "NCP",
-        type: "number",
-        placeholder: "e.g. 3",
-        min: 0,
-        max: 10,
-        step: 1,
+        type: "select",
+        options: [
+          [1, "1 meal"],
+          [2, "2 meals"],
+          [3, "3 meals"],
+          [4, "4 or more meals"],
+        ],
+        helperText: "Count breakfast, lunch, dinner, or similar main meals.",
       },
       {
         label: "Snacks between meals",
@@ -132,24 +145,29 @@ export default function ObesityPredict() {
           [2, "Frequently"],
           [3, "Always"],
         ],
+        helperText: "Choose the option closest to your usual routine.",
       },
       {
-        label: "Water intake (litres)",
+        label: "Water intake",
         name: "CH2O",
-        type: "number",
-        placeholder: "e.g. 2",
-        min: 0,
-        max: 10,
-        step: 0.1,
+        type: "select",
+        options: [
+          [0.5, "Less than 1 litre"],
+          [1, "About 1 litre"],
+          [2, "About 2 litres"],
+          [3, "3 litres or more"],
+        ],
+        helperText: "An estimate is enough.",
       },
       {
-        label: "Monitor calorie intake?",
+        label: "Do you track calorie intake?",
         name: "SCC",
         type: "select",
         options: [
           ["yes", "Yes"],
           ["no", "No"],
         ],
+        helperText: "This can include using an app, diary, or checking food labels.",
       },
     ],
     lifestyle: [
@@ -161,6 +179,7 @@ export default function ObesityPredict() {
           [0, "No"],
           [1, "Yes"],
         ],
+        helperText: "Used only to support the wellness summary.",
       },
       {
         label: "Alcohol consumption",
@@ -171,24 +190,31 @@ export default function ObesityPredict() {
           [1, "Sometimes"],
           [2, "Frequently"],
         ],
+        helperText: "Choose the closest usual pattern.",
       },
       {
-        label: "Physical activity weekly frequency",
+        label: "Daily physical activity",
         name: "FAF",
-        type: "number",
-        placeholder: "e.g. 1",
-        min: 0,
-        max: 10,
-        step: 0.1,
+        type: "select",
+        options: [
+          [0.2, "Very little"],
+          [1, "Light activity"],
+          [3, "Active most days"],
+          [5, "Very active"],
+        ],
+        helperText: "Include walking, housework, or light exercise.",
       },
       {
-        label: "Screen time (hours/day)",
+        label: "Daily screen time",
         name: "TUE",
-        type: "number",
-        placeholder: "e.g. 3",
-        min: 0,
-        max: 24,
-        step: 0.1,
+        type: "select",
+        options: [
+          [1, "1-2 hours"],
+          [3, "3-5 hours"],
+          [6, "6-8 hours"],
+          [9, "More than 8 hours"],
+        ],
+        helperText: "Choose the closest usual amount.",
       },
       {
         label: "Family history of overweight",
@@ -198,6 +224,7 @@ export default function ObesityPredict() {
           ["yes", "Yes"],
           ["no", "No"],
         ],
+        helperText: "Select yes if close family members have had overweight or obesity concerns.",
       },
       {
         label: "Mode of transportation",
@@ -210,6 +237,7 @@ export default function ObesityPredict() {
           ["Public_Transportation", "Public Transportation"],
           ["Walking", "Walking"],
         ],
+        helperText: "Choose how you usually get around.",
       },
     ],
   };
@@ -221,7 +249,7 @@ export default function ObesityPredict() {
     const { name, value } = e.target;
     const floatFields = ['Height', 'Weight', 'CH2O', 'FAF', 'TUE', 'FCVC'];
     const integerFields = ['Age', 'NCP'];
-    const selectNumericFields = ['Gender', 'SMOKE', 'CALC', 'FAVC', 'CAEC'];
+      const selectNumericFields = ['Gender', 'SMOKE', 'CALC', 'FAVC', 'CAEC', 'FCVC', 'NCP', 'CH2O', 'FAF', 'TUE'];
 
     let parsedValue = value;
     if (floatFields.includes(name)) {
@@ -326,7 +354,18 @@ export default function ObesityPredict() {
 
   return (
     <div className="obesity-card">
-      <div className="heading_survey">Personal Medical Survey</div>
+      <div className="heading_survey">Health & Lifestyle Check-In</div>
+
+      <section className="survey-intro">
+        <div>
+          <h2>Build your health summary</h2>
+          <p>
+            Answer a few questions about your routine so NutriHelp can estimate your wellness category
+            and prepare a starting point for healthier meal and activity guidance.
+          </p>
+        </div>
+        <span>Not a diagnosis</span>
+      </section>
 
       <div className="prog">
         <span className="progress-label">{progress}% completed</span>
@@ -337,9 +376,9 @@ export default function ObesityPredict() {
           {Object.entries(questionGroups).map(([groupName, questions]) => (
             <div key={groupName} className="question-group">
               <h3 className="group-heading">
-                {groupName === "personal" && "👤 Personal Information"}
-                {groupName === "food" && "🍎 Food & Diet"}
-                {groupName === "lifestyle" && "🏃 Lifestyle & Habits"}
+                {groupName === "personal" && "👤 About You"}
+                {groupName === "food" && "🍎 Eating Routine"}
+                {groupName === "lifestyle" && "🏃 Daily Habits"}
               </h3>
 
               <div className="questions-grid">
@@ -413,7 +452,7 @@ export default function ObesityPredict() {
                   Analyzing…
                 </>
               ) : (
-                "Predict"
+                "View My Health Summary"
               )}
             </button>
           </div>
