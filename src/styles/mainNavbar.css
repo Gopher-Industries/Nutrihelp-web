@@ -157,6 +157,21 @@
   transition: background-color 0.15s ease, border-color 0.15s ease;
 }
 
+.main-nav .nav-link,
+.main-nav .nav-link:visited,
+.main-nav .nav-link:hover,
+.main-nav .nav-link:focus,
+.main-nav .nav-link:focus-visible,
+.main-nav .nav-link:active,
+.main-nav .nav-button,
+.main-nav .nav-button:hover,
+.main-nav .nav-button:focus,
+.main-nav .nav-button:focus-visible,
+.main-nav .nav-button:active {
+  color: var(--text-primary) !important;
+  -webkit-text-fill-color: var(--text-primary);
+}
+
 .nav-link:hover,
 .nav-button:hover {
   background: var(--background-secondary);
