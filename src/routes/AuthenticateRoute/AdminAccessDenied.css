@@ -1,5 +1,5 @@
 .admin-access-denied-page {
-  min-height: calc(100vh - 120px);
+  min-height: 100vh;
   display: grid;
   place-items: center;
   padding: 40px 20px 72px;
