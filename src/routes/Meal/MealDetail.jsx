@@ -140,7 +140,11 @@ function isBlobUrl(value) {
 
 function isDisallowedImageSource(value) {
   const normalized = normalize(value);
-  return normalized.includes("wikimedia") || normalized.includes("wikipedia");
+  return (
+    normalized.includes("blob:") ||
+    normalized.includes("wikipedia.org") ||
+    normalized.includes("wikimedia.org")
+  );
 }
 
 function resolveDishImageByName(dishName, seed = 0, { allowRotation = true } = {}) {
@@ -172,9 +176,22 @@ function resolveMealImage(meal) {
 
 function shouldFetchDynamicImage(meal, image) {
   const imageValue = String(image || "").trim();
+  const sourceText = normalize(
+    `${meal?.imageSource || ""} ${meal?.imageSourceUrl || ""}`
+  );
+  const isWikipediaImage =
+    sourceText.includes("wikipedia") ||
+    sourceText.includes("wikimedia") ||
+    imageValue.includes("wikipedia.org") ||
+    imageValue.includes("wikimedia.org");
+  const hasTrustedRemoteImage =
+    sourceText.includes("unsplash") ||
+    (/^https?:\/\//i.test(imageValue) && !isWikipediaImage);
   const isScanMeal =
     String(meal?.id || "").startsWith("scan-") ||
     String(meal?.time || "").toLowerCase() === "ai scan";
+
+  if (hasTrustedRemoteImage) return false;
 
   return (
     isScanMeal ||

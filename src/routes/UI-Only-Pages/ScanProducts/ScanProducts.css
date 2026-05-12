@@ -155,12 +155,66 @@ html, body, #root, .App {
   gap: 10px;
 }
 
+.scan-upload-preview-frame {
+  position: relative;
+}
+
 .scan-upload-preview-img {
   width: 100%;
   height: 220px;
   object-fit: cover;
   border-radius: 14px;
   border: 1px solid rgba(14, 116, 144, 0.18);
+}
+
+.scan-upload-preview-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  border: 1px solid rgba(15, 23, 42, 0.14);
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--text-primary);
+  font-size: 1.15rem;
+  font-weight: 900;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(2, 6, 23, 0.16);
+}
+
+.scan-upload-preview-nav:hover:not(:disabled) {
+  filter: brightness(1.03);
+}
+
+.scan-upload-preview-nav:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.scan-upload-preview-nav--prev {
+  left: 12px;
+}
+
+.scan-upload-preview-nav--next {
+  right: 12px;
+}
+
+.scan-upload-preview-counter {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.74);
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 800;
+  line-height: 1;
 }
 
 .scan-upload-preview-meta {
@@ -485,6 +539,32 @@ html, body, #root, .App {
 .scan-meta-chip strong {
   font-size: 1rem;
   color: var(--text-primary);
+}
+
+.scan-review-image-wrap {
+  margin: 0 1rem;
+  padding: 12px;
+  border-radius: 20px;
+  border: 1px solid rgba(14, 116, 144, 0.16);
+  background: rgba(248, 252, 255, 0.9);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.scan-review-image {
+  width: 100%;
+  height: 340px;
+  object-fit: cover;
+  border-radius: 14px;
+  border: 1px solid rgba(14, 116, 144, 0.18);
+}
+
+.scan-review-image-caption {
+  color: var(--text-secondary);
+  font-size: 0.84rem;
+  font-weight: 700;
+  text-align: right;
 }
 
 .scan-editable-grid {
