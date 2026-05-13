@@ -68,7 +68,7 @@ function getAuthHeaders(includeContentType = true) {
 
 /* ---------------- Page ---------------- */
 
-export default function ChatPage() {
+export default function ChatPage({ compact = false, onClose }) {
   const [draft, setDraft] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const messagesRef = useRef(null);
@@ -393,12 +393,22 @@ export default function ChatPage() {
   }
 
   return (
-    <div className="nh-root">
+    <div className={`nh-root ${compact ? "nh-root--widget" : ""}`}>
       {/* ---------- Chat ---------- */}
       <main className="nh-app">
         <section className="nh-chatCard">
           <div className="nh-chatHeader">
             <h2 className="nh-chatTitle">NutriHelp Assistant</h2>
+            {compact ? (
+              <button
+                type="button"
+                className="nh-closeBtn"
+                aria-label="Close assistant"
+                onClick={onClose}
+              >
+                ×
+              </button>
+            ) : null}
           </div>
 
           <div className="nh-messages" ref={messagesRef}>
@@ -475,18 +485,22 @@ export default function ChatPage() {
             {/* AI013: mic button */}
             <button
               type="button"
-              className="nh-sendBtn"
+              className={`nh-sendBtn nh-micBtn ${isRecording ? "is-recording" : ""} ${isTranscribing ? "is-transcribing" : ""}`}
               disabled={isLoading || isTranscribing}
               onClick={isRecording ? stopRecording : startRecording}
-              style={{
-                backgroundColor: isRecording ? "#ef4444" : isTranscribing ? "#9ca3af" : "#4b0fa8",
-                animation: isRecording ? "pulse 1.5s infinite" : "none",
-              }}
+              aria-label={isRecording ? "Stop voice recording" : "Start voice recording"}
+              title={isRecording ? "Stop voice recording" : "Start voice recording"}
             >
               {isTranscribing ? <FaSpinner /> : isRecording ? <FaStop /> : <FaMicrophone />}
             </button>
 
-            <button className="nh-sendBtn" type="submit" disabled={isLoading}>
+            <button
+              className="nh-sendBtn nh-submitBtn"
+              type="submit"
+              disabled={isLoading}
+              aria-label="Send message"
+              title="Send message"
+            >
               ➤
             </button>
           </form>

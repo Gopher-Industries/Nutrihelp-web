@@ -366,7 +366,11 @@ const Home = () => {
   const aboutSectionRef = useRef(null);
 
   const onAssistant = () => {
-    navigate(currentUser ? "/chat" : "/login");
+    if (!currentUser) {
+      navigate("/login");
+      return;
+    }
+    window.dispatchEvent(new CustomEvent("nutrihelp:open-assistant"));
   };
 
   useEffect(() => {
