@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import * as XLSX from "xlsx";
 import { useNavigate } from "react-router-dom";
 import {
@@ -433,21 +433,27 @@ function getImportedItemStatusLabel(status) {
   if (normalized === "enriching") return "in progress";
   if (normalized === "rejected") return "canceled";
   if (normalized === "imported") return "completed";
-  if (normalized === "enriched") return "ready (auto import)";
+  if (normalized === "enriched") return "ready to approve";
   if (normalized === "queued") return "pending";
   return normalized || "-";
 }
 
 function getQueueReviewStatusLabel(row) {
   const status = normalizeQueueStatus(row?.status);
-  const completeness = String(row?.completeness_status || "").trim().toLowerCase();
-  if (completeness === "ready" && (status === "pending" || status === "queued")) return "ready to import";
-  if (completeness === "ready" && status === "failed") return "import failed";
+  const completeness = normalizeQueueCompleteness(row?.completeness_status);
+  if (completeness === "ready" && (status === "pending" || status === "queued" || status === "failed" || status === "enriched")) {
+    return "ready to approve";
+  }
+  if (completeness !== "ready" && status === "enriched") return "enriched (still missing data)";
   return getImportedItemStatusLabel(status);
 }
 
+function normalizeQueueCompleteness(value) {
+  return String(value || "").trim().toLowerCase();
+}
+
 function getCompletenessLabel(value) {
-  return String(value || "").trim().toLowerCase() === "ready" ? "Đủ dữ liệu" : "Thiếu dữ liệu";
+  return normalizeQueueCompleteness(value) === "ready" ? "Data ready" : "Missing data";
 }
 
 function toCsvText(value) {
@@ -545,14 +551,19 @@ function sleep(ms) {
   });
 }
 
-function isQueueRowReadyForAutoImport(row) {
+function isQueueRowStillNeedsEnrichment(row) {
   const status = normalizeQueueStatus(row?.status);
-  const completeness = String(row?.completeness_status || "").trim().toLowerCase();
+  const completeness = normalizeQueueCompleteness(row?.completeness_status);
   return (
-    completeness === "ready" &&
-    !row?.target_recipe_id &&
+    completeness === "missing_data" &&
     (status === "pending" || status === "queued" || status === "failed" || status === "enriched")
   );
+}
+
+function isQueueRowWaitingForEnrichment(row) {
+  const status = normalizeQueueStatus(row?.status);
+  const completeness = normalizeQueueCompleteness(row?.completeness_status);
+  return completeness === "missing_data" && (status === "pending" || status === "queued" || status === "enriching");
 }
 
 export default function AdminDataCenter() {
@@ -599,7 +610,7 @@ export default function AdminDataCenter() {
   const [importForm, setImportForm] = useState(DEFAULT_IMPORT_FORM);
   const [importFile, setImportFile] = useState(null);
   const [enrichmentLimit, setEnrichmentLimit] = useState("10");
-  const [autoEnrichOnImport, setAutoEnrichOnImport] = useState(true);
+  const [autoEnrichOnImport, setAutoEnrichOnImport] = useState(false);
   const [isImportPreviewOpen, setIsImportPreviewOpen] = useState(false);
   const [isImportPreviewLoading, setIsImportPreviewLoading] = useState(false);
   const [importPreviewRows, setImportPreviewRows] = useState([]);
@@ -616,7 +627,6 @@ export default function AdminDataCenter() {
     message: "Waiting for import action.",
     updatedAt: null,
   });
-  const isAutoImportingReadyRef = useRef(false);
 
   const [mealForm, setMealForm] = useState(DEFAULT_MEAL_FORM);
   const [editingMealId, setEditingMealId] = useState("");
@@ -922,68 +932,6 @@ export default function AdminDataCenter() {
     }).length;
   }, []);
 
-  const autoApproveQueueIds = useCallback(async (queueIds = []) => {
-    const ids = Array.from(
-      new Set((Array.isArray(queueIds) ? queueIds : []).map((id) => String(id || "").trim()).filter(Boolean))
-    );
-    if (!ids.length) return { attempted: 0, imported: 0, missing: 0, failed: 0 };
-
-    const BATCH_SIZE = 50;
-    let imported = 0;
-    let missing = 0;
-    let failed = 0;
-
-    for (let index = 0; index < ids.length; index += BATCH_SIZE) {
-      const batchIds = ids.slice(index, index + BATCH_SIZE);
-      const results = await approveRecipeLibraryImportQueueRows(batchIds);
-      imported += results.filter((item) => normalizeQueueStatus(item?.status) === "imported").length;
-      missing += results.filter((item) => normalizeQueueStatus(item?.status) === "missing_data").length;
-      failed += results.filter((item) => normalizeQueueStatus(item?.status) === "failed").length;
-    }
-
-    return { attempted: ids.length, imported, missing, failed };
-  }, []);
-
-  const autoImportReadyQueueRows = useCallback(async (rows = []) => {
-    const readyIds = (Array.isArray(rows) ? rows : [])
-      .filter((row) => isQueueRowReadyForAutoImport(row))
-      .map((row) => getQueueRowId(row))
-      .filter(Boolean);
-    if (!readyIds.length) return { attempted: 0, imported: 0, missing: 0, failed: 0 };
-    return autoApproveQueueIds(readyIds);
-  }, [autoApproveQueueIds]);
-
-  useEffect(() => {
-    const readyRows = importQueue.filter((row) => isQueueRowReadyForAutoImport(row));
-    if (!readyRows.length || isAutoImportingReadyRef.current) return;
-
-    let cancelled = false;
-    const syncReadyRows = async () => {
-      isAutoImportingReadyRef.current = true;
-      try {
-        const result = await autoImportReadyQueueRows(readyRows);
-        if (!cancelled && result.imported > 0) {
-          await refreshRecipeLibraryQueues();
-          setSuccess((prev) => {
-            const prefix = prev ? `${prev} ` : "";
-            return `${prefix}Auto-imported ${result.imported} ready row(s) into Recipe Library.`;
-          });
-        }
-      } catch (err) {
-        if (!cancelled) {
-          setError(err.message || "Failed to auto-import ready rows.");
-        }
-      } finally {
-        isAutoImportingReadyRef.current = false;
-      }
-    };
-
-    syncReadyRows();
-    return () => {
-      cancelled = true;
-    };
-  }, [autoImportReadyQueueRows, importQueue, refreshRecipeLibraryQueues]);
-
   const runEnrichmentLoop = useCallback(async (input = {}) => {
     const batchSize = Math.max(1, Math.min(50, Number(enrichmentLimit) || 10));
     const maxRounds = 120;
@@ -991,18 +939,17 @@ export default function AdminDataCenter() {
 
     const queueSnapshot = await fetchRecipeLibraryImportQueue({ limit: 300 }).catch(() => []);
     const enrichableStatuses = new Set(["pending", "queued", "failed", "enriched"]);
-    const remainingStatuses = new Set(["pending", "queued", "failed"]);
     const targetRows = selectedQueueIds.length
       ? queueSnapshot.filter(
           (row) =>
             selectedQueueIds.includes(getQueueRowId(row)) &&
             enrichableStatuses.has(normalizeQueueStatus(row?.status)) &&
-            String(row?.completeness_status || "").toLowerCase() === "missing_data"
+            isQueueRowStillNeedsEnrichment(row)
         )
       : queueSnapshot.filter(
           (row) =>
             normalizeQueueStatus(row?.status) === "pending" &&
-            String(row?.completeness_status || "").toLowerCase() === "missing_data"
+            isQueueRowStillNeedsEnrichment(row)
         );
     const initialPending = targetRows.length;
 
@@ -1068,15 +1015,8 @@ export default function AdminDataCenter() {
       let refreshedRows = selectedQueueIds.length
         ? refreshed.queue.filter((row) => selectedQueueIds.includes(getQueueRowId(row)))
         : refreshed.queue;
-      const autoImported = await autoImportReadyQueueRows(refreshedRows);
-      if (autoImported.imported > 0) {
-        refreshed = await refreshRecipeLibraryQueues();
-        refreshedRows = selectedQueueIds.length
-          ? refreshed.queue.filter((row) => selectedQueueIds.includes(getQueueRowId(row)))
-          : refreshed.queue;
-      }
       remaining = selectedQueueIds.length
-        ? refreshedRows.filter((row) => remainingStatuses.has(normalizeQueueStatus(row?.status))).length
+        ? refreshedRows.filter(isQueueRowWaitingForEnrichment).length
         : countPendingQueueRows(refreshedRows);
 
       setImportProgress({
@@ -1101,19 +1041,12 @@ export default function AdminDataCenter() {
       await sleep(400);
     }
 
-    let finalSnapshot = await refreshRecipeLibraryQueues();
-    let finalRows = selectedQueueIds.length
+    const finalSnapshot = await refreshRecipeLibraryQueues();
+    const finalRows = selectedQueueIds.length
       ? finalSnapshot.queue.filter((row) => selectedQueueIds.includes(getQueueRowId(row)))
       : finalSnapshot.queue;
-    const autoImportedAtEnd = await autoImportReadyQueueRows(finalRows);
-    if (autoImportedAtEnd.imported > 0) {
-      finalSnapshot = await refreshRecipeLibraryQueues();
-      finalRows = selectedQueueIds.length
-        ? finalSnapshot.queue.filter((row) => selectedQueueIds.includes(getQueueRowId(row)))
-        : finalSnapshot.queue;
-    }
     remaining = selectedQueueIds.length
-      ? finalRows.filter((row) => remainingStatuses.has(normalizeQueueStatus(row?.status))).length
+      ? finalRows.filter(isQueueRowWaitingForEnrichment).length
       : countPendingQueueRows(finalRows);
     const completed = Math.max(0, initialPending - remaining);
 
@@ -1125,9 +1058,9 @@ export default function AdminDataCenter() {
       failed: failedCount,
       message: pausedByQuota
         ? `Paused due to AI quota/rate limit. Enriched ${successCount}, failed ${failedCount}, ${remaining} still pending.${quotaPauseReason ? ` Reason: ${quotaPauseReason}` : ""}`
-        : remaining === 0
-          ? `Enrichment finished: ${successCount} enriched, ${failedCount} failed.`
-          : `Partial enrichment: ${successCount} enriched, ${failedCount} failed, ${remaining} still pending.`,
+        : remaining > 0
+          ? `Partial enrichment: ${successCount} enriched, ${failedCount} failed, ${remaining} still pending.`
+          : `Enrichment finished: ${successCount} enriched, ${failedCount} failed.`,
       updatedAt: new Date().toISOString(),
     });
 
@@ -1141,7 +1074,7 @@ export default function AdminDataCenter() {
       pausedByQuota,
       pauseReason: quotaPauseReason,
     };
-  }, [autoImportReadyQueueRows, countPendingQueueRows, enrichmentLimit, refreshRecipeLibraryQueues]);
+  }, [countPendingQueueRows, enrichmentLimit, refreshRecipeLibraryQueues]);
 
   const handleSaveMeal = async (event) => {
     event.preventDefault();
@@ -1325,28 +1258,22 @@ export default function AdminDataCenter() {
         total: rows.length,
         success: rows.length,
         failed: 0,
-        message: `Text import completed: ${rows.length} rows queued. Ready rows will auto-import to Recipe Library.`,
+        message: `Text import completed: ${rows.length} rows queued. Select rows to AI enrich or approve.`,
         updatedAt: new Date().toISOString(),
       });
       setImportForm(DEFAULT_IMPORT_FORM);
-      const refreshed = await refreshRecipeLibraryQueues();
-      const autoImported = await autoImportReadyQueueRows(refreshed.queue || []);
-      if (autoImported.imported > 0) {
-        await refreshRecipeLibraryQueues();
-      }
+      await refreshRecipeLibraryQueues();
 
       if (autoEnrichOnImport && rows.length > 0) {
-        const result = await runEnrichmentLoop();
-        const autoImportText = autoImported.imported > 0 ? ` Auto-imported ${autoImported.imported} ready rows.` : "";
+        const importedQueueIds = rows.map((row) => getQueueRowId(row)).filter(Boolean);
+        const result = await runEnrichmentLoop({ queueIds: importedQueueIds });
         setSuccess(
           result.pausedByQuota
-              ? `Imported ${rows.length} rows.${autoImportText} Auto enrichment (missing-data only) paused due to AI quota: ${result.successCount} enriched, ${result.failedCount} failed, ${result.remaining} still pending.`
+              ? `Imported ${rows.length} rows. Auto enrichment (missing-data only) paused due to AI quota: ${result.successCount} enriched, ${result.failedCount} failed, ${result.remaining} still pending.`
             : result.remaining > 0
-            ? `Imported ${rows.length} rows.${autoImportText} Auto enrichment (missing-data only) partial: ${result.successCount} enriched, ${result.failedCount} failed, ${result.remaining} still pending.`
-            : `Imported ${rows.length} rows.${autoImportText} Auto enrichment (missing-data only) finished: ${result.successCount} enriched, ${result.failedCount} failed.`
+            ? `Imported ${rows.length} rows. Auto enrichment (missing-data only) partial: ${result.successCount} enriched, ${result.failedCount} failed, ${result.remaining} still pending.`
+            : `Imported ${rows.length} rows. Auto enrichment (missing-data only) finished: ${result.successCount} enriched, ${result.failedCount} failed.`
         );
-      } else if (autoImported.imported > 0) {
-        setSuccess(`Imported ${rows.length} rows. Auto-imported ${autoImported.imported} ready rows to Recipe Library.`);
       }
     } catch (err) {
       setError(err.message || "Failed to import dish names.");
@@ -1467,25 +1394,23 @@ export default function AdminDataCenter() {
         total: rows.length,
         success: rows.length,
         failed: 0,
-        message: `Import completed: ${rows.length} rows added to import queue. Ready rows will auto-import to Recipe Library.`,
+        message: `Import completed: ${rows.length} rows added to import queue. Select rows to AI enrich or approve.`,
         updatedAt: new Date().toISOString(),
       });
       setImportFile(null);
       setImportPreviewRows([]);
       setEditingPreviewCell(null);
-      const refreshed = await refreshRecipeLibraryQueues();
-      const autoImported = await autoImportReadyQueueRows(refreshed.queue || []);
-      if (autoImported.imported > 0) {
-        await refreshRecipeLibraryQueues();
-      }
+      await refreshRecipeLibraryQueues();
 
-      if (rows.length > 0) {
-        const enrichResult = await runEnrichmentLoop();
-        const autoImportText = autoImported.imported > 0 ? ` Auto-imported ${autoImported.imported} ready rows.` : "";
+      if (autoEnrichOnImport && rows.length > 0) {
+        const importedQueueIds = rows.map((row) => getQueueRowId(row)).filter(Boolean);
+        const enrichResult = await runEnrichmentLoop({ queueIds: importedQueueIds });
         setSuccess(
           enrichResult.pausedByQuota
-            ? `Imported ${rows.length} rows.${autoImportText} AI enrichment (missing-data only) paused due to quota: ${enrichResult.successCount} enriched, ${enrichResult.failedCount} failed, ${enrichResult.remaining} still pending.`
-            : `Imported ${rows.length} rows.${autoImportText} AI enrichment (missing-data only) finished: ${enrichResult.successCount} enriched, ${enrichResult.failedCount} failed.`
+            ? `Imported ${rows.length} rows. AI enrichment (missing-data only) paused due to quota: ${enrichResult.successCount} enriched, ${enrichResult.failedCount} failed, ${enrichResult.remaining} still pending.`
+            : enrichResult.remaining > 0
+              ? `Imported ${rows.length} rows. AI enrichment (missing-data only) partial: ${enrichResult.successCount} enriched, ${enrichResult.failedCount} failed, ${enrichResult.remaining} still missing data.`
+              : `Imported ${rows.length} rows. AI enrichment (missing-data only) finished: ${enrichResult.successCount} enriched, ${enrichResult.failedCount} failed.`
         );
       }
     } catch (err) {
@@ -1568,17 +1493,8 @@ export default function AdminDataCenter() {
     setIsLoading(true);
     try {
       await updateRecipeLibraryImportQueueRow(queueId, queueEditForm);
-      const refreshed = await refreshRecipeLibraryQueues();
-      const updatedRow = (refreshed.queue || []).find((item) => String(item?.id) === queueId);
-      const autoImported = updatedRow ? await autoImportReadyQueueRows([updatedRow]) : { imported: 0 };
-      if (autoImported.imported > 0) {
-        await refreshRecipeLibraryQueues();
-      }
-      setSuccess(
-        autoImported.imported > 0
-          ? `Updated ${queueEditForm.dish_name || queueId} and auto-imported to Recipe Library.`
-          : `Updated imported item ${queueEditForm.dish_name || queueId}.`
-      );
+      await refreshRecipeLibraryQueues();
+      setSuccess(`Updated imported item ${queueEditForm.dish_name || queueId}.`);
       closeQueueEditModal();
     } catch (err) {
       setError(err.message || "Failed to update imported item.");
@@ -1601,7 +1517,9 @@ export default function AdminDataCenter() {
       setSuccess(
         result.pausedByQuota
           ? `AI enrich (missing-data only) paused by quota: ${result.successCount} enriched, ${result.failedCount} failed, ${result.remaining} pending.`
-          : `AI enrich (missing-data only) completed: ${result.successCount} enriched, ${result.failedCount} failed.`
+          : result.remaining > 0
+            ? `AI enrich (missing-data only) partial: ${result.successCount} enriched, ${result.failedCount} failed, ${result.remaining} still missing data.`
+            : `AI enrich (missing-data only) completed: ${result.successCount} enriched, ${result.failedCount} failed.`
       );
     } catch (err) {
       setError(err.message || "Failed to AI enrich selected rows.");
@@ -1932,7 +1850,20 @@ export default function AdminDataCenter() {
       const added = results.filter((row) => normalizeQueueStatus(row?.status) === "image_added").length;
       const noImage = results.filter((row) => normalizeQueueStatus(row?.status) === "no_image").length;
       const failed = results.filter((row) => normalizeQueueStatus(row?.status) === "failed").length;
-      await loadAdminData();
+      const addedById = new Map(
+        results
+          .filter((row) => normalizeQueueStatus(row?.status) === "image_added")
+          .map((row) => [Number(row?.id), String(row?.image_url || "").trim()])
+          .filter(([id, imageUrl]) => Number.isInteger(id) && id > 0 && Boolean(imageUrl))
+      );
+      if (addedById.size > 0) {
+        setRecipeLibrary((prev) =>
+          prev.map((row) =>
+            addedById.has(Number(row?.id)) ? { ...row, image_url: addedById.get(Number(row?.id)) } : row
+          )
+        );
+      }
+      await refreshRecipeLibraryQueues();
       setSuccess(`Image fetch result: added ${added}, no image ${noImage}, failed ${failed}.`);
       if (added === 0 && (noImage > 0 || failed > 0)) {
         const firstError = results.find((row) => row?.error)?.error || "";
@@ -3945,13 +3876,13 @@ export default function AdminDataCenter() {
                     </article>
                     <article>
                       <strong>{importQueueStats.enriched}</strong>
-                      <span>Ready auto-import</span>
+                      <span>Ready to approve</span>
                     </article>
                   </div>
                 </section>
 
                 <p className="admin-note">
-                  Progress only tracks the AI enrichment progress for items with missing data. Items that are ready to import without enrichment or have failed enrichment will not affect the progress percentage.
+                  Progress only tracks AI enrichment for selected rows with missing data. Rows with enough data can be approved manually.
                 </p>
                 <p className="admin-note">
                   List of items pending review ({missingDataQueueRows.length} rows)
@@ -3967,7 +3898,7 @@ export default function AdminDataCenter() {
                       !missingDataQueueRows.some(
                         (row) =>
                           selectedMissingQueueIds.includes(getQueueRowId(row)) &&
-                          String(row?.completeness_status || "").toLowerCase() === "missing_data"
+                          normalizeQueueCompleteness(row?.completeness_status) === "missing_data"
                       )
                     }
                   >
@@ -4045,7 +3976,7 @@ export default function AdminDataCenter() {
                             <option value="">All</option>
                             <option value="pending">Pending</option>
                             <option value="failed">Failed</option>
-                            <option value="ready to import">Ready to import</option>
+                            <option value="ready to approve">Ready to approve</option>
                             <option value="import failed">Import failed</option>
                           </select>
                         </th>
@@ -4091,7 +4022,7 @@ export default function AdminDataCenter() {
                     <tbody>
                       {missingDataQueueRows.map((row, index) => {
                         const queueId = getQueueRowId(row);
-                        const isReady = String(row?.completeness_status || "").toLowerCase() === "ready";
+                        const isReady = normalizeQueueCompleteness(row?.completeness_status) === "ready";
                         const errorText = String(row?.error_message || "").trim();
                         return (
                         <tr key={`missing-${queueId || index}`}>
