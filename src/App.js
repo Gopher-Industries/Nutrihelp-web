@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import "semantic-ui-css/semantic.min.css";
 import "./App.css";
 import { initializeFontSize } from "./utils/fontSizeManager";
@@ -81,8 +81,15 @@ import { isAuthPath } from "./utils/ttsRouteUtils";
 function GlobalAuthenticatedLayout() {
   const location = useLocation();
   const { currentUser } = useContext(UserContext);
+  const [assistantOpen, setAssistantOpen] = useState(false);
 
   const shouldHideGlobalControls = isAuthPath(location.pathname);
+
+  useEffect(() => {
+    const openAssistant = () => setAssistantOpen(true);
+    window.addEventListener("nutrihelp:open-assistant", openAssistant);
+    return () => window.removeEventListener("nutrihelp:open-assistant", openAssistant);
+  }, []);
 
   if (shouldHideGlobalControls) return null;
 
@@ -90,6 +97,9 @@ function GlobalAuthenticatedLayout() {
     <>
       <MainNavbar />
       {currentUser ? <TextToSpeechControl /> : null}
+      {currentUser && assistantOpen ? (
+        <ChatPage compact onClose={() => setAssistantOpen(false)} />
+      ) : null}
     </>
   );
 }
