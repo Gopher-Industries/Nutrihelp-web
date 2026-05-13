@@ -1,5 +1,5 @@
 // chat/ChatPage.jsx
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { FaMicrophone, FaStop, FaSpinner } from "react-icons/fa";
 import BaseApi from "../../services/baseApi";
 import "./ChatPage.css";
@@ -69,7 +69,6 @@ function getAuthHeaders(includeContentType = true) {
 /* ---------------- Page ---------------- */
 
 export default function ChatPage() {
-  const [menuOpen, setMenuOpen] = useState(false);
   const [draft, setDraft] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const messagesRef = useRef(null);
@@ -79,26 +78,6 @@ export default function ChatPage() {
   const [isTranscribing, setIsTranscribing] = useState(false);
   const mediaRecorderRef = useRef(null);
   const chunksRef = useRef([]);
-
-  const navLinks = useMemo(
-    () => [
-      "Home",
-      "Menu",
-      "Meal Planning",
-      "Edit Daily Plan",
-      "Health News",
-      "Fitness Roadmap",
-      "Community",
-      "Health FAQ",
-      "Recipes",
-      "Scan Products",
-      "Allergies & Intolerances",
-      "Symptom Assessment",
-      "Health Tools",
-      "Settings",
-    ],
-    []
-  );
 
   const [messages, setMessages] = useState(() => {
     try {
@@ -126,51 +105,56 @@ export default function ChatPage() {
     }
   }, [messages]);
 
-  useEffect(() => {
+  async function fetchPersonalizedGreeting() {
     const userId = getCurrentUserId();
     const headers = getAuthHeaders(false);
-    if (!userId || !headers.Authorization) return;
+    if (!userId || !headers.Authorization) return DEFAULT_GREETING;
 
+    try {
+      const params = new URLSearchParams({ user_id: String(userId) });
+      const response = await fetch(`${CHAT_GREETING_ENDPOINT}?${params.toString()}`, {
+        headers,
+      });
+      if (!response.ok) return DEFAULT_GREETING;
+
+      const data = await response.json();
+      return data?.greeting || DEFAULT_GREETING;
+    } catch (error) {
+      console.warn("Unable to load personalised chatbot greeting:", error);
+      return DEFAULT_GREETING;
+    }
+  }
+
+  useEffect(() => {
     let cancelled = false;
 
     async function loadGreeting() {
-      try {
-        const params = new URLSearchParams({ user_id: String(userId) });
-        const response = await fetch(`${CHAT_GREETING_ENDPOINT}?${params.toString()}`, {
-          headers,
-        });
-        if (!response.ok) return;
+      const greeting = await fetchPersonalizedGreeting();
+      if (cancelled) return;
 
-        const data = await response.json();
-        const greeting = data?.greeting;
-        if (!greeting || cancelled) return;
+      setMessages((prev) => {
+        if (!prev.length) {
+          return [{
+            id: uid(),
+            side: "left",
+            text: greeting,
+            time: formatTime(new Date()),
+          }];
+        }
 
-        setMessages((prev) => {
-          if (!prev.length) {
-            return [{
-              id: uid(),
-              side: "left",
-              text: greeting,
-              time: formatTime(new Date()),
-            }];
-          }
+        const first = prev[0];
+        if (first.side !== "left" || first.text !== DEFAULT_GREETING) {
+          return prev;
+        }
 
-          const first = prev[0];
-          if (first.side !== "left" || first.text !== DEFAULT_GREETING) {
-            return prev;
-          }
-
-          return [
-            {
-              ...first,
-              text: greeting,
-            },
-            ...prev.slice(1),
-          ];
-        });
-      } catch (error) {
-        console.warn("Unable to load personalised chatbot greeting:", error);
-      }
+        return [
+          {
+            ...first,
+            text: greeting,
+          },
+          ...prev.slice(1),
+        ];
+      });
     }
 
     loadGreeting();
@@ -180,9 +164,41 @@ export default function ChatPage() {
   }, []);
 
   useEffect(() => {
-    const esc = (e) => e.key === "Escape" && setMenuOpen(false);
-    window.addEventListener("keydown", esc);
-    return () => window.removeEventListener("keydown", esc);
+    const handleStorageRefresh = async (event) => {
+      if (event.key && !["user", "user_session", "auth_token", "jwt_token", "token"].includes(event.key)) {
+        return;
+      }
+
+      const greeting = await fetchPersonalizedGreeting();
+      if (greeting === DEFAULT_GREETING) return;
+
+      setMessages((prev) => {
+        if (!prev.length) {
+          return [{
+            id: uid(),
+            side: "left",
+            text: greeting,
+            time: formatTime(new Date()),
+          }];
+        }
+
+        const first = prev[0];
+        if (first.side !== "left" || first.text !== DEFAULT_GREETING) {
+          return prev;
+        }
+
+        return [
+          {
+            ...first,
+            text: greeting,
+          },
+          ...prev.slice(1),
+        ];
+      });
+    };
+
+    window.addEventListener("storage", handleStorageRefresh);
+    return () => window.removeEventListener("storage", handleStorageRefresh);
   }, []);
 
   async function callChatbot(userMessage) {
@@ -269,12 +285,13 @@ export default function ChatPage() {
 
   async function clearHistory() {
     localStorage.removeItem("nh-messages");
+    const greeting = await fetchPersonalizedGreeting();
     setMessages(
       [
         {
           id: uid(),
           side: "left",
-          text: DEFAULT_GREETING,
+          text: greeting,
           time: formatTime(new Date()),
         },
       ]
@@ -377,50 +394,6 @@ export default function ChatPage() {
 
   return (
     <div className="nh-root">
-      {/* ---------- Topbar ---------- */}
-      <header className="nh-topbar">
-        <button
-          className="nh-hamburger"
-          aria-label="Open menu"
-          aria-expanded={menuOpen}
-          onClick={() => setMenuOpen(true)}
-        >
-          <span />
-          <span />
-          <span />
-        </button>
-
-        <div className="nh-brand">
-          <div className="nh-logo">🍃</div>
-          <b>NutriHelp</b>
-        </div>
-
-        <div className="nh-rightlinks">
-          <span>Account</span>
-          <span>Log out</span>
-        </div>
-      </header>
-
-      {/* ---------- Drawer ---------- */}
-      <div
-        className={`nh-drawerOverlay ${menuOpen ? "open" : ""}`}
-        onClick={() => setMenuOpen(false)}
-      />
-
-      <aside className={`nh-drawer ${menuOpen ? "open" : ""}`}>
-        <button className="nh-drawerClose" onClick={() => setMenuOpen(false)}>
-          ×
-        </button>
-
-        <nav className="nh-drawerNav">
-          {navLinks.map((t) => (
-            <a key={t} href="#" className="nh-drawerLink">
-              {t}
-            </a>
-          ))}
-        </nav>
-      </aside>
-
       {/* ---------- Chat ---------- */}
       <main className="nh-app">
         <section className="nh-chatCard">
@@ -472,6 +445,7 @@ export default function ChatPage() {
           <form className="nh-composer" onSubmit={sendMessage}>
 
             <button
+              type="button"
               className="nh-clearBtn"
               disabled={isLoading}
               onClick={clearHistory}
