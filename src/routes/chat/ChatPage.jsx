@@ -1,11 +1,23 @@
 // chat/ChatPage.jsx
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { FaMicrophone, FaStop, FaSpinner } from "react-icons/fa";
+import BaseApi from "../../services/baseApi";
 import "./ChatPage.css";
 
 /* ---------------- Config ---------------- */
-const AI_BASE_URL = "http://localhost:8000";
-const CHAT_ENDPOINT = `${AI_BASE_URL}/ai-model/chatbot/chat`;
+const AI_BASE_URL = process.env.REACT_APP_AI_API_BASE_URL || "http://localhost:8000";
+const RAW_API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "https://localhost:8443";
+
+function normalizeApiBaseUrl(baseUrl) {
+  return String(baseUrl || "").trim().replace(/\/+$/, "");
+}
+
+const API_BASE_URL = normalizeApiBaseUrl(RAW_API_BASE_URL);
+const CHAT_ENDPOINT = `${API_BASE_URL}/api/chatbot/query`;
+const CHAT_GREETING_ENDPOINT = `${API_BASE_URL}/api/chatbot/greeting`;
+const DEFAULT_GREETING =
+  "Hi! I'm your NutriHelp assistant. Ask me anything about nutrition, meals, or your health goals.";
+const baseApi = new BaseApi();
 
 /* ---------------- Utils ---------------- */
 
@@ -19,6 +31,39 @@ function formatTime(d) {
   const ampm = h24 >= 12 ? "pm" : "am";
   const h12 = ((h24 + 11) % 12) + 1;
   return `Today, ${h12}:${m}${ampm}`;
+}
+
+function parseStoredJson(storage, key) {
+  try {
+    const raw = storage.getItem(key);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
+function getCurrentUserId() {
+  const storageKeys = [
+    { storage: localStorage, key: "user" },
+    { storage: localStorage, key: "user_session" },
+    { storage: sessionStorage, key: "user_session" },
+    { storage: sessionStorage, key: "user" },
+  ];
+
+  for (const { storage, key } of storageKeys) {
+    const user = parseStoredJson(storage, key);
+    const userId = user?.user_id || user?.id || user?.uid || user?.sub;
+    if (userId) return userId;
+  }
+  return null;
+}
+
+function getAuthHeaders(includeContentType = true) {
+  const token = baseApi.getAuthToken();
+  return {
+    ...(includeContentType && { "Content-Type": "application/json" }),
+    ...(token && { Authorization: `Bearer ${token}` }),
+  };
 }
 
 /* ---------------- Page ---------------- */
@@ -62,7 +107,7 @@ export default function ChatPage() {
         {
           id: uid(),
           side: "left",
-          text: "Hi! I'm your NutriHelp assistant. Ask me anything about nutrition, meals, or your health goals.",
+          text: DEFAULT_GREETING,
           time: formatTime(new Date()),
         },
       ];
@@ -82,16 +127,73 @@ export default function ChatPage() {
   }, [messages]);
 
   useEffect(() => {
+    const userId = getCurrentUserId();
+    const headers = getAuthHeaders(false);
+    if (!userId || !headers.Authorization) return;
+
+    let cancelled = false;
+
+    async function loadGreeting() {
+      try {
+        const params = new URLSearchParams({ user_id: String(userId) });
+        const response = await fetch(`${CHAT_GREETING_ENDPOINT}?${params.toString()}`, {
+          headers,
+        });
+        if (!response.ok) return;
+
+        const data = await response.json();
+        const greeting = data?.greeting;
+        if (!greeting || cancelled) return;
+
+        setMessages((prev) => {
+          if (!prev.length) {
+            return [{
+              id: uid(),
+              side: "left",
+              text: greeting,
+              time: formatTime(new Date()),
+            }];
+          }
+
+          const first = prev[0];
+          if (first.side !== "left" || first.text !== DEFAULT_GREETING) {
+            return prev;
+          }
+
+          return [
+            {
+              ...first,
+              text: greeting,
+            },
+            ...prev.slice(1),
+          ];
+        });
+      } catch (error) {
+        console.warn("Unable to load personalised chatbot greeting:", error);
+      }
+    }
+
+    loadGreeting();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
     const esc = (e) => e.key === "Escape" && setMenuOpen(false);
     window.addEventListener("keydown", esc);
     return () => window.removeEventListener("keydown", esc);
   }, []);
 
   async function callChatbot(userMessage) {
+    const userId = getCurrentUserId();
     const response = await fetch(CHAT_ENDPOINT, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ query: userMessage }),
+      headers: getAuthHeaders(),
+      body: JSON.stringify({
+        user_id: userId,
+        user_input: userMessage,
+      }),
     });
 
     if (!response.ok) {
@@ -102,7 +204,7 @@ export default function ChatPage() {
     }
 
     const data = await response.json();
-    const reply = data.msg || data.message || String(data);
+    const reply = data.response || data.msg || data.message || String(data);
 
     if (!reply || reply.trim() === "") {
       const err = new Error("Empty response");
@@ -172,7 +274,7 @@ export default function ChatPage() {
         {
           id: uid(),
           side: "left",
-          text: "Hi! I'm your NutriHelp assistant. Ask me anything about nutrition, meals, or your health goals.",
+          text: DEFAULT_GREETING,
           time: formatTime(new Date()),
         },
       ]
