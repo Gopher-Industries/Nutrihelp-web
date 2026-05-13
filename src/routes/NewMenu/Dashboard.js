@@ -1,37 +1,238 @@
-import React, { useState, useEffect } from "react";
-import { useLocation, Link } from "react-router-dom";
+import React, { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import DashboardGraph from "../../components/Dashboard-Graph";
 import Card from "./MenuCard";
 import "./MenuCard.css";
 import "./Menustyles.css";
 import imageMapping from "./importImages.js";
 import WaterTracker from "../../components/WaterTracker";
+import {
+  readMealSelectionsByDateFromStorage,
+  writeMealSelectionsByDateToStorage,
+} from "../../utils/mealSelectionStorage";
 
-const Dashboard = () => {
-  const location = useLocation();
-  const selectedItems = location.state?.selectedItems || [];
-  const totalNutrition = location.state?.totalNutrition || {
-    calories: 0,
-    proteins: 0,
-    fats: 0,
-    vitamins: 0,
-    sodium: 0,
-  };
+const NUTRITION_BY_TYPE = {
+  breakfast: { calories: 290, proteins: 16, fats: 9, vitamins: 120, sodium: 180 },
+  lunch: { calories: 430, proteins: 26, fats: 14, vitamins: 170, sodium: 360 },
+  dinner: { calories: 520, proteins: 32, fats: 18, vitamins: 210, sodium: 460 },
+  other: { calories: 210, proteins: 8, fats: 7, vitamins: 90, sodium: 140 },
+};
 
-  const [activeTab, setActiveTab] = useState("breakfast");
-  const [groupedItems, setGroupedItems] = useState({
-    breakfast: [],
-    lunch: [],
-    dinner: [],
+const LEVEL_FACTOR = {
+  easy: 1,
+  medium: 1.15,
+  hard: 1.3,
+};
+
+function normalize(value) {
+  return String(value || "").trim().toLowerCase();
+}
+
+function getTodayISO() {
+  const now = new Date();
+  const local = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
+  return local.toISOString().slice(0, 10);
+}
+
+function hasUsableMealImage(meal) {
+  const imageValue = String(meal?.image || meal?.imageUrl || "").trim();
+  return Boolean(
+    imageValue &&
+      !imageValue.startsWith("blob:") &&
+      !imageValue.includes("/images/meal-mock/placeholder")
+  );
+}
+
+function getMealDisplayScore(meal) {
+  const nutrition = meal?.nutrition && typeof meal.nutrition === "object" ? meal.nutrition : {};
+  return (
+    (hasUsableMealImage(meal) ? 10 : 0) +
+    (meal?.description ? 2 : 0) +
+    (parseNumber(nutrition.calories) > 0 ? 1 : 0)
+  );
+}
+
+function getCanonicalMealKey(meal, fallback = "") {
+  const mealType = normalizeMealType(meal?.mealType);
+  const titleKey = normalize(meal?.title || meal?.name);
+  const recipeIdKey = normalize(meal?.recipeId);
+  const idKey = normalize(meal?.id || fallback);
+  const identityKey =
+    titleKey ||
+    (recipeIdKey && recipeIdKey !== "null" ? recipeIdKey : "") ||
+    idKey ||
+    normalize(fallback);
+
+  return identityKey ? `${mealType}|${identityKey}` : "";
+}
+
+function dedupeSelectionMap(selectionMap) {
+  if (!selectionMap || typeof selectionMap !== "object") return {};
+
+  const bestByKey = {};
+  Object.entries(selectionMap).forEach(([entryKey, meal]) => {
+    if (!meal || typeof meal !== "object") return;
+
+    const normalizedMeal = {
+      ...meal,
+      mealType: normalizeMealType(meal?.mealType),
+    };
+    const canonicalKey = getCanonicalMealKey(normalizedMeal, entryKey);
+    if (!canonicalKey) return;
+
+    const score = getMealDisplayScore(normalizedMeal);
+    const current = bestByKey[canonicalKey];
+    if (!current || score >= current.score) {
+      bestByKey[canonicalKey] = { entryKey, meal: normalizedMeal, score };
+    }
   });
 
+  return Object.fromEntries(
+    Object.values(bestByKey).map(({ entryKey, meal }) => [entryKey, meal])
+  );
+}
+
+function dedupeSelectionsByDate(selectionsByDate) {
+  if (!selectionsByDate || typeof selectionsByDate !== "object") return {};
+
+  return Object.fromEntries(
+    Object.entries(selectionsByDate).map(([date, selectionMap]) => [
+      date,
+      dedupeSelectionMap(selectionMap),
+    ])
+  );
+}
+
+function readSelectionsByDate() {
+  const rawSelections = readMealSelectionsByDateFromStorage();
+  return rawSelections && typeof rawSelections === "object"
+    ? dedupeSelectionsByDate(rawSelections)
+    : {};
+}
+
+function normalizeMealType(value) {
+  const normalized = normalize(value);
+  if (normalized === "breakfast" || normalized === "lunch" || normalized === "dinner") {
+    return normalized;
+  }
+  if (
+    normalized === "other" ||
+    normalized === "others" ||
+    normalized === "snack" ||
+    normalized === "snacks" ||
+    normalized === "dessert" ||
+    normalized === "desserts" ||
+    normalized === "drink" ||
+    normalized === "drinks" ||
+    normalized === "beverage" ||
+    normalized === "beverages"
+  ) {
+    return "other";
+  }
+  return "other";
+}
+
+function parseNumber(value) {
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+  const source = String(value ?? "").replace(/,/g, "");
+  const matched = source.match(/-?\d+(?:\.\d+)?/);
+  if (!matched) return 0;
+  const parsed = Number(matched[0]);
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+
+function estimateMealNutrition(meal) {
+  const mealType = normalizeMealType(meal?.mealType);
+  const level = normalize(meal?.level);
+  const factor = LEVEL_FACTOR[level] || 1;
+  const base = NUTRITION_BY_TYPE[mealType] || NUTRITION_BY_TYPE.breakfast;
+  const nutrition = meal?.nutrition && typeof meal.nutrition === "object" ? meal.nutrition : {};
+
+  return {
+    calories: Math.round(parseNumber(nutrition.calories) || base.calories * factor),
+    proteins: Math.round(parseNumber(nutrition.proteins ?? nutrition.protein) || base.proteins * factor),
+    fats: Math.round(parseNumber(nutrition.fats ?? nutrition.fat) || base.fats * factor),
+    vitamins: Math.round(parseNumber(nutrition.vitamins ?? nutrition.fiber) || base.vitamins * factor),
+    sodium: Math.round(parseNumber(nutrition.sodium) || base.sodium * factor),
+  };
+}
+
+const Dashboard = () => {
+  const [activeTab, setActiveTab] = useState("breakfast");
+  const [selectionsByDate, setSelectionsByDate] = useState(() => readSelectionsByDate());
+
+  const todayIso = useMemo(() => getTodayISO(), []);
+
   useEffect(() => {
-    setGroupedItems({
-      breakfast: selectedItems.filter((i) => i.mealType === "breakfast"),
-      lunch: selectedItems.filter((i) => i.mealType === "lunch"),
-      dinner: selectedItems.filter((i) => i.mealType === "dinner"),
-    });
-  }, [selectedItems]);
+    const syncSelections = () => {
+      setSelectionsByDate(readSelectionsByDate());
+    };
+
+    const handleVisibility = () => {
+      if (document.visibilityState === "visible") {
+        syncSelections();
+      }
+    };
+
+    window.addEventListener("storage", syncSelections);
+    window.addEventListener("focus", syncSelections);
+    document.addEventListener("visibilitychange", handleVisibility);
+
+    return () => {
+      window.removeEventListener("storage", syncSelections);
+      window.removeEventListener("focus", syncSelections);
+      document.removeEventListener("visibilitychange", handleVisibility);
+    };
+  }, []);
+
+  useEffect(() => {
+    try {
+      writeMealSelectionsByDateToStorage(selectionsByDate);
+    } catch {
+      // Menu rendering should continue even if localStorage is unavailable.
+    }
+  }, [selectionsByDate]);
+
+  const selectedItems = useMemo(() => {
+    const todayMap = selectionsByDate[todayIso] || {};
+    return Object.values(todayMap);
+  }, [selectionsByDate, todayIso]);
+
+  const groupedItems = useMemo(
+    () => ({
+      breakfast: selectedItems.filter((item) => normalizeMealType(item?.mealType) === "breakfast"),
+      lunch: selectedItems.filter((item) => normalizeMealType(item?.mealType) === "lunch"),
+      dinner: selectedItems.filter((item) => normalizeMealType(item?.mealType) === "dinner"),
+      other: selectedItems.filter((item) => normalizeMealType(item?.mealType) === "other"),
+    }),
+    [selectedItems],
+  );
+
+  const addMealTab = useMemo(() => activeTab, [activeTab]);
+
+  const totalNutrition = useMemo(
+    () =>
+      selectedItems.reduce(
+        (accumulator, meal) => {
+          const nutrition = estimateMealNutrition(meal);
+          return {
+            calories: accumulator.calories + nutrition.calories,
+            proteins: accumulator.proteins + nutrition.proteins,
+            fats: accumulator.fats + nutrition.fats,
+            vitamins: accumulator.vitamins + nutrition.vitamins,
+            sodium: accumulator.sodium + nutrition.sodium,
+          };
+        },
+        {
+          calories: 0,
+          proteins: 0,
+          fats: 0,
+          vitamins: 0,
+          sodium: 0,
+        },
+      ),
+    [selectedItems],
+  );
 
   const renderMealItems = (mealType) => {
     const items = groupedItems[mealType];
@@ -40,7 +241,7 @@ const Dashboard = () => {
     return (
       <div className="cards-container">
         {items.map((item, idx) => (
-          <Card key={idx} item={item} imageMapping={imageMapping} />
+          <Card key={item?.id || item?.recipeId || idx} item={item} imageMapping={imageMapping} />
         ))}
       </div>
     );
@@ -62,9 +263,14 @@ const Dashboard = () => {
         {/* Row 1: Today aligned to the middle (Lunch) column, width matches the meal pane only */}
         <div className="today-row">
           <div className="today-align-grid">
-            <div />
-            <div className="today-text">Today</div>
-            <div />
+            <div className="today-text">Today · {todayIso}</div>
+            <Link
+              to={`/meal/${addMealTab}?date=${encodeURIComponent(todayIso)}`}
+              state={{ defaultMealType: addMealTab, planDate: todayIso }}
+              className="edit-menu-btn"
+            >
+              Edit Menu
+            </Link>
           </div>
           <div className="today-row-spacer" />
         </div>
@@ -98,6 +304,15 @@ const Dashboard = () => {
                 aria-selected={activeTab === "dinner"}
               >
                 Dinner
+              </button>
+
+              <button
+                type="button"
+                className={`nav-tab-btn ${activeTab === "other" ? "active" : ""}`}
+                onClick={() => setActiveTab("other")}
+                aria-selected={activeTab === "other"}
+              >
+                Other
               </button>
             </nav>
 

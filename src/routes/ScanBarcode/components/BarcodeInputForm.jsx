@@ -1,21 +1,24 @@
-function BarcodeInputForm({ value, handleOnchange, handleSubmit } ) {
-  return (
-    <>
-      <div>
-        <div>
-          <label style={{ color: '#000000', fontsize:'1rem', padding:'1rem'}}>Barcode</label>
-          <input
-            placeholder="Enter barcode number. Ex: 3017624010701"
-            value={value}
-            onChange={(e) => handleOnchange(e.target.value)}
-          />
-        </div>
+import FieldError from "../../../components/FieldError";
 
-        <button className="upload-button w-100" onClick={handleSubmit}>
-          Get Barcode Information
-        </button>
+function BarcodeInputForm({ value, handleOnchange, handleBlur, error, touched, handleSubmit }) {
+  return (
+    <div className="barcode-input-wrapper">
+      <div className="form-group scan-barcode-form-group">
+        <label className="scan-barcode-label">Barcode</label>
+        <input
+          placeholder="Enter barcode number. Ex: 3017624010701"
+          value={value}
+          onChange={(e) => handleOnchange(e.target.value)}
+          onBlur={handleBlur}
+          className={`barcode-input scan-barcode-input ${error && touched ? 'error-border' : ''}`}
+        />
+        <FieldError error={error} touched={touched} />
       </div>
-    </>
+
+      <button className="upload-button scan-barcode-submit" onClick={handleSubmit}>
+        Get Barcode Information
+      </button>
+    </div>
   )
 }
 

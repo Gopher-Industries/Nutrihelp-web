@@ -1,16 +1,17 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDarkMode } from "../routes/DarkModeToggle/DarkModeContext";
 import "../styles/mainNavbar.css";
 import UserIcon from "./user-stroke-rounded.tsx";
 import SideMenu from "./SideMenu";
+import { fetchMyNotifications } from "../services/notificationApi";
 
 const RobotIcon = ({ size = 20 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true">
-    <rect x="3" y="7" width="18" height="14" rx="4" ry="4" fill="none" stroke="currentColor" strokeWidth="2"/>
-    <circle cx="9" cy="13" r="1" fill="currentColor"/>
-    <circle cx="15" cy="13" r="1" fill="currentColor"/>
-    <path d="M12 7V3" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+    <rect x="3" y="7" width="18" height="14" rx="4" ry="4" fill="none" stroke="currentColor" strokeWidth="2" />
+    <circle cx="9" cy="13" r="1" fill="currentColor" />
+    <circle cx="15" cy="13" r="1" fill="currentColor" />
+    <path d="M12 7V3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
   </svg>
 );
 
@@ -55,12 +56,14 @@ const MainNavbar = () => {
   const { darkMode } = useDarkMode();
 
   const navigate = useNavigate();
+  const location = useLocation();
 
   // Desktop dropdowns
   const [openMenu, setOpenMenu] = useState(null); // "more" | "settings" | "account" | null
 
   // Mobile drawer
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [unreadNotificationCount, setUnreadNotificationCount] = useState(0);
 
   const [scrolled, setScrolled] = useState(false);
   const navRef = useRef(null);
@@ -98,10 +101,71 @@ const MainNavbar = () => {
   }, []);
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 200);
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    const handleScroll = () => {
+      const hero = document.querySelector(".home-hero");
+
+      if (!hero) {
+        setScrolled(true);
+        return;
+      }
+
+      setScrolled(window.scrollY >= window.innerHeight * 0.5);
+    };
+
+    handleScroll();
+    const rafId = window.requestAnimationFrame(handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("resize", handleScroll);
+
+    return () => {
+      window.cancelAnimationFrame(rafId);
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleScroll);
+    };
+  }, [location.pathname]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadNotifications() {
+      try {
+        const result = await fetchMyNotifications(20);
+        if (!isMounted) return;
+        setUnreadNotificationCount(Number(result.unreadCount) || 0);
+      } catch (_error) {
+        if (!isMounted) return;
+        setUnreadNotificationCount(0);
+      }
+    }
+
+    loadNotifications();
+    const timer = window.setInterval(loadNotifications, 30000);
+    return () => {
+      isMounted = false;
+      window.clearInterval(timer);
+    };
+  }, [location.pathname]);
+
+  useEffect(() => {
+    const handleNotificationUpdate = (event) => {
+      const nextCount = Number(event?.detail?.unreadCount);
+      if (Number.isFinite(nextCount)) {
+        setUnreadNotificationCount(Math.max(0, nextCount));
+        return;
+      }
+
+      fetchMyNotifications(20)
+        .then((result) => setUnreadNotificationCount(Number(result.unreadCount) || 0))
+        .catch(() => setUnreadNotificationCount(0));
+    };
+
+    window.addEventListener("nutrihelp:notifications-updated", handleNotificationUpdate);
+    return () => window.removeEventListener("nutrihelp:notifications-updated", handleNotificationUpdate);
   }, []);
+
+  const openAccountMenu = () => {
+    setOpenMenu((prev) => (prev === "account" ? null : "account"));
+  };
 
   // Hover/focus open
   const menuHandlers = (name) => ({
@@ -118,16 +182,16 @@ const MainNavbar = () => {
   const closeMobile = () => setMobileOpen(false);
 
   return (
-    <header
-      className={`main-header ${darkMode ? "dark-mode" : ""} ${
-        scrolled ? "scrolled" : ""
-      }`}
-    >
-      <nav className="main-nav" ref={navRef} aria-label="Main">
-        {/* Logo -> Home */}
-        <Link to="/home" className="nav-logo" aria-label="NutriHelp Home">
-          <img src="/images/logo.png" alt="NutriHelp logo" />
-        </Link>
+    <>
+      <header
+        className={`main-header ${darkMode ? "dark-mode" : ""} ${scrolled ? "scrolled" : ""
+          }`}
+      >
+        <nav className="main-nav" ref={navRef} aria-label="Main">
+          {/* Logo -> Home */}
+          <Link to="/home" className="nav-logo" aria-label="NutriHelp Home">
+            <img src="/images/logo.png" alt="NutriHelp logo" />
+          </Link>
 
         {/* Desktop controls (hidden on mobile via CSS) */}
         <div className="nav-desktop">
@@ -137,7 +201,7 @@ const MainNavbar = () => {
               Home
             </Link>
 
-            <Link to="/Scan" className="nav-link nav-link-icon">
+            <Link to="/scan" className="nav-link nav-link-icon">
               <span className="nav-icon" aria-hidden="true">
                 <BarcodeIcon />
               </span>
@@ -187,78 +251,12 @@ const MainNavbar = () => {
 
 
             {/* SETTINGS */}
-            <div className="nav-dropdown" {...menuHandlers("settings")}>
-              <button
-                type="button"
-                className="nav-button"
-                aria-haspopup="true"
-                aria-expanded={openMenu === "settings"}
-                aria-controls="menu-settings"
-              >
-                Settings{" "}
-                <span className="nav-icon">
-                  <ChevronDownIcon />
-                </span>
-              </button>
-
-              {/* Settings' anchors */}
-              {openMenu === "settings" && (
-                <div
-                  id="menu-settings"
-                  className="dropdown-panel single-menu"
-                  role="menu"
-                >
-                  <Link
-                    className="dropdown-item"
-                    role="menuitem"
-                    to="/settings#display"
-                    onClick={() => setOpenMenu(null)}
-                  >
-                    Display
-                  </Link>
-                  <Link
-                    className="dropdown-item"
-                    role="menuitem"
-                    to="/settings#font"
-                    onClick={() => setOpenMenu(null)}
-                  >
-                    Font Size
-                  </Link>
-                  <Link
-                    className="dropdown-item"
-                    role="menuitem"
-                    to="/settings#accessibility"
-                    onClick={() => setOpenMenu(null)}
-                  >
-                    Accessibility
-                  </Link>
-                  <Link
-                    className="dropdown-item"
-                    role="menuitem"
-                    to="/settings#notifications"
-                    onClick={() => setOpenMenu(null)}
-                  >
-                    Notifications
-                  </Link>
-                  <Link
-                    className="dropdown-item"
-                    role="menuitem"
-                    to="/settings#language"
-                    onClick={() => setOpenMenu(null)}
-                  >
-                    Language
-                  </Link>
-                  <Link
-                    className="dropdown-item"
-                    role="menuitem"
-                    to="/settings#voice"
-                    onClick={() => setOpenMenu(null)}
-                  >
-                    Voice &amp; Audio
-                  </Link>
-                </div>
-              )}
-            </div>
+            <Link to="/settings" className="nav-link nav-link-icon">
+              {/* <span className="nav-icon" aria-hidden="true">
+                <SettingsIcon />
+              </span> */}
+              Settings
+            </Link>
 
             {/* ACCOUNT */}
             <div className="nav-dropdown" {...menuHandlers("account")}>
@@ -268,11 +266,15 @@ const MainNavbar = () => {
                 aria-haspopup="true"
                 aria-expanded={openMenu === "account"}
                 aria-controls="menu-account"
+                onClick={openAccountMenu}
               >
                 <span className="account-icon" aria-hidden="true">
                   <UserIcon width={22} height={22} color="currentColor" />
                 </span>
                 Account{" "}
+                {unreadNotificationCount > 0 && openMenu !== "account" ? (
+                  <span className="nav-notification-badge">{unreadNotificationCount}</span>
+                ) : null}
                 <span className="nav-icon">
                   <ChevronDownIcon />
                 </span>
@@ -290,15 +292,10 @@ const MainNavbar = () => {
                     to="/userProfile"
                     onClick={() => setOpenMenu(null)}
                   >
-                    Profile
-                  </Link>
-                  <Link
-                    className="dropdown-item"
-                    role="menuitem"
-                    to="/dietaryRequirements"
-                    onClick={() => setOpenMenu(null)}
-                  >
-                    Dietary Preference
+                    <span>Profile</span>
+                    {unreadNotificationCount > 0 ? (
+                      <span className="dropdown-notification-badge">{unreadNotificationCount}</span>
+                    ) : null}
                   </Link>
                   <Link
                     className="dropdown-item"
@@ -306,7 +303,7 @@ const MainNavbar = () => {
                     to="/preferences"
                     onClick={() => setOpenMenu(null)}
                   >
-                    Allergies &amp; Intolerances
+                    Dietary &amp; Allergies
                   </Link>
                   <Link
                     className="dropdown-item"
@@ -332,27 +329,28 @@ const MainNavbar = () => {
             onClick={() => setMobileOpen((v) => !v)}
           >
             <HamburgerIcon />
-            <span className="nav-mobile-menu-label">Menu</span>
           </button>
         </div>
-      </nav>
+        </nav>
 
-      {/* Mobile Drawer (overlay and side panel) */}
-      {mobileOpen && (
-        <div
-          className="mobile-drawer-overlay"
-          role="presentation"
-          onMouseDown={(e) => {
-            // click outside closes
-            if (e.target === e.currentTarget) closeMobile();
-          }}
-        >
-          <aside className="mobile-drawer" aria-label="Mobile navigation">
-            <SideMenu mode="mobile" onNavigate={closeMobile} onClose={closeMobile} />
-          </aside>
-        </div>
-      )}
-    </header>
+        {/* Mobile Drawer (overlay and side panel) */}
+        {mobileOpen && (
+          <div
+            className="mobile-drawer-overlay"
+            role="presentation"
+            onMouseDown={(e) => {
+              // click outside closes
+              if (e.target === e.currentTarget) closeMobile();
+            }}
+          >
+            <aside className="mobile-drawer" aria-label="Mobile navigation">
+              <SideMenu mode="mobile" onNavigate={closeMobile} onClose={closeMobile} />
+            </aside>
+          </div>
+        )}
+      </header>
+      {location.pathname !== "/home" && <div className="main-navbar-spacer" aria-hidden="true" />}
+    </>
   );
 };
 

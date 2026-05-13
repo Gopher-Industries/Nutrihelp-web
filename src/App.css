@@ -2,35 +2,39 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Global resets to prevent white space issues */
-html, body, #root {
+html,
+body,
+#root {
   min-height: 100%;
   width: 100%;
   margin: 0;
   padding: 0;
-  background-color: var(--background-color);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
 .App {
-  text-align: center;
   min-height: 100vh;
   width: 100%;
   background-color: var(--background-color);
   color: var(--text-primary);
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition: background-color var(--motion-normal) ease, color var(--motion-normal) ease;
   overflow-x: hidden;
-  box-sizing: border-box;
 }
 
 .App-header {
   background-color: var(--card-background);
-  padding: 20px;
   color: var(--text-primary);
+  border-bottom: 1px solid var(--border-color);
   box-shadow: var(--card-shadow);
 }
 
 .App-link {
-  color: var(--primary-color);
+  color: var(--text-link);
 }
 
 .App-link:hover {
@@ -50,9 +54,7 @@ html, body, #root {
 /* Global body styles */
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: var(--background-color);
@@ -61,71 +63,16 @@ body {
 }
 
 .dark-mode body {
-  background: linear-gradient(135deg, var(--background-color) 0%, var(--background-secondary) 100%);
+  background-color: var(--background-color);
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+  font-family: var(--font-family-mono);
   background-color: var(--background-secondary);
   color: var(--text-primary);
-  padding: 2px 4px;
-  border-radius: 4px;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-xs);
   border: 1px solid var(--border-color);
-}
-
-img {
-  width: 950px;
-}
-
-/* Duplicate variable definitions removed - now using global-dark-mode.css */
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: var(--nav-background);
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: var(--nav-text);
-}
-
-.App-link {
-  color: var(--info-color);
-  justify-content: center;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-h2,
-.name-box,
-.meta,
-.description {
-  font-family: "Poppins", sans-serif;
-}
-
-body {
-  background: linear-gradient(135deg, #f3e8ff 25%, #f9f7fc 75%);
 }
 
 @media (max-width: 768px) {

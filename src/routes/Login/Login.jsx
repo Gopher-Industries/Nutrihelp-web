@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useContext, useEffect } from "react"
-import { Eye, EyeOff, UserIcon } from "lucide-react"
+import { Eye, EyeOff } from "lucide-react"
 import loginImage from "../../images/Nutrihelp.jpg"
 import logoImage from "../../images/logos_black_icon.png"
 
@@ -10,46 +10,9 @@ import { toast } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 import { UserContext } from "../../context/user.context"
 import { useDarkMode } from "../DarkModeToggle/DarkModeContext"
-import { supabase } from "../../supabaseClient"
 import { useNavigate, useLocation } from "react-router-dom"
-
-function startInactivityWatcher({ enabled, seconds = 30, onTimeout }) {
-  if (window.__idleInterval) {
-    clearInterval(window.__idleInterval)
-    window.__idleInterval = null
-  }
-
-  const EVENTS = ["mousemove", "keydown", "click", "scroll", "touchstart"]
-  const KEY_LAST = "__idle:lastActivity"
-
-  const removeAll = (resetFn) =>
-    EVENTS.forEach((e) => window.removeEventListener(e, resetFn, { passive: true }))
-
-  if (!enabled) {
-    localStorage.removeItem(KEY_LAST)
-    return
-  }
-
-  const resetActivity = () => {
-    localStorage.setItem(KEY_LAST, String(Date.now()))
-  }
-
-  resetActivity()
-  EVENTS.forEach((e) => window.addEventListener(e, resetActivity, { passive: true }))
-
-  window.__idleInterval = setInterval(() => {
-    const last = parseInt(localStorage.getItem(KEY_LAST) || "0", 10)
-    if (!last) return
-    const idleMs = Date.now() - last
-    if (idleMs >= seconds * 1000) {
-      clearInterval(window.__idleInterval)
-      window.__idleInterval = null
-      removeAll(resetActivity)
-      localStorage.removeItem(KEY_LAST)
-      onTimeout?.()
-    }
-  }, 1000)
-}
+import { API_BASE_URL } from "../../utils/authApi"
+import { supabase } from "../../supabaseClient"
 
 export default function Login() {
   // Existing UI state (unchanged)
@@ -66,7 +29,8 @@ export default function Login() {
   const { setCurrentUser } = useContext(UserContext)
   const { darkMode } = useDarkMode()
   const navigate = useNavigate()
-  const API_BASE = "http://localhost:80"
+
+  const unwrapApiData = (payload) => (payload && typeof payload === "object" && "data" in payload ? payload.data : payload)
 
   const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -105,18 +69,25 @@ export default function Login() {
 
     try {
       // ✅ Use backend API for login (matches backend's bcrypt-based auth)
-      const res = await fetch(`${API_BASE}/api/login`, {
+      const res = await fetch(`${API_BASE_URL}/api/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: email.trim().toLowerCase(), password }),
       })
 
       const data = await res.json()
+      const payload = unwrapApiData(data)
 
       // Handle MFA required (202 status) - redirect to MFA page
       if (res.status === 202) {
-        toast.info(data.message || "MFA token sent to your email")
-        navigate("/mfa", { state: { email: email.trim().toLowerCase(), password } })
+        toast.info(payload?.message || data.message || "MFA token sent to your email")
+        navigate("/mfa", {
+          state: {
+            email: email.trim().toLowerCase(),
+            password,
+            rememberMe,
+          },
+        })
         return
       }
 
@@ -125,38 +96,42 @@ export default function Login() {
         return
       }
 
-      const user = data.user
-      const token = data.token
+      const user = payload?.user || data.user
+      const accessToken =
+        payload?.session?.accessToken || payload?.accessToken || payload?.token || data.token
+      const refreshToken =
+        payload?.session?.refreshToken || payload?.refreshToken || data.refreshToken || ""
+      const expiresIn =
+        payload?.session?.expiresIn || payload?.expiresIn || data.expiresIn || 0
+      const tokenType =
+        payload?.session?.tokenType || payload?.tokenType || data.tokenType || "Bearer"
 
-      // ✅ Save session with JWT token
+      if (!user || !accessToken) {
+        toast.error("Login session is incomplete. Please try again.")
+        return
+      }
+
       const userSession = {
         id: user.user_id,
+        user_id: user.user_id,
         email: user.email,
         name: user.name,
-        token: token,
+        role: user.role || user.user_roles?.role_name || "user",
+        token: accessToken,
         provider: "email",
       }
 
-      localStorage.setItem("user_session", JSON.stringify(userSession))
-      localStorage.setItem("auth_token", token)
+      localStorage.removeItem("sso_session")
 
-      // ✅ Set global context (if used)
       if (typeof setCurrentUser === "function") {
-        setCurrentUser(userSession, rememberMe ? 60 * 60 * 1000 : 0)
+        setCurrentUser(userSession, {
+          persist: rememberMe,
+          accessToken,
+          refreshToken,
+          expiresIn,
+          tokenType,
+        })
       }
-
-    // ✅ Optional inactivity logout
-    startInactivityWatcher({
-      enabled: !rememberMe,
-      seconds: 30,
-      onTimeout: async () => {
-        await supabase.auth.signOut()
-        localStorage.removeItem("user_session")
-        setCurrentUser?.(null)
-        toast.info("You were signed out due to inactivity.")
-        navigate("/login")
-      },
-    })
 
     toast.success("Welcome back!")
     navigate("/home")
@@ -170,18 +145,31 @@ export default function Login() {
 }
 
   // keep Google sign-in logic from old code (unchanged)
-  const handleGoogleSignIn = async () => {
+  const handleGoogleSignIn = async (event) => {
+    event?.preventDefault()
+
     try {
-      await supabase.auth.signInWithOAuth({
+      const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
           redirectTo: `${window.location.origin}/auth/callback?next=/home`,
           queryParams: { access_type: "offline", prompt: "consent" },
+          skipBrowserRedirect: true,
         },
       })
+
+      if (error) {
+        throw error
+      }
+
+      if (!data?.url) {
+        throw new Error("Google sign-in URL was not returned.")
+      }
+
+      window.location.assign(data.url)
     } catch (err) {
       console.error("Google sign-in error:", err)
-      toast.error("Google sign-in failed. Please try again.")
+      toast.error(err?.message || "Google sign-in failed. Please try again.")
     }
   }
 
@@ -235,7 +223,7 @@ export default function Login() {
     },
     cardForm: {
       width: "60%",
-      padding: "45px 55px",
+      padding: "40px 52px",
       overflowY: "auto",
     },
     logoBlock: {
@@ -263,12 +251,14 @@ export default function Login() {
       textAlign: "center",
     },
     subtitle: {
-      marginBottom: "22px",
+      marginBottom: "20px",
       fontSize: "15px",
       color: "#555",
+      textAlign: "center",
+      lineHeight: 1.5,
     },
     field: {
-      marginBottom: "14px",
+      marginBottom: "12px",
     },
     label: {
       fontSize: "14px",
@@ -339,7 +329,7 @@ export default function Login() {
       display: "flex",
       justifyContent: "space-between",
       alignItems: "center",
-      margin: "10px 0 14px 0",
+      margin: "8px 0 12px 0",
       flexWrap: "wrap",
       gap: "10px",
     },
@@ -371,13 +361,14 @@ export default function Login() {
       cursor: "pointer",
       fontSize: "15px",
       fontWeight: 600,
-      marginBottom: "14px",
+      marginBottom: "12px",
       fontFamily: "inherit",
       transition: "all 0.2s ease",
     },
     switchText: {
-      marginBottom: "20px",
+      marginBottom: "16px",
       fontSize: "14px",
+      textAlign: "center",
     },
     switchLink: {
       color: "black",
@@ -387,7 +378,7 @@ export default function Login() {
     },
     divider: {
       textAlign: "center",
-      margin: "8px 0 18px 0",
+      margin: "4px 0 14px 0",
       position: "relative",
       fontSize: "14px",
     },
@@ -401,24 +392,37 @@ export default function Login() {
     },
     socialBox: {
       display: "flex",
-      gap: "15px",
+      justifyContent: "center",
+      width: "100%",
     },
     socialBtn: {
-      flex: 1,
-      padding: "12px",
+      width: "100%",
+      maxWidth: "340px",
+      padding: "13px 22px",
       borderRadius: "8px",
       border: "1px solid black",
       backgroundColor: "white",
       display: "flex",
       justifyContent: "center",
       alignItems: "center",
-      gap: "6px",
+      gap: "10px",
       cursor: "pointer",
       fontSize: "14px",
       fontWeight: 600,
       fontFamily: "inherit",
       transition: "all 0.3s ease",
       minHeight: "48px",
+      color: "#111111",
+      whiteSpace: "nowrap",
+    },
+    socialBtnLabel: {
+      fontSize: "14px",
+      fontWeight: 600,
+      lineHeight: 1,
+      color: "#111111",
+      display: "inline-block",
+      opacity: 1,
+      visibility: "visible",
     },
   }
 
@@ -463,6 +467,7 @@ export default function Login() {
         @media (max-width: 480px) {
           .card-image { height: 180px !important; }
           .card-form { padding: 24px 16px !important; }
+          .login-social-btn { max-width: 100% !important; }
         }
       `}</style>
 
@@ -557,8 +562,8 @@ export default function Login() {
 
           {/* Social Buttons */}
           <div style={styles.socialBox}>
-            <button style={styles.socialBtn} className="social-btn" onClick={handleGoogleSignIn}>
-              <span style={{ fontSize: "18px" }}>
+            <button type="button" style={styles.socialBtn} className="login-social-btn" onClick={handleGoogleSignIn}>
+              <span aria-hidden="true" style={{ display: "flex", alignItems: "center" }}>
                 <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="24" height="24" viewBox="0 0 48 48">
                   <path
                     fill="#FFC107"
@@ -578,13 +583,7 @@ export default function Login() {
                   ></path>
                 </svg>
               </span>
-            </button>
-            <button style={styles.socialBtn} className="social-btn">
-              <span style={{ fontSize: "18px" }}>
-                <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="24" height="24" viewBox="0 0 50 50">
-                  <path d="M 44.527344 34.75 C 43.449219 37.144531 42.929688 38.214844 41.542969 40.328125 C 39.601563 43.28125 36.863281 46.96875 33.480469 46.992188 C 30.46875 47.019531 29.691406 45.027344 25.601563 45.0625 C 21.515625 45.082031 20.664063 47.03125 17.648438 47 C 14.261719 46.96875 11.671875 43.648438 9.730469 40.699219 C 4.300781 32.429688 3.726563 22.734375 7.082031 17.578125 C 9.457031 13.921875 13.210938 11.773438 16.738281 11.773438 C 20.332031 11.773438 22.589844 13.746094 25.558594 13.746094 C 28.441406 13.746094 30.195313 11.769531 34.351563 11.769531 C 37.492188 11.769531 40.8125 13.480469 43.1875 16.433594 C 35.421875 20.691406 36.683594 31.78125 44.527344 34.75 Z M 31.195313 8.46875 C 32.707031 6.527344 33.855469 3.789063 33.4375 1 C 30.972656 1.167969 28.089844 2.742188 26.40625 4.78125 C 24.878906 6.640625 23.613281 9.398438 24.105469 12.066406 C 26.796875 12.152344 29.582031 10.546875 31.195313 8.46875 Z"></path>
-                </svg>
-              </span>
+              <span style={styles.socialBtnLabel}>Continue with Google</span>
             </button>
           </div>
         </div>

@@ -3,10 +3,14 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
+import { API_BASE_URL, parseJsonSafe } from "../../utils/authApi";
+
+const FORGOT_PASSWORD_EMAIL_KEY = "nutrihelp.forgotPassword.email";
+const FORGOT_PASSWORD_RESET_TOKEN_KEY = "nutrihelp.forgotPassword.resetToken";
 
 /**
  * ForgotPasswordReset.jsx
- * - Expects location.state.email (and optionally code)
+ * - Expects location.state.email and resetToken
  * - Submits new password to POST /api/password/reset
  */
 
@@ -15,10 +19,15 @@ export default function ForgotPasswordReset() {
   const navigate = useNavigate();
 
   const providedEmail = (location && location.state && location.state.email) || "";
-  const providedCode = (location && location.state && location.state.code) || "";
+  const providedResetToken =
+    (location && location.state && location.state.resetToken) || "";
 
-  const [email] = useState(providedEmail);
-  const [code] = useState(providedCode);
+  const [email] = useState(
+    providedEmail || sessionStorage.getItem(FORGOT_PASSWORD_EMAIL_KEY) || ""
+  );
+  const [resetToken] = useState(
+    providedResetToken || sessionStorage.getItem(FORGOT_PASSWORD_RESET_TOKEN_KEY) || ""
+  );
 
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -42,6 +51,10 @@ export default function ForgotPasswordReset() {
       setServerMsg("Missing email — cannot reset.");
       return;
     }
+    if (!resetToken) {
+      setServerMsg("Missing reset token — please verify your code again.");
+      return;
+    }
     if (password !== confirmPassword) {
       setServerMsg("Passwords do not match.");
       return;
@@ -54,17 +67,19 @@ export default function ForgotPasswordReset() {
 
     setLoading(true);
     try {
-      const body = { email, code, newPassword: password };
-      const res = await fetch("/api/password/reset", {
+      const body = { email, resetToken, newPassword: password };
+      const res = await fetch(`${API_BASE_URL}/api/password/reset`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
       if (!res.ok) {
-        const d = await res.json().catch(() => ({}));
+        const d = await parseJsonSafe(res);
         throw new Error(d.error || d.message || `Reset failed (HTTP ${res.status})`);
       }
       setServerMsg("Password updated! Redirecting to login...");
+      sessionStorage.removeItem(FORGOT_PASSWORD_EMAIL_KEY);
+      sessionStorage.removeItem(FORGOT_PASSWORD_RESET_TOKEN_KEY);
       setTimeout(() => navigate("/login"), 1200);
     } catch (err) {
       setServerMsg(err.message || "Reset failed");
@@ -77,6 +92,15 @@ export default function ForgotPasswordReset() {
     const el = document.querySelector(".fpr-card input");
     if (el) el.setAttribute("autofocus", "true");
   }, []);
+
+  useEffect(() => {
+    if (email) {
+      sessionStorage.setItem(FORGOT_PASSWORD_EMAIL_KEY, email);
+    }
+    if (resetToken) {
+      sessionStorage.setItem(FORGOT_PASSWORD_RESET_TOKEN_KEY, resetToken);
+    }
+  }, [email, resetToken]);
 
   return (
     <div>
@@ -139,7 +163,12 @@ export default function ForgotPasswordReset() {
 
       <div className="fpr-page">
         <div className="fpr-card">
-          <div className="fpr-back" onClick={() => navigate("/forgot/verify")}>← Back to Code</div>
+          <div
+            className="fpr-back"
+            onClick={() => navigate("/forgot/verify", { state: { email } })}
+          >
+            ← Back to Code
+          </div>
 
           <svg className="fpr-icon" xmlns="http://www.w3.org/2000/svg" height="40px" viewBox="0 -960 960 960" width="40px" fill="#0000F5" aria-hidden>
             <path d="M481-779.67q107.33 0 202.33 45.84 95 45.83 158 131.83 4.34 6.33 3.17 10.67-1.17 4.33-5.17 8-4 3.66-9.66 3.5Q824-580 819.33-586q-57.66-80.67-147.5-123.83Q582-753 481-753q-101 0-189.33 43.5-88.34 43.5-147 123.5-4.67 6.33-9.67 7.33t-9.67-2q-5-3-5.5-8.5t2.84-10.83q62-85.67 156.5-132.67 94.5-47 201.83-47Zm0 95.34q135.67 0 233 90 97.33 90 97.33 222.33 0 47.33-34.5 79.83t-83.5 32.5q-49.66 0-85.16-32.5T572.67-372q0-37-27.17-61.83-27.17-24.84-64.5-24.84t-64.83 24.84Q388.67-409 388.67-372q0 101.67 61.16 169.67Q511-134.33 604-107q7 2.33 9 6.67 2 4.33.67 9.66-1.34 5.67-5.34 8.67T598-81q-103.33-26-169.67-103.17Q362-261.33 362-372q0-48 35-80.67 35-32.66 84-32.66t84 32.66Q600-420 600-372q0 36.33 28 61.17Q656-286 693.33-286 730-286 757-310.83q27-24.84 27-61.17 0-120.67-89.33-202.33Q605.33-656 481.33-656T268-574.33q-89.33 81.66-89.33 202 0 24 5.16 61.66Q189-273 206.67-224.33 209-218 206.5-214t-7.17 6.33q-5.33 2.34-10.83.5-5.5-1.83-7.83-7.83-13.67-38.33-20.84-77.5-7.16-39.17-7.16-79.5 0-130.33 97.5-221.33t230.83-91Zm0-195.34q64.67 0 126.67 15.84 62 15.83 119 44.83 6.33 3 7.16 8 .84 5-1.5 9.33-2.33 4.34-7 7Q720.67-792 714-795q-54.33-27-113.17-42.17Q542-852.33 481-852.33q-60.67 0-118.67 14.16-58 14.17-111 43.17-6 3-10.33 1.17-4.33-1.84-7-6.5-2.67-4-2-8.84.67-4.83 5.33-7.83Q294-847.67 356-863.67t125-16Zm0 295q92.33 0 159 61.5T706.67-372q0 6.33-3.5 9.83t-9.84 3.5q-6 0-10-3.5t-4-9.83q0-79-58.83-132.5T481-558q-80.67 0-138.5 53.5T284.67-372q0 83.67 29 142.5t85.66 117.83Q404-107 403.67-102q-.34 5-4.34 9-3.33 3.33-9 4.33-5.66 1-10.33-4.33-58.33-60.67-90.5-126.17T257.33-372q0-89.67 65.67-151.17 65.67-61.5 158-61.5ZM480-386q6.33 0 9.83 4t3.5 10q0 79 57.67 130t133.67 51q7.33 0 18.33-1 11-1 23.67-3 6.33-1.33 10.5 1.83 4.16 3.17 5.5 8.17 1.33 5.33-1.34 9.33-2.66 4-8.66 5.34-18 5-31.5 5.5t-16.5.5q-88.34 0-153.17-59-64.83-59-64.83-148.67 0-6 3.5-10t9.83-4Z"/>
@@ -221,7 +250,14 @@ export default function ForgotPasswordReset() {
             </div>
 
             <div className="fpr-actions" style={{ marginTop: 16 }}>
-              <button type="button" className="fpr-btn" onClick={() => navigate("/forgot/verify")} style={{ marginRight: 12 }}>Back to code</button>
+              <button
+                type="button"
+                className="fpr-btn"
+                onClick={() => navigate("/forgot/verify", { state: { email } })}
+                style={{ marginRight: 12 }}
+              >
+                Back to code
+              </button>
               <button type="submit" className="fpr-btn primary" disabled={loading}>{loading ? "Submitting..." : "Submit"}</button>
             </div>
           </form>

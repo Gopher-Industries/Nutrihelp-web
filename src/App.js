@@ -1,8 +1,9 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import "semantic-ui-css/semantic.min.css";
 import "./App.css";
 import { initializeFontSize } from "./utils/fontSizeManager";
 import "./styles/global-dark-mode.css";
+import "./styles/root-style-system.css";
 
 import {
   BrowserRouter as Router,
@@ -30,14 +31,17 @@ import UserProfilePage from "./routes/UI-Only-Pages/UserProfilePage/userprofile"
 import Home from "./routes/Home/Home";
 import DietaryRequirements from "./routes/UI-Only-Pages/DietaryRequirements/DietaryRequirements";
 import ScanProducts from "./routes/UI-Only-Pages/ScanProducts/ScanProducts";
+import ScanMealReview from "./routes/UI-Only-Pages/ScanProducts/ScanMealReview";
 import Menu from "./routes/UI-Only-Pages/Menu/Menu";
 import Recipe from "./routes/MyRecipe/Recipe";
 import Appointment from "./routes/UI-Only-Pages/Appointment/Appointment";
 import Meal from "./routes/Meal/Meal";
+import MealDetail from "./routes/Meal/MealDetail";
 import Scan from "./routes/ScanBarcode/Scan.jsx";
 import MFAform from "./routes/MFA/MFAform";
 import Dashboard from "./routes/NewMenu/Dashboard";
 import AuthenticateRoute from "./routes/AuthenticateRoute/AuthenticateRoute";
+import InternalAdminRoute from "./routes/AuthenticateRoute/InternalAdminRoute";
 import MainNavbar from "./components/MainNavbar";
 import FAQ from "./routes/FAQ/faq";
 import NutritionCalculator from "./routes/UI-Only-Pages/NutritionCalculator/NutritionCalculator";
@@ -47,7 +51,7 @@ import FoodPreferences from "./routes/FoodPreferences/FoodPreferences";
 import HealthTools from "./routes/HealthTools/HealthTools";
 import RecipeRating from "./routes/RecipeRating/RecipeRating";
 import ShoppingList from "./routes/UI-Only-Pages/ShoppingList/ShoppingList";
-import RecipeDetail from "./routes/RecipeRating/RecipeDetail";
+import MealRecipeDetail from "./routes/Meal/MealRecipeDetail";
 import SymptomAssessment from "./routes/SymptomAssessment/SymptomAssessment";
 import Leaderboard from "./routes/LeaderBoard/leaderBoard";
 import ObesityPredictor from "./routes/survey/ObesityPredictor";
@@ -60,10 +64,18 @@ import Community from "./routes/Community/Community";
 import ChatPage from "./routes/chat/ChatPage";
 import PostDetail from "./routes/Community/PostDetail";
 import ScanBarcode from "./routes/ScanBarcode/ScanBarcode";
+import FoodDetails from "./routes/UI-Only-Pages/ScanProducts/FoodDetails";
+import UploadHistory from "./routes/UI-Only-Pages/ScanProducts/UploadHistory";
 import AuthCallback from "./pages/AuthCallback";
 import DailyPlanEdit from "./routes/DailyPlan/DailyPlanEdit";
 import Account from "./routes/Account/Account.js";
 import WeeklyMealPlanPage from "./routes/Meal/WeeklyMealPlanPage";
+
+import TextToSpeechControl from "./components/TextToSpeech/TextToSpeech";
+import AdminAuditDashboard from "./routes/AdminAudit/AdminAuditDashboard";
+import AdminDataCenter from "./routes/Admin/AdminDataCenter";
+import AdminRecipeLibraryPage from "./routes/Admin/AdminRecipeLibraryPage";
+import { isAuthPath } from "./utils/ttsRouteUtils";
 
 /* NEW HEALTH SCREENS */
 import SymptomAssessmentScreen from "./health/SymptomAssessmentScreen";
@@ -71,30 +83,56 @@ import ObesitySurveyScreen from "./health/ObesitySurveyScreen";
 import ObesitySurveyResultScreen from "./health/ObesitySurveyResultScreen";
 import FitnessRoadmapScreen from "./health/FitnessRoadmapScreen";
 
-function NavbarWrapper() {
+function GlobalAuthenticatedLayout() {
+  const location = useLocation();
+  const { currentUser } = useContext(UserContext);
+  const [assistantOpen, setAssistantOpen] = useState(false);
+
+  const shouldHideGlobalControls = isAuthPath(location.pathname);
+
+  useEffect(() => {
+    const openAssistant = () => setAssistantOpen(true);
+    window.addEventListener("nutrihelp:open-assistant", openAssistant);
+    return () =>
+      window.removeEventListener("nutrihelp:open-assistant", openAssistant);
+  }, []);
+
+  if (shouldHideGlobalControls) return null;
+
+  return (
+    <>
+      <MainNavbar />
+      {currentUser ? <TextToSpeechControl /> : null}
+      {currentUser && assistantOpen ? (
+        <ChatPage compact onClose={() => setAssistantOpen(false)} />
+      ) : null}
+    </>
+  );
+}
+
+function CanonicalMealRedirect() {
   const location = useLocation();
 
-  const hideNavbarRoutes = [
-    "/login",
-    "/signup",
-    "/forgot",
-    "/forgotpassword",
-    "/forgot/verify",
-    "/forgot/reset",
-    "/mfaform",
-  ];
-
-  const currentPath = location.pathname.toLowerCase();
-
-  const shouldHideNavbar = hideNavbarRoutes.some((route) =>
-    currentPath.startsWith(route)
+  return (
+    <Navigate
+      to={`${location.pathname.toLowerCase()}${location.search}${location.hash}`}
+      replace
+    />
   );
+}
 
-  return shouldHideNavbar ? null : <MainNavbar />;
+function RouteScrollToTop() {
+  const location = useLocation();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  }, [location.pathname]);
+
+  return null;
 }
 
 function App() {
-  const { currentUser } = useContext(UserContext);
+  const { currentUser, authReady } = useContext(UserContext);
 
   useEffect(() => {
     initializeFontSize();
@@ -102,14 +140,19 @@ function App() {
 
   return (
     <Router>
-      <NavbarWrapper />
+      <RouteScrollToTop />
+      <GlobalAuthenticatedLayout />
       <ToastContainer />
 
       <Routes>
         <Route
           path="/"
           element={
-            currentUser ? <Navigate to="/home" /> : <Navigate to="/login" />
+            !authReady ? null : currentUser ? (
+              <Navigate to="/home" />
+            ) : (
+              <Navigate to="/login" />
+            )
           }
         />
 
@@ -122,35 +165,171 @@ function App() {
         <Route path="/forgot/reset" element={<ForgotPasswordReset />} />
 
         <Route path="/mfa" element={<MFAform />} />
-        <Route path="/home" element={<Home />} />
-        <Route path="/faq" element={<FAQ />} />
-        <Route path="/leaderboard" element={<Leaderboard />} />
-        <Route path="/community" element={<Community />} />
-        <Route path="/chat" element={<ChatPage />} />
-        <Route path="/community/post/:postId" element={<PostDetail />} />
 
-        <Route path="/survey" element={<ObesityPredictor />} />
-        <Route path="/survey/result" element={<Predictionresult />} />
-        <Route path="/roadmap" element={<FitnessRoadmap />} />
+        <Route
+          path="/home"
+          element={
+            <AuthenticateRoute>
+              <Home />
+            </AuthenticateRoute>
+          }
+        />
+
+        <Route
+          path="/faq"
+          element={
+            <AuthenticateRoute>
+              <FAQ />
+            </AuthenticateRoute>
+          }
+        />
+
+        <Route
+          path="/leaderboard"
+          element={
+            <AuthenticateRoute>
+              <Leaderboard />
+            </AuthenticateRoute>
+          }
+        />
+
+        <Route
+          path="/community"
+          element={
+            <AuthenticateRoute>
+              <Community />
+            </AuthenticateRoute>
+          }
+        />
+
+        <Route
+          path="/chat"
+          element={
+            <AuthenticateRoute>
+              <ChatPage />
+            </AuthenticateRoute>
+          }
+        />
+
+        <Route
+          path="/community/post/:postId"
+          element={
+            <AuthenticateRoute>
+              <PostDetail />
+            </AuthenticateRoute>
+          }
+        />
+
+        <Route
+          path="/survey"
+          element={
+            <AuthenticateRoute>
+              <ObesityPredictor />
+            </AuthenticateRoute>
+          }
+        />
+
+        <Route
+          path="/survey/result"
+          element={
+            <AuthenticateRoute>
+              <Predictionresult />
+            </AuthenticateRoute>
+          }
+        />
+
+        <Route
+          path="/roadmap"
+          element={
+            <AuthenticateRoute>
+              <FitnessRoadmap />
+            </AuthenticateRoute>
+          }
+        />
 
         {/* NEW HEALTH ROUTES */}
         <Route
           path="/symptom-assessment-new"
-          element={<SymptomAssessmentScreen />}
-        />
-        <Route path="/obesity-survey-new" element={<ObesitySurveyScreen />} />
-        <Route
-          path="/obesity-survey-result-new"
-          element={<ObesitySurveyResultScreen />}
-        />
-        <Route
-          path="/fitness-roadmap-new"
-          element={<FitnessRoadmapScreen />}
+          element={
+            <AuthenticateRoute>
+              <SymptomAssessmentScreen />
+            </AuthenticateRoute>
+          }
         />
 
-        <Route path="/Scan" element={<Scan />} />
-        <Route path="/Meal" element={<Meal />} />
-        <Route path="/account" element={<Account />} />
+        <Route
+          path="/obesity-survey-new"
+          element={
+            <AuthenticateRoute>
+              <ObesitySurveyScreen />
+            </AuthenticateRoute>
+          }
+        />
+
+        <Route
+          path="/obesity-survey-result-new"
+          element={
+            <AuthenticateRoute>
+              <ObesitySurveyResultScreen />
+            </AuthenticateRoute>
+          }
+        />
+
+        <Route
+          path="/fitness-roadmap-new"
+          element={
+            <AuthenticateRoute>
+              <FitnessRoadmapScreen />
+            </AuthenticateRoute>
+          }
+        />
+
+        <Route
+          path="/Scan"
+          element={
+            <AuthenticateRoute>
+              <Scan />
+            </AuthenticateRoute>
+          }
+        />
+
+        <Route
+          path="/scan"
+          element={
+            <AuthenticateRoute>
+              <Scan />
+            </AuthenticateRoute>
+          }
+        />
+
+        <Route caseSensitive path="/Meal/*" element={<CanonicalMealRedirect />} />
+
+        <Route
+          path="/dish/detail"
+          element={
+            <AuthenticateRoute>
+              <MealDetail />
+            </AuthenticateRoute>
+          }
+        />
+
+        <Route
+          path="/meal/detail"
+          element={
+            <AuthenticateRoute>
+              <MealDetail />
+            </AuthenticateRoute>
+          }
+        />
+
+        <Route
+          path="/account"
+          element={
+            <AuthenticateRoute>
+              <Account />
+            </AuthenticateRoute>
+          }
+        />
 
         <Route
           path="/daily-plan-edit"
@@ -207,7 +386,7 @@ function App() {
         />
 
         <Route
-          path="Appointment"
+          path="appointment"
           element={
             <AuthenticateRoute>
               <Appointment />
@@ -216,7 +395,7 @@ function App() {
         />
 
         <Route
-          path="dietaryRequirements"
+          path="dietary-requirements"
           element={
             <AuthenticateRoute>
               <DietaryRequirements />
@@ -225,7 +404,7 @@ function App() {
         />
 
         <Route
-          path="ScanProducts"
+          path="scan-products"
           element={
             <AuthenticateRoute>
               <ScanProducts />
@@ -234,7 +413,34 @@ function App() {
         />
 
         <Route
-          path="RecipeRating"
+          path="scan-review"
+          element={
+            <AuthenticateRoute>
+              <ScanMealReview />
+            </AuthenticateRoute>
+          }
+        />
+
+        <Route
+          path="food-details/:foodName"
+          element={
+            <AuthenticateRoute>
+              <FoodDetails />
+            </AuthenticateRoute>
+          }
+        />
+
+        <Route
+          path="upload-history"
+          element={
+            <AuthenticateRoute>
+              <UploadHistory />
+            </AuthenticateRoute>
+          }
+        />
+
+        <Route
+          path="recipe-rating"
           element={
             <AuthenticateRoute>
               <RecipeRating />
@@ -243,7 +449,7 @@ function App() {
         />
 
         <Route
-          path="UiTimer"
+          path="ui-timer"
           element={
             <AuthenticateRoute>
               <UiTimer />
@@ -269,10 +475,17 @@ function App() {
           }
         />
 
-        <Route path="/recipe/:id" element={<RecipeDetail />} />
+        <Route
+          path="/recipe/:id"
+          element={
+            <AuthenticateRoute>
+              <MealRecipeDetail />
+            </AuthenticateRoute>
+          }
+        />
 
         <Route
-          path="Meal"
+          path="/meal"
           element={
             <AuthenticateRoute>
               <Meal />
@@ -280,7 +493,24 @@ function App() {
           }
         />
 
-        <Route path="/weekly-plan" element={<WeeklyMealPlanPage />} />
+        <Route
+          path="/meal/:preselectedMealType"
+          element={
+            <AuthenticateRoute>
+              <Meal />
+            </AuthenticateRoute>
+          }
+        />
+
+        <Route
+          path="/weekly-plan"
+          element={
+            <AuthenticateRoute>
+              <WeeklyMealPlanPage />
+            </AuthenticateRoute>
+          }
+        />
+
         <Route path="/auth/callback" element={<AuthCallback />} />
 
         <Route
@@ -292,8 +522,23 @@ function App() {
           }
         />
 
-        <Route path="/preferences" element={<FoodPreferences />} />
-        <Route path="/symptomassessment" element={<SymptomAssessment />} />
+        <Route
+          path="/preferences"
+          element={
+            <AuthenticateRoute>
+              <FoodPreferences />
+            </AuthenticateRoute>
+          }
+        />
+
+        <Route
+          path="/symptomassessment"
+          element={
+            <AuthenticateRoute>
+              <SymptomAssessment />
+            </AuthenticateRoute>
+          }
+        />
 
         <Route
           path="healthnews"
@@ -319,6 +564,15 @@ function App() {
             <AuthenticateRoute>
               <Dashboard />
             </AuthenticateRoute>
+          }
+        />
+
+        <Route
+          path="/admin/integration-audit"
+          element={
+            <InternalAdminRoute>
+              <AdminAuditDashboard />
+            </InternalAdminRoute>
           }
         />
 
@@ -350,6 +604,33 @@ function App() {
         />
 
         <Route
+          path="admin"
+          element={
+            <InternalAdminRoute>
+              <AdminDataCenter />
+            </InternalAdminRoute>
+          }
+        />
+
+        <Route
+          path="admin/recipe-library/:id"
+          element={
+            <InternalAdminRoute>
+              <AdminRecipeLibraryPage />
+            </InternalAdminRoute>
+          }
+        />
+
+        <Route
+          path="admin/recipe-library/:id/edit"
+          element={
+            <InternalAdminRoute>
+              <AdminRecipeLibraryPage mode="edit" />
+            </InternalAdminRoute>
+          }
+        />
+
+        <Route
           path="HealthFAQ"
           element={
             <AuthenticateRoute>
@@ -358,8 +639,23 @@ function App() {
           }
         />
 
-        <Route path="ScanBarcode" element={<ScanBarcode />} />
-        <Route path="Scan" element={<Scan />} />
+        <Route
+          path="ScanBarcode"
+          element={
+            <AuthenticateRoute>
+              <ScanBarcode />
+            </AuthenticateRoute>
+          }
+        />
+
+        <Route
+          path="scan"
+          element={
+            <AuthenticateRoute>
+              <Scan />
+            </AuthenticateRoute>
+          }
+        />
       </Routes>
     </Router>
   );

@@ -1,6 +1,11 @@
+.border-red-500 {
+  border-color: #ef4444 !important;
+}
+
 /* Form container */
 .fitness-form-container {
-  background: white; /* White background for the form */
+  background: white;
+  /* White background for the form */
   padding: 30px;
   border-radius: 16px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
@@ -14,14 +19,16 @@
   text-align: center;
   margin-bottom: 25px;
   font-weight: 600;
-  color: #ba49e7; /* Navbar color */
+  color: #ba49e7;
+  /* Navbar color */
 }
 
 .fitness-form-container h3 {
   text-align: center;
   margin-bottom: 25px;
   font-weight: 600;
-  color: #ba49e7; /* Navbar color */
+  color: #ba49e7;
+  /* Navbar color */
 }
 
 /* Label and inputs */
@@ -29,7 +36,8 @@
   display: block;
   margin-bottom: 15px;
   font-weight: 300;
-  color: white; /* Dark text for readability */
+  color: white;
+  /* Dark text for readability */
 }
 
 .fitness-form-container input:not(#no-bg),
@@ -39,10 +47,12 @@
   padding: 10px;
   margin-top: 5px;
   box-sizing: border-box;
-  border: 1px solid #d3b8ff; /* Light purple border */
+  border: 1px solid #d3b8ff;
+  /* Light purple border */
   border-radius: 8px;
   font-size: 14px;
-  background-color: #f9f5ff; /* Slightly purple background for inputs */
+  background-color: #f9f5ff;
+  /* Slightly purple background for inputs */
 }
 
 /* Textarea */
@@ -53,7 +63,8 @@
 
 /* Buttons */
 .fitness-form-container button {
-  background-color: #292929; /* Complementary teal for buttons */
+  background-color: #292929;
+  /* Complementary teal for buttons */
   color: white;
   padding: 10px 16px;
   border: none;
@@ -65,7 +76,8 @@
 }
 
 .fitness-form-container button:hover {
-  background-color: #ba49e7; /* Darker teal for hover */
+  background-color: #ba49e7;
+  /* Darker teal for hover */
 }
 
 /* Button group */
@@ -78,6 +90,7 @@
 .fitness-form-container input:focus,
 .fitness-form-container select:focus,
 .fitness-form-container textarea:focus {
-  border-color: #ba49e7; /* Purple border when focused */
+  border-color: #ba49e7;
+  /* Purple border when focused */
   outline: none;
 }

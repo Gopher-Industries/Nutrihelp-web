@@ -1,11 +1,14 @@
-import { useEffect, useRef } from "react"
+import { useContext, useEffect, useRef } from "react"
 import { useNavigate, useLocation } from "react-router-dom"
 import { supabase } from "../supabaseClient"
 import { toast } from "react-toastify"
+import { UserContext } from "../context/user.context"
+import { API_BASE_URL, parseJsonSafe } from "../utils/authApi"
 
 export default function AuthCallback() {
   const navigate = useNavigate()
   const location = useLocation()
+  const { setCurrentUser } = useContext(UserContext)
   const handledRef = useRef(false) // prevents double execution
 
   useEffect(() => {
@@ -46,14 +49,84 @@ export default function AuthCallback() {
         // LOGIN FLOW (SSO)
         // ==========================
         if (mode === "login" || !mode) {
-          // Optional: store minimal session reference
-          localStorage.setItem(
-            "sso_session",
-            JSON.stringify({
-              provider: data.session.user.app_metadata?.provider,
-              email: data.session.user.email,
-            })
-          )
+          const supabaseAccessToken = data.session.access_token || ""
+          if (!supabaseAccessToken) {
+            throw new Error("Missing Google session token")
+          }
+
+          // Prevent stale backend JWT from being reused.
+          localStorage.removeItem("auth_token")
+          localStorage.removeItem("jwt_token")
+
+          const exchangeRes = await fetch(`${API_BASE_URL}/api/auth/google/exchange`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ supabaseAccessToken, provider: "google" }),
+          })
+
+          const exchangeData = await parseJsonSafe(exchangeRes)
+          const exchangePayload = exchangeData?.data || exchangeData
+          const backendToken =
+            exchangePayload?.accessToken ||
+            exchangePayload?.token ||
+            exchangePayload?.session?.accessToken ||
+            ""
+          const backendRefreshToken =
+            exchangePayload?.refreshToken ||
+            exchangePayload?.session?.refreshToken ||
+            ""
+          const backendExpiresIn =
+            exchangePayload?.expiresIn ||
+            exchangePayload?.session?.expiresIn ||
+            0
+          const backendTokenType =
+            exchangePayload?.tokenType ||
+            exchangePayload?.session?.tokenType ||
+            "Bearer"
+          const backendUser = exchangePayload?.user || null
+
+          if (!exchangeRes.ok || !backendToken || !backendUser?.id) {
+            throw new Error(
+              exchangeData?.error?.message ||
+              exchangeData?.error ||
+              "Unable to complete Google sign-in."
+            )
+          }
+
+          const sessionUser = {
+            id: backendUser.id,
+            user_id: backendUser.id,
+            uid: backendUser.id,
+            email: backendUser.email || data.session.user.email,
+            name:
+              backendUser.name ||
+              data.session.user.user_metadata?.full_name ||
+              data.session.user.user_metadata?.name ||
+              data.session.user.email,
+            displayName:
+              backendUser.name ||
+              data.session.user.user_metadata?.full_name ||
+              data.session.user.user_metadata?.name ||
+              data.session.user.email,
+            photoURL:
+              data.session.user.user_metadata?.avatar_url ||
+              data.session.user.user_metadata?.picture ||
+              "",
+            provider: "google",
+            role: backendUser.role || "user",
+            token: backendToken,
+            supabaseUserId: data.session.user.id,
+            supabaseAccessToken,
+          }
+
+          localStorage.setItem("sso_session", "google")
+          setCurrentUser(sessionUser, {
+            persist: true,
+            accessToken: backendToken,
+            refreshToken: backendRefreshToken,
+            expiresIn: backendExpiresIn,
+            tokenType: backendTokenType,
+          })
 
           navigate(next, { replace: true })
           return
@@ -66,12 +139,14 @@ export default function AuthCallback() {
 
       } catch (err) {
         console.error("Auth callback error:", err)
+        toast.error(err?.message || "Unable to complete Google sign-in.")
+        await supabase.auth.signOut()
         navigate("/login", { replace: true })
       }
     }
 
     handleAuth()
-  }, [navigate, location])
+  }, [location, navigate, setCurrentUser])
 
   return (
     <p style={{ padding: 16, fontSize: 14, color: "#555" }}>

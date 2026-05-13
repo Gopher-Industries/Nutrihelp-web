@@ -1,132 +1,3 @@
-// import React from 'react';
-// import { createContext, useState } from 'react';
-
-// //The function to set the context for the logged in user
-// //This function will be called by the in-built react function, "userContext()"
-// // in order to set the current user
-// export const UserContext = createContext(
-//     {
-//         currentUser: null,
-//         setCurrentUser: () => null
-//     }
-// )
-
-// //Gives access to the values in the UserContext
-// export const UserProvider = ({ children }) => {
-//     //Set the current user
-//     const [currentUser, setCurrentUser] = useState(null)
-
-//     //Use destructuring to set the constant, "value"
-//     //to take the function, setCurrentUser, and the variable, currentUser
-//     const value = { currentUser, setCurrentUser }
-
-//     return (
-//         <UserContext.Provider value={value}>
-//             {children}
-//         </UserContext.Provider>
-//     )
-// }
-
-
-
-// import React, { createContext, useState, useEffect } from 'react';
-
-// // creating react context to configure logging in user
-// export const UserContext = createContext({
-//     currentUser: null,
-//     setCurrentUser: () => null,
-//     logOut: () => null,
-// });
-
-// export const UserProvider = ({ children }) => {
-//     const [currentUser, setCurrentUser] = useState(() => {
-//     //    get value of current user from localstorage
-//         const userFromStorage = localStorage.getItem('user');
-//         return userFromStorage ? JSON.parse(userFromStorage) : null;
-//     });
-
-//     // to add the user in local storage
-//     const setUser = (user) => {
-//         setCurrentUser(user);
-//         if (user) {
-//             localStorage.setItem('user', JSON.stringify(user)); 
-//         } else {
-//             localStorage.removeItem('user'); // remove storage data if there is no user
-//         }
-//     };
-
-//     const logOut = () => {
-//         localStorage.removeItem('user');
-//         setCurrentUser(null);
-//     };
-
-//     const value = { currentUser, setCurrentUser: setUser, logOut };
-
-//     return (
-//         <UserContext.Provider value={value}>
-//             {children}
-//         </UserContext.Provider>
-//     );
-// };
-
-// import React, { createContext, useState, useEffect } from 'react';
-
-// export const UserContext = createContext({
-//     currentUser: null,
-//     setCurrentUser: () => null,
-//     logOut: () => null,
-// });
-
-// export const UserProvider = ({ children }) => {
-//     const [currentUser, setCurrentUser] = useState(() => {
-//         // get value of current user from localstorage
-//         const storedUser = localStorage.getItem('user');
-//         const storedExpirationTime = localStorage.getItem('expirationTime');
-        
-//         if (storedUser && storedExpirationTime) {
-//             // Check if the expiration time is still valid
-//             const expirationTime = JSON.parse(storedExpirationTime);
-//             if (Date.now() > expirationTime) {
-//                 // If expired, clear the user data
-//                 localStorage.removeItem('user');
-//                 localStorage.removeItem('expirationTime');
-//                 return null;
-//             }
-//             return JSON.parse(storedUser);
-//         }
-//         return null;
-//     });
-
-//     const setUser = (user, expirationTimeInMillis) => {
-//         if (user) {
-//             // Set expiration time if the user is logged in
-//             setCurrentUser(user);
-//             const expirationTime = Date.now() + expirationTimeInMillis;
-//             localStorage.setItem('user', JSON.stringify(user));
-//             localStorage.setItem('expirationTime', JSON.stringify(expirationTime));
-//         } else {
-//             // Clear user and expiration time if logged out
-//             localStorage.removeItem('user');
-//             localStorage.removeItem('expirationTime');
-//         }
-//     };
-
-//     const logOut = () => {
-//         localStorage.removeItem('user');
-//         localStorage.removeItem('userExpireTime');
-//         setCurrentUser(null);
-//     };
-
-//     const value = { currentUser, setCurrentUser: setUser, logOut };
-
-//     return (
-//         <UserContext.Provider value={value}>
-//             {children}
-//         </UserContext.Provider>
-//     );
-// };
-
-
 import React, {
   createContext,
   useCallback,
@@ -136,148 +7,554 @@ import React, {
   useState,
 } from "react";
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "https://localhost:8443";
+const DEFAULT_SESSION_TTL_MS = 180 * 60 * 1000;
+const DEFAULT_PERSIST_TTL_MS = 7 * 24 * 60 * 60 * 1000;
+const REFRESH_BUFFER_MS = 60 * 1000;
+
 export const UserContext = createContext({
   currentUser: null,
-  // same signature you call in Login.jsx: setCurrentUser(user, expirationTimeInMillis)
-  setCurrentUser: (_user, _ttlMs = 0) => {},
-  logOut: () => {},
+  authReady: false,
+  setCurrentUser: () => {},
+  logOut: async () => {},
+  refreshSession: async () => null,
 });
 
 const KEYS = {
-  localUser: "user",                 // persistent (keep me logged in)
-  localExpiry: "expirationTime",     // ms epoch
-  sessionUser: "user_session",       // non-persistent (until tab/browser close)
+  localUser: "user",
+  localExpiry: "expirationTime",
+  sessionUser: "user_session",
+  authToken: "auth_token",
+  refreshToken: "refresh_token",
+  jwtToken: "jwt_token",
+  token: "token",
+  ssoSession: "sso_session",
 };
 
-// helpers
-function readLocal() {
+function safeParse(value) {
+  if (!value) return null;
   try {
-    const u = localStorage.getItem(KEYS.localUser);
-    const exp = localStorage.getItem(KEYS.localExpiry);
-    if (!u || !exp) return null;
-    const expiresAt = JSON.parse(exp);
-    if (typeof expiresAt === "number" && expiresAt > 0 && Date.now() > expiresAt) {
-      // expired -> clear
-      localStorage.removeItem(KEYS.localUser);
-      localStorage.removeItem(KEYS.localExpiry);
-      return null;
-    }
-    return JSON.parse(u);
-  } catch {
+    return JSON.parse(value);
+  } catch (_error) {
     return null;
   }
 }
 
-function readSession() {
-  try {
-    const u = sessionStorage.getItem(KEYS.sessionUser);
-    return u ? JSON.parse(u) : null;
-  } catch {
-    return null;
-  }
+function toPositiveNumber(value) {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : 0;
 }
 
-function writeLocal(user, expiresAt) {
+function readRawUser(storage, key) {
+  return safeParse(storage.getItem(key));
+}
+
+function readStoredUser() {
+  const localUser = readRawUser(localStorage, KEYS.localUser);
+  const sessionUser =
+    readRawUser(sessionStorage, KEYS.sessionUser) ||
+    readRawUser(localStorage, KEYS.sessionUser);
+
+  const candidate = localUser || sessionUser;
+  if (!candidate || typeof candidate !== "object") return null;
+
+  const accessToken =
+    candidate.accessToken ||
+    candidate.token ||
+    localStorage.getItem(KEYS.authToken) ||
+    sessionStorage.getItem(KEYS.authToken) ||
+    localStorage.getItem(KEYS.jwtToken) ||
+    sessionStorage.getItem(KEYS.jwtToken) ||
+    localStorage.getItem(KEYS.token) ||
+    sessionStorage.getItem(KEYS.token) ||
+    "";
+
+  const refreshToken =
+    candidate.refreshToken ||
+    localStorage.getItem(KEYS.refreshToken) ||
+    sessionStorage.getItem(KEYS.refreshToken) ||
+    "";
+
+  const sessionExpiresAt =
+    toPositiveNumber(candidate.sessionExpiresAt) ||
+    toPositiveNumber(localStorage.getItem(KEYS.localExpiry));
+
+  if (sessionExpiresAt && Date.now() > sessionExpiresAt) {
+    return null;
+  }
+
+  return {
+    ...candidate,
+    token: accessToken,
+    accessToken,
+    refreshToken,
+    tokenType: candidate.tokenType || "Bearer",
+    expiresIn: toPositiveNumber(candidate.expiresIn),
+    accessTokenExpiresAt: toPositiveNumber(candidate.accessTokenExpiresAt),
+    sessionExpiresAt,
+    rememberMe: Boolean(candidate.rememberMe || localUser),
+  };
+}
+
+function clearLocalSession() {
+  localStorage.removeItem(KEYS.localUser);
+  localStorage.removeItem(KEYS.localExpiry);
+  localStorage.removeItem(KEYS.authToken);
+  localStorage.removeItem(KEYS.refreshToken);
+  localStorage.removeItem(KEYS.jwtToken);
+  localStorage.removeItem(KEYS.token);
+}
+
+function clearSessionSession() {
+  sessionStorage.removeItem(KEYS.sessionUser);
+  sessionStorage.removeItem(KEYS.authToken);
+  sessionStorage.removeItem(KEYS.refreshToken);
+  sessionStorage.removeItem(KEYS.jwtToken);
+  sessionStorage.removeItem(KEYS.token);
+  localStorage.removeItem(KEYS.sessionUser);
+}
+
+function clearAllSessionStorage() {
+  clearLocalSession();
+  clearSessionSession();
+  localStorage.removeItem(KEYS.ssoSession);
+  sessionStorage.removeItem(KEYS.ssoSession);
+}
+
+function writePersistentSession(user) {
   localStorage.setItem(KEYS.localUser, JSON.stringify(user));
-  localStorage.setItem(KEYS.localExpiry, JSON.stringify(expiresAt || 0));
+  localStorage.setItem(KEYS.localExpiry, String(user.sessionExpiresAt || 0));
+  localStorage.setItem(KEYS.sessionUser, JSON.stringify(user));
+  localStorage.setItem(KEYS.authToken, user.token || "");
+  if (user.refreshToken) {
+    localStorage.setItem(KEYS.refreshToken, user.refreshToken);
+  } else {
+    localStorage.removeItem(KEYS.refreshToken);
+  }
+
   sessionStorage.removeItem(KEYS.sessionUser);
+  sessionStorage.removeItem(KEYS.authToken);
+  sessionStorage.removeItem(KEYS.refreshToken);
 }
 
-function writeSession(user) {
+function writeSessionOnly(user) {
   sessionStorage.setItem(KEYS.sessionUser, JSON.stringify(user));
+  sessionStorage.setItem(KEYS.authToken, user.token || "");
+  if (user.refreshToken) {
+    sessionStorage.setItem(KEYS.refreshToken, user.refreshToken);
+  } else {
+    sessionStorage.removeItem(KEYS.refreshToken);
+  }
+
   localStorage.removeItem(KEYS.localUser);
   localStorage.removeItem(KEYS.localExpiry);
+  localStorage.removeItem(KEYS.authToken);
+  localStorage.removeItem(KEYS.refreshToken);
+  localStorage.removeItem(KEYS.jwtToken);
+  localStorage.removeItem(KEYS.token);
+  localStorage.removeItem(KEYS.sessionUser);
 }
 
-function clearAll() {
-  localStorage.removeItem(KEYS.localUser);
-  localStorage.removeItem(KEYS.localExpiry);
-  sessionStorage.removeItem(KEYS.sessionUser);
+function normalizeSessionOptions(input, previousUser) {
+  if (typeof input === "number") {
+    return {
+      persist: input > 0,
+      sessionTtlMs: input > 0 ? input : DEFAULT_SESSION_TTL_MS,
+    };
+  }
+
+  if (!input || typeof input !== "object") {
+    return {
+      persist: Boolean(previousUser?.rememberMe),
+      sessionTtlMs:
+        previousUser?.sessionExpiresAt
+          ? Math.max(previousUser.sessionExpiresAt - Date.now(), 0)
+          : previousUser?.rememberMe
+            ? DEFAULT_PERSIST_TTL_MS
+            : DEFAULT_SESSION_TTL_MS,
+    };
+  }
+
+  return {
+    persist:
+      typeof input.persist === "boolean"
+        ? input.persist
+        : Boolean(input.rememberMe ?? previousUser?.rememberMe),
+    sessionTtlMs: toPositiveNumber(input.sessionTtlMs || input.ttlMs),
+    sessionExpiresAt: toPositiveNumber(input.sessionExpiresAt),
+    accessToken: input.accessToken || input.token || "",
+    refreshToken: input.refreshToken || "",
+    tokenType: input.tokenType || "",
+    expiresIn: toPositiveNumber(input.expiresIn),
+    accessTokenExpiresAt: toPositiveNumber(input.accessTokenExpiresAt),
+  };
+}
+
+function buildSessionUser(nextUser, options, previousUser) {
+  const resolvedOptions = normalizeSessionOptions(options, previousUser);
+  const merged = {
+    ...(previousUser || {}),
+    ...(nextUser || {}),
+  };
+
+  const accessToken =
+    resolvedOptions.accessToken ||
+    merged.accessToken ||
+    merged.token ||
+    previousUser?.accessToken ||
+    previousUser?.token ||
+    "";
+
+  const refreshToken =
+    resolvedOptions.refreshToken ||
+    merged.refreshToken ||
+    previousUser?.refreshToken ||
+    "";
+
+  const tokenType =
+    resolvedOptions.tokenType ||
+    merged.tokenType ||
+    previousUser?.tokenType ||
+    "Bearer";
+
+  const expiresIn =
+    resolvedOptions.expiresIn ||
+    toPositiveNumber(merged.expiresIn) ||
+    toPositiveNumber(previousUser?.expiresIn);
+
+  const accessTokenExpiresAt =
+    resolvedOptions.accessTokenExpiresAt ||
+    toPositiveNumber(merged.accessTokenExpiresAt) ||
+    (expiresIn > 0 ? Date.now() + expiresIn * 1000 : 0) ||
+    toPositiveNumber(previousUser?.accessTokenExpiresAt);
+
+  const persist = resolvedOptions.persist;
+  const sessionTtlMs =
+    resolvedOptions.sessionTtlMs ||
+    (persist ? DEFAULT_PERSIST_TTL_MS : DEFAULT_SESSION_TTL_MS);
+
+  const sessionExpiresAt =
+    resolvedOptions.sessionExpiresAt || Date.now() + sessionTtlMs;
+
+  return {
+    ...merged,
+    token: accessToken,
+    accessToken,
+    refreshToken,
+    tokenType,
+    expiresIn,
+    accessTokenExpiresAt,
+    sessionExpiresAt,
+    rememberMe: persist,
+  };
+}
+
+async function parseJsonSafe(response) {
+  try {
+    return await response.json();
+  } catch (_error) {
+    return {};
+  }
 }
 
 export const UserProvider = ({ children }) => {
-  // Rehydrate on first render: prefer persistent, else session
-  const [currentUser, setCurrentUserState] = useState(() => {
-    return readLocal() ?? readSession() ?? null;
-  });
-
+  const [currentUser, setCurrentUserState] = useState(() => readStoredUser());
+  const [authReady, setAuthReady] = useState(false);
+  const currentUserRef = useRef(readStoredUser());
   const logoutTimerRef = useRef(null);
-  const scheduleLogout = useCallback((expiresAt) => {
-    if (logoutTimerRef.current) clearTimeout(logoutTimerRef.current);
-    if (typeof expiresAt === "number" && expiresAt > 0) {
-      const delay = Math.max(0, expiresAt - Date.now());
-      logoutTimerRef.current = setTimeout(() => {
-        clearAll();
-        setCurrentUserState(null);
-      }, delay);
+  const refreshTimerRef = useRef(null);
+  const refreshPromiseRef = useRef(null);
+  const refreshSessionRef = useRef(async () => null);
+
+  const clearTimers = useCallback(() => {
+    if (logoutTimerRef.current) {
+      clearTimeout(logoutTimerRef.current);
+      logoutTimerRef.current = null;
+    }
+    if (refreshTimerRef.current) {
+      clearTimeout(refreshTimerRef.current);
+      refreshTimerRef.current = null;
     }
   }, []);
 
-  // On mount, if local user exists with expiry, schedule auto-logout
-  useEffect(() => {
-    const exp = localStorage.getItem(KEYS.localExpiry);
-    const expiresAt = exp ? JSON.parse(exp) : 0;
-    scheduleLogout(expiresAt);
-
-    // keep multiple tabs in sync
-    const onStorage = (e) => {
-      if (!e.key) return;
-
-      // If persistent keys change
-      if (e.key === KEYS.localUser || e.key === KEYS.localExpiry) {
-        const u = readLocal();
-        setCurrentUserState(u);
-        const exp2 = localStorage.getItem(KEYS.localExpiry);
-        scheduleLogout(exp2 ? JSON.parse(exp2) : 0);
-      }
-
-      // If session key changes
-      if (e.key === KEYS.sessionUser) {
-        const u = readSession();
-        setCurrentUserState(u);
-        scheduleLogout(0);
-      }
-    };
-    window.addEventListener("storage", onStorage);
-    return () => {
-      window.removeEventListener("storage", onStorage);
-      if (logoutTimerRef.current) clearTimeout(logoutTimerRef.current);
-    };
-  }, [scheduleLogout]);
-
-  /**
-   * setCurrentUser(user, ttlMs)
-   * - ttlMs > 0  => persist in localStorage for ttlMs (keep me logged in)
-   * - ttlMs === 0 => store in sessionStorage (dies on tab/browser close)
-   */
-  const setCurrentUser = useCallback((user, ttlMs = 0) => {
-    if (user) {
+  const applyUserState = useCallback(
+    (user) => {
+      currentUserRef.current = user;
       setCurrentUserState(user);
-      if (ttlMs > 0) {
-        const expiresAt = Date.now() + ttlMs;
-        writeLocal(user, expiresAt);
-        scheduleLogout(expiresAt);
-      } else {
-        writeSession(user);
-        scheduleLogout(0);
-      }
-    } else {
-      // explicit clear
-      clearAll();
-      setCurrentUserState(null);
-      scheduleLogout(0);
-    }
-  }, [scheduleLogout]);
 
-  const logOut = useCallback(() => {
-    clearAll();
-    setCurrentUserState(null);
-    scheduleLogout(0);
-  }, [scheduleLogout]);
+      clearTimers();
+
+      if (!user) {
+        clearAllSessionStorage();
+        return;
+      }
+
+      if (user.rememberMe) {
+        writePersistentSession(user);
+      } else {
+        writeSessionOnly(user);
+      }
+
+      if (user.sessionExpiresAt > 0) {
+        const delay = Math.max(0, user.sessionExpiresAt - Date.now());
+        logoutTimerRef.current = setTimeout(() => {
+          clearAllSessionStorage();
+          currentUserRef.current = null;
+          setCurrentUserState(null);
+        }, delay);
+      }
+    },
+    [clearTimers]
+  );
+
+  const scheduleRefresh = useCallback(
+    (user) => {
+      if (refreshTimerRef.current) {
+        clearTimeout(refreshTimerRef.current);
+        refreshTimerRef.current = null;
+      }
+
+      if (!user?.refreshToken || !user?.accessTokenExpiresAt) {
+        return;
+      }
+
+      const refreshAt = Math.max(
+        5000,
+        user.accessTokenExpiresAt - Date.now() - REFRESH_BUFFER_MS
+      );
+
+      refreshTimerRef.current = setTimeout(() => {
+        refreshSessionRef.current?.().catch(() => {});
+      }, refreshAt);
+    },
+    []
+  );
+
+  const refreshSession = useCallback(async () => {
+    const storedUser = currentUserRef.current || readStoredUser();
+    if (!storedUser?.refreshToken) {
+      return null;
+    }
+
+    if (refreshPromiseRef.current) {
+      return refreshPromiseRef.current;
+    }
+
+    refreshPromiseRef.current = (async () => {
+      const response = await fetch(`${API_BASE_URL}/api/auth/refresh`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ refreshToken: storedUser.refreshToken }),
+      });
+
+      const payload = await parseJsonSafe(response);
+      const session = payload?.data?.session || payload?.session || {};
+
+      if (!response.ok || !session?.accessToken) {
+        throw new Error(payload?.error?.message || payload?.error || "Session refresh failed");
+      }
+
+      const refreshedUser = buildSessionUser(
+        storedUser,
+        {
+          persist: storedUser.rememberMe,
+          sessionTtlMs: storedUser.rememberMe
+            ? DEFAULT_PERSIST_TTL_MS
+            : DEFAULT_SESSION_TTL_MS,
+          accessToken: session.accessToken,
+          refreshToken: session.refreshToken || storedUser.refreshToken,
+          tokenType: session.tokenType,
+          expiresIn: session.expiresIn,
+        },
+        storedUser
+      );
+
+      applyUserState(refreshedUser);
+      scheduleRefresh(refreshedUser);
+      return refreshedUser;
+    })()
+      .catch((error) => {
+        applyUserState(null);
+        throw error;
+      })
+      .finally(() => {
+        refreshPromiseRef.current = null;
+      });
+
+    return refreshPromiseRef.current;
+  }, [applyUserState, scheduleRefresh]);
+
+  useEffect(() => {
+    refreshSessionRef.current = refreshSession;
+  }, [refreshSession]);
+
+  useEffect(() => {
+    if (currentUserRef.current) {
+      scheduleRefresh(currentUserRef.current);
+    }
+  }, [scheduleRefresh]);
+
+  const logOut = useCallback(async () => {
+    const storedUser = currentUserRef.current || readStoredUser();
+
+    if (storedUser?.refreshToken) {
+      try {
+        await fetch(`${API_BASE_URL}/api/auth/logout`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ refreshToken: storedUser.refreshToken }),
+        });
+      } catch (_error) {
+        // Best-effort logout only.
+      }
+    }
+
+    applyUserState(null);
+  }, [applyUserState]);
+
+  const verifyStoredSession = useCallback(async () => {
+    const storedUser = readStoredUser();
+
+    if (!storedUser?.token) {
+      applyUserState(null);
+      setAuthReady(true);
+      return null;
+    }
+
+    const tryProfile = async (accessToken) => {
+      const response = await fetch(`${API_BASE_URL}/api/auth/profile`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      const payload = await parseJsonSafe(response);
+      return { response, payload };
+    };
+
+    try {
+      let activeUser = storedUser;
+      let profileResult = await tryProfile(storedUser.token);
+
+      if (profileResult.response.status === 401 && storedUser.refreshToken) {
+        activeUser = await refreshSession();
+        if (activeUser?.token) {
+          profileResult = await tryProfile(activeUser.token);
+        }
+      }
+
+      if (!profileResult.response.ok) {
+        applyUserState(null);
+        setAuthReady(true);
+        return null;
+      }
+
+      const verifiedProfile = profileResult.payload?.data?.user || activeUser;
+      const verifiedUser = buildSessionUser(verifiedProfile, activeUser, activeUser);
+      applyUserState(verifiedUser);
+      setAuthReady(true);
+      return verifiedUser;
+    } catch (_error) {
+      applyUserState(null);
+      setAuthReady(true);
+      return null;
+    }
+  }, [applyUserState, refreshSession, scheduleRefresh]);
+
+  useEffect(() => {
+    verifyStoredSession();
+
+    const onVisibilityRefresh = () => {
+      if (document.visibilityState === "visible") {
+        const storedUser = currentUserRef.current || readStoredUser();
+        if (!storedUser?.token) return;
+
+        if (
+          storedUser.refreshToken &&
+          storedUser.accessTokenExpiresAt &&
+          storedUser.accessTokenExpiresAt - Date.now() <= REFRESH_BUFFER_MS
+        ) {
+          refreshSession().catch(() => {});
+        }
+      }
+    };
+
+    const onWindowFocus = () => {
+      const storedUser = currentUserRef.current || readStoredUser();
+      if (!storedUser?.token) return;
+
+      if (
+        storedUser.refreshToken &&
+        storedUser.accessTokenExpiresAt &&
+        storedUser.accessTokenExpiresAt - Date.now() <= REFRESH_BUFFER_MS
+      ) {
+        refreshSession().catch(() => {});
+      }
+    };
+
+    const onStorage = () => {
+      const storedUser = readStoredUser();
+      currentUserRef.current = storedUser;
+      setCurrentUserState(storedUser);
+      if (storedUser) {
+        clearTimers();
+        if (storedUser.sessionExpiresAt > 0) {
+          const delay = Math.max(0, storedUser.sessionExpiresAt - Date.now());
+          logoutTimerRef.current = setTimeout(() => {
+            clearAllSessionStorage();
+            currentUserRef.current = null;
+            setCurrentUserState(null);
+          }, delay);
+        }
+        scheduleRefresh(storedUser);
+      } else {
+        clearTimers();
+      }
+    };
+
+    document.addEventListener("visibilitychange", onVisibilityRefresh);
+    window.addEventListener("focus", onWindowFocus);
+    window.addEventListener("storage", onStorage);
+
+    return () => {
+      document.removeEventListener("visibilitychange", onVisibilityRefresh);
+      window.removeEventListener("focus", onWindowFocus);
+      window.removeEventListener("storage", onStorage);
+      clearTimers();
+    };
+  }, [clearTimers, refreshSession, scheduleRefresh, verifyStoredSession]);
+
+  const setCurrentUser = useCallback(
+    (userOrUpdater, options = 0) => {
+      const previousUser = currentUserRef.current;
+      const nextUser =
+        typeof userOrUpdater === "function"
+          ? userOrUpdater(previousUser)
+          : userOrUpdater;
+
+      if (!nextUser) {
+        applyUserState(null);
+        setAuthReady(true);
+        return;
+      }
+
+      const sessionUser = buildSessionUser(nextUser, options, previousUser);
+      applyUserState(sessionUser);
+      scheduleRefresh(sessionUser);
+      setAuthReady(true);
+    },
+    [applyUserState, scheduleRefresh]
+  );
 
   const value = useMemo(
-    () => ({ currentUser, setCurrentUser, logOut }),
-    [currentUser, setCurrentUser, logOut]
+    () => ({
+      currentUser,
+      authReady,
+      setCurrentUser,
+      logOut,
+      refreshSession,
+    }),
+    [authReady, currentUser, logOut, refreshSession, setCurrentUser]
   );
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;

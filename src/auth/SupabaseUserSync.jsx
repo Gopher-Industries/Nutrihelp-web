@@ -1,32 +1,37 @@
-import { useEffect, useContext } from "react";
-import { supabase } from '../supabaseClient';
-import { UserContext } from "../context/user.context";
+import { useEffect } from "react";
+import { supabase } from "../supabaseClient";
+
+function hasBackendSession() {
+  const directToken =
+    localStorage.getItem("auth_token") ||
+    sessionStorage.getItem("auth_token") ||
+    localStorage.getItem("jwt_token") ||
+    sessionStorage.getItem("jwt_token");
+
+  if (directToken) return true;
+
+  const storedUser =
+    localStorage.getItem("user") ||
+    localStorage.getItem("user_session") ||
+    sessionStorage.getItem("user_session");
+
+  return Boolean(storedUser);
+}
 
 export default function SupabaseUserSync() {
-  const { setCurrentUser } = useContext(UserContext);
-
   useEffect(() => {
-
-    supabase.auth.getSession().then(({ data }) => {
-      const u = data.session?.user;
-      if (u) {
-        setCurrentUser({ email: u.email, id: u.id }, 0);
-      }
-    });
-
-
     const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
-      const u = session?.user;
-      if (u) {
-        setCurrentUser({ email: u.email, id: u.id }, 0);
-      } else {
-        setCurrentUser(null, 0);
+      if (session?.user) {
+        return;
+      }
+
+      if (!hasBackendSession()) {
+        localStorage.removeItem("sso_session");
       }
     });
-
 
     return () => sub.subscription.unsubscribe();
-  }, [setCurrentUser]);
+  }, []);
 
   return null;
 }

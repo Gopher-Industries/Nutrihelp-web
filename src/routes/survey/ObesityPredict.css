@@ -1,3 +1,6 @@
+.border-red-500 {
+  border-color: #ef4444 !important;
+}
 
 .obesity-card {
   width: 100%;
@@ -28,6 +31,42 @@
   letter-spacing: 0.3px;
 }
 
+.survey-intro {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 18px 22px;
+  border: 1px solid #dbe7ff;
+  border-radius: 16px;
+  background: #ffffff;
+}
+
+.survey-intro h2 {
+  margin: 0 0 6px;
+  color: #10213f;
+  font-size: 1.35rem;
+  font-weight: 800;
+}
+
+.survey-intro p {
+  margin: 0;
+  max-width: 780px;
+  color: #526173;
+  font-size: 0.98rem;
+  line-height: 1.5;
+}
+
+.survey-intro span {
+  flex: 0 0 auto;
+  padding: 7px 12px;
+  border-radius: 999px;
+  border: 1px solid #b7d5ff;
+  background: #eef6ff;
+  color: #174276;
+  font-size: 0.85rem;
+  font-weight: 800;
+}
 
 .prog {
   display: flex;
@@ -102,12 +141,12 @@
 .question-card {
   background: #f8fbff;
   border: 1px solid #dbe7ff;
-  border-radius: 16px;
+  border-radius: 10px;
   padding: 14px 16px;
   display: flex;
   flex-direction: column;
   gap: 8px;
-  min-height: 120px;
+  min-height: 150px;
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
@@ -121,6 +160,13 @@
   color: #1f2937;
   font-weight: 700;
   font-size: 1rem;
+}
+
+.field-helper {
+  color: #5b6473;
+  font-size: 0.86rem;
+  line-height: 1.4;
+  min-height: 36px;
 }
 
 .question-card input,
@@ -154,7 +200,7 @@
   color: #ffffff;
   border: none;
   border-radius: 10px;
-  padding: 10px 20px;
+  padding: 12px 22px;
   font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
@@ -168,6 +214,12 @@
 
 .predict-btn:active {
   transform: scale(0.98);
+}
+
+.predict-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+  box-shadow: none;
 }
 
 .scroll-hint {
@@ -185,6 +237,11 @@
 
   .heading_survey {
     font-size: 1.4rem;
+  }
+
+  .survey-intro {
+    align-items: flex-start;
+    flex-direction: column;
   }
 
   .questions-grid {
@@ -234,4 +291,35 @@
   .predict-btn {
     width: 100%;
   }
+}
+
+.error-border {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 1px #ef4444 !important;
+}
+.spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.predict-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.predict-btn--loading {
+  background: #1b3a6b;
 }

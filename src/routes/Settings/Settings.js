@@ -1,8 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { useDarkMode } from '../../routes/DarkModeToggle/DarkModeContext';
 import { getFontSizeOptions, applyFontSize, getCurrentFontSize } from '../../utils/fontSizeManager';
-import { testVoiceSettings, saveVoiceSettings } from '../../utils/voiceSettingsManager';
+import {
+  DEFAULT_VOICE_SETTINGS,
+  getVoiceSettings,
+  hasSpeechSynthesisSupport,
+  saveVoiceSettings,
+  testVoiceSettings
+} from '../../utils/voiceSettingsManager';
 import { MoonIcon, SunIcon, Bell, Globe, Volume2 } from "lucide-react";
 import notificationPreferencesApi from '../../services/notificationPreferencesApi';
 import './Settings.css';
@@ -10,7 +16,6 @@ import Switch from "react-switch";
 import Slider from '@mui/material/Slider';
 
 const Settings = () => {
-  const navigate = useNavigate();
   const location = useLocation();
   const { darkMode, setDarkMode } = useDarkMode();
 
@@ -42,14 +47,9 @@ const Settings = () => {
   const [apiSuccess, setApiSuccess] = useState(null);
   
   // Voice/Audio settings states
-  const [voiceSettings, setVoiceSettings] = useState({
-    enabled: true,
-    volume: 0.8,
-    rate: 1.0,
-    pitch: 1.0,
-    autoPlay: false,
-    voice: 'default'
-  });
+  const [voiceSettings, setVoiceSettings] = useState({ ...DEFAULT_VOICE_SETTINGS });
+  const [isSpeechSupported, setIsSpeechSupported] = useState(() => hasSpeechSynthesisSupport());
+  const [availableVoices, setAvailableVoices] = useState([]);
 
   // Language options
   const languageOptions = [
@@ -132,7 +132,7 @@ const Settings = () => {
         const savedRememberPreferences = localStorage.getItem('rememberPreferences') !== 'false';
         const savedShowHelpfulTips = localStorage.getItem('showHelpfulTips') !== 'false';
         const savedAutoSave = localStorage.getItem('autoSave') !== 'false';
-        const savedVoiceSettings = JSON.parse(localStorage.getItem('voiceSettings') || '{}');
+        const savedVoiceSettings = getVoiceSettings();
 
         setHighContrast(savedHighContrast);
         setShowFocusIndicators(savedShowFocusIndicators);
@@ -140,7 +140,8 @@ const Settings = () => {
         setRememberPreferences(savedRememberPreferences);
         setShowHelpfulTips(savedShowHelpfulTips);
         setAutoSave(savedAutoSave);
-        setVoiceSettings(prev => ({ ...prev, ...savedVoiceSettings }));
+        setVoiceSettings(savedVoiceSettings);
+        setIsSpeechSupported(hasSpeechSynthesisSupport());
 
         setIsLoading(false);
       } catch (error) {
@@ -153,6 +154,40 @@ const Settings = () => {
     };
     
     initializeSettings();
+  }, []);
+
+  useEffect(() => {
+    const supported = hasSpeechSynthesisSupport();
+    setIsSpeechSupported(supported);
+
+    if (!supported) {
+      setAvailableVoices([]);
+      return undefined;
+    }
+
+    const loadVoices = () => {
+      const voices = window.speechSynthesis.getVoices() || [];
+      setAvailableVoices(voices);
+    };
+
+    loadVoices();
+
+    const speechSynthesisRef = window.speechSynthesis;
+
+    // Some browsers only expose voices asynchronously.
+    if (typeof speechSynthesisRef.addEventListener === "function") {
+      speechSynthesisRef.addEventListener("voiceschanged", loadVoices);
+    } else {
+      speechSynthesisRef.onvoiceschanged = loadVoices;
+    }
+
+    return () => {
+      if (typeof speechSynthesisRef.removeEventListener === "function") {
+        speechSynthesisRef.removeEventListener("voiceschanged", loadVoices);
+      } else if (speechSynthesisRef.onvoiceschanged === loadVoices) {
+        speechSynthesisRef.onvoiceschanged = null;
+      }
+    };
   }, []);
 
   // Anchor scrolling for /settings#section
@@ -305,16 +340,19 @@ const Settings = () => {
 
   // Handle voice settings change
   const handleVoiceSettingChange = (setting, value) => {
-    setVoiceSettings(prev => ({
-      ...prev,
-      [setting]: value
-    }));
+    setVoiceSettings(prev => {
+      const updated = {
+        ...prev,
+        [setting]: value
+      };
+      return saveVoiceSettings(updated);
+    });
     setHasUnsavedChanges(true);
   };
 
   // Test voice settings
   const handleTestVoice = () => {
-    testVoiceSettings(voiceSettings);
+    testVoiceSettings(voiceSettings, availableVoices);
   };
 
   // Save all settings
@@ -440,6 +478,11 @@ const Settings = () => {
   }
 
   const currentFontSize = fontSizes[fontSize] || fontSizes.medium || { size: '16px', label: 'Medium' };
+  const selectedVoiceExists = availableVoices.some(
+    (voice) => voice.voiceURI === voiceSettings.voice
+  );
+  const selectedVoiceValue = selectedVoiceExists ? voiceSettings.voice : 'default';
+  const areVoiceControlsDisabled = !isSpeechSupported || !voiceSettings.enabled;
 
   // Define all settings sections
   const allSections = [
@@ -731,6 +774,12 @@ const Settings = () => {
       description: 'Configure text-to-speech and audio settings',
       content: (
         <div className="voice-options">
+          {!isSpeechSupported && (
+            <div className="checkbox-description" style={{ color: '#b45309', marginBottom: '12px' }}>
+              Text-to-speech is not available in this browser. Voice controls are disabled.
+            </div>
+          )}
+
           <div className="checkbox-group">
             <div>
               <div className="checkbox-label">Enable text-to-speech</div>
@@ -738,6 +787,7 @@ const Settings = () => {
             <Switch 
               checked={voiceSettings.enabled}
               onChange={(checked) => handleVoiceSettingChange('enabled', checked)}
+              disabled={!isSpeechSupported}
               onColor="#005BBB"
               offColor="#ccc"
               checkedIcon={false}
@@ -745,6 +795,25 @@ const Settings = () => {
               height={24}
               width={48}
             />
+          </div>
+
+          <div className="slider-group">
+            <div className="slider-label">
+              <span>Voice</span>
+            </div>
+            <select
+              className="language-dropdown"
+              value={selectedVoiceValue}
+              onChange={(e) => handleVoiceSettingChange('voice', e.target.value)}
+              disabled={areVoiceControlsDisabled}
+            >
+              <option value="default">Default System Voice</option>
+              {availableVoices.map((voice) => (
+                <option key={voice.voiceURI} value={voice.voiceURI}>
+                  {voice.name} ({voice.lang}){voice.default ? ' - default' : ''}
+                </option>
+              ))}
+            </select>
           </div>
           
           <div className="slider-group">
@@ -755,6 +824,7 @@ const Settings = () => {
             <Slider
               value={voiceSettings.volume}
               onChange={(e, newValue) => handleVoiceSettingChange('volume', newValue)}
+              disabled={areVoiceControlsDisabled}
               min={0}
               max={1}
               step={0.1}
@@ -783,6 +853,7 @@ const Settings = () => {
             <Slider
               value={voiceSettings.rate}
               onChange={(e, newValue) => handleVoiceSettingChange('rate', newValue)}
+              disabled={areVoiceControlsDisabled}
               min={0.5}
               max={2}
               step={0.1}
@@ -811,6 +882,7 @@ const Settings = () => {
             <Slider
               value={voiceSettings.pitch}
               onChange={(e, newValue) => handleVoiceSettingChange('pitch', newValue)}
+              disabled={areVoiceControlsDisabled}
               min={0.5}
               max={2}
               step={0.1}
@@ -839,6 +911,7 @@ const Settings = () => {
             <Switch 
               checked={voiceSettings.autoPlay}
               onChange={(checked) => handleVoiceSettingChange('autoPlay', checked)}
+              disabled={areVoiceControlsDisabled}
               onColor="#005BBB"
               offColor="#ccc"
               checkedIcon={false}
@@ -852,7 +925,7 @@ const Settings = () => {
             <button 
               className="test-voice-btn"
               onClick={handleTestVoice}
-              disabled={!voiceSettings.enabled}
+              disabled={areVoiceControlsDisabled}
             >
               <Volume2 size={16} />
               Test Voice Settings

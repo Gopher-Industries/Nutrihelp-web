@@ -16,7 +16,7 @@
 //   useEffect(() => {
 //     const fetchFitnessData = async () => {
 //       try {
-//         const res = await fetch("http://localhost:80/api/fitness-Journey");
+//         const res = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://localhost:8081'}/api/fitness-Journey`);
 //         const data = await res.json();
 //         setFitnessData(Array.isArray(data) ? data[data.length - 1] : data);
 //       } catch (error) {
@@ -118,6 +118,8 @@ import WeeklyPlanView from "./WeeklyPlanView.jsx"; // adjust path as needed
 import StatsView from "./StatsView.jsx";
 import "./FitnessJourney.css";
 
+const FITNESS_JOURNEY_STORAGE_KEY = "fitnessJourneyProfile";
+
 const FitnessJourney = () => {
   const [fitnessData, setFitnessData] = useState(null);
   const [visibleWeeks, setVisibleWeeks] = useState(12);
@@ -127,17 +129,17 @@ const FitnessJourney = () => {
   const [activePage, setActivePage] = useState("weekly");
 
   useEffect(() => {
-    const fetchFitnessData = async () => {
-      try {
-        const res = await fetch("http://localhost:80/api/fitness-Journey");
-        const data = await res.json();
-        setFitnessData(Array.isArray(data) ? data[data.length - 1] : data);
-      } catch (error) {
-        console.error("Error fetching fitness data:", error);
-      }
-    };
-
-    fetchFitnessData();
+    try {
+      const stored = localStorage.getItem(FITNESS_JOURNEY_STORAGE_KEY);
+      if (!stored) return;
+      const data = JSON.parse(stored);
+      setFitnessData({
+        ...data,
+        target_weight: data?.targetWeight ?? data?.target_weight,
+      });
+    } catch (error) {
+      console.error("Error loading fitness journey data:", error);
+    }
   }, []);
 
   const handleWeekClick = (week) => {
@@ -203,4 +205,3 @@ const FitnessJourney = () => {
 };
 
 export default FitnessJourney;
-

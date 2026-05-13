@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Plus,  X,  Trash, Check, Edit2, Save} from 'lucide-react';
+import { Plus, X, Trash, Check, Edit2, Save } from 'lucide-react';
+import { ERROR_MESSAGES, validatePositiveNumber } from '../../../utils/validationRules';
+import FieldError from '../../../components/FieldError';
+import { toast } from 'react-toastify';
 import './ShoppingList.css';
 
 const ShoppingList = () => {
@@ -18,12 +21,17 @@ const ShoppingList = () => {
     const [editUnit, setEditUnit] = useState('');
     const [editCategory, setEditCategory] = useState('');
 
+    const [addErrors, setAddErrors] = useState({});
+    const [addTouched, setAddTouched] = useState({});
+    const [editErrors, setEditErrors] = useState({});
+    const [editTouched, setEditTouched] = useState({});
+
     // Function to generate shopping list from meal plan
     const generateShoppingListFromMealPlan = (selectedItems) => {
         if (!selectedItems || selectedItems.length === 0) return [];
-        
+
         const mealPlanItems = [];
-        
+
         selectedItems.forEach(item => {
             // Generate corresponding shopping list items based on ingredient names
             const ingredients = getIngredientsForMeal(item.name, item.mealType);
@@ -41,7 +49,7 @@ const ShoppingList = () => {
                 });
             });
         });
-        
+
         return mealPlanItems;
     };
 
@@ -110,7 +118,7 @@ const ShoppingList = () => {
                 { name: 'Cinnamon', quantity: 1, unit: 'tsp', category: 'pantry' }
             ]
         };
-        
+
         return ingredientsMap[mealName] || [];
     };
 
@@ -118,20 +126,20 @@ const ShoppingList = () => {
     useEffect(() => {
         const savedItems = localStorage.getItem('shoppingList');
         let items = savedItems ? JSON.parse(savedItems) : [];
-        
+
         // Check if there's data passed from meal plan page
         if (location.state && location.state.selectedItems) {
             const mealPlanItems = generateShoppingListFromMealPlan(location.state.selectedItems);
-            
+
             // Merge existing items with meal plan items, avoid duplicates
             const existingNames = items.map(item => item.name.toLowerCase());
-            const newItems = mealPlanItems.filter(item => 
+            const newItems = mealPlanItems.filter(item =>
                 !existingNames.includes(item.name.toLowerCase())
             );
-            
+
             items = [...items, ...newItems];
         }
-        
+
         setShoppingItems(items);
     }, [location.state]);
 
@@ -141,6 +149,17 @@ const ShoppingList = () => {
     }, [shoppingItems]);
 
     const addItem = () => {
+        const err = {};
+        if (!newItem.trim()) err.name = ERROR_MESSAGES.REQUIRED;
+        const qErr = validatePositiveNumber(newQuantity);
+        if (qErr) err.quantity = qErr;
+
+        if (Object.keys(err).length > 0) {
+            setAddErrors(err);
+            setAddTouched({ name: true, quantity: true });
+            return;
+        }
+
         if (newItem.trim()) {
             const item = {
                 id: Date.now() + Math.random(),
@@ -156,6 +175,9 @@ const ShoppingList = () => {
             setNewQuantity('1');
             setNewUnit('piece');
             setNewCategory('vegetable');
+            setAddErrors({});
+            setAddTouched({});
+            toast.success("Item added successfully!");
         }
     };
 
@@ -164,7 +186,7 @@ const ShoppingList = () => {
     };
 
     const toggleItem = (id) => {
-        setShoppingItems(shoppingItems.map(item => 
+        setShoppingItems(shoppingItems.map(item =>
             item.id === id ? { ...item, checked: !item.checked } : item
         ));
     };
@@ -178,18 +200,30 @@ const ShoppingList = () => {
     };
 
     const saveEdit = () => {
-        if (!editName.trim()) {
-            alert('Item name cannot be empty.');
+        const err = {};
+        if (!editName.trim()) err.name = ERROR_MESSAGES.REQUIRED;
+        const qErr = validatePositiveNumber(editQuantity);
+        if (qErr) err.quantity = qErr;
+
+        if (Object.keys(err).length > 0) {
+            setEditErrors(err);
+            setEditTouched({ name: true, quantity: true });
             return;
         }
-        setShoppingItems(shoppingItems.map(item => 
-            item.id === editingId ? { ...item, name: editName, quantity: parseInt(editQuantity) || 1, unit: editUnit, category: editCategory } : item
-        ));
-        setEditingId(null);
-        setEditName('');
-        setEditQuantity('');
-        setEditUnit('');
-        setEditCategory('');
+
+        if (editName.trim()) {
+            setShoppingItems(shoppingItems.map(item =>
+                item.id === editingId ? { ...item, name: editName, quantity: parseInt(editQuantity) || 1, unit: editUnit, category: editCategory } : item
+            ));
+            setEditingId(null);
+            setEditName('');
+            setEditQuantity('');
+            setEditUnit('');
+            setEditCategory('');
+            setEditErrors({});
+            setEditTouched({});
+            toast.success("Item updated successfully!");
+        }
     };
 
     const cancelEdit = () => {
@@ -198,6 +232,8 @@ const ShoppingList = () => {
         setEditQuantity('');
         setEditUnit('');
         setEditCategory('');
+        setEditErrors({});
+        setEditTouched({});
     };
 
     const clearAll = () => {
@@ -250,7 +286,7 @@ const ShoppingList = () => {
             <header className="shopping-list-header">
                 <h1>Shopping List</h1>
                 {/* Back to meal planning */}
-                <Link to="/Meal" className="back-button">
+                <Link to="/meal" className="back-button">
                     ← Back to Meal Planning
                 </Link>
             </header>
@@ -294,22 +330,36 @@ const ShoppingList = () => {
                     <div className="add-item-section">
                         <h2>Add New Item</h2>
                         <div className="add-item-form">
-                            <input
-                                type="text"
-                                placeholder="Enter item name..."
-                                value={newItem}
-                                onChange={(e) => setNewItem(e.target.value)}
-                                className="item-input"
-                            />
-                            <input
-                                type="number"
-                                min="1"
-                                value={newQuantity}
-                                onChange={(e) => setNewQuantity(e.target.value)}
-                                className="quantity-input"
-                            />
-                            <select 
-                                value={newUnit} 
+                            <div className="form-group-slist" style={{ flex: 2 }}>
+                                <input
+                                    type="text"
+                                    placeholder="Enter item name..."
+                                    value={newItem}
+                                    onChange={(e) => {
+                                        setNewItem(e.target.value);
+                                        if (addErrors.name) setAddErrors(prev => ({ ...prev, name: undefined }));
+                                    }}
+                                    onBlur={() => setAddTouched(prev => ({ ...prev, name: true }))}
+                                    className={`item-input ${addErrors.name && addTouched.name ? 'error-border' : ''}`}
+                                />
+                                <FieldError error={addErrors.name} touched={addTouched.name} />
+                            </div>
+                            <div className="form-group-slist" style={{ flex: 1 }}>
+                                <input
+                                    type="number"
+                                    min="1"
+                                    value={newQuantity}
+                                    onChange={(e) => {
+                                        setNewQuantity(e.target.value);
+                                        if (addErrors.quantity) setAddErrors(prev => ({ ...prev, quantity: undefined }));
+                                    }}
+                                    onBlur={() => setAddTouched(prev => ({ ...prev, quantity: true }))}
+                                    className={`quantity-input ${addErrors.quantity && addTouched.quantity ? 'error-border' : ''}`}
+                                />
+                                <FieldError error={addErrors.quantity} touched={addTouched.quantity} />
+                            </div>
+                            <select
+                                value={newUnit}
                                 onChange={(e) => setNewUnit(e.target.value)}
                                 className="unit-select"
                             >
@@ -319,8 +369,8 @@ const ShoppingList = () => {
                                     </option>
                                 ))}
                             </select>
-                            <select 
-                                value={newCategory} 
+                            <select
+                                value={newCategory}
                                 onChange={(e) => setNewCategory(e.target.value)}
                                 className="category-select"
                             >
@@ -370,21 +420,35 @@ const ShoppingList = () => {
                                         {editingId === item.id ? (
                                             <div className="edit-mode-container">
                                                 <div className="add-item-form">
-                                                    <input
-                                                        type="text"
-                                                        value={editName}
-                                                        onChange={(e) => setEditName(e.target.value)}
-                                                        placeholder="Item name"
-                                                        className="item-input"
-                                                    />
-                                                    <input
-                                                        type="number"
-                                                        min="1"
-                                                        value={editQuantity}
-                                                        onChange={(e) => setEditQuantity(e.target.value)}
-                                                        placeholder="Quantity"
-                                                        className="quantity-input"
-                                                    />
+                                                    <div className="form-group-slist" style={{ flex: 2 }}>
+                                                        <input
+                                                            type="text"
+                                                            value={editName}
+                                                            onChange={(e) => {
+                                                                setEditName(e.target.value);
+                                                                if (editErrors.name) setEditErrors(prev => ({ ...prev, name: undefined }));
+                                                            }}
+                                                            onBlur={() => setEditTouched(prev => ({ ...prev, name: true }))}
+                                                            placeholder="Item name"
+                                                            className={`item-input ${editErrors.name && editTouched.name ? 'error-border' : ''}`}
+                                                        />
+                                                        <FieldError error={editErrors.name} touched={editTouched.name} />
+                                                    </div>
+                                                    <div className="form-group-slist" style={{ flex: 1 }}>
+                                                        <input
+                                                            type="number"
+                                                            min="1"
+                                                            value={editQuantity}
+                                                            onChange={(e) => {
+                                                                setEditQuantity(e.target.value);
+                                                                if (editErrors.quantity) setEditErrors(prev => ({ ...prev, quantity: undefined }));
+                                                            }}
+                                                            onBlur={() => setEditTouched(prev => ({ ...prev, quantity: true }))}
+                                                            placeholder="Quantity"
+                                                            className={`quantity-input ${editErrors.quantity && editTouched.quantity ? 'error-border' : ''}`}
+                                                        />
+                                                        <FieldError error={editErrors.quantity} touched={editTouched.quantity} />
+                                                    </div>
                                                     <select
                                                         value={editUnit}
                                                         onChange={(e) => setEditUnit(e.target.value)}
@@ -409,7 +473,7 @@ const ShoppingList = () => {
                                                     </select>
                                                 </div>
                                                 <div className="edit-buttons-container">
-                                                    <button 
+                                                    <button
                                                         onClick={saveEdit}
                                                         className="save-edit-button"
                                                         title="Save changes"
@@ -417,7 +481,7 @@ const ShoppingList = () => {
                                                         <Save size={18} />
                                                         Save
                                                     </button>
-                                                    <button 
+                                                    <button
                                                         onClick={cancelEdit}
                                                         className="cancel-edit-button"
                                                         title="Cancel editing"
@@ -429,45 +493,45 @@ const ShoppingList = () => {
                                             </div>
                                         ) : (
                                             <>
-                                            <div className="item-actions">
-                                                <button
-                                                    onClick={() => toggleItem(item.id)}
-                                                    className={`purchase-btn ${item.checked ? 'purchased' : 'unpurchased'}`}
-                                                    title={item.checked ? "Mark as not purchased" : "Mark as purchased"}
-                                                >
-                                                    {item.checked ? <Check size={24} /> : ' '}
-                                                </button>
-                                            </div>
-                                            <div className="item-info">
-                                                <span className="item-name">
-                                                    {item.name} :
-                                                    {item.checked && (
-                                                        <span className="purchased-badge">
-                                                            Purchased
-                                                        </span>
-                                                    )}
-                                                </span>
-                                                <span className="item-category" style={{ color: category?.color }}>
-                                                    <span>{item.quantity}</span>
-                                                    <span>{item.unit}</span>
-                                                </span>
-                                            </div>
-                                            <div className="item-action-buttons">
-                                                <button 
-                                                    onClick={() => startEdit(item)}
-                                                    className="edit-button"
-                                                    title="Edit item"
-                                                >
-                                                    <Edit2 size={20} />
-                                                </button>
-                                                <button 
-                                                    onClick={() => removeItem(item.id)}
-                                                    className="remove-button"
-                                                    title="Remove item"
-                                                >
-                                                    <Trash size={20}/>
-                                                </button>
-                                            </div>
+                                                <div className="item-actions">
+                                                    <button
+                                                        onClick={() => toggleItem(item.id)}
+                                                        className={`purchase-btn ${item.checked ? 'purchased' : 'unpurchased'}`}
+                                                        title={item.checked ? "Mark as not purchased" : "Mark as purchased"}
+                                                    >
+                                                        {item.checked ? <Check size={24} /> : ' '}
+                                                    </button>
+                                                </div>
+                                                <div className="item-info">
+                                                    <span className="item-name">
+                                                        {item.name} :
+                                                        {item.checked && (
+                                                            <span className="purchased-badge">
+                                                                Purchased
+                                                            </span>
+                                                        )}
+                                                    </span>
+                                                    <span className="item-category" style={{ color: category?.color }}>
+                                                        <span>{item.quantity}</span>
+                                                        <span>{item.unit}</span>
+                                                    </span>
+                                                </div>
+                                                <div className="item-action-buttons">
+                                                    <button
+                                                        onClick={() => startEdit(item)}
+                                                        className="edit-button"
+                                                        title="Edit item"
+                                                    >
+                                                        <Edit2 size={20} />
+                                                    </button>
+                                                    <button
+                                                        onClick={() => removeItem(item.id)}
+                                                        className="remove-button"
+                                                        title="Remove item"
+                                                    >
+                                                        <Trash size={20} />
+                                                    </button>
+                                                </div>
                                             </>
                                         )}
                                     </div>

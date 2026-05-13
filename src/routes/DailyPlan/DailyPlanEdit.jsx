@@ -1,336 +1,1031 @@
-// src/routes/DailyPlan/DailyPlanEdit.jsx
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  BarChart3,
+  CalendarDays,
+  ChevronLeft,
+  ChevronRight,
+  Cloud,
+  Clock3,
+  Moon,
+  Plus,
+  Sun,
+  Trash2,
+  Users,
+} from "lucide-react";
+import { fetchDishImage } from "../../services/dishImageApi";
 import "./DailyPlanEdit.css";
+import mealPlanApi from "../../services/mealPlanApi";
+import {
+  readMealSelectionsByDateFromStorage,
+  writeMealSelectionsByDateToStorage,
+} from "../../utils/mealSelectionStorage";
 
-// ----- Types -----
-const MEALS = ["Breakfast", "Lunch", "Dinner", "Snacks"];
-const NEW_ITEM = () => ({
-  name: "",
-  calories: 0,
-  protein: 0,
-  fat: 0,
-  vitamins: 0,
-  sodium: 0,
-});
+const IMAGE_ENRICHMENT_STORAGE_KEY = "nutrihelp_daily_plan_image_enrichment_queue_v1";
 
-// ----- Helpers -----
-function pad(n) {
-  return n < 10 ? `0${n}` : `${n}`;
+const MONTHS = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+];
+
+const MEAL_SECTIONS = [
+  { key: "breakfast", label: "Breakfast", icon: Sun, iconClass: "icon-breakfast" },
+  { key: "lunch", label: "Lunch", icon: Cloud, iconClass: "icon-lunch" },
+  { key: "dinner", label: "Dinner", icon: Moon, iconClass: "icon-dinner" },
+];
+
+const FALLBACK_TAGS = {
+  breakfast: ["Balanced Meal", "Heart-Healthy"],
+  lunch: ["Full Meal", "High Protein"],
+  dinner: ["Light Meal", "Low Fat"],
+  other: ["Snack", "Quick Bite"],
+};
+
+const NUTRITION_TARGETS = {
+  calories: 2000,
+  protein: 80,
+  carbs: 250,
+  fat: 65,
+};
+
+const NUTRITION_BY_TYPE = {
+  breakfast: { calories: 300, protein: 18, carbs: 42, fat: 10 },
+  lunch: { calories: 470, protein: 30, carbs: 55, fat: 16 },
+  dinner: { calories: 560, protein: 34, carbs: 50, fat: 20 },
+  other: { calories: 210, protein: 8, carbs: 24, fat: 7 },
+};
+
+const LEVEL_FACTOR = {
+  easy: 1,
+  medium: 1.12,
+  hard: 1.24,
+};
+
+const IMAGE_FALLBACK = "/images/meal-mock/placeholder.svg";
+
+function normalize(value) {
+  return String(value || "").trim().toLowerCase();
 }
-function toDateString(d) {
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+
+function shouldEnrichMealImage(meal) {
+  const imageValue = String(meal?.image || "").trim();
+  const isScanMeal =
+    String(meal?.id || "").startsWith("scan-") ||
+    String(meal?.time || "").toLowerCase() === "ai scan";
+
+  return (
+    isScanMeal &&
+    (!imageValue ||
+      imageValue.startsWith("blob:") ||
+      imageValue.includes("/images/meal-mock/") ||
+      imageValue === IMAGE_FALLBACK)
+  );
 }
-function fromDateString(s) {
-  const d = new Date(s);
-  return isNaN(d.getTime()) ? new Date() : d;
+
+function getImageEnrichmentKey(date, entryId, meal) {
+  return [date, entryId, normalize(meal?.title || meal?.name)].filter(Boolean).join("|");
+}
+
+function readImageEnrichmentQueue() {
+  if (typeof window === "undefined") return {};
+  try {
+    const raw = sessionStorage.getItem(IMAGE_ENRICHMENT_STORAGE_KEY);
+    const parsed = raw ? JSON.parse(raw) : {};
+    return parsed && typeof parsed === "object" ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
+function writeImageEnrichmentQueue(queue) {
+  if (typeof window === "undefined") return;
+  try {
+    sessionStorage.setItem(IMAGE_ENRICHMENT_STORAGE_KEY, JSON.stringify(queue));
+  } catch {
+    // Ignore queue persistence issues.
+  }
+}
+
+function normalizeMealType(value) {
+  const normalized = normalize(value);
+  if (normalized === "breakfast" || normalized === "lunch" || normalized === "dinner") {
+    return normalized;
+  }
+  if (
+    normalized === "other" ||
+    normalized === "others" ||
+    normalized === "snack" ||
+    normalized === "snacks" ||
+    normalized === "dessert" ||
+    normalized === "desserts" ||
+    normalized === "drink" ||
+    normalized === "drinks" ||
+    normalized === "beverage" ||
+    normalized === "beverages"
+  ) {
+    return "other";
+  }
+  return "other";
+}
+
+function parseNumber(value) {
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+  const source = String(value ?? "").replace(/,/g, "");
+  const matched = source.match(/-?\d+(?:\.\d+)?/);
+  if (!matched) return 0;
+  const parsed = Number(matched[0]);
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+
+function pad(number) {
+  return String(number).padStart(2, "0");
+}
+
+function toISODate(date) {
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+}
+
+function fromISODate(isoDate) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(String(isoDate || ""))) return new Date();
+  const [year, month, day] = isoDate.split("-").map(Number);
+  const parsed = new Date(year, month - 1, day);
+  return Number.isNaN(parsed.getTime()) ? new Date() : parsed;
+}
+
+function shiftDate(isoDate, offset) {
+  const date = fromISODate(isoDate);
+  date.setDate(date.getDate() + offset);
+  return toISODate(date);
+}
+
+function hasUsableMealImage(meal) {
+  const imageValue = String(meal?.image || meal?.imageUrl || "").trim();
+  return Boolean(
+    imageValue &&
+      !imageValue.startsWith("blob:") &&
+      !imageValue.includes("/images/meal-mock/placeholder")
+  );
+}
+
+function getMealDisplayScore(meal) {
+  const nutrition = meal?.nutrition && typeof meal.nutrition === "object" ? meal.nutrition : {};
+  return (
+    (hasUsableMealImage(meal) ? 10 : 0) +
+    (meal?.description ? 2 : 0) +
+    (parseNumber(nutrition.calories) > 0 ? 1 : 0)
+  );
+}
+
+function getCanonicalMealKey(meal, fallback = "") {
+  const mealType = normalizeMealType(meal?.mealType);
+  const titleKey = normalize(meal?.title || meal?.name);
+  const recipeIdKey = normalize(meal?.recipeId);
+  const idKey = normalize(meal?.id || fallback);
+  const identityKey =
+    titleKey ||
+    (recipeIdKey && recipeIdKey !== "null" ? recipeIdKey : "") ||
+    idKey ||
+    normalize(fallback);
+
+  return identityKey ? `${mealType}|${identityKey}` : "";
+}
+
+function dedupeSelectionMap(selectionMap) {
+  if (!selectionMap || typeof selectionMap !== "object") return {};
+
+  const bestByKey = {};
+  Object.entries(selectionMap).forEach(([entryKey, meal]) => {
+    if (!meal || typeof meal !== "object") return;
+
+    const normalizedMeal = {
+      ...meal,
+      mealType: normalizeMealType(meal?.mealType),
+    };
+    const canonicalKey = getCanonicalMealKey(normalizedMeal, entryKey);
+    if (!canonicalKey) return;
+
+    const score = getMealDisplayScore(normalizedMeal);
+    const current = bestByKey[canonicalKey];
+    if (!current || score >= current.score) {
+      bestByKey[canonicalKey] = { entryKey, meal: normalizedMeal, score };
+    }
+  });
+
+  return Object.fromEntries(
+    Object.values(bestByKey).map(({ entryKey, meal }) => [entryKey, meal])
+  );
+}
+
+function dedupeSelectionsByDate(selectionsByDate) {
+  if (!selectionsByDate || typeof selectionsByDate !== "object") return {};
+
+  return Object.fromEntries(
+    Object.entries(selectionsByDate).map(([date, selectionMap]) => [
+      date,
+      dedupeSelectionMap(selectionMap),
+    ])
+  );
+}
+
+function readSelectionsByDate() {
+  const rawSelections = readMealSelectionsByDateFromStorage();
+  return dedupeSelectionsByDate(rawSelections);
+}
+
+function getMealNutrition(meal) {
+  const type = normalizeMealType(meal?.mealType);
+  const level = normalize(meal?.level);
+  const factor = LEVEL_FACTOR[level] || 1;
+  const base = NUTRITION_BY_TYPE[type] || NUTRITION_BY_TYPE.breakfast;
+
+  const nutrition = meal?.nutrition && typeof meal.nutrition === "object" ? meal.nutrition : {};
+
+  return {
+    calories: Math.round(parseNumber(nutrition.calories) || base.calories * factor),
+    protein: Math.round(parseNumber(nutrition.protein) || base.protein * factor),
+    carbs: Math.round(
+      parseNumber(nutrition.carbs ?? nutrition.carbohydrates) || base.carbs * factor,
+    ),
+    fat: Math.round(parseNumber(nutrition.fat) || base.fat * factor),
+  };
+}
+
+function toTitleCase(value) {
+  const text = String(value || "").trim();
+  if (!text) return "";
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
+function getHealthTip(progressMap) {
+  if (progressMap.protein < 60) {
+    return "Consider adding one more protein-rich dish to improve muscle recovery and satiety.";
+  }
+
+  if (progressMap.carbs < 55) {
+    return "Your carb intake is still low. Add whole grains or fruit for balanced energy.";
+  }
+
+  if (progressMap.fat > 105) {
+    return "Fat intake is above target. Prioritize lean proteins and lighter cooking methods.";
+  }
+
+  if (progressMap.calories < 70) {
+    return "You are still below daily energy target. A nutrient-dense snack can help complete your plan.";
+  }
+
+  return "Great progress today. Keep hydration consistent to support digestion and nutrient absorption.";
 }
 
 export default function DailyPlanEdit() {
-  // Plan state: date + meal items
-  const [dateText, setDateText] = useState(toDateString(new Date()));
-  const [plan, setPlan] = useState(() => {
-    const base = {};
-    MEALS.forEach((m) => (base[m] = []));
-    return base;
-  });
+  const navigate = useNavigate();
+  const [selectedDate, setSelectedDate] = useState(() => toISODate(new Date()));
+  const [selectionsByDate, setSelectionsByDate] = useState(() => readSelectionsByDate());
+  const [aiSuggestions, setAiSuggestions] = useState([]);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiError, setAiError] = useState('');
+  const [deletingIds, setDeletingIds] = useState(() => new Set());
 
-  // ---- Derived totals ----
-  const totals = useMemo(() => {
-    const sum = { calories: 0, protein: 0, fat: 0, vitamins: 0, sodium: 0 };
-    MEALS.forEach((m) => {
-      (plan[m] || []).forEach((it) => {
-        sum.calories += Number(it.calories) || 0;
-        sum.protein += Number(it.protein) || 0;
-        sum.fat += Number(it.fat) || 0;
-        sum.vitamins += Number(it.vitamins) || 0;
-        sum.sodium += Number(it.sodium) || 0;
+  const selectedDateObj = useMemo(() => fromISODate(selectedDate), [selectedDate]);
+
+  const yearOptions = useMemo(() => {
+    const currentYear = new Date().getFullYear();
+    return Array.from({ length: 9 }, (_, index) => currentYear - 2 + index);
+  }, []);
+
+  const selectedMonth = selectedDateObj.getMonth();
+  const selectedYear = selectedDateObj.getFullYear();
+
+  const dayRail = useMemo(() => {
+    return Array.from({ length: 16 }, (_, index) => {
+      const offset = index - 7;
+      const date = fromISODate(selectedDate);
+      date.setDate(date.getDate() + offset);
+      return {
+        iso: toISODate(date),
+        label: pad(date.getDate()),
+      };
+    });
+  }, [selectedDate]);
+
+  const selectedEntries = useMemo(() => {
+    const byDate = selectionsByDate[selectedDate] || {};
+    return Object.entries(byDate).map(([entryId, meal]) => ({
+      entryId,
+      meal: meal || {},
+    }));
+  }, [selectionsByDate, selectedDate]);
+
+  const groupedMeals = useMemo(() => {
+    const grouped = {
+      breakfast: [],
+      lunch: [],
+      dinner: [],
+      other: [],
+    };
+
+    selectedEntries.forEach(({ entryId, meal }) => {
+      const mealType = normalizeMealType(meal?.mealType);
+      grouped[mealType].push({ entryId, meal });
+    });
+
+    return grouped;
+  }, [selectedEntries]);
+
+  const displaySections = useMemo(() => {
+    if ((groupedMeals.other || []).length > 0) {
+      return [...MEAL_SECTIONS, { key: "other", label: "Other", icon: Clock3, iconClass: "icon-snack" }];
+    }
+    return MEAL_SECTIONS;
+  }, [groupedMeals]);
+
+  const nutritionTotals = useMemo(() => {
+    return selectedEntries.reduce(
+      (accumulator, { meal }) => {
+        const values = getMealNutrition(meal);
+        return {
+          calories: accumulator.calories + values.calories,
+          protein: accumulator.protein + values.protein,
+          carbs: accumulator.carbs + values.carbs,
+          fat: accumulator.fat + values.fat,
+        };
+      },
+      { calories: 0, protein: 0, carbs: 0, fat: 0 },
+    );
+  }, [selectedEntries]);
+
+  const nutritionProgress = useMemo(() => {
+    const caloriesPercent = Math.round((nutritionTotals.calories / NUTRITION_TARGETS.calories) * 100);
+    const proteinPercent = Math.round((nutritionTotals.protein / NUTRITION_TARGETS.protein) * 100);
+    const carbsPercent = Math.round((nutritionTotals.carbs / NUTRITION_TARGETS.carbs) * 100);
+    const fatPercent = Math.round((nutritionTotals.fat / NUTRITION_TARGETS.fat) * 100);
+
+    return {
+      calories: Number.isFinite(caloriesPercent) ? caloriesPercent : 0,
+      protein: Number.isFinite(proteinPercent) ? proteinPercent : 0,
+      carbs: Number.isFinite(carbsPercent) ? carbsPercent : 0,
+      fat: Number.isFinite(fatPercent) ? fatPercent : 0,
+    };
+  }, [nutritionTotals]);
+
+  const healthTip = useMemo(() => getHealthTip(nutritionProgress), [nutritionProgress]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    writeMealSelectionsByDateToStorage(selectionsByDate);
+  }, [selectionsByDate]);
+
+  useEffect(() => {
+    if (!mealPlanApi.getAuthToken()) return;
+    let mounted = true;
+    setAiLoading(true);
+    setAiError('');
+    mealPlanApi.getAiMealSuggestions()
+      .then((items) => { if (mounted) setAiSuggestions(items); })
+      .catch((err) => {
+        if (!mounted) return;
+        if (err.status === 401) navigate('/login');
+        else setAiError(err.message || 'Failed to load AI meal suggestions.');
+      })
+      .finally(() => { if (mounted) setAiLoading(false); });
+    return () => { mounted = false; };
+  }, [navigate]);
+
+  useEffect(() => {
+    const queue = readImageEnrichmentQueue();
+    const jobs = [];
+
+    Object.entries(selectionsByDate).forEach(([date, mealMap]) => {
+      Object.entries(mealMap || {}).forEach(([entryId, meal]) => {
+        if (!shouldEnrichMealImage(meal)) return;
+        const jobKey = getImageEnrichmentKey(date, entryId, meal);
+        if (queue[jobKey]) return;
+
+        queue[jobKey] = "pending";
+        jobs.push({ date, entryId, meal, jobKey });
       });
     });
-    return sum;
-  }, [plan]);
 
-  // ---- Date controls ----
-  const goPrevDay = () => {
-    const d = fromDateString(dateText);
-    d.setDate(d.getDate() - 1);
-    setDateText(toDateString(d));
-  };
-  const goNextDay = () => {
-    const d = fromDateString(dateText);
-    d.setDate(d.getDate() + 1);
-    setDateText(toDateString(d));
+    if (jobs.length === 0) return;
+
+    writeImageEnrichmentQueue(queue);
+
+    jobs.slice(0, 6).forEach(({ date, entryId, meal, jobKey }) => {
+      fetchDishImage(meal.title || meal.name, {
+        cuisine: Array.isArray(meal.tags) ? meal.tags[0] : "",
+      })
+        .then((result) => {
+          const nextQueue = readImageEnrichmentQueue();
+          if (!result?.imageUrl) {
+            nextQueue[jobKey] = "missing";
+            writeImageEnrichmentQueue(nextQueue);
+            return;
+          }
+
+          nextQueue[jobKey] = "done";
+          writeImageEnrichmentQueue(nextQueue);
+
+          setSelectionsByDate((previousByDate) => {
+            const dateMap = { ...(previousByDate[date] || {}) };
+            const currentMeal = dateMap[entryId];
+            if (!currentMeal || !shouldEnrichMealImage(currentMeal)) return previousByDate;
+
+            return {
+              ...previousByDate,
+              [date]: {
+                ...dateMap,
+                [entryId]: {
+                  ...currentMeal,
+                  image: result.imageUrl,
+                  imageSource: result.source || currentMeal.imageSource || "",
+                  imageAttribution: result.attribution || currentMeal.imageAttribution || "",
+                  imageSourceUrl: result.sourceUrl || currentMeal.imageSourceUrl || "",
+                },
+              },
+            };
+          });
+        })
+        .catch(() => {
+          const nextQueue = readImageEnrichmentQueue();
+          nextQueue[jobKey] = "failed";
+          writeImageEnrichmentQueue(nextQueue);
+        });
+    });
+  }, [selectionsByDate]);
+
+  const handleMonthChange = (event) => {
+    const nextMonth = Number(event.target.value);
+    const currentDay = selectedDateObj.getDate();
+    const maxDay = new Date(selectedYear, nextMonth + 1, 0).getDate();
+    const nextDate = new Date(selectedYear, nextMonth, Math.min(currentDay, maxDay));
+    setSelectedDate(toISODate(nextDate));
   };
 
-  // ---- Item mutations ----
-  const addItem = (meal) => {
-    setPlan((p) => ({
-      ...p,
-      [meal]: [...(p[meal] || []), NEW_ITEM()],
+  const handleYearChange = (event) => {
+    const nextYear = Number(event.target.value);
+    const currentDay = selectedDateObj.getDate();
+    const maxDay = new Date(nextYear, selectedMonth + 1, 0).getDate();
+    const nextDate = new Date(nextYear, selectedMonth, Math.min(currentDay, maxDay));
+    setSelectedDate(toISODate(nextDate));
+  };
+
+  const handleRemoveMeal = (entryId) => {
+    setSelectionsByDate((previous) => {
+      const currentDateMap = { ...(previous[selectedDate] || {}) };
+      if (!currentDateMap[entryId]) return previous;
+
+      delete currentDateMap[entryId];
+
+      const next = { ...previous };
+      if (Object.keys(currentDateMap).length === 0) {
+        delete next[selectedDate];
+      } else {
+        next[selectedDate] = currentDateMap;
+      }
+      return next;
+    });
+  };
+
+  const handleAddMeal = (mealType) => {
+    const normalizedMealType = normalizeMealType(mealType);
+    navigate(`/meal/${encodeURIComponent(normalizedMealType)}?date=${encodeURIComponent(selectedDate)}`, {
+      state: {
+        defaultMealType: normalizedMealType,
+        planDate: selectedDate,
+      },
+    });
+  };
+
+  const handleAddAiToDaily = (item, mealType) => {
+    const entryId = `slot:ai:${item.id}|${mealType}`;
+    setSelectionsByDate((prev) => ({
+      ...prev,
+      [selectedDate]: {
+        ...(prev[selectedDate] || {}),
+        [entryId]: {
+          mealType,
+          title: item.name,
+          name: item.name,
+        },
+      },
     }));
   };
 
-  const removeItem = (meal, index) => {
-    setPlan((p) => {
-      const copy = [...(p[meal] || [])];
-      copy.splice(index, 1);
-      return { ...p, [meal]: copy };
-    });
-  };
-
-  const updateItem = (meal, index, key, value) => {
-    setPlan((p) => {
-      const copy = [...(p[meal] || [])];
-      const next = { ...copy[index] };
-      next[key] = key === "name" ? value : value === "" ? "" : Number(value);
-      copy[index] = next;
-      return { ...p, [meal]: copy };
-    });
-  };
-
-  // ---- Actions (original logic) ----
-  const savePlan = () => {
-    // Hook to your API if desired
-    console.log("savePlan", { date: dateText, plan });
-    alert("Saved (demo): check console for payload.");
-  };
-
-  const clearAll = () => {
-    if (!window.confirm("Clear all items for all meals?")) return;
-    const base = {};
-    MEALS.forEach((m) => (base[m] = []));
-    setPlan(base);
-  };
-
-  const exportPlan = () => {
-    const payload = { date: dateText, plan };
-    const blob = new Blob([JSON.stringify(payload, null, 2)], {
-      type: "application/json",
-    });
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = `daily-plan-${dateText}.json`;
-    a.click();
-    URL.revokeObjectURL(a.href);
-  };
-
-  const importPlan = async () => {
-    const input = document.createElement("input");
-    input.type = "file";
-    input.accept = "application/json";
-    input.onchange = async () => {
-      const file = input.files?.[0];
-      if (!file) return;
-      try {
-        const text = await file.text();
-        const data = JSON.parse(text);
-        if (!data || typeof data !== "object") throw new Error("Bad file");
-
-        const nextDate = data.date || dateText;
-        const nextPlan = data.plan || {};
-
-        // Sanitize data
-        const safe = {};
-        MEALS.forEach((m) => {
-          safe[m] = Array.isArray(nextPlan[m])
-            ? nextPlan[m].map((x) => ({
-                name: x?.name ?? "",
-                calories: Number(x?.calories) || 0,
-                protein: Number(x?.protein) || 0,
-                fat: Number(x?.fat) || 0,
-                vitamins: Number(x?.vitamins) || 0,
-                sodium: Number(x?.sodium) || 0,
-              }))
-            : [];
-        });
-
-        setDateText(nextDate);
-        setPlan(safe);
-      } catch (e) {
-        console.error(e);
-        alert("Invalid plan file.");
+  const handleDeleteAiSuggestion = async (id) => {
+    setDeletingIds((prev) => new Set([...prev, id]));
+    try {
+      await mealPlanApi.deleteAiMealSuggestion(id);
+      setAiSuggestions((prev) => prev.filter((item) => item.id !== id));
+    } catch (err) {
+      if (err.status === 401) {
+        navigate('/login');
+      } else {
+        setAiError(err.message || 'Failed to remove suggestion. Please try again.');
       }
-    };
-    input.click();
+    } finally {
+      setDeletingIds((prev) => {
+        const next = new Set(prev);
+        next.delete(id);
+        return next;
+      });
+    }
   };
 
-  // ---- Render (blue sidebar UI with dpe classes) ----
-  return (
-    <div className="dpe">
-      <div className="dpe-container">
-        {/* Sidebar */}
-        <aside className="dpe-sidebar">
-          <div className="dpe-sidebar-card">
-            <div className="dpe-card-title">Date</div>
+  const renderMealCard = (section) => {
+    const meals = groupedMeals[section.key] || [];
+    const SectionIcon = section.icon;
 
-            <div className="dpe-date-nav">
-              <button className="dpe-nav-btn" onClick={goPrevDay} type="button">
-                ← Prev
-              </button>
+    return (
+      <section key={section.key} className="dpe-meal-block">
+        <div className="dpe-meal-block-head">
+          <span className={`dpe-meal-icon ${section.iconClass || ""}`} aria-hidden="true">
+            {SectionIcon ? <SectionIcon size={18} strokeWidth={2.2} /> : null}
+          </span>
+          <h3>{section.label}</h3>
+        </div>
 
-              <input
-                className="dpe-date-input"
-                type="text"
-                value={dateText}
-                onChange={(e) => setDateText(e.target.value)}
-                aria-label="Date"
-              />
+        {meals.length === 0 ? (
+          <div className="dpe-meal-empty">No dish selected for this meal yet.</div>
+        ) : (
+          <div className="dpe-meal-items">
+            {meals.map(({ entryId, meal }) => {
+              const tags = Array.isArray(meal?.tags) && meal.tags.length > 0
+                ? meal.tags.slice(0, 2)
+                : FALLBACK_TAGS[section.key] || FALLBACK_TAGS.other;
 
-              <button className="dpe-nav-btn" onClick={goNextDay} type="button">
-                Next →
-              </button>
-            </div>
+              return (
+                <article key={entryId} className="dpe-selected-meal-card">
+                  <div className="dpe-item-thumb">
+                    <img
+                      src={meal?.image || IMAGE_FALLBACK}
+                      alt={meal?.title || meal?.name || "Meal"}
+                      onError={(event) => {
+                        event.currentTarget.onerror = null;
+                        event.currentTarget.src = IMAGE_FALLBACK;
+                      }}
+                    />
+                  </div>
 
-            <div className="dpe-action-grid">
-              <button className="dpe-btn-save" onClick={savePlan} type="button">
-                Save
-              </button>
-              <button className="dpe-btn-clear" onClick={clearAll} type="button">
-                Clear All
-              </button>
-              <button
-                className="dpe-btn-white"
-                onClick={exportPlan}
-                type="button"
-              >
-                Export
-              </button>
-              <button
-                className="dpe-btn-white"
-                onClick={importPlan}
-                type="button"
-              >
-                Import
-              </button>
-            </div>
-          </div>
+                  <div className="dpe-item-content">
+                    <h4>{meal?.title || meal?.name || "Untitled dish"}</h4>
 
-          <div className="dpe-sidebar-card">
-            <h3 className="dpe-summary-title">Nutrition Summary</h3>
-            <div className="dpe-summary-list">
-              <div className="dpe-summary-item">
-                <span>Calories</span> <strong>{totals.calories} kcal</strong>
-              </div>
-              <div className="dpe-summary-item">
-                <span>Protein</span> <strong>{totals.protein} g</strong>
-              </div>
-              <div className="dpe-summary-item">
-                <span>Fat</span> <strong>{totals.fat} g</strong>
-              </div>
-              <div className="dpe-summary-item">
-                <span>Vitamins</span> <strong>{totals.vitamins}</strong>
-              </div>
-              <div className="dpe-summary-item">
-                <span>Sodium</span> <strong>{totals.sodium} mg</strong>
-              </div>
-            </div>
-          </div>
-        </aside>
-
-        {/* Main content */}
-        <main className="dpe-main-content">
-          {MEALS.map((meal) => (
-            <div key={meal} className="dpe-meal-card">
-              <div className="dpe-meal-header">
-                <h2>{meal}</h2>
-                <button
-                  className="dpe-add-btn"
-                  onClick={() => addItem(meal)}
-                  type="button"
-                >
-                  + Add
-                </button>
-              </div>
-
-              <div className="dpe-meal-list">
-                {(plan[meal] || []).length === 0 ? (
-                  <p className="dpe-empty-msg">No items yet.</p>
-                ) : (
-                  (plan[meal] || []).map((item, idx) => (
-                    <div key={idx} className="dpe-item-row">
-                      <div className="dpe-input-field name">
-                        <input
-                          type="text"
-                          placeholder="Item name"
-                          value={item.name}
-                          onChange={(e) =>
-                            updateItem(meal, idx, "name", e.target.value)
-                          }
-                        />
-                        <label>Name</label>
-                      </div>
-
-                      <div className="dpe-input-field num">
-                        <input
-                          type="number"
-                          value={item.calories}
-                          onChange={(e) =>
-                            updateItem(meal, idx, "calories", e.target.value)
-                          }
-                        />
-                        <label>Calories</label>
-                      </div>
-
-                      <div className="dpe-input-field num">
-                        <input
-                          type="number"
-                          value={item.protein}
-                          onChange={(e) =>
-                            updateItem(meal, idx, "protein", e.target.value)
-                          }
-                        />
-                        <label>Protein</label>
-                      </div>
-
-                      <div className="dpe-input-field num">
-                        <input
-                          type="number"
-                          value={item.fat}
-                          onChange={(e) =>
-                            updateItem(meal, idx, "fat", e.target.value)
-                          }
-                        />
-                        <label>Fat</label>
-                      </div>
-
-                      <div className="dpe-input-field num">
-                        <input
-                          type="number"
-                          value={item.vitamins}
-                          onChange={(e) =>
-                            updateItem(meal, idx, "vitamins", e.target.value)
-                          }
-                        />
-                        <label>Vitamins</label>
-                      </div>
-
-                      <div className="dpe-input-field num">
-                        <input
-                          type="number"
-                          value={item.sodium}
-                          onChange={(e) =>
-                            updateItem(meal, idx, "sodium", e.target.value)
-                          }
-                        />
-                        <label>Sodium</label>
-                      </div>
-
-                      <div className="dpe-input-field action">
-                        <button
-                          className="dpe-remove-text"
-                          onClick={() => removeItem(meal, idx)}
-                          type="button"
-                        >
-                          Remove
-                        </button>
-                        <label>Action</label>
-                      </div>
+                    <div className="dpe-item-tags">
+                      {tags.map((tag) => (
+                        <span key={`${entryId}-${tag}`}>{tag}</span>
+                      ))}
                     </div>
-                  ))
-                )}
-              </div>
+
+                    <div className="dpe-item-meta">
+                      <span>
+                        <Users size={14} />
+                        {meal?.servings || "1 Serving"}
+                      </span>
+                      <span>
+                        <Clock3 size={14} />
+                        {meal?.time || "N/A"}
+                      </span>
+                      <span>
+                        <BarChart3 size={14} />
+                        {toTitleCase(meal?.level || "Easy")}
+                      </span>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    className="dpe-remove-item"
+                    onClick={() => handleRemoveMeal(entryId)}
+                    aria-label={`Remove ${meal?.title || meal?.name || "meal"}`}
+                  >
+                    <Trash2 size={17} />
+                  </button>
+                </article>
+              );
+            })}
+          </div>
+        )}
+
+        <button type="button" className="dpe-add-meal-btn" onClick={() => handleAddMeal(section.key)}>
+          <Plus size={20} />
+          Add Meal
+        </button>
+      </section>
+    );
+  };
+
+  return (
+    <div className="dpe-page">
+      <div className="dpe-shell">
+        
+        <div className="dpe-breadcrumb" aria-label="breadcrumb">
+          <button type="button" onClick={() => navigate(-1)}>
+            <ChevronLeft size={14} />
+            Back
+          </button>
+          <span>/</span>
+          <span>Meal Planning</span>
+          <span>/</span>
+          <strong>Daily Meal</strong>
+        </div>
+
+        <h1 className="dpe-page-title" style={{ margin: "28px 0"}}>
+          Daily Plan
+        </h1>
+
+        <div className="dpe-calendar-row">
+          <div className="dpe-date-toolbar">
+            <select value={selectedMonth} onChange={handleMonthChange} aria-label="Month">
+              {MONTHS.map((month, index) => (
+                <option key={month} value={index}>
+                  {month}
+                </option>
+              ))}
+            </select>
+
+            <select value={selectedYear} onChange={handleYearChange} aria-label="Year">
+              {yearOptions.map((year) => (
+                <option key={year} value={year}>
+                  {year}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="dpe-day-strip" aria-label="Select day">
+            <button
+              type="button"
+              className="dpe-strip-nav"
+              onClick={() => setSelectedDate((previous) => shiftDate(previous, -1))}
+              aria-label="Previous day"
+            >
+              <ChevronLeft size={26} />
+            </button>
+
+            <div className="dpe-strip-days">
+              {dayRail.map((day) => {
+                const isActive = day.iso === selectedDate;
+                return (
+                  <button
+                    key={day.iso}
+                    type="button"
+                    className={`dpe-day-chip ${isActive ? "active" : ""}`}
+                    onClick={() => setSelectedDate(day.iso)}
+                    aria-pressed={isActive}
+                  >
+                    {day.label}
+                  </button>
+                );
+              })}
             </div>
-          ))}
-        </main>
+
+            <button
+              type="button"
+              className="dpe-strip-nav"
+              onClick={() => setSelectedDate((previous) => shiftDate(previous, 1))}
+              aria-label="Next day"
+            >
+              <ChevronRight size={26} />
+            </button>
+          </div>
+        </div>
+
+        <div className="dpe-main-grid">
+          <div className="dpe-left-column">
+            {displaySections.map((section) => renderMealCard(section))}
+          </div>
+
+          <aside className="dpe-right-column">
+            <section className="dpe-nutrition-card">
+              <h2>Today's Nutrition</h2>
+
+              <div className="dpe-kpi-row">
+                <div className="dpe-kpi-head">
+                  <span>Calories</span>
+                  <strong>{nutritionProgress.calories}%</strong>
+                </div>
+                <div className="dpe-kpi-track">
+                  <span style={{ width: `${Math.min(100, Math.max(0, nutritionProgress.calories))}%` }} />
+                </div>
+                <p>{nutritionTotals.calories}/{NUTRITION_TARGETS.calories} kcal</p>
+              </div>
+
+              <div className="dpe-kpi-row">
+                <div className="dpe-kpi-head">
+                  <span>Protein</span>
+                  <strong>{nutritionProgress.protein}%</strong>
+                </div>
+                <div className="dpe-kpi-track protein">
+                  <span style={{ width: `${Math.min(100, Math.max(0, nutritionProgress.protein))}%` }} />
+                </div>
+                <p>{nutritionTotals.protein}/{NUTRITION_TARGETS.protein}g</p>
+              </div>
+
+              <div className="dpe-kpi-row">
+                <div className="dpe-kpi-head">
+                  <span>Carbohydrates</span>                  <strong>{nutritionProgress.carbs}%</strong>
+                </div>
+                <div className="dpe-kpi-track carbs">
+                  <span style={{ width: `${Math.min(100, Math.max(0, nutritionProgress.carbs))}%` }} />
+                </div>
+                <p>{nutritionTotals.carbs}/{NUTRITION_TARGETS.carbs}g</p>
+              </div>
+
+              <div className="dpe-kpi-row">
+                <div className="dpe-kpi-head">
+                  <span>Fat</span>
+                  <strong>{nutritionProgress.fat}%</strong>
+                </div>
+                <div className="dpe-kpi-track fat">
+                  <span style={{ width: `${Math.min(100, Math.max(0, nutritionProgress.fat))}%` }} />
+                </div>
+                <p>{nutritionTotals.fat}/{NUTRITION_TARGETS.fat}g</p>
+              </div>
+
+              <div className="dpe-health-tip">
+                <h4>Health Tip</h4>
+                <p>{healthTip}</p>
+              </div>
+
+              <div className="dpe-selected-date-note">
+                <CalendarDays size={15} />
+                <span>{selectedDate}</span>
+              </div>
+            </section>
+          </aside>
+        </div>
+
+        {/* ── My AI Suggestions ── */}
+        <div style={{ marginTop: 32 }}>
+          <div style={{
+            borderRadius: 14,
+            border: '1px solid var(--border-color)',
+            borderLeft: '5px solid #7B1FA2',
+            overflow: 'hidden',
+            background: 'var(--card-background)',
+          }}>
+            <div style={{
+              padding: '14px 18px',
+              borderBottom: '1px solid var(--border-color)',
+              display: 'flex',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              gap: 8,
+            }}>
+              <h2 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-primary)' }}>
+                My AI Suggestions
+              </h2>
+              <span style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
+                Meals saved from your AI-generated plans
+              </span>
+            </div>
+
+            <div style={{ padding: 16 }}>
+              {aiLoading && (
+                <div style={{ textAlign: 'center', padding: '24px 16px', color: 'var(--text-secondary)', fontSize: '0.9375rem' }}>
+                  Loading saved AI meals...
+                </div>
+              )}
+
+              {aiError && !aiLoading && (
+                <div style={{
+                  padding: '12px 16px',
+                  borderRadius: 8,
+                  background: '#FEF2F2',
+                  color: '#dc2626',
+                  fontSize: '0.9375rem',
+                  marginBottom: 12,
+                }}>
+                  {aiError}
+                </div>
+              )}
+
+              {!aiLoading && !aiError && aiSuggestions.length === 0 && (
+                <div style={{
+                  padding: '32px 16px',
+                  textAlign: 'center',
+                  color: 'var(--text-secondary)',
+                  fontSize: '0.9375rem',
+                  lineHeight: 1.6,
+                }}>
+                  {mealPlanApi.getAuthToken() ? (
+                    <>
+                      No AI meal suggestions saved yet. Generate a meal plan on the{' '}
+                      <button
+                        type="button"
+                        onClick={() => navigate('/meal')}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          color: 'var(--primary-color)',
+                          cursor: 'pointer',
+                          fontWeight: 600,
+                          fontSize: 'inherit',
+                          padding: 0,
+                          textDecoration: 'underline',
+                        }}
+                      >
+                        Meal page
+                      </button>
+                      {' '}to get started.
+                    </>
+                  ) : (
+                    <>
+                      <button
+                        type="button"
+                        onClick={() => navigate('/login')}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          color: 'var(--primary-color)',
+                          cursor: 'pointer',
+                          fontWeight: 600,
+                          fontSize: 'inherit',
+                          padding: 0,
+                          textDecoration: 'underline',
+                        }}
+                      >
+                        Log in
+                      </button>
+                      {' '}to view and save your AI meal suggestions.
+                    </>
+                  )}
+                </div>
+              )}
+
+              {!aiLoading && aiSuggestions.length > 0 && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                  {aiSuggestions.map((item) => (
+                    <article
+                      key={item.id}
+                      style={{
+                        border: '1px solid var(--border-color)',
+                        borderRadius: 10,
+                        padding: 16,
+                        background: 'var(--card-background-secondary)',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: 8,
+                      }}
+                    >
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
+                        <div style={{ flex: 1 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 4 }}>
+                            {item.day && (
+                              <span style={{
+                                fontSize: '0.8125rem',
+                                fontWeight: 600,
+                                padding: '2px 8px',
+                                borderRadius: 999,
+                                background: '#EDE9FE',
+                                color: '#6D28D9',
+                              }}>
+                                {item.day}
+                              </span>
+                            )}
+                            {item.meal_type && (
+                              <span style={{
+                                fontSize: '0.8125rem',
+                                fontWeight: 600,
+                                padding: '2px 8px',
+                                borderRadius: 999,
+                                background: 'var(--background-secondary)',
+                                color: 'var(--text-secondary)',
+                                textTransform: 'capitalize',
+                              }}>
+                                {item.meal_type}
+                              </span>
+                            )}
+                          </div>
+                          <h4 style={{ margin: '0 0 4px', fontSize: '1rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+                            {item.name}
+                          </h4>
+                          {item.description && (
+                            <p style={{ margin: '0 0 4px', fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                              {item.description}
+                            </p>
+                          )}
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteAiSuggestion(item.id)}
+                          disabled={deletingIds.has(item.id)}
+                          aria-label={`Remove ${item.name}`}
+                          style={{
+                            background: deletingIds.has(item.id) ? 'var(--background-secondary)' : '#FEF2F2',
+                            border: '1px solid ' + (deletingIds.has(item.id) ? 'var(--border-color)' : '#FCA5A5'),
+                            borderRadius: 8,
+                            padding: '6px 10px',
+                            cursor: deletingIds.has(item.id) ? 'not-allowed' : 'pointer',
+                            color: deletingIds.has(item.id) ? 'var(--text-secondary)' : '#dc2626',
+                            fontSize: '0.8125rem',
+                            fontWeight: 600,
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 4,
+                            flexShrink: 0,
+                            transition: 'all 0.15s ease',
+                          }}
+                        >
+                          {deletingIds.has(item.id) ? 'Removing...' : (
+                            <>
+                              <Trash2 size={14} />
+                              Remove
+                            </>
+                          )}
+                        </button>
+                      </div>
+
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                        {item.calories != null && (
+                          <span style={{ display: 'inline-flex', alignItems: 'center', padding: '3px 10px', borderRadius: 999, background: '#FFF3CD', color: '#c05c00', fontSize: '0.8125rem', fontWeight: 600 }}>
+                            Cal: {item.calories}
+                          </span>
+                        )}
+                        {item.proteins != null && (
+                          <span style={{ display: 'inline-flex', alignItems: 'center', padding: '3px 10px', borderRadius: 999, background: '#DBEAFE', color: '#1e40af', fontSize: '0.8125rem', fontWeight: 600 }}>
+                            Protein: {item.proteins}
+                          </span>
+                        )}
+                        {item.fats != null && (
+                          <span style={{ display: 'inline-flex', alignItems: 'center', padding: '3px 10px', borderRadius: 999, background: '#FEF9C3', color: '#92400e', fontSize: '0.8125rem', fontWeight: 600 }}>
+                            Fat: {item.fats}
+                          </span>
+                        )}
+                        {item.fiber != null && (
+                          <span style={{ display: 'inline-flex', alignItems: 'center', padding: '3px 10px', borderRadius: 999, background: '#DCFCE7', color: '#166534', fontSize: '0.8125rem', fontWeight: 600 }}>
+                            Fiber: {item.fiber}
+                          </span>
+                        )}
+                        {item.sodium != null && (
+                          <span style={{ display: 'inline-flex', alignItems: 'center', padding: '3px 10px', borderRadius: 999, background: '#F3F4F6', color: '#374151', fontSize: '0.8125rem', fontWeight: 600 }}>
+                            Sodium: {item.sodium}
+                          </span>
+                        )}
+                      </div>
+
+                      {Array.isArray(item.ingredients) && item.ingredients.length > 0 && (
+                        <div>
+                          <p style={{ margin: '0 0 4px', fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-secondary)' }}>
+                            Ingredients:
+                          </p>
+                          <ul style={{ margin: 0, padding: '0 0 0 16px', fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
+                            {item.ingredients.map((ing, i) => (
+                              <li key={i} style={{ padding: '2px 0' }}>
+                                {ing.item}{ing.amount ? ` — ${ing.amount}` : ''}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap', paddingTop: 4 }}>
+                        <span style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)', fontWeight: 500 }}>
+                          Add to today:
+                        </span>
+                        {['breakfast', 'lunch', 'dinner'].map((type) => {
+                          const entryId = `slot:ai:${item.id}|${type}`;
+                          const added = !!(selectionsByDate[selectedDate]?.[entryId]);
+                          return (
+                            <button
+                              key={type}
+                              type="button"
+                              disabled={added}
+                              onClick={() => handleAddAiToDaily(item, type)}
+                              style={{
+                                padding: '4px 12px',
+                                borderRadius: 6,
+                                border: '1px solid ' + (added ? '#16a34a' : 'var(--border-color)'),
+                                background: added ? '#DCFCE7' : 'var(--card-background)',
+                                color: added ? '#166534' : 'var(--text-primary)',
+                                fontSize: '0.8125rem',
+                                fontWeight: 600,
+                                cursor: added ? 'default' : 'pointer',
+                                textTransform: 'capitalize',
+                                transition: 'all 0.15s ease',
+                              }}
+                            >
+                              {added ? `✓ ${type}` : type}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -250,11 +250,12 @@
   outline: none;
 }
 
-.filter-tabs{
+.filter-tabs {
   display: flex;
   justify-content: space-between;
   margin-bottom: 2rem;
 }
+
 /* Filter Tabs */
 .tab-section {
   display: flex;
@@ -298,7 +299,7 @@
   border-radius: 12px;
   padding: 48px;
   text-align: center;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .empty-state-icon {
@@ -330,7 +331,7 @@
   background-color: #FFFFFF;
   border-radius: 12px;
   padding: 28px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   border: 2px solid #005BBB;
   opacity: 1;
 }
@@ -439,6 +440,11 @@
 
 /* Responsive Design */
 
+.error-border {
+  border-color: #ef4444 !important;
+}
+
+/* Base variables */
 /* Large Tablets and Small Desktops (max-width: 1024px) */
 @media (max-width: 1024px) {
   .appointments-wrapper {
@@ -924,6 +930,7 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
