@@ -1047,6 +1047,7 @@ const Meal = () => {
   );
   const [query, setQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [pageJumpInput, setPageJumpInput] = useState("");
   const [gridColumns, setGridColumns] = useState(() => getMealGridColumns());
   const [widgetFabBottom, setWidgetFabBottom] = useState(DEFAULT_WIDGET_BOTTOM);
   const [isWidgetMenuOpen, setIsWidgetMenuOpen] = useState(false);
@@ -1284,21 +1285,6 @@ const Meal = () => {
   const rowsPerPage = 3;
   const itemsPerPage = gridColumns * rowsPerPage;
   const totalPages = Math.max(1, Math.ceil(filteredAllMeals.length / itemsPerPage));
-  const paginationTokens = useMemo(() => {
-    if (totalPages <= 7) {
-      return Array.from({ length: totalPages }, (_, index) => ({
-        type: "page",
-        value: index + 1,
-      }));
-    }
-
-    return [
-      { type: "page", value: 1 },
-      { type: "page", value: 2 },
-      { type: "ellipsis", value: "ellipsis" },
-      { type: "page", value: totalPages },
-    ];
-  }, [totalPages]);
 
   const paginatedAllMeals = useMemo(() => {
     const startIndex = (currentPage - 1) * itemsPerPage;
@@ -1640,6 +1626,10 @@ const Meal = () => {
     setCurrentPage(1);
   }, [activeFilter, normalizedQuery, selectedDate]);
 
+  useEffect(() => {
+    setPageJumpInput("");
+  }, [currentPage, totalPages]);
+
   const toggleMealSelection = (meal) => {
     const selectionKey = getMealSlotKey(meal, meal?.id || meal?.title || selectedDate);
     if (!selectionKey) return;
@@ -1727,6 +1717,27 @@ const Meal = () => {
 
   const goToNextPage = () => {
     setCurrentPage((previous) => Math.min(totalPages, previous + 1));
+  };
+
+  const handlePageJumpInputChange = (event) => {
+    const nextValue = event.target.value.replace(/[^\d]/g, "");
+    setPageJumpInput(nextValue);
+  };
+
+  const handleSubmitPageJump = () => {
+    if (!pageJumpInput) return;
+    const parsedPage = Number.parseInt(pageJumpInput, 10);
+    if (!Number.isFinite(parsedPage)) return;
+
+    const clampedPage = Math.min(totalPages, Math.max(1, parsedPage));
+    setCurrentPage(clampedPage);
+    setPageJumpInput("");
+  };
+
+  const handlePageJumpKeyDown = (event) => {
+    if (event.key !== "Enter") return;
+    event.preventDefault();
+    handleSubmitPageJump();
   };
 
   const handleSearchInputChange = (event) => {
@@ -2384,34 +2395,21 @@ const Meal = () => {
                             Prev
                           </button>
 
-                          <div className="pagination-index-list">
-                            {paginationTokens.map((token, index) => {
-                              if (token.type === "ellipsis") {
-                                return (
-                                  <span
-                                    key={`ellipsis-${index}`}
-                                    className="pagination-ellipsis"
-                                    aria-hidden="true"
-                                  >
-                                    ...
-                                  </span>
-                                );
-                              }
-
-                              const pageNumber = token.value;
-                              const isActive = currentPage === pageNumber;
-
-                              return (
-                                <button
-                                  key={pageNumber}
-                                  type="button"
-                                  className={`pagination-index ${isActive ? "active" : ""}`}
-                                  onClick={() => setCurrentPage(pageNumber)}
-                                >
-                                  {pageNumber}
-                                </button>
-                              );
-                            })}
+                          <div className="pagination-jump">
+                            <input
+                              type="text"
+                              inputMode="numeric"
+                              pattern="[0-9]*"
+                              className="pagination-jump-input"
+                              value={pageJumpInput}
+                              onChange={handlePageJumpInputChange}
+                              onKeyDown={handlePageJumpKeyDown}
+                              placeholder={`${currentPage}`}
+                              aria-label={`Jump to page. Current page ${currentPage} of ${totalPages}`}
+                            />
+                            <span className="pagination-total-pages" aria-label={`Total pages ${totalPages}`}>
+                              / {totalPages}
+                            </span>
                           </div>
 
                           <button

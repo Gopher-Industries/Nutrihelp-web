@@ -759,9 +759,8 @@
   flex-wrap: wrap;
 }
 
-.pagination-nav,
-.pagination-index {
-  min-width: 40px;
+.pagination-nav {
+  min-width: 72px;
   height: 38px;
   border-radius: 10px;
   border: 1px solid rgba(165, 179, 199, 0.85);
@@ -773,39 +772,47 @@
   transition: all 0.15s ease;
 }
 
-.pagination-nav {
-  padding: 0 12px;
-}
-
-.pagination-index-list {
+.pagination-jump {
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  min-height: 38px;
+  padding: 0 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(165, 179, 199, 0.85);
+  background: #fff;
 }
 
-.pagination-ellipsis {
-  min-width: 24px;
-  height: 38px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+.pagination-jump-input {
+  width: 56px;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: #253249;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.pagination-jump-input::placeholder {
   color: #55637a;
-  font-size: 18px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
+  opacity: 1;
 }
 
-.pagination-nav:hover:not(:disabled),
-.pagination-index:hover {
+.pagination-total-pages {
+  color: #55637a;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.pagination-nav:hover:not(:disabled) {
   border-color: rgba(0, 91, 187, 0.4);
   background: #f6faff;
 }
 
-.pagination-index.active {
-  border-color: #005bbb;
-  background: #005bbb;
-  color: #fff;
-  box-shadow: 0 8px 16px rgba(0, 91, 187, 0.22);
+.pagination-jump:focus-within {
+  border-color: rgba(0, 91, 187, 0.4);
+  box-shadow: 0 0 0 3px rgba(0, 91, 187, 0.1);
 }
 
 .pagination-nav:disabled {
@@ -1437,21 +1444,6 @@
     gap: 6px;
   }
 
-  .pagination-index-list {
-    width: auto;
-    max-width: none;
-    overflow: visible;
-    justify-content: center;
-    padding: 0;
-  }
-
-  .pagination-index {
-    flex: 0 0 auto;
-    min-width: 34px;
-    height: 32px;
-    font-size: 12px;
-  }
-
   .pagination-nav {
     min-width: 72px;
     height: 32px;
@@ -1459,10 +1451,20 @@
     padding: 0 8px;
   }
 
-  .pagination-ellipsis {
-    min-width: 18px;
+  .pagination-jump {
     height: 32px;
-    font-size: 14px;
+    min-height: 32px;
+    padding: 0 8px;
+    gap: 6px;
+  }
+
+  .pagination-jump-input {
+    width: 48px;
+    font-size: 12px;
+  }
+
+  .pagination-total-pages {
+    font-size: 12px;
   }
 
   .selected-dish-card {
@@ -1627,12 +1629,6 @@
     display: none;
   }
 
-  .pagination-index {
-    min-width: 34px;
-    height: 32px;
-    font-size: 12px;
-  }
-
   .pagination-nav {
     min-width: 72px;
     height: 32px;
@@ -1640,10 +1636,20 @@
     padding: 0 8px;
   }
 
-  .pagination-ellipsis {
-    min-width: 18px;
+  .pagination-jump {
     height: 32px;
-    font-size: 14px;
+    min-height: 32px;
+    padding: 0 8px;
+    gap: 6px;
+  }
+
+  .pagination-jump-input {
+    width: 44px;
+    font-size: 12px;
+  }
+
+  .pagination-total-pages {
+    font-size: 12px;
   }
 
   .selected-meal-group {

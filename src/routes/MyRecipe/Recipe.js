@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Clock3, RefreshCcwIcon, Sparkles, Users, ChefHat, ArrowRight, Trash2, Globe2, X } from "lucide-react";
 import recipeApi from "../../services/recepieApi";
 import "../../styles/recipe.css";
@@ -30,6 +30,8 @@ function Recipe() {
   const [deletingId, setDeletingId] = useState(null);
   const [sharingId, setSharingId] = useState(null);
   const [shareModal, setShareModal] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageJumpInput, setPageJumpInput] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -52,6 +54,23 @@ function Recipe() {
     };
     fetchData();
   }, [refresh]);
+
+  const itemsPerPage = 9;
+  const totalPages = Math.max(1, Math.ceil(recipes.length / itemsPerPage));
+  const paginatedRecipes = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return recipes.slice(startIndex, startIndex + itemsPerPage);
+  }, [recipes, currentPage, itemsPerPage]);
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, totalPages]);
+
+  useEffect(() => {
+    setPageJumpInput("");
+  }, [currentPage, totalPages]);
 
   const handleDeleteRecipe = async (event, recipe) => {
     event.stopPropagation();
@@ -124,6 +143,34 @@ function Recipe() {
     } finally {
       setSharingId(null);
     }
+  };
+
+  const goToPreviousPage = () => {
+    setCurrentPage((previous) => Math.max(1, previous - 1));
+  };
+
+  const goToNextPage = () => {
+    setCurrentPage((previous) => Math.min(totalPages, previous + 1));
+  };
+
+  const handlePageJumpInputChange = (event) => {
+    const nextValue = event.target.value.replace(/[^\d]/g, "");
+    setPageJumpInput(nextValue);
+  };
+
+  const handleSubmitPageJump = () => {
+    if (!pageJumpInput) return;
+    const parsedPage = Number.parseInt(pageJumpInput, 10);
+    if (!Number.isFinite(parsedPage)) return;
+    const clampedPage = Math.min(totalPages, Math.max(1, parsedPage));
+    setCurrentPage(clampedPage);
+    setPageJumpInput("");
+  };
+
+  const handlePageJumpKeyDown = (event) => {
+    if (event.key !== "Enter") return;
+    event.preventDefault();
+    handleSubmitPageJump();
   };
 
   return (
@@ -200,96 +247,140 @@ function Recipe() {
         ) : null}
 
         {!loading && !error && recipes.length > 0 ? (
-          <section className="my-recipes-grid" id="no-bg" aria-label="My saved recipes">
-            {recipes.map((item) => {
-              const imageSrc = resolveRecipeImage(item);
-              return (
-                <article
-                  key={item.id || item.recipe_name}
-                  id="no-bg"
-                  className="my-recipe-card"
-                  onClick={() => { window.location.href = `/recipe/${item.id}`; }}
-                  tabIndex={0}
-                  role="button"
-                  onKeyDown={(event) => {
-                    if (event.key === "Enter" || event.key === " ") {
-                      event.preventDefault();
-                      window.location.href = `/recipe/${item.id}`;
-                    }
-                  }}
-                >
-                  <div className="my-recipe-media" id="no-bg">
-                    <img
-                      src={imageSrc}
-                      alt={item.recipe_name || "Recipe"}
-                      id="no-bg"
-                      onError={(event) => {
-                        if (event.currentTarget.src.endsWith(DEFAULT_RECIPE_IMAGE)) return;
-                        event.currentTarget.src = DEFAULT_RECIPE_IMAGE;
-                      }}
-                    />
-                    <div className="my-recipe-badges" id="no-bg">
-                      <span className="my-recipe-badge" id="no-bg">{getVisibilityLabel(item)}</span>
-                    </div>
-                    <button
-                      id="no-bg"
-                      type="button"
-                      className={`my-recipe-share-btn ${isSharedRecipe(item) ? "is-shared" : ""}`}
-                      onClick={(event) => handleShareRecipe(event, item)}
-                      disabled={sharingId === item.id}
-                      title={isSharedRecipe(item) ? "Stop sharing this recipe" : "Share recipe to community"}
-                      aria-label={
-                        isSharedRecipe(item)
-                          ? `Stop sharing ${item.recipe_name || "recipe"}`
-                          : `Share ${item.recipe_name || "recipe"} to community`
+          <section id="no-bg" aria-label="My saved recipes">
+            <div className="my-recipes-grid" id="no-bg">
+              {paginatedRecipes.map((item) => {
+                const imageSrc = resolveRecipeImage(item);
+                return (
+                  <article
+                    key={item.id || item.recipe_name}
+                    id="no-bg"
+                    className="my-recipe-card"
+                    onClick={() => { window.location.href = `/recipe/${item.id}`; }}
+                    tabIndex={0}
+                    role="button"
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter" || event.key === " ") {
+                        event.preventDefault();
+                        window.location.href = `/recipe/${item.id}`;
                       }
-                    >
-                      <Globe2 size={20} />
-                    </button>
-                  </div>
-
-                  <div className="my-recipe-body" id="no-bg">
-                    <div className="my-recipe-meta" id="no-bg">
-                      <span id="no-bg">
-                        <Clock3 size={15} />
-                        {formatValue(item.preparation_time, 0)} min
-                      </span>
-                      <span id="no-bg">
-                        <Users size={15} />
-                        {formatValue(item.total_servings, 1)} servings
-                      </span>
-                      <span id="no-bg">
-                        <ChefHat size={15} />
-                        Easy
-                      </span>
-                    </div>
-
-                    <h2 id="no-bg">{item.recipe_name || "Untitled Recipe"}</h2>
-                    <p id="no-bg" className="my-recipe-cuisine">
-                      {item.cuisine_name || "Personal recipe"}
-                    </p>
-
-                    <div className="my-recipe-actions" id="no-bg">
-                      <span className="my-recipe-view" id="no-bg">
-                        View Recipe
-                        <ArrowRight size={16} />
-                      </span>
-
+                    }}
+                  >
+                    <div className="my-recipe-media" id="no-bg">
+                      <img
+                        src={imageSrc}
+                        alt={item.recipe_name || "Recipe"}
+                        id="no-bg"
+                        onError={(event) => {
+                          if (event.currentTarget.src.endsWith(DEFAULT_RECIPE_IMAGE)) return;
+                          event.currentTarget.src = DEFAULT_RECIPE_IMAGE;
+                        }}
+                      />
+                      <div className="my-recipe-badges" id="no-bg">
+                        <span className="my-recipe-badge" id="no-bg">{getVisibilityLabel(item)}</span>
+                      </div>
                       <button
                         id="no-bg"
                         type="button"
-                        className="my-recipe-delete-btn"
-                        onClick={(event) => handleDeleteRecipe(event, item)}
-                        disabled={deletingId === item.id}
+                        className={`my-recipe-share-btn ${isSharedRecipe(item) ? "is-shared" : ""}`}
+                        onClick={(event) => handleShareRecipe(event, item)}
+                        disabled={sharingId === item.id}
+                        title={isSharedRecipe(item) ? "Stop sharing this recipe" : "Share recipe to community"}
+                        aria-label={
+                          isSharedRecipe(item)
+                            ? `Stop sharing ${item.recipe_name || "recipe"}`
+                            : `Share ${item.recipe_name || "recipe"} to community`
+                        }
                       >
-                        <Trash2 size={16} />
-                        {deletingId === item.id ? "Deleting..." : "Delete"}
+                        <Globe2 size={20} />
                       </button>
                     </div>
-                  </div>
-                </article>
-              );
-            })}
+
+                    <div className="my-recipe-body" id="no-bg">
+                      <div className="my-recipe-meta" id="no-bg">
+                        <span id="no-bg">
+                          <Clock3 size={15} />
+                          {formatValue(item.preparation_time, 0)} min
+                        </span>
+                        <span id="no-bg">
+                          <Users size={15} />
+                          {formatValue(item.total_servings, 1)} servings
+                        </span>
+                        <span id="no-bg">
+                          <ChefHat size={15} />
+                          Easy
+                        </span>
+                      </div>
+
+                      <h2 id="no-bg">{item.recipe_name || "Untitled Recipe"}</h2>
+                      <p id="no-bg" className="my-recipe-cuisine">
+                        {item.cuisine_name || "Personal recipe"}
+                      </p>
+
+                      <div className="my-recipe-actions" id="no-bg">
+                        <span className="my-recipe-view" id="no-bg">
+                          View Recipe
+                          <ArrowRight size={16} />
+                        </span>
+
+                        <button
+                          id="no-bg"
+                          type="button"
+                          className="my-recipe-delete-btn"
+                          onClick={(event) => handleDeleteRecipe(event, item)}
+                          disabled={deletingId === item.id}
+                        >
+                          <Trash2 size={16} />
+                          {deletingId === item.id ? "Deleting..." : "Delete"}
+                        </button>
+                      </div>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+
+            {totalPages > 1 ? (
+              <div className="my-recipes-pagination" id="no-bg" aria-label="My recipes pagination">
+                <button
+                  id="no-bg"
+                  type="button"
+                  className="my-pagination-nav"
+                  onClick={goToPreviousPage}
+                  disabled={currentPage === 1}
+                >
+                  Prev
+                </button>
+
+                <div className="my-pagination-jump" id="no-bg">
+                  <input
+                    id="no-bg"
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    className="my-pagination-jump-input"
+                    value={pageJumpInput}
+                    onChange={handlePageJumpInputChange}
+                    onKeyDown={handlePageJumpKeyDown}
+                    placeholder={`${currentPage}`}
+                    aria-label={`Jump to page. Current page ${currentPage} of ${totalPages}`}
+                  />
+                  <span className="my-pagination-total-pages" id="no-bg" aria-label={`Total pages ${totalPages}`}>
+                    / {totalPages}
+                  </span>
+                </div>
+
+                <button
+                  id="no-bg"
+                  type="button"
+                  className="my-pagination-nav"
+                  onClick={goToNextPage}
+                  disabled={currentPage === totalPages}
+                >
+                  Next
+                </button>
+              </div>
+            ) : null}
           </section>
         ) : null}
       </div>

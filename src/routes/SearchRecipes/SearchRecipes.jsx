@@ -136,6 +136,8 @@ function SearchRecipes() {
   const [recipeSource, setRecipeSource] = useState("library");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageJumpInput, setPageJumpInput] = useState("");
 
   useEffect(() => {
     let isMounted = true;
@@ -216,7 +218,27 @@ function SearchRecipes() {
   }, [recipes, searchTerm, selectedCuisine]);
 
   const featuredRecipes = useMemo(() => filteredRecipes.slice(0, 8), [filteredRecipes]);
-  const allRecipes = useMemo(() => filteredRecipes.slice(0, 60), [filteredRecipes]);
+  const allRecipes = useMemo(() => filteredRecipes, [filteredRecipes]);
+  const itemsPerPage = 12;
+  const totalPages = Math.max(1, Math.ceil(allRecipes.length / itemsPerPage));
+  const paginatedRecipes = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return allRecipes.slice(startIndex, startIndex + itemsPerPage);
+  }, [allRecipes, currentPage, itemsPerPage]);
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, totalPages]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, selectedCuisine, recipeSource]);
+
+  useEffect(() => {
+    setPageJumpInput("");
+  }, [currentPage, totalPages]);
 
   const handleCuisineClick = (cuisine) => {
     setSelectedCuisine(cuisine);
@@ -241,6 +263,34 @@ function SearchRecipes() {
     navigate(`/recipe/${encodeURIComponent(String(targetRecipeId))}`, {
       state: { meal: recipe },
     });
+  };
+
+  const goToPreviousPage = () => {
+    setCurrentPage((previous) => Math.max(1, previous - 1));
+  };
+
+  const goToNextPage = () => {
+    setCurrentPage((previous) => Math.min(totalPages, previous + 1));
+  };
+
+  const handlePageJumpInputChange = (event) => {
+    const nextValue = event.target.value.replace(/[^\d]/g, "");
+    setPageJumpInput(nextValue);
+  };
+
+  const handleSubmitPageJump = () => {
+    if (!pageJumpInput) return;
+    const parsedPage = Number.parseInt(pageJumpInput, 10);
+    if (!Number.isFinite(parsedPage)) return;
+    const clampedPage = Math.min(totalPages, Math.max(1, parsedPage));
+    setCurrentPage(clampedPage);
+    setPageJumpInput("");
+  };
+
+  const handlePageJumpKeyDown = (event) => {
+    if (event.key !== "Enter") return;
+    event.preventDefault();
+    handleSubmitPageJump();
   };
 
   return (
@@ -367,11 +417,11 @@ function SearchRecipes() {
             <section className="search-recipes-section">
               <div className="section-title-row">
                 <h2 className="section-title">All Recipes</h2>
-                <span className="search-result-count">Showing {allRecipes.length}</span>
+                <span className="search-result-count">Showing {paginatedRecipes.length} / {allRecipes.length}</span>
               </div>
 
               <div className="search-recipes-grid">
-                {allRecipes.map((recipe) => (
+                {paginatedRecipes.map((recipe) => (
                   <article
                     key={recipe.id}
                     className={`search-recipe-card ${selectedRecipe?.id === recipe.id ? "selected" : ""}`}
@@ -424,6 +474,45 @@ function SearchRecipes() {
                   </article>
                 ))}
               </div>
+
+              {totalPages > 1 ? (
+                <div className="search-recipes-pagination" aria-label="Search recipes pagination">
+                  <button
+                    type="button"
+                    className="search-pagination-nav"
+                    onClick={goToPreviousPage}
+                    disabled={currentPage === 1}
+                  >
+                    Prev
+                  </button>
+
+                  <div className="search-pagination-jump">
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
+                      className="search-pagination-jump-input"
+                      value={pageJumpInput}
+                      onChange={handlePageJumpInputChange}
+                      onKeyDown={handlePageJumpKeyDown}
+                      placeholder={`${currentPage}`}
+                      aria-label={`Jump to page. Current page ${currentPage} of ${totalPages}`}
+                    />
+                    <span className="search-pagination-total-pages" aria-label={`Total pages ${totalPages}`}>
+                      / {totalPages}
+                    </span>
+                  </div>
+
+                  <button
+                    type="button"
+                    className="search-pagination-nav"
+                    onClick={goToNextPage}
+                    disabled={currentPage === totalPages}
+                  >
+                    Next
+                  </button>
+                </div>
+              ) : null}
             </section>
           </>
         )}

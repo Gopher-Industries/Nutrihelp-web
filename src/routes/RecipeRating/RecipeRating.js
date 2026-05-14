@@ -160,6 +160,8 @@ function RecipeRating() {
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageJumpInput, setPageJumpInput] = useState("");
 
   useEffect(() => {
     let isMounted = true;
@@ -203,6 +205,26 @@ function RecipeRating() {
       ].filter(Boolean).join(" ")).includes(term);
     });
   }, [items, searchTerm]);
+  const itemsPerPage = 8;
+  const totalPages = Math.max(1, Math.ceil(filteredItems.length / itemsPerPage));
+  const paginatedItems = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return filteredItems.slice(startIndex, startIndex + itemsPerPage);
+  }, [filteredItems, currentPage, itemsPerPage]);
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, totalPages]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, rating, sourceType, sort]);
+
+  useEffect(() => {
+    setPageJumpInput("");
+  }, [currentPage, totalPages]);
 
   const averageRating = Number(summary.averageRating || 0);
 
@@ -238,6 +260,34 @@ function RecipeRating() {
     navigate(`/recipe/${encodeURIComponent(String(detailRecipe.recipeId || "recipe"))}`, {
       state: { meal: detailRecipe },
     });
+  };
+
+  const goToPreviousPage = () => {
+    setCurrentPage((previous) => Math.max(1, previous - 1));
+  };
+
+  const goToNextPage = () => {
+    setCurrentPage((previous) => Math.min(totalPages, previous + 1));
+  };
+
+  const handlePageJumpInputChange = (event) => {
+    const nextValue = event.target.value.replace(/[^\d]/g, "");
+    setPageJumpInput(nextValue);
+  };
+
+  const handleSubmitPageJump = () => {
+    if (!pageJumpInput) return;
+    const parsedPage = Number.parseInt(pageJumpInput, 10);
+    if (!Number.isFinite(parsedPage)) return;
+    const clampedPage = Math.min(totalPages, Math.max(1, parsedPage));
+    setCurrentPage(clampedPage);
+    setPageJumpInput("");
+  };
+
+  const handlePageJumpKeyDown = (event) => {
+    if (event.key !== "Enter") return;
+    event.preventDefault();
+    handleSubmitPageJump();
   };
 
   return (
@@ -344,11 +394,52 @@ function RecipeRating() {
               <p>Try a different star rating, source, search term, or sort order.</p>
             </div>
           ) : (
-            <div className="rating-review-list">
-              {filteredItems.map((item) => (
-                <ReviewCard key={`${item.sourceType}-${item.recipeId}-${item.id}`} item={item} onView={handleViewRecipe} />
-              ))}
-            </div>
+            <>
+              <div className="rating-review-list">
+                {paginatedItems.map((item) => (
+                  <ReviewCard key={`${item.sourceType}-${item.recipeId}-${item.id}`} item={item} onView={handleViewRecipe} />
+                ))}
+              </div>
+
+              {totalPages > 1 ? (
+                <div className="rating-pagination" aria-label="Recipe ratings pagination">
+                  <button
+                    type="button"
+                    className="rating-pagination-nav"
+                    onClick={goToPreviousPage}
+                    disabled={currentPage === 1}
+                  >
+                    Prev
+                  </button>
+
+                  <div className="rating-pagination-jump">
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
+                      className="rating-pagination-jump-input"
+                      value={pageJumpInput}
+                      onChange={handlePageJumpInputChange}
+                      onKeyDown={handlePageJumpKeyDown}
+                      placeholder={`${currentPage}`}
+                      aria-label={`Jump to page. Current page ${currentPage} of ${totalPages}`}
+                    />
+                    <span className="rating-pagination-total-pages" aria-label={`Total pages ${totalPages}`}>
+                      / {totalPages}
+                    </span>
+                  </div>
+
+                  <button
+                    type="button"
+                    className="rating-pagination-nav"
+                    onClick={goToNextPage}
+                    disabled={currentPage === totalPages}
+                  >
+                    Next
+                  </button>
+                </div>
+              ) : null}
+            </>
           )}
         </section>
       </section>

@@ -374,6 +374,76 @@
   gap: clamp(18px, 2vw, 30px);
 }
 
+.my-recipes-pagination {
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.my-pagination-nav {
+  min-width: 72px;
+  height: 38px;
+  border-radius: 10px;
+  border: 1px solid rgba(124, 171, 217, 0.85);
+  background: #fff;
+  color: #183d68;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.my-pagination-jump {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 38px;
+  padding: 0 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(124, 171, 217, 0.85);
+  background: #fff;
+}
+
+.my-pagination-jump-input {
+  width: 56px;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: #183d68;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.my-pagination-jump-input::placeholder {
+  color: #4b6b8f;
+  opacity: 1;
+}
+
+.my-pagination-total-pages {
+  color: #4b6b8f;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.my-pagination-nav:hover:not(:disabled) {
+  border-color: rgba(15, 99, 183, 0.52);
+  background: #f2f8ff;
+}
+
+.my-pagination-jump:focus-within {
+  border-color: rgba(15, 99, 183, 0.52);
+  box-shadow: 0 0 0 3px rgba(15, 99, 183, 0.12);
+}
+
+.my-pagination-nav:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
 .my-recipes-action-error {
   display: flex;
   align-items: center;
@@ -791,5 +861,33 @@
 
   .my-recipe-media {
     height: 230px;
+  }
+
+  .my-recipes-pagination {
+    gap: 6px;
+    flex-wrap: nowrap;
+  }
+
+  .my-pagination-nav {
+    min-width: 72px;
+    height: 32px;
+    font-size: 12px;
+    padding: 0 8px;
+  }
+
+  .my-pagination-jump {
+    height: 32px;
+    min-height: 32px;
+    padding: 0 8px;
+    gap: 6px;
+  }
+
+  .my-pagination-jump-input {
+    width: 44px;
+    font-size: 12px;
+  }
+
+  .my-pagination-total-pages {
+    font-size: 12px;
   }
 }

@@ -557,6 +557,76 @@
   grid-auto-rows: 1fr;
 }
 
+.search-recipes-pagination {
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.search-pagination-nav {
+  min-width: 72px;
+  height: 38px;
+  border-radius: 10px;
+  border: 1px solid rgba(165, 179, 199, 0.85);
+  background: #fff;
+  color: #253249;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.search-pagination-jump {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 38px;
+  padding: 0 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(165, 179, 199, 0.85);
+  background: #fff;
+}
+
+.search-pagination-jump-input {
+  width: 56px;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: #253249;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.search-pagination-jump-input::placeholder {
+  color: #55637a;
+  opacity: 1;
+}
+
+.search-pagination-total-pages {
+  color: #55637a;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.search-pagination-nav:hover:not(:disabled) {
+  border-color: rgba(0, 91, 187, 0.4);
+  background: #f6faff;
+}
+
+.search-pagination-jump:focus-within {
+  border-color: rgba(0, 91, 187, 0.4);
+  box-shadow: 0 0 0 3px rgba(0, 91, 187, 0.1);
+}
+
+.search-pagination-nav:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
 .search-recipe-card {
   border-radius: 18px;
   border: 1px solid rgba(157, 174, 198, 0.45);
@@ -766,5 +836,33 @@
   .search-recipes-grid,
   .preview-meta-grid {
     grid-template-columns: 1fr;
+  }
+
+  .search-recipes-pagination {
+    gap: 6px;
+    flex-wrap: nowrap;
+  }
+
+  .search-pagination-nav {
+    min-width: 72px;
+    height: 32px;
+    font-size: 12px;
+    padding: 0 8px;
+  }
+
+  .search-pagination-jump {
+    height: 32px;
+    min-height: 32px;
+    padding: 0 8px;
+    gap: 6px;
+  }
+
+  .search-pagination-jump-input {
+    width: 44px;
+    font-size: 12px;
+  }
+
+  .search-pagination-total-pages {
+    font-size: 12px;
   }
 }
