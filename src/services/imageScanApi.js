@@ -1,4 +1,5 @@
 import AIBaseApi from "./aiApi";
+import BaseApi from "./baseApi";
 
 class ImageScanApi extends AIBaseApi {
   async scanSingleImage(file, { topk = 3 } = {}) {
@@ -35,6 +36,28 @@ class ImageScanApi extends AIBaseApi {
   }
 }
 
+class ScanVerificationApi extends BaseApi {
+  async verifyScanWithProfile(scanResult) {
+    const token = this.getAuthToken();
+    if (!token || !scanResult) return null;
+
+    const response = await fetch(`${this.baseURL}/chatbot/scan-verification`, {
+      method: "POST",
+      headers: this.getHeaders(token),
+      body: JSON.stringify({ scan_result: scanResult }),
+    });
+
+    const data = await response.json().catch(() => null);
+    if (!response.ok) {
+      throw new Error(data?.message || data?.error || "Failed to verify scan with profile.");
+    }
+    return data;
+  }
+}
+
 export const imageScanApi = new ImageScanApi();
+export const scanVerificationApi = new ScanVerificationApi();
 export const scanSingleImage = (...args) => imageScanApi.scanSingleImage(...args);
 export const scanMultipleImages = (...args) => imageScanApi.scanMultipleImages(...args);
+export const verifyScanWithProfile = (...args) =>
+  scanVerificationApi.verifyScanWithProfile(...args);

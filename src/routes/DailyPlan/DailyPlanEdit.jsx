@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   BarChart3,
   CalendarDays,
@@ -288,7 +288,11 @@ function getHealthTip(progressMap) {
 
 export default function DailyPlanEdit() {
   const navigate = useNavigate();
-  const [selectedDate, setSelectedDate] = useState(() => toISODate(new Date()));
+  const location = useLocation();
+  const [selectedDate, setSelectedDate] = useState(() => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get("date") || toISODate(new Date());
+  });
   const [selectionsByDate, setSelectionsByDate] = useState(() => readSelectionsByDate());
   const [aiSuggestions, setAiSuggestions] = useState([]);
   const [aiLoading, setAiLoading] = useState(false);
@@ -296,6 +300,16 @@ export default function DailyPlanEdit() {
   const [deletingIds, setDeletingIds] = useState(() => new Set());
 
   const selectedDateObj = useMemo(() => fromISODate(selectedDate), [selectedDate]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const dateFromQuery = params.get("date");
+    const dateFromState = location.state?.selectedDate;
+    const nextDate = dateFromQuery || dateFromState;
+    if (nextDate) {
+      setSelectedDate(nextDate);
+    }
+  }, [location.search, location.state]);
 
   const yearOptions = useMemo(() => {
     const currentYear = new Date().getFullYear();

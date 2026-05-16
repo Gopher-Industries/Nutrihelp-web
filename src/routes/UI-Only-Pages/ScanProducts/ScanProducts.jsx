@@ -1,8 +1,13 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { toast } from "react-toastify";
 import "./ScanProducts.css";
 import { useLocation, useNavigate } from "react-router-dom";
-import { scanMultipleImages, scanSingleImage } from "../../../services/imageScanApi";
+import {
+  scanMultipleImages,
+  scanSingleImage,
+  verifyScanWithProfile,
+} from "../../../services/imageScanApi";
 import {
   fetchNutritionPreview,
   saveScannedMeal,
@@ -83,6 +88,32 @@ function hasBlockingPhotoIssue(issues = []) {
   );
 }
 
+function hasNonFoodPhotoIssue(issues = []) {
+  return issues.some((issue) =>
+    /people|screenshot|interface|non-food|rather than a clear food photo/i.test(issue)
+  );
+}
+
+function isRetakeOnlyScan(scanResult) {
+  if (!scanResult) return false;
+  const issues = scanResult.quality?.issues || [];
+  const foodProbability = Number(scanResult.food_probability ?? scanResult.foodProbability);
+  const confidence = normalizeConfidence(scanResult.confidence);
+  const lowFoodProbability = Number.isFinite(foodProbability) && foodProbability < 0.45;
+  const weakClosedSetGuess = confidence > 0 && confidence < 0.5;
+  const hasPhotoQualityBlocker = hasBlockingPhotoIssue(issues);
+  return Boolean(
+    scanResult.retake_needed &&
+      (
+        (lowFoodProbability && weakClosedSetGuess && hasPhotoQualityBlocker) ||
+        hasNonFoodPhotoIssue(issues) ||
+        /non-food|rather than a clear food|people|screenshot|interface/i.test(
+          `${scanResult.retake_reason || ""} ${scanResult.unclear_reason || ""}`
+        )
+      )
+  );
+}
+
 function normalizeMealTypeForDetail(value) {
   const normalized = String(value || "").trim().toLowerCase();
   if (normalized === "breakfast" || normalized === "lunch" || normalized === "dinner") {
@@ -112,9 +143,25 @@ function normalizeConfidence(value) {
   return Math.max(0, Math.min(1, decimalValue));
 }
 
+function formatProfileValue(items, fallback = "Not added yet") {
+  const values = Array.isArray(items)
+    ? items.map((item) => String(item || "").trim()).filter(Boolean)
+    : [];
+  return values.length ? values.join(", ") : fallback;
+}
+
 function getDefaultScanLabel(scanResult) {
   if (!scanResult) return "";
-  return scanResult.is_unclear ? "" : scanResult.label || scanResult.topk?.[0]?.label || "";
+  if (isRetakeOnlyScan(scanResult)) return "";
+  const firstSuggestedLabel = scanResult.topk?.[0]?.label || scanResult.matches?.[0]?.label || "";
+  if (firstSuggestedLabel) return firstSuggestedLabel;
+  return scanResult.is_unclear ? "" : scanResult.label || "";
+}
+
+function getScanNutritionPreview(label, scanResult) {
+  if (!label || !scanResult?.nutrition?.available) return null;
+  if (nutritionKey(label) !== nutritionKey(scanResult.label)) return null;
+  return normalizeNutritionPreview(label, scanResult.nutrition);
 }
 
 function clampReviewIndex(index, scanResults = []) {
@@ -371,9 +418,7 @@ function ScanProducts({ mode = "scan", embedded = false }) {
   const initialReviewIndex = clampReviewIndex(reviewPayload?.initialIndex, initialScanResults);
   const initialScanResult = initialScanResults[initialReviewIndex] || null;
   const initialLabel = getDefaultScanLabel(initialScanResult);
-  const initialNutritionPreview = initialLabel
-    ? normalizeNutritionPreview(initialLabel, initialScanResult?.nutrition)
-    : null;
+  const initialNutritionPreview = getScanNutritionPreview(initialLabel, initialScanResult);
   const [uploadedImages, setUploadedImages] = useState([]);
   const [previewUrls, setPreviewUrls] = useState(initialPreviewUrls);
   const [uploadPreviewIndex, setUploadPreviewIndex] = useState(0);
@@ -387,7 +432,7 @@ function ScanProducts({ mode = "scan", embedded = false }) {
   const [manualLabelInput, setManualLabelInput] = useState(initialLabel);
   const [nutritionPreview, setNutritionPreview] = useState(initialNutritionPreview);
   const [suggestedNutrition, setSuggestedNutrition] = useState(
-    initialLabel
+    initialLabel && initialNutritionPreview
       ? {
           [nutritionKey(initialLabel)]: initialNutritionPreview,
         }
@@ -408,6 +453,12 @@ function ScanProducts({ mode = "scan", embedded = false }) {
   const [isSavingScanLog, setIsSavingScanLog] = useState(false);
   const [isBookmarkTagDialogOpen, setIsBookmarkTagDialogOpen] = useState(false);
   const [bookmarkTag, setBookmarkTag] = useState(() => normalizeMealTypeForDetail("Lunch"));
+  const [scanProfileCheck, setScanProfileCheck] = useState(null);
+  const [isLoadingProfileCheck, setIsLoadingProfileCheck] = useState(false);
+  const [scanProfileCheckError, setScanProfileCheckError] = useState("");
+  const [profileCheckView, setProfileCheckView] = useState("advice");
+  const [scanReviewStep, setScanReviewStep] = useState("match");
+  const [saveConfirmation, setSaveConfirmation] = useState(null);
 
   const requiresConfirmation = Boolean(scanResult?.is_unclear);
   const hasConfidentScanLabel = Boolean(scanResult?.label && !requiresConfirmation);
@@ -428,6 +479,7 @@ function ScanProducts({ mode = "scan", embedded = false }) {
       !isSaving
   );
   const hasSuggestedMatches = Boolean(scanResult?.topk?.length);
+  const isRetakeOnly = isRetakeOnlyScan(scanResult);
   const hasPhotoIssue = hasBlockingPhotoIssue(scanResult?.quality?.issues || []);
 
   const selectedCandidate = useMemo(() => {
@@ -453,11 +505,14 @@ function ScanProducts({ mode = "scan", embedded = false }) {
   const photoQualityText = hasPhotoIssue ? "Try another photo" : "Good enough";
   const hasNutritionEstimate = nutritionPreview?.estimated_calories != null;
   const displayMealName =
-    nutritionPreview?.display_name || humanizeLabel(activeLabel) || "Choose a meal";
+    humanizeLabel(nutritionPreview?.display_name || activeLabel) || "Choose a meal";
+  const hasReviewSuggestion = Boolean(
+    requiresConfirmation && hasSuggestedMatches && activeLabel && !isRetakeOnly
+  );
   const scanReviewTitle = hasConfidentScanLabel
     ? humanizeLabel(scanResult.label)
-    : hasSuggestedMatches
-    ? "Review suggested matches"
+    : hasReviewSuggestion
+    ? `Suggested match: ${displayMealName}`
     : "No confident food match";
   const mealAboutText =
     nutritionPreview?.about ||
@@ -532,16 +587,14 @@ function ScanProducts({ mode = "scan", embedded = false }) {
     const nextScanResult = scanResults[reviewIndex] || null;
     const nextPreviewUrl = previewUrls[reviewIndex] || "";
     const defaultLabel = getDefaultScanLabel(nextScanResult);
-    const defaultPreview = defaultLabel
-      ? normalizeNutritionPreview(defaultLabel, nextScanResult?.nutrition)
-      : null;
+    const defaultPreview = getScanNutritionPreview(defaultLabel, nextScanResult);
 
     setPreviewUrl(nextPreviewUrl);
     setScanResult(nextScanResult);
     setSelectedLabel(defaultLabel);
     setManualLabelInput(defaultLabel);
     setSuggestedNutrition(
-      defaultLabel
+      defaultLabel && defaultPreview
         ? {
             [nutritionKey(defaultLabel)]: defaultPreview,
           }
@@ -554,6 +607,10 @@ function ScanProducts({ mode = "scan", embedded = false }) {
     setScanError("");
     setSaveMessage("");
     setIsBookmarkTagDialogOpen(false);
+    setScanProfileCheck(null);
+    setScanProfileCheckError("");
+    setProfileCheckView("advice");
+    setScanReviewStep("match");
   }, [isReviewMode, previewUrls, reviewIndex, scanResults]);
 
   useEffect(() => {
@@ -584,7 +641,7 @@ function ScanProducts({ mode = "scan", embedded = false }) {
       return undefined;
     }
 
-    if (activeLabel === scanResult.label && scanResult.nutrition) {
+    if (activeLabel === scanResult.label && scanResult.nutrition?.available) {
       const preview = normalizeNutritionPreview(activeLabel, scanResult.nutrition);
       setSuggestedNutrition((current) => ({
         ...current,
@@ -605,6 +662,57 @@ function ScanProducts({ mode = "scan", embedded = false }) {
 
     return () => clearTimeout(timer);
   }, [activeLabel, scanResult, suggestedNutrition]);
+
+  useEffect(() => {
+    if (!isReviewMode || !scanResult || !activeLabel) {
+      setScanProfileCheck(null);
+      setScanProfileCheckError("");
+      setIsLoadingProfileCheck(false);
+      return undefined;
+    }
+
+    let cancelled = false;
+    const timer = setTimeout(async () => {
+      setIsLoadingProfileCheck(true);
+      setScanProfileCheckError("");
+
+      const selectedCandidateForCheck =
+        scanResult.topk?.find((item) => nutritionKey(item.label) === nutritionKey(activeLabel)) ||
+        scanResult.matches?.find((item) => nutritionKey(item.label) === nutritionKey(activeLabel)) ||
+        null;
+
+      try {
+        const result = await verifyScanWithProfile({
+          ...scanResult,
+          selectedLabel: activeLabel,
+          confidence:
+            activeLabel === scanResult.label
+              ? scanResult.confidence
+              : selectedCandidateForCheck?.score ?? scanResult.confidence,
+          nutrition: nutritionPreview || scanResult.nutrition || {},
+        });
+
+        if (cancelled) return;
+        setScanProfileCheck(result);
+        setScanProfileCheckError("");
+      } catch (error) {
+        if (cancelled) return;
+        setScanProfileCheck(null);
+        setScanProfileCheckError(
+          error.message || "Profile-aware scan check is unavailable right now."
+        );
+      } finally {
+        if (!cancelled) {
+          setIsLoadingProfileCheck(false);
+        }
+      }
+    }, 450);
+
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [activeLabel, isReviewMode, nutritionPreview, scanResult]);
 
   function handleSelectedLogDateChange(event) {
     const nextDate = event.target.value;
@@ -646,6 +754,11 @@ function ScanProducts({ mode = "scan", embedded = false }) {
     setNutritionPreview(null);
     setSuggestedNutrition({});
     setEditedCaloriesInput("");
+    setSaveConfirmation(null);
+    setScanProfileCheck(null);
+    setScanProfileCheckError("");
+    setProfileCheckView("advice");
+    setScanReviewStep("match");
     if (selectedFiles.length > MAX_IMAGE_COUNT) {
       setScanError(`You can upload up to ${MAX_IMAGE_COUNT} images at once.`);
     } else if (filteredFiles.length !== selectedFiles.length) {
@@ -724,9 +837,7 @@ function ScanProducts({ mode = "scan", embedded = false }) {
       writeScanReviewPayload(scanFlow);
       navigate("/scan-review", { state: { scanFlow } });
 
-      const defaultPreview = defaultLabel
-        ? normalizeNutritionPreview(defaultLabel, defaultScanResult?.nutrition)
-        : null;
+      const defaultPreview = getScanNutritionPreview(defaultLabel, defaultScanResult);
       setScanResults(scanResultList);
       setReviewIndex(0);
       setPreviewUrls(reviewPreviewUrls);
@@ -735,7 +846,7 @@ function ScanProducts({ mode = "scan", embedded = false }) {
       setSelectedLabel(defaultLabel);
       setManualLabelInput(defaultLabel);
       setSuggestedNutrition(
-        defaultLabel
+        defaultLabel && defaultPreview
           ? {
               [nutritionKey(defaultLabel)]: defaultPreview,
             }
@@ -982,7 +1093,16 @@ function ScanProducts({ mode = "scan", embedded = false }) {
         savedEntry.meal_type || selectedMealType
       } on ${savedDate}${syncedToMenu ? " and added it to your menu." : "."}`;
       setSaveMessage(successMessage);
-      toast.success(successMessage);
+      setSaveConfirmation({
+        dishName: humanizeLabel(savedEntry.label),
+        mealType: savedEntry.meal_type || selectedMealType,
+        date: savedDate,
+        syncedToMenu,
+      });
+      toast.success(successMessage, {
+        position: "top-right",
+        autoClose: 3500,
+      });
     } catch (error) {
       setScanError(error.message || "Failed to save meal log.");
     } finally {
@@ -1281,14 +1401,34 @@ function ScanProducts({ mode = "scan", embedded = false }) {
             </div>
           ) : null}
 
+          <div className="scan-review-stepper" aria-label="Scan review steps">
+            {[
+              ["match", "1. AI match"],
+              ["confirm", "2. Confirm"],
+              ["advice", "3. Profile advice"],
+              ["save", "4. Save"],
+            ].map(([step, label]) => (
+              <button
+                key={step}
+                type="button"
+                className={scanReviewStep === step ? "active" : ""}
+                onClick={() => setScanReviewStep(step)}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+
+          {scanReviewStep === "match" ? (
+          <>
           <div className="scan-review-banner">
             <div>
               <span className="scan-review-kicker">AI suggestion</span>
               <h3>{scanReviewTitle}</h3>
               <p>
                 {requiresConfirmation
-                  ? hasSuggestedMatches
-                    ? "AI found possible matches but is not confident enough to confirm one automatically. Pick a suggestion if it looks right, or type the meal name yourself."
+                  ? hasSuggestedMatches && !isRetakeOnly
+                    ? `AI's closest match is ${displayMealName}, but it still needs your review. Pick another suggestion if it looks better, or type the meal name yourself.`
                     : "AI is not confident enough to confirm a dish from this image. Try another photo or type the meal name yourself."
                   : "This looks like a strong match. You can still adjust the meal name or calories if the serving looks different."}
               </p>
@@ -1311,6 +1451,50 @@ function ScanProducts({ mode = "scan", embedded = false }) {
               : "Check the meal name, dish information, and estimated calories below. If the serving is larger or smaller than usual, update it before saving."}
           </p>
 
+          {scanResult.topk?.length && !isRetakeOnly ? (
+            <div className="scan-suggestions-block">
+              <div className="scan-suggestions-header">
+                <h3>Similar matches</h3>
+                <p>Tap one to update the meal name, dish information, and starting calorie estimate for that match.</p>
+              </div>
+              <div className="scan-topk-list">
+              {scanResult.topk.map((item) => (
+                <button
+                  key={item.label}
+                  type="button"
+                  className={`scan-topk-option ${selectedLabel === item.label ? "active" : ""}`}
+                  onClick={() => handleCandidateSelect(item.label)}
+                >
+                  <span>{humanizeLabel(item.label)}</span>
+                  <strong>{requiresConfirmation ? "Review" : percent(item.score)}</strong>
+                </button>
+              ))}
+              </div>
+            </div>
+          ) : null}
+
+          {scanResult.quality?.issues?.length ? (
+            <ul className="scan-quality-list">
+              {scanResult.quality.issues.map((issue) => (
+                <li key={issue}>{issue}</li>
+              ))}
+            </ul>
+          ) : null}
+
+          <div className="scan-step-actions">
+            <button
+              type="button"
+              className="scan-step-primary"
+              onClick={() => setScanReviewStep("confirm")}
+            >
+              {activeLabel ? "Review this match" : "Enter meal manually"}
+            </button>
+          </div>
+          </>
+          ) : null}
+
+          {scanReviewStep === "confirm" ? (
+          <>
           <div className="scan-editable-grid">
             <label className="scan-edit-card">
               <span>Meal name</span>
@@ -1448,36 +1632,150 @@ function ScanProducts({ mode = "scan", embedded = false }) {
             </div>
           </div>
 
-          {scanResult.topk?.length ? (
-            <div className="scan-suggestions-block">
-              <div className="scan-suggestions-header">
-                <h3>Similar matches</h3>
-                <p>Tap one to update the meal name, dish information, and starting calorie estimate for that match.</p>
-              </div>
-              <div className="scan-topk-list">
-              {scanResult.topk.map((item) => (
-                <button
-                  key={item.label}
-                  type="button"
-                  className={`scan-topk-option ${selectedLabel === item.label ? "active" : ""}`}
-                  onClick={() => handleCandidateSelect(item.label)}
-                >
-                  <span>{humanizeLabel(item.label)}</span>
-                  <strong>{requiresConfirmation ? "Review" : percent(item.score)}</strong>
-                </button>
-              ))}
-              </div>
+          <div className="scan-step-actions">
+            <button type="button" className="scan-step-secondary" onClick={() => setScanReviewStep("match")}>
+              Back to AI match
+            </button>
+            <button
+              type="button"
+              className="scan-step-primary"
+              onClick={() => setScanReviewStep("advice")}
+              disabled={!activeLabel}
+            >
+              Check with my profile
+            </button>
+          </div>
+          </>
+          ) : null}
+
+          {scanReviewStep === "advice" ? (
+          <>
+          <div className="scan-profile-check-card">
+            <div>
+              <span className="scan-review-kicker">Profile-aware AI check</span>
+              <h3>Personal safety and suitability review</h3>
+              <p className="scan-profile-check-intro">
+                NutriHelp reviews the scan result with your saved food preferences and health profile.
+              </p>
             </div>
+            {isLoadingProfileCheck ? (
+              <p className="scan-meal-info-copy">
+                Checking this scan against your saved allergies, preferences, and health profile...
+              </p>
+            ) : scanProfileCheck?.verification ? (
+              <>
+                <div className="scan-profile-check-tabs" role="group" aria-label="Scan verification sections">
+                  {[
+                    ["advice", "AI advice"],
+                    ["scan", "Scan details"],
+                    ["profile", "Profile used"],
+                  ].map(([view, label]) => (
+                    <button
+                      key={view}
+                      type="button"
+                      className={profileCheckView === view ? "active" : ""}
+                      onClick={() => setProfileCheckView(view)}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+
+                {profileCheckView === "advice" ? (
+                  <div className="scan-profile-check-response">
+                    {String(scanProfileCheck.verification)
+                      .split(/\n+/)
+                      .filter(Boolean)
+                      .slice(0, 4)
+                      .map((line) => (
+                        <p key={line}>{line.replace(/^[-*]\s*/, "")}</p>
+                      ))}
+                  </div>
+                ) : null}
+
+                {profileCheckView === "scan" ? (
+                  <div className="scan-profile-check-grid">
+                    <div>
+                      <span>Closest match</span>
+                      <strong>{humanizeLabel(scanProfileCheck.scanSummary?.label || activeLabel || "Not set")}</strong>
+                    </div>
+                    <div>
+                      <span>Confidence</span>
+                      <strong>{percent(scanProfileCheck.scanSummary?.confidence ?? scanResult?.confidence)}</strong>
+                    </div>
+                    <div>
+                      <span>Food probability</span>
+                      <strong>
+                        {scanProfileCheck.scanSummary?.foodProbability == null
+                          ? "Not available"
+                          : percent(scanProfileCheck.scanSummary.foodProbability)}
+                      </strong>
+                    </div>
+                    <div>
+                      <span>Top options</span>
+                      <strong>
+                        {formatProfileValue(scanProfileCheck.scanSummary?.topCandidates, "No clear options")}
+                      </strong>
+                    </div>
+                  </div>
+                ) : null}
+
+                {profileCheckView === "profile" ? (
+                  <div className="scan-profile-check-grid">
+                    <div>
+                      <span>Allergies/intolerances</span>
+                      <strong>{formatProfileValue(scanProfileCheck.profileSummary?.allergies)}</strong>
+                    </div>
+                    <div>
+                      <span>Diet</span>
+                      <strong>{formatProfileValue(scanProfileCheck.profileSummary?.dietaryRequirements)}</strong>
+                    </div>
+                    <div>
+                      <span>Disliked ingredients</span>
+                      <strong>{formatProfileValue(scanProfileCheck.profileSummary?.dislikedIngredients)}</strong>
+                    </div>
+                    <div>
+                      <span>Health conditions</span>
+                      <strong>{formatProfileValue(scanProfileCheck.profileSummary?.healthConditions)}</strong>
+                    </div>
+                  </div>
+                ) : null}
+
+                <small>
+                  {scanProfileCheck.profileAware
+                    ? "Based on your saved NutriHelp profile. Always confirm ingredients before eating."
+                    : "Complete your profile for a more personalised allergy and health check."}
+                </small>
+              </>
+            ) : scanProfileCheckError ? (
+              <p className="scan-meal-info-copy muted">
+                {scanProfileCheckError}
+              </p>
+            ) : (
+              <p className="scan-meal-info-copy muted">
+                Sign in and complete your profile to check this scan against allergies, preferences, and health goals.
+              </p>
+            )}
+          </div>
+
+          <div className="scan-step-actions">
+            <button type="button" className="scan-step-secondary" onClick={() => setScanReviewStep("confirm")}>
+              Back to confirm
+            </button>
+            <button
+              type="button"
+              className="scan-step-primary"
+              onClick={() => setScanReviewStep("save")}
+              disabled={!activeLabel}
+            >
+              Continue to save
+            </button>
+          </div>
+          </>
           ) : null}
 
-          {scanResult.quality?.issues?.length ? (
-            <ul className="scan-quality-list">
-              {scanResult.quality.issues.map((issue) => (
-                <li key={issue}>{issue}</li>
-              ))}
-            </ul>
-          ) : null}
-
+          {scanReviewStep === "save" ? (
+          <>
           <div className="scan-save-options-card">
             <div>
               <span className="scan-review-kicker">Save settings</span>
@@ -1522,7 +1820,51 @@ function ScanProducts({ mode = "scan", embedded = false }) {
               {isSaving ? "Saving..." : `Save to ${selectedMealType} on ${selectedLogDate || "selected date"}`}
             </button>
           </div>
+          </>
+          ) : null}
         </div>
+      ) : null}
+
+      {saveConfirmation ? createPortal(
+        <div
+          className="scan-save-confirmation-backdrop"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="scan-save-confirmation-title"
+        >
+          <div className="scan-save-confirmation-card">
+            <span className="scan-save-confirmation-kicker">Meal saved</span>
+            <h3 id="scan-save-confirmation-title">Saved to your Daily Plan</h3>
+            <p>
+              {saveConfirmation.dishName} was saved to {saveConfirmation.mealType} on{" "}
+              {saveConfirmation.date}. You can review it in your Daily Plan now.
+            </p>
+            {saveConfirmation.syncedToMenu ? (
+              <small>The meal was also added to your local daily menu view.</small>
+            ) : null}
+            <div className="scan-save-confirmation-actions">
+              <button
+                type="button"
+                className="scan-save-confirmation-button scan-save-confirmation-button-secondary"
+                onClick={() => setSaveConfirmation(null)}
+              >
+                Stay here
+              </button>
+              <button
+                type="button"
+                className="scan-save-confirmation-button scan-save-confirmation-button-primary"
+                onClick={() =>
+                  navigate(`/daily-plan-edit?date=${encodeURIComponent(saveConfirmation.date)}`, {
+                    state: { selectedDate: saveConfirmation.date },
+                  })
+                }
+              >
+                Yes, open Daily Plan
+              </button>
+            </div>
+          </div>
+        </div>,
+        document.body
       ) : null}
 
     </div>
