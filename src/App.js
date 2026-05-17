@@ -10,7 +10,7 @@ import {
   Routes,
   Route,
   Navigate,
-  useLocation,
+  useLocation
 } from "react-router-dom";
 
 import { ToastContainer } from "react-toastify";
@@ -26,7 +26,7 @@ import ForgotPasswordReset from "./routes/ForgotPassword/ForgotPasswordReset";
 import CreateRecipe from "./routes/CreateRecipe/CreateRecipe";
 import SearchRecipes from "./routes/SearchRecipes/SearchRecipes";
 import CategoryResults from "./routes/SearchRecipes/CategoryResults";
-import YourPreferences from "./routes/UI-Only-Pages/YourPreferences/YourPreferences";
+import YourPreferences from './routes/UI-Only-Pages/YourPreferences/YourPreferences';
 import UserProfilePage from "./routes/UI-Only-Pages/UserProfilePage/userprofile";
 import Home from "./routes/Home/Home";
 import DietaryRequirements from "./routes/UI-Only-Pages/DietaryRequirements/DietaryRequirements";
@@ -35,9 +35,10 @@ import ScanMealReview from "./routes/UI-Only-Pages/ScanProducts/ScanMealReview";
 import Menu from "./routes/UI-Only-Pages/Menu/Menu";
 import Recipe from "./routes/MyRecipe/Recipe";
 import Appointment from "./routes/UI-Only-Pages/Appointment/Appointment";
+import newMenu from "./routes/NewMenu/newMenu";
 import Meal from "./routes/Meal/Meal";
 import MealDetail from "./routes/Meal/MealDetail";
-import Scan from "./routes/ScanBarcode/Scan.jsx";
+import Scan from "./routes/ScanBarcode/Scan.jsx"
 import MFAform from "./routes/MFA/MFAform";
 import Dashboard from "./routes/NewMenu/Dashboard";
 import AuthenticateRoute from "./routes/AuthenticateRoute/AuthenticateRoute";
@@ -69,20 +70,14 @@ import UploadHistory from "./routes/UI-Only-Pages/ScanProducts/UploadHistory";
 import AuthCallback from "./pages/AuthCallback";
 import DailyPlanEdit from "./routes/DailyPlan/DailyPlanEdit";
 import Account from "./routes/Account/Account.js";
-import WeeklyMealPlanPage from "./routes/Meal/WeeklyMealPlanPage";
-
 import TextToSpeechControl from "./components/TextToSpeech/TextToSpeech";
 import AdminAuditDashboard from "./routes/AdminAudit/AdminAuditDashboard";
 import AdminDataCenter from "./routes/Admin/AdminDataCenter";
 import AdminRecipeLibraryPage from "./routes/Admin/AdminRecipeLibraryPage";
 import { isAuthPath } from "./utils/ttsRouteUtils";
-
-/* NEW HEALTH SCREENS */
-import SymptomAssessmentScreen from "./health/SymptomAssessmentScreen";
-import ObesitySurveyScreen from "./health/ObesitySurveyScreen";
-import ObesitySurveyResultScreen from "./health/ObesitySurveyResultScreen";
-import FitnessRoadmapScreen from "./health/FitnessRoadmapScreen";
-
+/* -------------------------------
+   GLOBAL AUTHENTICATED LAYOUT
+-------------------------------- */
 function GlobalAuthenticatedLayout() {
   const location = useLocation();
   const { currentUser } = useContext(UserContext);
@@ -93,8 +88,7 @@ function GlobalAuthenticatedLayout() {
   useEffect(() => {
     const openAssistant = () => setAssistantOpen(true);
     window.addEventListener("nutrihelp:open-assistant", openAssistant);
-    return () =>
-      window.removeEventListener("nutrihelp:open-assistant", openAssistant);
+    return () => window.removeEventListener("nutrihelp:open-assistant", openAssistant);
   }, []);
 
   if (shouldHideGlobalControls) return null;
@@ -112,7 +106,6 @@ function GlobalAuthenticatedLayout() {
 
 function CanonicalMealRedirect() {
   const location = useLocation();
-
   return (
     <Navigate
       to={`${location.pathname.toLowerCase()}${location.search}${location.hash}`}
@@ -131,6 +124,8 @@ function RouteScrollToTop() {
   return null;
 }
 
+import WeeklyMealPlanPage from './routes/Meal/WeeklyMealPlanPage';
+
 function App() {
   const { currentUser, authReady } = useContext(UserContext);
 
@@ -141,25 +136,28 @@ function App() {
   return (
     <Router>
       <RouteScrollToTop />
+      {/* Show navbar only on allowed pages */}
       <GlobalAuthenticatedLayout />
+
       <ToastContainer />
 
       <Routes>
         <Route
           path="/"
           element={
-            !authReady ? null : currentUser ? (
-              <Navigate to="/home" />
-            ) : (
-              <Navigate to="/login" />
-            )
+            !authReady ? null : currentUser ? <Navigate to="/home" /> : <Navigate to="/login" />
           }
         />
 
+        {/* PUBLIC ROUTES */}
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
 
+
+        {/* Forgot password flow */}
+        {/* legacy route */}
         <Route path="/forgotPassword" element={<ForgotPassword />} />
+        {/* new multi-step flow routes */}
         <Route path="/forgot" element={<ForgotPassword />} />
         <Route path="/forgot/verify" element={<ForgotPasswordVerify />} />
         <Route path="/forgot/reset" element={<ForgotPasswordReset />} />
@@ -174,7 +172,6 @@ function App() {
             </AuthenticateRoute>
           }
         />
-
         <Route
           path="/faq"
           element={
@@ -183,7 +180,6 @@ function App() {
             </AuthenticateRoute>
           }
         />
-
         <Route
           path="/leaderboard"
           element={
@@ -192,7 +188,6 @@ function App() {
             </AuthenticateRoute>
           }
         />
-
         <Route
           path="/community"
           element={
@@ -201,7 +196,6 @@ function App() {
             </AuthenticateRoute>
           }
         />
-
         <Route
           path="/chat"
           element={
@@ -210,7 +204,6 @@ function App() {
             </AuthenticateRoute>
           }
         />
-
         <Route
           path="/community/post/:postId"
           element={
@@ -228,7 +221,6 @@ function App() {
             </AuthenticateRoute>
           }
         />
-
         <Route
           path="/survey/result"
           element={
@@ -237,7 +229,6 @@ function App() {
             </AuthenticateRoute>
           }
         />
-
         <Route
           path="/roadmap"
           element={
@@ -246,44 +237,6 @@ function App() {
             </AuthenticateRoute>
           }
         />
-
-        {/* NEW HEALTH ROUTES */}
-        <Route
-          path="/symptom-assessment-new"
-          element={
-            <AuthenticateRoute>
-              <SymptomAssessmentScreen />
-            </AuthenticateRoute>
-          }
-        />
-
-        <Route
-          path="/obesity-survey-new"
-          element={
-            <AuthenticateRoute>
-              <ObesitySurveyScreen />
-            </AuthenticateRoute>
-          }
-        />
-
-        <Route
-          path="/obesity-survey-result-new"
-          element={
-            <AuthenticateRoute>
-              <ObesitySurveyResultScreen />
-            </AuthenticateRoute>
-          }
-        />
-
-        <Route
-          path="/fitness-roadmap-new"
-          element={
-            <AuthenticateRoute>
-              <FitnessRoadmapScreen />
-            </AuthenticateRoute>
-          }
-        />
-
         <Route
           path="/Scan"
           element={
@@ -292,7 +245,6 @@ function App() {
             </AuthenticateRoute>
           }
         />
-
         <Route
           path="/scan"
           element={
@@ -301,9 +253,7 @@ function App() {
             </AuthenticateRoute>
           }
         />
-
         <Route caseSensitive path="/Meal/*" element={<CanonicalMealRedirect />} />
-
         <Route
           path="/dish/detail"
           element={
@@ -312,7 +262,6 @@ function App() {
             </AuthenticateRoute>
           }
         />
-
         <Route
           path="/meal/detail"
           element={
@@ -321,7 +270,6 @@ function App() {
             </AuthenticateRoute>
           }
         />
-
         <Route
           path="/account"
           element={
@@ -330,7 +278,7 @@ function App() {
             </AuthenticateRoute>
           }
         />
-
+        {/* PRIVATE ROUTES */}
         <Route
           path="/daily-plan-edit"
           element={
@@ -411,7 +359,6 @@ function App() {
             </AuthenticateRoute>
           }
         />
-
         <Route
           path="scan-review"
           element={
@@ -420,7 +367,6 @@ function App() {
             </AuthenticateRoute>
           }
         />
-
         <Route
           path="food-details/:foodName"
           element={
@@ -429,7 +375,6 @@ function App() {
             </AuthenticateRoute>
           }
         />
-
         <Route
           path="upload-history"
           element={
@@ -483,7 +428,6 @@ function App() {
             </AuthenticateRoute>
           }
         />
-
         <Route
           path="/meal"
           element={
@@ -492,7 +436,6 @@ function App() {
             </AuthenticateRoute>
           }
         />
-
         <Route
           path="/meal/:preselectedMealType"
           element={
@@ -510,6 +453,7 @@ function App() {
             </AuthenticateRoute>
           }
         />
+        
 
         <Route path="/auth/callback" element={<AuthCallback />} />
 
@@ -647,7 +591,6 @@ function App() {
             </AuthenticateRoute>
           }
         />
-
         <Route
           path="scan"
           element={
