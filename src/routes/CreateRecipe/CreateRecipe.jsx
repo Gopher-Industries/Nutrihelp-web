@@ -3,8 +3,10 @@ import { useRef, useState, useEffect, useMemo, useContext } from "react";
 import "./CreateRecipe.css";
 import { MdArrowDropDown, MdArrowDropUp, MdEdit } from "react-icons/md";
 import { RiDeleteBin6Fill } from "react-icons/ri";
+import { CircleHelp } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import FramerClient from "../../components/framer-client.jsx";
+import GuidedTour from "../../components/GuidedTour/GuidedTour";
 import {
   cuisineListDB,
   getCuisineList,
@@ -18,6 +20,77 @@ import { UserContext } from "../../context/user.context.jsx";
 import { ERROR_MESSAGES } from "../../utils/validationRules";
 import FieldError from "../../components/FieldError";
 import { toast } from "react-toastify";
+import {
+  setCrossPageTourFlowStage,
+} from "../../utils/crossPageTourFlow";
+
+const CREATE_SEARCH_TOUR_FLOW_ID = "create-to-search-recipes";
+const CREATE_RECIPE_TOUR_STATE_KEY = "nutrihelp_create_recipe_tour_state_v1";
+
+const CREATE_RECIPE_TOUR_STEPS = [
+  {
+    targetId: "create-recipe-hero",
+    title: "Create recipe here",
+    description: "This page lets you create your own recipe step by step.",
+    spotlightSize: 220,
+  },
+  {
+    targetId: "create-recipe-name-input",
+    title: "Enter recipe name",
+    description: "Start by typing a simple recipe name.",
+    spotlightSize: 190,
+  },
+  {
+    targetId: "create-recipe-cuisine-select",
+    title: "Choose cuisine type",
+    description: "Pick the cuisine that matches your recipe.",
+    spotlightSize: 195,
+  },
+  {
+    targetId: "create-recipe-add-ingredient-button",
+    title: "Add ingredient",
+    description: "Fill ingredient fields, then press Add.",
+    spotlightSize: 190,
+  },
+  {
+    targetId: "create-recipe-add-instruction-button",
+    title: "Add instruction step",
+    description: "Write a cooking step, then press Add.",
+    spotlightSize: 190,
+  },
+  {
+    targetId: "create-recipe-save-button",
+    title: "Save your recipe",
+    description: "When ready, press Save Recipe.",
+    spotlightSize: 200,
+  },
+  {
+    targetId: "create-recipe-guide-button",
+    title: "Continue to Search Recipes",
+    description: "Press Finish to open Search Recipes and continue the guide.",
+    spotlightSize: 170,
+  },
+];
+
+function readCreateRecipeTourStateFromStorage() {
+  if (typeof window === "undefined") return "";
+
+  try {
+    return localStorage.getItem(CREATE_RECIPE_TOUR_STATE_KEY) || "";
+  } catch {
+    return "";
+  }
+}
+
+function writeCreateRecipeTourStateToStorage(nextState) {
+  if (typeof window === "undefined") return;
+
+  try {
+    localStorage.setItem(CREATE_RECIPE_TOUR_STATE_KEY, nextState);
+  } catch {
+    // Ignore localStorage write failures in restricted environments.
+  }
+}
 
 // Create Recipe page
 function CreateRecipe() {
@@ -424,6 +497,51 @@ function CreateRecipe() {
   };
 
   const [attemptedSubmit, setAttemptedSubmit] = useState(false);
+  const [isCreateRecipeTourOpen, setIsCreateRecipeTourOpen] = useState(false);
+  const [createRecipeTourRestartKey, setCreateRecipeTourRestartKey] = useState(0);
+  const [hasSeenCreateRecipeTour, setHasSeenCreateRecipeTour] = useState(false);
+  const [isCreateRecipeTourStateReady, setIsCreateRecipeTourStateReady] = useState(false);
+
+  const closeCreateRecipeTour = (nextState) => {
+    setIsCreateRecipeTourOpen(false);
+    if (!nextState) return;
+    writeCreateRecipeTourStateToStorage(nextState);
+    setHasSeenCreateRecipeTour(true);
+  };
+
+  const handleOpenCreateRecipeTour = () => {
+    setIsCreateRecipeTourOpen(true);
+    setCreateRecipeTourRestartKey((previous) => previous + 1);
+  };
+
+  const handleSkipCreateRecipeTour = () => {
+    closeCreateRecipeTour("skipped");
+  };
+
+  const handleFinishCreateRecipeTour = () => {
+    closeCreateRecipeTour("completed");
+    setCrossPageTourFlowStage(CREATE_SEARCH_TOUR_FLOW_ID, "search-pending");
+    navigate("/searchRecipes");
+  };
+
+  useEffect(() => {
+    const persistedState = readCreateRecipeTourStateFromStorage();
+    setHasSeenCreateRecipeTour(persistedState === "completed" || persistedState === "skipped");
+    setIsCreateRecipeTourStateReady(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isCreateRecipeTourStateReady) return;
+    if (hasSeenCreateRecipeTour) return;
+    if (isCreateRecipeTourOpen) return;
+
+    const timerId = window.setTimeout(() => {
+      setIsCreateRecipeTourOpen(true);
+      setCreateRecipeTourRestartKey((previous) => previous + 1);
+    }, 450);
+
+    return () => window.clearTimeout(timerId);
+  }, [hasSeenCreateRecipeTour, isCreateRecipeTourOpen, isCreateRecipeTourStateReady]);
 
   //==================== Render the component ====================
   return (
@@ -451,7 +569,7 @@ function CreateRecipe() {
                 id="no-bg"
               //className="flex flex-col bg-[#E8F1FF] sm:flex-row justify-between items-center mb-6 sm:mb-8 md:mb-10 lg:mb-12"
               >
-                <div id="no-bg" className="create-recipe-hero w-full flex justify-center">
+                <div id="no-bg" className="create-recipe-hero w-full flex justify-center" data-tour-id="create-recipe-hero">
                   <span className="create-recipe-kicker">Personal Recipe Builder</span>
                   <h1
                     id="no-bg"
@@ -462,6 +580,16 @@ function CreateRecipe() {
                   <p className="create-recipe-subtitle">
                     Add the essentials only. NutriHelp will save your recipe privately and show it in My Recipes.
                   </p>
+                  <button
+                    type="button"
+                    className="create-recipe-guide-btn"
+                    onClick={handleOpenCreateRecipeTour}
+                    data-tour-id="create-recipe-guide-button"
+                    aria-label="Open Create Recipe guide"
+                  >
+                    <CircleHelp size={18} />
+                    Guide
+                  </button>
                 </div>
               </div>
               {/* Recipe Description Section */}
@@ -501,6 +629,7 @@ function CreateRecipe() {
                         value={formData.recipeName}
                         onChange={(e) => handleFieldChange("recipeName", e.target.value)}
                         onBlur={() => setTouched(prev => ({ ...prev, recipeName: true }))}
+                        data-tour-id="create-recipe-name-input"
                       />
                       <FieldError error={errors.recipeName} touched={touched.recipeName} />
                     </div>
@@ -522,6 +651,7 @@ function CreateRecipe() {
                         value={formData.cuisine}
                         onChange={(e) => handleFieldChange("cuisine", e.target.value)}
                         onBlur={() => setTouched(prev => ({ ...prev, cuisine: true }))}
+                        data-tour-id="create-recipe-cuisine-select"
                       >
                         <option value="">Select Cuisine Type</option>
                         {cuisineOptions}
@@ -865,6 +995,7 @@ function CreateRecipe() {
                           id="no-bg"
                           className="font-[Arial] bg-[#005BBB] text-white px-4 sm:px-6 py-2 sm:py-3 rounded-full font-semibold text-sm sm:text-base"
                           onClick={() => handelIngredientsInTable()}
+                          data-tour-id="create-recipe-add-ingredient-button"
                         >
                           Add
                         </button>
@@ -1097,6 +1228,7 @@ function CreateRecipe() {
                         setErrors((prev) => ({ ...prev, instructions: undefined }));
                         setFormData((prev) => ({ ...prev, currentInstruction: "" }));
                       }}
+                      data-tour-id="create-recipe-add-instruction-button"
                     >
                       Add
                     </button>
@@ -1111,6 +1243,7 @@ function CreateRecipe() {
                   id="no-bg"
                   // disabled={!instructions.trim()}
                   className="font-[Arial] bg-[#005BBB] text-white w-full max-w-xs px-8 py-3 rounded-full font-semibold text-lg shadow-xl shadow-blue-800/50  hover:bg-[#003f8a] transition duration-300"
+                  data-tour-id="create-recipe-save-button"
                 >
                   Save  Recipe
                 </button>
@@ -1119,6 +1252,14 @@ function CreateRecipe() {
           </div>
         </form>
       </div>
+
+      <GuidedTour
+        open={isCreateRecipeTourOpen}
+        steps={CREATE_RECIPE_TOUR_STEPS}
+        restartKey={createRecipeTourRestartKey}
+        onFinish={handleFinishCreateRecipeTour}
+        onSkip={handleSkipCreateRecipeTour}
+      />
     </FramerClient>
   );
 }

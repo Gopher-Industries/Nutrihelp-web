@@ -1676,12 +1676,21 @@
 }
 
 /* ── Page-level tab switcher ─────────────────────────────────────────────── */
+.meal-tab-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
 .meal-tab-switcher {
   display: flex;
   gap: 8px;
-  margin-bottom: 20px;
+  margin-bottom: 0;
   border-bottom: 2px solid var(--line);
   padding-bottom: 0;
+  flex: 1;
 }
 
 .meal-tab-btn {
@@ -1711,14 +1720,50 @@
   border-bottom-color: var(--brand);
 }
 
+.add-meal-guide-btn {
+  min-height: 44px;
+  border-radius: 999px;
+  border: 1px solid rgba(0, 91, 187, 0.35);
+  background: linear-gradient(135deg, rgba(234, 242, 255, 0.96), rgba(216, 232, 255, 0.96));
+  color: #0d4f9e;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 0 16px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+}
+
+.add-meal-guide-btn:hover {
+  transform: translateY(-1px);
+  filter: brightness(0.98);
+  box-shadow: 0 10px 18px rgba(0, 91, 187, 0.18);
+}
+
 /* ── Personalized plan section ───────────────────────────────────────────── */
 .personalized-plan-section {
   padding-top: 8px;
 }
 
 @media (max-width: 640px) {
+  .meal-tab-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
   .meal-tab-btn {
     padding: 8px 14px;
+    font-size: 0.875rem;
+  }
+
+  .add-meal-guide-btn {
+    width: 100%;
+    min-height: 42px;
     font-size: 0.875rem;
   }
 }

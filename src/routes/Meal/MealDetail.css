@@ -14,10 +14,19 @@
 .meal-detail-breadcrumb {
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
   gap: 10px;
   margin-bottom: 18px;
   color: #6a7280;
   font-size: 0.875rem;
+}
+
+.meal-detail-breadcrumb-left {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
 }
 
 .meal-detail-back {
@@ -34,6 +43,29 @@
 
 .meal-detail-back:hover {
   color: #1f2937;
+}
+
+.meal-detail-guide-btn {
+  min-height: 38px;
+  border-radius: 999px;
+  border: 1px solid rgba(0, 91, 187, 0.35);
+  background: linear-gradient(135deg, rgba(234, 242, 255, 0.96), rgba(216, 232, 255, 0.96));
+  color: #0d4f9e;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 0 14px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.18s ease, filter 0.18s ease, box-shadow 0.18s ease;
+}
+
+.meal-detail-guide-btn:hover {
+  transform: translateY(-1px);
+  filter: brightness(0.98);
+  box-shadow: 0 8px 14px rgba(0, 91, 187, 0.16);
 }
 
 .meal-detail-divider {
@@ -578,6 +610,22 @@
 @media (max-width: 860px) {
   .meal-detail-page {
     padding: 14px 12px 34px;
+  }
+
+  .meal-detail-breadcrumb {
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .meal-detail-breadcrumb-left {
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .meal-detail-guide-btn {
+    width: 100%;
+    min-height: 36px;
   }
 
   .meal-detail-add-grid {

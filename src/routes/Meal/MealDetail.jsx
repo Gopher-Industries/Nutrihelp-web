@@ -2,15 +2,79 @@ import "./MealDetail.css";
 
 import React, { useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
-import { CalendarDays, ChevronLeft, Cloud, Clock3, Moon, Plus, Star, Sun, Users } from "lucide-react";
+import {
+  CalendarDays,
+  ChevronLeft,
+  CircleHelp,
+  Cloud,
+  Clock3,
+  Moon,
+  Plus,
+  Star,
+  Sun,
+  Users,
+} from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { fetchDishImage } from "../../services/dishImageApi";
+import GuidedTour from "../../components/GuidedTour/GuidedTour";
 import {
   readMealSelectionsByDateFromStorage,
   writeMealSelectionsByDateToStorage,
 } from "../../utils/mealSelectionStorage";
 
 const DEFAULT_IMAGE = "/images/meal-mock/placeholder.svg";
+const MEAL_DETAIL_TOUR_STATE_KEY = "nutrihelp_meal_detail_tour_state_v1";
+
+const MEAL_DETAIL_TOUR_STEPS = [
+  {
+    targetId: "meal-detail-hero-section",
+    title: "Meal details here",
+    description: "This page shows nutrition, ingredients, and meal details.",
+    spotlightSize: 220,
+  },
+  {
+    targetId: "meal-detail-add-slot-breakfast",
+    title: "Choose meal time",
+    description: "Pick Breakfast, Lunch, or Dinner first.",
+    spotlightSize: 190,
+  },
+  {
+    targetId: "meal-detail-add-today-button",
+    title: "Add for today",
+    description: "Press here to add this meal to today's plan.",
+    spotlightSize: 190,
+  },
+  {
+    targetId: "meal-detail-specific-day-trigger",
+    title: "Add for another day",
+    description: "Use this button to choose a different date.",
+    spotlightSize: 190,
+  },
+  {
+    targetIds: ["meal-detail-specific-date-input", "meal-detail-specific-day-trigger"],
+    title: "Choose your date",
+    description: "Pick a date from today onward.",
+    spotlightSize: 195,
+  },
+  {
+    targetIds: ["meal-detail-specific-date-add", "meal-detail-specific-day-trigger"],
+    title: "Save this date",
+    description: "Press Add to save this meal for that day.",
+    spotlightSize: 180,
+  },
+  {
+    targetId: "meal-detail-view-recipe-button",
+    title: "Open full recipe",
+    description: "Use View Recipe to see full cooking instructions.",
+    spotlightSize: 200,
+  },
+  {
+    targetId: "meal-detail-guide-button",
+    title: "Replay this guide",
+    description: "Need help again? Press Guide any time.",
+    spotlightSize: 165,
+  },
+];
 
 const NUTRITION_PRESETS = {
   breakfast: { calories: 280, carbs: 45, protein: 10, fiber: 8, fat: 9, sodium: 140 },
@@ -239,6 +303,26 @@ function writeStoredSelections(nextValue) {
   }
 }
 
+function readMealDetailTourStateFromStorage() {
+  if (typeof window === "undefined") return "";
+
+  try {
+    return localStorage.getItem(MEAL_DETAIL_TOUR_STATE_KEY) || "";
+  } catch {
+    return "";
+  }
+}
+
+function writeMealDetailTourStateToStorage(nextState) {
+  if (typeof window === "undefined") return;
+
+  try {
+    localStorage.setItem(MEAL_DETAIL_TOUR_STATE_KEY, nextState);
+  } catch {
+    // Ignore localStorage write failures in restricted environments.
+  }
+}
+
 function removeDuplicateMealSelections(selectionMap, incomingMeal) {
   if (!selectionMap || typeof selectionMap !== "object") return {};
 
@@ -416,6 +500,52 @@ const MealDetail = () => {
   const [selectedAddTo, setSelectedAddTo] = useState(normalizePlanMealType(detail.mealType || "breakfast"));
   const [specificDate, setSpecificDate] = useState(todayIso);
   const [isSpecificDayPickerOpen, setIsSpecificDayPickerOpen] = useState(false);
+  const [isMealDetailTourOpen, setIsMealDetailTourOpen] = useState(false);
+  const [mealDetailTourRestartKey, setMealDetailTourRestartKey] = useState(0);
+  const [hasSeenMealDetailTour, setHasSeenMealDetailTour] = useState(false);
+  const [isMealDetailTourStateReady, setIsMealDetailTourStateReady] = useState(false);
+
+  const closeMealDetailTour = (nextState) => {
+    setIsMealDetailTourOpen(false);
+    setIsSpecificDayPickerOpen(false);
+    if (!nextState) return;
+    writeMealDetailTourStateToStorage(nextState);
+    setHasSeenMealDetailTour(true);
+  };
+
+  const handleOpenMealDetailTour = () => {
+    setIsSpecificDayPickerOpen(true);
+    setIsMealDetailTourOpen(true);
+    setMealDetailTourRestartKey((previous) => previous + 1);
+  };
+
+  const handleFinishMealDetailTour = () => {
+    closeMealDetailTour("completed");
+  };
+
+  const handleSkipMealDetailTour = () => {
+    closeMealDetailTour("skipped");
+  };
+
+  useEffect(() => {
+    const persistedState = readMealDetailTourStateFromStorage();
+    setHasSeenMealDetailTour(persistedState === "completed" || persistedState === "skipped");
+    setIsMealDetailTourStateReady(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isMealDetailTourStateReady) return;
+    if (hasSeenMealDetailTour) return;
+    if (isMealDetailTourOpen) return;
+
+    const timerId = window.setTimeout(() => {
+      setIsSpecificDayPickerOpen(true);
+      setIsMealDetailTourOpen(true);
+      setMealDetailTourRestartKey((previous) => previous + 1);
+    }, 450);
+
+    return () => window.clearTimeout(timerId);
+  }, [hasSeenMealDetailTour, isMealDetailTourOpen, isMealDetailTourStateReady]);
 
   useEffect(() => {
     let isActive = true;
@@ -536,17 +666,35 @@ const MealDetail = () => {
     <div className="meal-detail-page">
       <div className="meal-detail-shell">
         <div className="meal-detail-breadcrumb" aria-label="breadcrumb">
-          <button type="button" className="meal-detail-back" onClick={() => navigate(-1)}>
-            <ChevronLeft size={14} />
-            Back
+          <div className="meal-detail-breadcrumb-left">
+            <button
+              type="button"
+              className="meal-detail-back"
+              onClick={() => navigate(-1)}
+              data-tour-id="meal-detail-back-button"
+            >
+              <ChevronLeft size={14} />
+              Back
+            </button>
+            <span className="meal-detail-divider">/</span>
+            <span className="meal-detail-muted">Meal Planning</span>
+            <span className="meal-detail-divider">/</span>
+            <span className="meal-detail-current">Dish Detail</span>
+          </div>
+
+          <button
+            type="button"
+            className="meal-detail-guide-btn"
+            onClick={handleOpenMealDetailTour}
+            data-tour-id="meal-detail-guide-button"
+            aria-label="Open meal detail guide"
+          >
+            <CircleHelp size={17} />
+            Guide
           </button>
-          <span className="meal-detail-divider">/</span>
-          <span className="meal-detail-muted">Meal Planning</span>
-          <span className="meal-detail-divider">/</span>
-          <span className="meal-detail-current">Dish Detail</span>
         </div>
 
-        <div className="meal-detail-hero">
+        <div className="meal-detail-hero" data-tour-id="meal-detail-hero-section">
           <section className="meal-detail-left">
             <div className="meal-detail-image-card">
               <img src={detailImage} alt={detail.title} loading="lazy" onError={handleImageError} />
@@ -594,6 +742,7 @@ const MealDetail = () => {
                       type="button"
                       className={`meal-detail-add-option ${isActive ? "active" : ""}`}
                       onClick={() => setSelectedAddTo(option.key)}
+                      data-tour-id={option.key === "breakfast" ? "meal-detail-add-slot-breakfast" : undefined}
                     >
                       <span className={`icon ${option.iconClass}`}>
                         <Icon size={16} strokeWidth={2.3} />
@@ -664,7 +813,12 @@ const MealDetail = () => {
 
           <div className="meal-detail-bottom-actions">
             <div className="meal-detail-actions">
-              <button type="button" className="meal-detail-action-btn primary" onClick={handleAddToday}>
+              <button
+                type="button"
+                className="meal-detail-action-btn primary"
+                onClick={handleAddToday}
+                data-tour-id="meal-detail-add-today-button"
+              >
                 <Plus size={16} />
                 Add to Today's Plan
               </button>
@@ -673,6 +827,7 @@ const MealDetail = () => {
                   type="button"
                   className="meal-detail-action-btn secondary meal-detail-specific-day-trigger"
                   onClick={() => setIsSpecificDayPickerOpen((previous) => !previous)}
+                  data-tour-id="meal-detail-specific-day-trigger"
                 >
                   <CalendarDays size={16} />
                   Add to a Specific Day
@@ -687,9 +842,15 @@ const MealDetail = () => {
                       value={specificDate}
                       min={todayIso}
                       onChange={handleSpecificDateChange}
+                      data-tour-id="meal-detail-specific-date-input"
                     />
                     <div className="meal-detail-specific-day-actions">
-                      <button type="button" className="specific-day-add" onClick={handleAddToSpecificDate}>
+                      <button
+                        type="button"
+                        className="specific-day-add"
+                        onClick={handleAddToSpecificDate}
+                        data-tour-id="meal-detail-specific-date-add"
+                      >
                         Add
                       </button>
                       <button
@@ -705,7 +866,12 @@ const MealDetail = () => {
               </div>
             </div>
 
-            <button type="button" className="meal-detail-view-recipe-btn" onClick={handleViewRecipe}>
+            <button
+              type="button"
+              className="meal-detail-view-recipe-btn"
+              onClick={handleViewRecipe}
+              data-tour-id="meal-detail-view-recipe-button"
+            >
               View Recipe
             </button>
           </div>
@@ -803,6 +969,14 @@ const MealDetail = () => {
           </div>
         </section>
       </div>
+
+      <GuidedTour
+        open={isMealDetailTourOpen}
+        steps={MEAL_DETAIL_TOUR_STEPS}
+        restartKey={mealDetailTourRestartKey}
+        onFinish={handleFinishMealDetailTour}
+        onSkip={handleSkipMealDetailTour}
+      />
     </div>
   );
 };
