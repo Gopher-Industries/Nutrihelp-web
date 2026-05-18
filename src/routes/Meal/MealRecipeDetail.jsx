@@ -6,6 +6,7 @@ import {
   AlertTriangle,
   BarChart3,
   CalendarDays,
+  CircleHelp,
   ChevronLeft,
   Clock3,
   Cloud,
@@ -28,13 +29,66 @@ import recipeApi from "../../services/recepieApi";
 import { generateDetailedRecipe } from "../../services/aiRecipeDetailApi";
 import { getRecipes } from "../CreateRecipe/data/db/db";
 import { fetchRecipeReviews, submitRecipeReview } from "../../services/recipeReviewApi";
+import GuidedTour from "../../components/GuidedTour/GuidedTour";
 import {
   readMealSelectionsByDateFromStorage,
   writeMealSelectionsByDateToStorage,
 } from "../../utils/mealSelectionStorage";
 
 const AI_RECIPE_CACHE_STORAGE_KEY = "nutrihelp_ai_recipe_detail_cache_v1";
+const RECIPE_TOUR_STATE_KEY = "nutrihelp_recipe_detail_tour_state_v1";
 const DEFAULT_IMAGE = "/images/meal-mock/placeholder.svg";
+
+const RECIPE_TOUR_STEPS = [
+  {
+    targetId: "recipe-hero-section",
+    title: "Recipe details here",
+    description: "This page shows meal time, servings, and full recipe details.",
+    spotlightSize: 210,
+  },
+  {
+    targetId: "recipe-add-plan-button",
+    title: "Start adding this meal",
+    description: "Press Add to Meal Plan to open the planner.",
+    spotlightSize: 170,
+  },
+  {
+    targetIds: ["recipe-plan-date-input", "recipe-add-plan-button"],
+    title: "Choose a date",
+    description: "Pick the day you want this meal in your plan.",
+    spotlightSize: 195,
+  },
+  {
+    targetIds: ["recipe-slot-breakfast", "recipe-add-plan-button"],
+    title: "Choose meal time",
+    description: "Select Breakfast, Lunch, or Dinner.",
+    spotlightSize: 185,
+  },
+  {
+    targetIds: ["recipe-plan-confirm-button", "recipe-add-plan-button"],
+    title: "Save to your plan",
+    description: "Press Confirm to save this recipe to your meal plan.",
+    spotlightSize: 185,
+  },
+  {
+    targetId: "recipe-shop-ingredients-button",
+    title: "Shop ingredients",
+    description: "Use this button to prepare your shopping list quickly.",
+    spotlightSize: 200,
+  },
+  {
+    targetId: "recipe-back-button",
+    title: "Review saved meals",
+    description: "Use Back to return and review your planned meals.",
+    spotlightSize: 170,
+  },
+  {
+    targetId: "recipe-guide-button",
+    title: "Replay this guide",
+    description: "Need help again? Press Guide any time.",
+    spotlightSize: 165,
+  },
+];
 
 const MEAL_SLOT_OPTIONS = [
   { key: "breakfast", label: "Breakfast", icon: Sun, iconClass: "slot-breakfast" },
@@ -1195,6 +1249,26 @@ function writeStoredSelections(nextValue) {
   }
 }
 
+function readRecipeTourStateFromStorage() {
+  if (typeof window === "undefined") return "";
+
+  try {
+    return localStorage.getItem(RECIPE_TOUR_STATE_KEY) || "";
+  } catch {
+    return "";
+  }
+}
+
+function writeRecipeTourStateToStorage(nextState) {
+  if (typeof window === "undefined") return;
+
+  try {
+    localStorage.setItem(RECIPE_TOUR_STATE_KEY, nextState);
+  } catch {
+    // Ignore localStorage write failures in restricted environments.
+  }
+}
+
 function removeDuplicateMealSelections(selectionMap, incomingMeal) {
   if (!selectionMap || typeof selectionMap !== "object") return {};
 
@@ -1548,6 +1622,51 @@ const MealRecipeDetail = () => {
   const [selectedMealType, setSelectedMealType] = useState(() =>
     normalizePlanMealType(stateMeal?.mealType || stateMeal?.meal_type || "breakfast"),
   );
+  const [isRecipeTourOpen, setIsRecipeTourOpen] = useState(false);
+  const [recipeTourRestartKey, setRecipeTourRestartKey] = useState(0);
+  const [hasSeenRecipeTour, setHasSeenRecipeTour] = useState(false);
+  const [isRecipeTourStateReady, setIsRecipeTourStateReady] = useState(false);
+
+  const closeRecipeTour = (nextState) => {
+    setIsRecipeTourOpen(false);
+    if (!nextState) return;
+    writeRecipeTourStateToStorage(nextState);
+    setHasSeenRecipeTour(true);
+  };
+
+  const handleOpenRecipeTour = () => {
+    setIsPlannerOpen(true);
+    setIsRecipeTourOpen(true);
+    setRecipeTourRestartKey((previous) => previous + 1);
+  };
+
+  const handleFinishRecipeTour = () => {
+    closeRecipeTour("completed");
+  };
+
+  const handleSkipRecipeTour = () => {
+    closeRecipeTour("skipped");
+  };
+
+  useEffect(() => {
+    const persistedState = readRecipeTourStateFromStorage();
+    setHasSeenRecipeTour(persistedState === "completed" || persistedState === "skipped");
+    setIsRecipeTourStateReady(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isRecipeTourStateReady) return;
+    if (hasSeenRecipeTour) return;
+    if (isRecipeTourOpen) return;
+
+    const timerId = window.setTimeout(() => {
+      setIsPlannerOpen(true);
+      setIsRecipeTourOpen(true);
+      setRecipeTourRestartKey((previous) => previous + 1);
+    }, 450);
+
+    return () => window.clearTimeout(timerId);
+  }, [hasSeenRecipeTour, isRecipeTourOpen, isRecipeTourStateReady]);
 
   useEffect(() => {
     let isMounted = true;
@@ -1895,17 +2014,35 @@ const MealRecipeDetail = () => {
     <div className="meal-recipe-page">
       <div className="meal-recipe-shell">
         <div className="meal-recipe-breadcrumb" aria-label="breadcrumb">
-          <button type="button" className="meal-recipe-back" onClick={() => navigate(-1)}>
-            <ChevronLeft size={14} />
-            Back
+          <div className="meal-recipe-breadcrumb-left">
+            <button
+              type="button"
+              className="meal-recipe-back"
+              onClick={() => navigate(-1)}
+              data-tour-id="recipe-back-button"
+            >
+              <ChevronLeft size={14} />
+              Back
+            </button>
+            <span>/</span>
+            <span className="meal-recipe-muted">Recipes</span>
+            <span>/</span>
+            <span className="meal-recipe-current">{recipe.title}</span>
+          </div>
+
+          <button
+            type="button"
+            className="meal-recipe-guide-btn"
+            onClick={handleOpenRecipeTour}
+            data-tour-id="recipe-guide-button"
+            aria-label="Open recipe guide"
+          >
+            <CircleHelp size={17} />
+            Guide
           </button>
-          <span>/</span>
-          <span className="meal-recipe-muted">Recipes</span>
-          <span>/</span>
-          <span className="meal-recipe-current">{recipe.title}</span>
         </div>
 
-        <section className="meal-recipe-hero">
+        <section className="meal-recipe-hero" data-tour-id="recipe-hero-section">
           <img src={recipe.image} alt={recipe.title} loading="lazy" onError={handleImageError} />
           <div className="meal-recipe-hero-scrim" aria-hidden="true" />
           <div className="meal-recipe-hero-panel">
@@ -1943,6 +2080,7 @@ const MealRecipeDetail = () => {
                 type="button"
                 className="meal-recipe-pill-btn"
                 onClick={() => setIsPlannerOpen((previous) => !previous)}
+                data-tour-id="recipe-add-plan-button"
               >
                 Add to Meal Plan
                 <CalendarDays size={16} />
@@ -1959,6 +2097,7 @@ const MealRecipeDetail = () => {
                       min={todayIso}
                       value={selectedDate}
                       onChange={(event) => setSelectedDate(event.target.value)}
+                      data-tour-id="recipe-plan-date-input"
                     />
                   </div>
 
@@ -1974,6 +2113,7 @@ const MealRecipeDetail = () => {
                           aria-selected={isActive}
                           className={`meal-recipe-slot-btn ${slot.iconClass} ${isActive ? "active" : ""}`}
                           onClick={() => setSelectedMealType(slot.key)}
+                          data-tour-id={slot.key === "breakfast" ? "recipe-slot-breakfast" : undefined}
                         >
                           <Icon size={15} />
                           <span>{slot.label}</span>
@@ -1983,7 +2123,12 @@ const MealRecipeDetail = () => {
                   </div>
 
                   <div className="meal-recipe-plan-actions">
-                    <button type="button" className="confirm" onClick={handleAddToMealPlan}>
+                    <button
+                      type="button"
+                      className="confirm"
+                      onClick={handleAddToMealPlan}
+                      data-tour-id="recipe-plan-confirm-button"
+                    >
                       Confirm
                     </button>
                     <button type="button" className="close" onClick={() => setIsPlannerOpen(false)}>
@@ -2049,7 +2194,12 @@ const MealRecipeDetail = () => {
               <strong>{estimatedTotalCost === null ? "NA" : `${formatCost(estimatedTotalCost)} AUD`}</strong>
             </div>
 
-            <button type="button" className="meal-recipe-shop-btn" onClick={handleShopIngredients}>
+            <button
+              type="button"
+              className="meal-recipe-shop-btn"
+              onClick={handleShopIngredients}
+              data-tour-id="recipe-shop-ingredients-button"
+            >
               <ShoppingCart size={17} />
               Shop Ingredients
             </button>
@@ -2209,6 +2359,14 @@ const MealRecipeDetail = () => {
         {isLoading ? <p className="meal-recipe-loading">Loading recipe details...</p> : null}
         {isEnhancing ? <p className="meal-recipe-loading">Enhancing with AI for a more realistic recipe...</p> : null}
       </div>
+
+      <GuidedTour
+        open={isRecipeTourOpen}
+        steps={RECIPE_TOUR_STEPS}
+        restartKey={recipeTourRestartKey}
+        onFinish={handleFinishRecipeTour}
+        onSkip={handleSkipRecipeTour}
+      />
     </div>
   );
 };

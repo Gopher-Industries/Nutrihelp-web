@@ -15,10 +15,19 @@
 .meal-recipe-breadcrumb {
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
   gap: 0.625rem;
   margin-bottom: 0.875rem;
   color: #64748b;
   font-size: 0.9375rem;
+}
+
+.meal-recipe-breadcrumb-left {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+  min-width: 0;
 }
 
 .meal-recipe-back {
@@ -34,6 +43,29 @@
 
 .meal-recipe-back:hover {
   color: #1f2937;
+}
+
+.meal-recipe-guide-btn {
+  min-height: 2.4rem;
+  border-radius: 999px;
+  border: 1px solid rgba(0, 91, 187, 0.35);
+  background: linear-gradient(135deg, rgba(234, 242, 255, 0.96), rgba(216, 232, 255, 0.96));
+  color: #0e4f9d;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0 0.9rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.18s ease, filter 0.18s ease, box-shadow 0.18s ease;
+}
+
+.meal-recipe-guide-btn:hover {
+  transform: translateY(-1px);
+  filter: brightness(0.98);
+  box-shadow: 0 10px 18px rgba(0, 91, 187, 0.16);
 }
 
 .meal-recipe-muted {
@@ -871,8 +903,21 @@
   }
 
   .meal-recipe-breadcrumb {
+    align-items: stretch;
     gap: 0.44rem;
     font-size: 0.8125rem;
+  }
+
+  .meal-recipe-breadcrumb-left {
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .meal-recipe-guide-btn {
+    width: 100%;
+    min-height: 2.35rem;
+    font-size: 0.85rem;
   }
 
   .meal-recipe-hero img {

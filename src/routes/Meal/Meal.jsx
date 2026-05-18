@@ -7,6 +7,7 @@ import {
   Check,
   Calculator,
   CalendarDays,
+  CircleHelp,
   ChevronLeft,
   Clock3,
   Search,
@@ -25,6 +26,7 @@ import {
 } from "../../utils/mealSelectionStorage";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
+import GuidedTour from "../../components/GuidedTour/GuidedTour";
 import PersonalizedPlanForm from "./PersonalizedPlanForm";
 import PersonalizedWeeklyPlan from "./PersonalizedWeeklyPlan";
 
@@ -50,6 +52,62 @@ const FLOATING_STACK_GAP = 12;
 const DEFAULT_WIDGET_BOTTOM = DEFAULT_FLOATING_BOTTOM + 48 + FLOATING_STACK_GAP;
 const RECOMMENDED_SCROLLBAR_INSET = 2;
 const RECOMMENDED_SCROLLBAR_MIN_THUMB = 56;
+const ADD_MEAL_TOUR_STATE_KEY = "nutrihelp_add_meal_tour_state_v1";
+
+const ADD_MEAL_TOUR_STEPS = [
+  {
+    targetId: "add-meal-tab-button",
+    title: "Welcome to Add Meal",
+    description: "This page helps you plan meals one step at a time.",
+    spotlightSize: 170,
+  },
+  {
+    targetId: "add-meal-date-control",
+    title: "Choose a date",
+    description: "First, pick the day you want to plan for.",
+    spotlightSize: 180,
+  },
+  {
+    targetId: "add-meal-breakfast-filter",
+    title: "Pick meal time",
+    description: "Choose Breakfast, Lunch, or Dinner here.",
+    spotlightSize: 175,
+  },
+  {
+    targetId: "add-meal-search-control",
+    title: "Search meals",
+    description: "Type a meal name here to find options quickly.",
+    spotlightSize: 210,
+  },
+  {
+    targetIds: [
+      "add-meal-first-recommended-card",
+      "add-meal-first-all-card",
+      "add-meal-all-section",
+    ],
+    title: "Select a meal card",
+    description: "Click a meal card to add it to your plan.",
+    spotlightSize: 200,
+  },
+  {
+    targetId: "add-meal-selected-total",
+    title: "Check it was added",
+    description: "Great. This number goes up when a meal is added.",
+    spotlightSize: 190,
+  },
+  {
+    targetId: "add-meal-view-plan-button",
+    title: "Review your saved plan",
+    description: "Press View Meal Plan to review your saved meals.",
+    spotlightSize: 200,
+  },
+  {
+    targetId: "add-meal-guide-button",
+    title: "Replay anytime",
+    description: "Need help again? Press Guide any time.",
+    spotlightSize: 165,
+  },
+];
 
 function getTodayISO() {
   const now = new Date();
@@ -59,6 +117,26 @@ function getTodayISO() {
 
 function readSelectionsByDateFromStorage() {
   return readMealSelectionsByDateFromStorage();
+}
+
+function readAddMealTourStateFromStorage() {
+  if (typeof window === "undefined") return "";
+
+  try {
+    return localStorage.getItem(ADD_MEAL_TOUR_STATE_KEY) || "";
+  } catch {
+    return "";
+  }
+}
+
+function writeAddMealTourStateToStorage(nextState) {
+  if (typeof window === "undefined") return;
+
+  try {
+    localStorage.setItem(ADD_MEAL_TOUR_STATE_KEY, nextState);
+  } catch {
+    // Ignore localStorage write failures in restricted environments.
+  }
 }
 
 function shiftISODate(isoDate, days) {
@@ -1074,12 +1152,66 @@ const Meal = () => {
   const [isRecipeLibraryLoading, setIsRecipeLibraryLoading] = useState(true);
   const [recipeLibraryError, setRecipeLibraryError] = useState("");
 
-  const [activeTab, setActiveTab] = useState('addMeal');
+  const [activeTab, setActiveTab] = useState("addMeal");
   const [planFilters, setPlanFilters] = useState(null);
+  const [isAddMealTourOpen, setIsAddMealTourOpen] = useState(false);
+  const [addMealTourRestartKey, setAddMealTourRestartKey] = useState(0);
+  const [hasSeenAddMealTour, setHasSeenAddMealTour] = useState(false);
+  const [isAddMealTourStateReady, setIsAddMealTourStateReady] = useState(false);
+
+  const closeAddMealTour = useCallback((nextState) => {
+    setIsAddMealTourOpen(false);
+
+    if (!nextState) return;
+    writeAddMealTourStateToStorage(nextState);
+    setHasSeenAddMealTour(true);
+  }, []);
+
+  const handleOpenAddMealTour = useCallback(() => {
+    setActiveTab("addMeal");
+    setActiveFilter("all");
+    setQuery("");
+    setIsSuggestionOpen(false);
+    setIsNutritionCollapsed(false);
+    setIsAddMealTourOpen(true);
+    setAddMealTourRestartKey((previous) => previous + 1);
+  }, []);
+
+  const handleFinishAddMealTour = useCallback(() => {
+    closeAddMealTour("completed");
+  }, [closeAddMealTour]);
+
+  const handleSkipAddMealTour = useCallback(() => {
+    closeAddMealTour("skipped");
+  }, [closeAddMealTour]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [location.pathname, location.search]);
+
+  useEffect(() => {
+    const persistedState = readAddMealTourStateFromStorage();
+    setHasSeenAddMealTour(persistedState === "completed" || persistedState === "skipped");
+    setIsAddMealTourStateReady(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isAddMealTourStateReady) return;
+    if (hasSeenAddMealTour) return;
+    if (isAddMealTourOpen) return;
+    if (activeTab !== "addMeal") return;
+
+    const timerId = window.setTimeout(() => {
+      setActiveFilter("all");
+      setQuery("");
+      setIsSuggestionOpen(false);
+      setIsNutritionCollapsed(false);
+      setIsAddMealTourOpen(true);
+      setAddMealTourRestartKey((previous) => previous + 1);
+    }, 450);
+
+    return () => window.clearTimeout(timerId);
+  }, [activeTab, hasSeenAddMealTour, isAddMealTourOpen, isAddMealTourStateReady]);
 
   useEffect(() => {
     const requestedFilter = resolveInitialMealFilter(location, preselectedMealType);
@@ -1858,25 +1990,39 @@ const Meal = () => {
           <span className="crumb-current">Add Meal</span>
         </div>
 
-        <div className="meal-tab-switcher">
+        <div className="meal-tab-header">
+          <div className="meal-tab-switcher">
+            <button
+              type="button"
+              className={`meal-tab-btn ${activeTab === "addMeal" ? "active" : ""}`}
+              onClick={() => setActiveTab("addMeal")}
+              data-tour-id="add-meal-tab-button"
+            >
+              Add Meal
+            </button>
+            <button
+              type="button"
+              className={`meal-tab-btn ${activeTab === "personalizedPlan" ? "active" : ""}`}
+              onClick={() => setActiveTab("personalizedPlan")}
+            >
+              <Sparkles size={15} />
+              AI Personalized Plan
+            </button>
+          </div>
+
           <button
             type="button"
-            className={`meal-tab-btn ${activeTab === 'addMeal' ? 'active' : ''}`}
-            onClick={() => setActiveTab('addMeal')}
+            className="add-meal-guide-btn"
+            onClick={handleOpenAddMealTour}
+            data-tour-id="add-meal-guide-button"
+            aria-label="Open Add Meal guide"
           >
-            Add Meal
-          </button>
-          <button
-            type="button"
-            className={`meal-tab-btn ${activeTab === 'personalizedPlan' ? 'active' : ''}`}
-            onClick={() => setActiveTab('personalizedPlan')}
-          >
-            <Sparkles size={15} />
-            AI Personalized Plan
+            <CircleHelp size={18} />
+            Guide
           </button>
         </div>
 
-        {activeTab === 'addMeal' && (<>
+        {activeTab === "addMeal" && (<>
         <div className="add-meal-toolbar">
           <div className="add-meal-date-row" aria-label="Plan date controls">
             <button
@@ -1894,6 +2040,7 @@ const Meal = () => {
                 className="add-meal-date-display"
                 onClick={openDatePicker}
                 aria-label="Choose planning date"
+                data-tour-id="add-meal-date-control"
               >
                 <CalendarDays size={16} className="add-meal-date-icon" />
                 <span>{dateDisplayLabel}</span>
@@ -1923,7 +2070,7 @@ const Meal = () => {
           </div>
 
           <div className="add-meal-search-wrap" ref={searchWrapRef}>
-            <label className="add-meal-search" htmlFor="add-meal-search">
+            <label className="add-meal-search" htmlFor="add-meal-search" data-tour-id="add-meal-search-control">
               <Search size={22} strokeWidth={2.2} className="search-icon" />
               <input
                 id="add-meal-search"
@@ -1998,6 +2145,7 @@ const Meal = () => {
                 aria-selected={isActive}
                 className={`filter-chip ${isActive ? "active" : ""}`}
                 onClick={() => setActiveFilter(filter.key)}
+                data-tour-id={filter.key === "breakfast" ? "add-meal-breakfast-filter" : undefined}
               >
                 {filter.label}
               </button>
@@ -2146,7 +2294,7 @@ const Meal = () => {
                     ) : (
                       <div className="recommended-row-shell">
                         <div className="recommended-row" ref={recommendedRowRef}>
-                          {filteredRecommended.map((meal) => {
+                          {filteredRecommended.map((meal, index) => {
                             const mealSlotKey = getMealSlotKey(
                               meal,
                               meal.id || meal.recipeId || meal.title,
@@ -2170,6 +2318,7 @@ const Meal = () => {
                                 key={meal.id}
                                 className={`recommend-card ${isSelected ? "selected" : ""} ${isSelectedDish ? "selected-dish" : ""}`}
                                 onClick={() => toggleMealSelection(meal)}
+                                data-tour-id={index === 0 ? "add-meal-first-recommended-card" : undefined}
                               >
                                 <div className="recommend-image-wrap">
                                   <img
@@ -2264,7 +2413,7 @@ const Meal = () => {
                   </section>
                 ) : null}
 
-                <section className="add-meal-section">
+                <section className="add-meal-section" data-tour-id="add-meal-all-section">
                   <div className="section-title-row">
                     <h2 className="section-title">
                       {isScanLogView ? "Saved Scan Meals" : "All Meals & Recipes"}
@@ -2293,7 +2442,7 @@ const Meal = () => {
                   ) : (
                     <div className="all-meals-wrap">
                       <div className="all-meals-grid">
-                        {paginatedAllMeals.map((meal) => {
+                        {paginatedAllMeals.map((meal, index) => {
                           const mealSlotKey = getMealSlotKey(
                             meal,
                             meal.id || meal.recipeId || meal.title,
@@ -2317,6 +2466,7 @@ const Meal = () => {
                               key={meal.id}
                               className={`all-meal-card ${isSelected ? "selected" : ""} ${isSelectedDish ? "selected-dish" : ""}`}
                               onClick={() => toggleMealSelection(meal)}
+                              data-tour-id={index === 0 ? "add-meal-first-all-card" : undefined}
                             >
                               <div className="all-meal-image-wrap">
                                 <img
@@ -2485,7 +2635,7 @@ const Meal = () => {
 
               <div className="nutrition-section total-nutrition-section">
                 <h4>Total Nutrition</h4>
-                <p>Total items selected: {selectedCount}</p>
+                <p data-tour-id="add-meal-selected-total">Total items selected: {selectedCount}</p>
                 <ul className="nutrition-kpi-list">
                   <li>
                     <span>Calories</span>
@@ -2521,6 +2671,7 @@ const Meal = () => {
                       },
                     })
                   }
+                  data-tour-id="add-meal-view-plan-button"
                 >
                   View Meal Plan
                 </button>
@@ -2551,6 +2702,14 @@ const Meal = () => {
           </div>
         )}
       </div>
+
+      <GuidedTour
+        open={isAddMealTourOpen}
+        steps={ADD_MEAL_TOUR_STEPS}
+        restartKey={addMealTourRestartKey}
+        onFinish={handleFinishAddMealTour}
+        onSkip={handleSkipAddMealTour}
+      />
 
       <div
         ref={widgetFabRef}

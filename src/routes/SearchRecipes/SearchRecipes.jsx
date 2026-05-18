@@ -1,12 +1,79 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { BarChart3, ChefHat, Clock3, Globe2, Search, Star, Users, Utensils } from "lucide-react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { BarChart3, ChefHat, CircleHelp, Clock3, Globe2, Search, Star, Users, Utensils } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import "./SearchRecipes.css";
 import { fetchRecipeLibraryForAddMeal } from "../../services/recipeLibraryApi";
 import recipeApi from "../../services/recepieApi";
 import { fetchRecipeReviewSummaries, getRecipeReviewKey } from "../../services/recipeReviewApi";
+import GuidedTour from "../../components/GuidedTour/GuidedTour";
+import {
+  clearCrossPageTourFlow,
+  readCrossPageTourFlow,
+  setCrossPageTourFlowStage,
+} from "../../utils/crossPageTourFlow";
 
 const FALLBACK_IMAGE = "/images/meal-mock/placeholder.svg";
+const CREATE_SEARCH_TOUR_FLOW_ID = "create-to-search-recipes";
+const SEARCH_RECIPES_TOUR_STATE_KEY = "nutrihelp_search_recipes_tour_state_v1";
+
+const SEARCH_RECIPES_TOUR_STEPS = [
+  {
+    targetId: "search-recipes-hero-section",
+    title: "Welcome to Search Recipes",
+    description: "Great. Now let's find recipes quickly.",
+    spotlightSize: 220,
+  },
+  {
+    targetId: "search-recipes-search-input",
+    title: "Search here",
+    description: "Type a recipe name, meal type, or tag.",
+    spotlightSize: 210,
+  },
+  {
+    targetId: "search-recipes-all-cuisine-button",
+    title: "Filter by cuisine",
+    description: "Use these chips to narrow results.",
+    spotlightSize: 190,
+  },
+  {
+    targetIds: ["search-recipes-first-featured-card", "search-recipes-first-all-card"],
+    title: "Choose a recipe card",
+    description: "Click a card to open full recipe details.",
+    spotlightSize: 210,
+  },
+  {
+    targetId: "search-recipes-first-view-button",
+    title: "Open from View button",
+    description: "You can also press View on any recipe card.",
+    spotlightSize: 200,
+  },
+  {
+    targetId: "search-recipes-guide-button",
+    title: "Replay guide any time",
+    description: "Need help again? Press Guide here.",
+    spotlightSize: 170,
+  },
+];
+
+function readSearchRecipesTourStateFromStorage() {
+  if (typeof window === "undefined") return "";
+
+  try {
+    return localStorage.getItem(SEARCH_RECIPES_TOUR_STATE_KEY) || "";
+  } catch {
+    return "";
+  }
+}
+
+function writeSearchRecipesTourStateToStorage(nextState) {
+  if (typeof window === "undefined") return;
+
+  try {
+    localStorage.setItem(SEARCH_RECIPES_TOUR_STATE_KEY, nextState);
+  } catch {
+    // Ignore localStorage write failures in restricted environments.
+  }
+}
 
 function normalizeText(value) {
   return String(value || "").trim().toLowerCase();
@@ -138,6 +205,95 @@ function SearchRecipes() {
   const [error, setError] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [pageJumpInput, setPageJumpInput] = useState("");
+  const [isSearchRecipesTourOpen, setIsSearchRecipesTourOpen] = useState(false);
+  const [searchRecipesTourRestartKey, setSearchRecipesTourRestartKey] = useState(0);
+  const [hasSeenSearchRecipesTour, setHasSeenSearchRecipesTour] = useState(false);
+  const [isSearchRecipesTourStateReady, setIsSearchRecipesTourStateReady] = useState(false);
+
+  const prepareSearchRecipesTourView = useCallback(() => {
+    setRecipeSource("library");
+    setSelectedCuisine("all");
+    setSearchTerm("");
+    setSelectedRecipe(null);
+    setCurrentPage(1);
+  }, []);
+
+  const closeSearchRecipesTour = useCallback((nextState, options = {}) => {
+    const { clearFlow = false } = options;
+    setIsSearchRecipesTourOpen(false);
+
+    if (nextState) {
+      writeSearchRecipesTourStateToStorage(nextState);
+      setHasSeenSearchRecipesTour(true);
+    }
+
+    if (clearFlow) {
+      clearCrossPageTourFlow();
+    }
+  }, []);
+
+  const handleOpenSearchRecipesTour = useCallback(() => {
+    prepareSearchRecipesTourView();
+    setIsSearchRecipesTourOpen(true);
+    setSearchRecipesTourRestartKey((previous) => previous + 1);
+  }, [prepareSearchRecipesTourView]);
+
+  const handleFinishSearchRecipesTour = useCallback(() => {
+    closeSearchRecipesTour("completed", { clearFlow: true });
+  }, [closeSearchRecipesTour]);
+
+  const handleSkipSearchRecipesTour = useCallback(() => {
+    closeSearchRecipesTour("skipped", { clearFlow: true });
+  }, [closeSearchRecipesTour]);
+
+  useEffect(() => {
+    const persistedState = readSearchRecipesTourStateFromStorage();
+    setHasSeenSearchRecipesTour(persistedState === "completed" || persistedState === "skipped");
+    setIsSearchRecipesTourStateReady(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isSearchRecipesTourStateReady) return;
+    if (isSearchRecipesTourOpen) return;
+
+    const flow = readCrossPageTourFlow();
+    const hasPendingCrossPageFlow =
+      flow?.flowId === CREATE_SEARCH_TOUR_FLOW_ID && flow?.stage === "search-pending";
+    if (!hasPendingCrossPageFlow) return;
+
+    const timerId = window.setTimeout(() => {
+      prepareSearchRecipesTourView();
+      setCrossPageTourFlowStage(CREATE_SEARCH_TOUR_FLOW_ID, "search-started");
+      setIsSearchRecipesTourOpen(true);
+      setSearchRecipesTourRestartKey((previous) => previous + 1);
+    }, 450);
+
+    return () => window.clearTimeout(timerId);
+  }, [isSearchRecipesTourOpen, isSearchRecipesTourStateReady, prepareSearchRecipesTourView]);
+
+  useEffect(() => {
+    if (!isSearchRecipesTourStateReady) return;
+    if (hasSeenSearchRecipesTour) return;
+    if (isSearchRecipesTourOpen) return;
+
+    const flow = readCrossPageTourFlow();
+    const hasPendingCrossPageFlow =
+      flow?.flowId === CREATE_SEARCH_TOUR_FLOW_ID && flow?.stage === "search-pending";
+    if (hasPendingCrossPageFlow) return;
+
+    const timerId = window.setTimeout(() => {
+      prepareSearchRecipesTourView();
+      setIsSearchRecipesTourOpen(true);
+      setSearchRecipesTourRestartKey((previous) => previous + 1);
+    }, 500);
+
+    return () => window.clearTimeout(timerId);
+  }, [
+    hasSeenSearchRecipesTour,
+    isSearchRecipesTourOpen,
+    isSearchRecipesTourStateReady,
+    prepareSearchRecipesTourView,
+  ]);
 
   useEffect(() => {
     let isMounted = true;
@@ -296,13 +452,25 @@ function SearchRecipes() {
   return (
     <div className="search-recipes-page">
       <div className="search-recipes-shell">
-        <div className="search-recipes-breadcrumb" aria-label="breadcrumb">
-          <span className="crumb-muted">Recipe Library</span>
-          <span className="crumb-divider">/</span>
-          <span className="crumb-current">Search Recipes</span>
+        <div className="search-recipes-topbar">
+          <div className="search-recipes-breadcrumb" aria-label="breadcrumb">
+            <span className="crumb-muted">Recipe Library</span>
+            <span className="crumb-divider">/</span>
+            <span className="crumb-current">Search Recipes</span>
+          </div>
+          <button
+            type="button"
+            className="search-recipes-guide-btn"
+            onClick={handleOpenSearchRecipesTour}
+            data-tour-id="search-recipes-guide-button"
+            aria-label="Open Search Recipes guide"
+          >
+            <CircleHelp size={18} />
+            Guide
+          </button>
         </div>
 
-        <section className="search-recipes-hero">
+        <section className="search-recipes-hero" data-tour-id="search-recipes-hero-section">
           <div>
             <span className="search-recipes-kicker">
               <ChefHat size={16} />
@@ -322,7 +490,11 @@ function SearchRecipes() {
         </section>
 
         <div className="search-recipes-toolbar">
-          <label className="search-recipes-search" htmlFor="search-recipes-input">
+          <label
+            className="search-recipes-search"
+            htmlFor="search-recipes-input"
+            data-tour-id="search-recipes-search-input"
+          >
             <Search size={22} strokeWidth={2.2} className="search-icon" />
             <input
               id="search-recipes-input"
@@ -357,6 +529,7 @@ function SearchRecipes() {
               type="button"
               className={`cuisine-chip ${selectedCuisine === "all" ? "active" : ""}`}
               onClick={() => handleCuisineClick("all")}
+              data-tour-id="search-recipes-all-cuisine-button"
             >
               <Globe2 size={15} />
               All cuisines
@@ -387,11 +560,12 @@ function SearchRecipes() {
             <section className="search-recipes-section">
               <h2 className="section-title">Featured Recipes</h2>
               <div className="search-recommended-row">
-                {featuredRecipes.map((recipe) => (
+                {featuredRecipes.map((recipe, index) => (
                   <article
                     key={`featured-${recipe.id}`}
                     className="search-recommend-card"
                     onClick={() => handleViewRecipe(recipe)}
+                    data-tour-id={index === 0 ? "search-recipes-first-featured-card" : undefined}
                   >
                     <div className="search-recommend-image">
                       <img src={recipe.image || FALLBACK_IMAGE} alt={recipe.title} loading="lazy" onError={handleImageError} />
@@ -421,7 +595,7 @@ function SearchRecipes() {
               </div>
 
               <div className="search-recipes-grid">
-                {paginatedRecipes.map((recipe) => (
+                {paginatedRecipes.map((recipe, index) => (
                   <article
                     key={recipe.id}
                     className={`search-recipe-card ${selectedRecipe?.id === recipe.id ? "selected" : ""}`}
@@ -429,6 +603,7 @@ function SearchRecipes() {
                       setSelectedRecipe(recipe);
                       handleViewRecipe(recipe);
                     }}
+                    data-tour-id={index === 0 ? "search-recipes-first-all-card" : undefined}
                   >
                     <div className="search-recipe-image">
                       <img src={recipe.image || FALLBACK_IMAGE} alt={recipe.title} loading="lazy" onError={handleImageError} />
@@ -467,6 +642,7 @@ function SearchRecipes() {
                           setSelectedRecipe(recipe);
                           handleViewRecipe(recipe);
                         }}
+                        data-tour-id={index === 0 ? "search-recipes-first-view-button" : undefined}
                       >
                         View
                       </button>
@@ -544,6 +720,14 @@ function SearchRecipes() {
           </aside>
         ) : null}
       </div>
+
+      <GuidedTour
+        open={isSearchRecipesTourOpen}
+        steps={SEARCH_RECIPES_TOUR_STEPS}
+        restartKey={searchRecipesTourRestartKey}
+        onFinish={handleFinishSearchRecipesTour}
+        onSkip={handleSkipSearchRecipesTour}
+      />
     </div>
   );
 }

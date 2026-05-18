@@ -22,13 +22,47 @@
   margin: 0 auto;
 }
 
+.search-recipes-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
 .search-recipes-breadcrumb {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 24px;
   font-size: 14px;
   color: var(--ink-soft);
+  margin: 0;
+}
+
+.search-recipes-guide-btn {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 1px solid rgba(0, 91, 187, 0.26);
+  border-radius: 999px;
+  background: #ffffff;
+  color: #0f5cc7;
+  padding: 0 16px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.16s ease, box-shadow 0.16s ease, background 0.16s ease, color 0.16s ease;
+  box-shadow: 0 8px 20px rgba(12, 99, 199, 0.12);
+}
+
+.search-recipes-guide-btn:hover {
+  transform: translateY(-1px);
+  background: #005bbb;
+  color: #ffffff;
+  box-shadow: 0 12px 26px rgba(0, 91, 187, 0.24);
 }
 
 .search-recipes-page .crumb-divider {
@@ -809,6 +843,15 @@
 @media (max-width: 720px) {
   .search-recipes-page {
     padding: 20px 14px 56px;
+  }
+
+  .search-recipes-topbar {
+    align-items: stretch;
+  }
+
+  .search-recipes-guide-btn {
+    width: 100%;
+    min-height: 48px;
   }
 
   .search-recipes-hero > div:first-child {
