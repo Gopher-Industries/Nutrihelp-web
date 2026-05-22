@@ -72,6 +72,11 @@ button {
   cursor: pointer;
 }
 
+.menu-voice-search-btn {
+  color: var(--text-inverse);
+  margin-right: 8px;
+}
+
 
 /* #menuContainer {
   display: flex;

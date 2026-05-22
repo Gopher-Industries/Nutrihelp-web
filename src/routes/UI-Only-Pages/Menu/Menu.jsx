@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './menu.css'; // Import your CSS file here
+import VoiceSearchButton from '../../../components/VoiceControl/VoiceSearchButton';
 
 const Menu = () => {
     const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -120,7 +121,18 @@ const Menu = () => {
 
             <header>
                 <h1>NutriHelp Menu</h1>
-                <input type="text" id="searchInput" placeholder="Search for food..." onChange={handleSearchChange} />
+                <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="Search for food..."
+                    value={searchTerm}
+                    onChange={handleSearchChange}
+                />
+                <VoiceSearchButton
+                    className="menu-voice-search-btn"
+                    ariaLabel="Search menu with voice"
+                    onTranscript={setSearchTerm}
+                />
                 <button onClick={toggleSearch}>Search</button>
             </header>
 
@@ -143,5 +155,4 @@ const Menu = () => {
 };
 
 export default Menu;
-
 

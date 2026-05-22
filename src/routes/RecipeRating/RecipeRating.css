@@ -162,12 +162,17 @@
 }
 
 .rating-search-box input {
-  width: 100%;
+  flex: 1;
+  min-width: 0;
   border: 0;
   outline: none;
   background: transparent;
   color: #14243d;
   font-size: 16px;
+}
+
+.rating-voice-search-btn {
+  color: #0f5cc7;
 }
 
 .rating-control-row {

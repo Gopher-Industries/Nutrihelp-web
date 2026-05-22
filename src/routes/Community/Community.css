@@ -191,6 +191,23 @@ width: 100%;
   box-sizing: border-box;
 }
 
+.community-page .search-input {
+  padding-right: 66px;
+}
+
+.community-voice-search-btn {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #64748b;
+  z-index: 2;
+}
+
+.dark-mode .community-voice-search-btn {
+  color: #a0aec0;
+}
+
 .dark-mode .search-input {
   background: #2d3748;
   border-color: #4a5568;

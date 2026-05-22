@@ -279,15 +279,22 @@
   font-weight: 600;
 }
 
+.preference-search-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
 .preference-search {
-  width: 100%;
+  flex: 1;
+  min-width: 0;
   padding: 11px 14px;
   border-radius: 14px;
   border: 1px solid rgba(105, 147, 187, 0.54);
   background: rgba(243, 250, 255, 0.88);
   color: #173b61;
   font-size: 0.95rem;
-  margin-bottom: 10px;
 }
 
 .preference-search::placeholder {
@@ -298,6 +305,10 @@
   outline: none;
   border-color: #4e95db;
   box-shadow: 0 0 0 4px rgba(78, 149, 219, 0.2);
+}
+
+.preference-voice-search-btn {
+  color: #1f5d96;
 }
 
 .preference-group-pills--scrollable {
@@ -807,6 +818,11 @@ input:focus-visible,
   background: rgba(14, 28, 47, 0.72);
   border-color: rgba(97, 136, 174, 0.58);
   color: #e6f1ff;
+}
+
+.dark-mode .preference-voice-search-btn,
+[data-theme="dark"] .preference-voice-search-btn {
+  color: #c7dcf5;
 }
 
 .dark-mode .styled-alert,

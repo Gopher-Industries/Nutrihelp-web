@@ -1,0 +1,172 @@
+.elderly-utility-hub {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 1100;
+  display: grid;
+  gap: 10px;
+}
+
+.elderly-utility-trigger {
+  min-height: 52px;
+  min-width: 148px;
+  border: 1px solid #1e3a8a;
+  border-radius: 999px;
+  padding: 8px 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  font-weight: 800;
+  color: #ffffff;
+  background: #1e3a8a;
+  cursor: pointer;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.28);
+}
+
+.elderly-utility-trigger.open {
+  background: #0f172a;
+  border-color: #0f172a;
+}
+
+.elderly-trigger-emoji {
+  font-size: 21px;
+  line-height: 1;
+}
+
+.elderly-trigger-text {
+  line-height: 1;
+}
+
+.elderly-utility-menu {
+  display: grid;
+  gap: 8px;
+}
+
+.elderly-utility-action {
+  min-height: 46px;
+  border: 1px solid rgba(15, 23, 42, 0.2);
+  border-radius: 12px;
+  padding: 8px 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #ffffff;
+  color: #0f172a;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 8px 22px rgba(15, 23, 42, 0.2);
+  text-align: left;
+}
+
+.elderly-utility-action .icon {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.elderly-utility-action.active {
+  color: #ffffff;
+  background: #1e3a8a;
+  border-color: #1e3a8a;
+}
+
+.elderly-utility-action.sos {
+  border-color: #b91c1c;
+}
+
+.elderly-utility-action.sos.ready {
+  background: #b91c1c;
+  color: #ffffff;
+}
+
+.elderly-sos-editor {
+  width: min(330px, calc(100vw - 24px));
+  border: 1px solid rgba(15, 23, 42, 0.2);
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 20px 42px rgba(15, 23, 42, 0.3);
+  padding: 14px;
+  display: grid;
+  gap: 10px;
+}
+
+.elderly-sos-editor h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #0f172a;
+}
+
+.elderly-sos-editor p {
+  margin: 0;
+  font-size: 13px;
+  color: #475569;
+}
+
+.elderly-sos-editor label {
+  display: grid;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.elderly-sos-editor input {
+  min-height: 42px;
+  border: 1px solid rgba(100, 116, 139, 0.45);
+  border-radius: 10px;
+  padding: 8px 10px;
+  font-size: 15px;
+}
+
+.elderly-sos-error {
+  color: #b91c1c;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.elderly-sos-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.elderly-sos-actions button {
+  min-height: 38px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.elderly-sos-save {
+  color: #ffffff;
+  background: #b91c1c;
+}
+
+.elderly-sos-cancel,
+.elderly-sos-profile {
+  color: #0f172a;
+  background: #ffffff;
+  border-color: rgba(100, 116, 139, 0.4);
+}
+
+@media (max-width: 768px) {
+  .elderly-utility-hub {
+    right: 12px;
+    bottom: 12px;
+  }
+
+  .elderly-utility-trigger {
+    min-height: 48px;
+    min-width: 136px;
+    font-size: 14px;
+    padding: 8px 12px;
+  }
+
+  .elderly-trigger-emoji {
+    font-size: 20px;
+  }
+}

@@ -3,6 +3,7 @@ import './HealthNews.css';
 import { FaHeart, FaRegHeart } from 'react-icons/fa';
 import { supabase } from '../../utils/supabase';
 import { useNavigate } from 'react-router-dom';
+import VoiceSearchButton from '../../components/VoiceControl/VoiceSearchButton';
 import newsBg1 from '../../images/HealthNews_background_image/news_background_image_1.png';
 import newsBg2 from '../../images/HealthNews_background_image/news_background_image_2.png';
 import newsBg3 from '../../images/HealthNews_background_image/news_background_image_3.png';
@@ -347,6 +348,14 @@ const HealthNews = () => {
             onChange={handleSearch}
             className="search-input"
           />
+          <VoiceSearchButton
+            className="health-news-voice-search-btn"
+            ariaLabel="Search news with voice"
+            onTranscript={(spokenText) => {
+              setSearchQuery(spokenText);
+              setCurrentPage(1);
+            }}
+          />
         </div>
         <div className="news-categories">
           <button 
@@ -455,6 +464,12 @@ const HealthNews = () => {
                 </div>
               )}
             </div>
+            <VoiceSearchButton
+              className="health-news-voice-search-btn"
+              ariaLabel="Search API keywords with voice"
+              onTranscript={setApiSearchQuery}
+              disabled={isSearching}
+            />
             <button 
               className="test-search-button"
               onClick={searchArticles}

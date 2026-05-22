@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { FaForward, FaPause, FaPlay, FaRedoAlt, FaVolumeUp } from "react-icons/fa";
+import { FaForward, FaPause, FaPlay, FaRedoAlt, FaTimes, FaVolumeUp } from "react-icons/fa";
 import { useLocation } from "react-router-dom";
 import {
   applyVoiceSettings,
@@ -58,7 +58,7 @@ const statusStyleMap = {
   [PLAYBACK_STATE.ERROR]: { background: "#fee2e2", color: "#991b1b" },
 };
 
-const TextToSpeechControl = () => {
+const TextToSpeechControl = ({ hideLauncher = false }) => {
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
   const [voices, setVoices] = useState([]);
@@ -385,6 +385,25 @@ const TextToSpeechControl = () => {
     startSpeech(replayText);
   };
 
+  useEffect(() => {
+    const handleOpenPanel = () => setIsOpen(true);
+    const handleTogglePanel = () => setIsOpen((prev) => !prev);
+    const handlePlayRequest = () => {
+      setIsOpen(true);
+      startSpeech();
+    };
+
+    window.addEventListener("nutrihelp:tts-open-panel", handleOpenPanel);
+    window.addEventListener("nutrihelp:tts-toggle-panel", handleTogglePanel);
+    window.addEventListener("nutrihelp:tts-play", handlePlayRequest);
+
+    return () => {
+      window.removeEventListener("nutrihelp:tts-open-panel", handleOpenPanel);
+      window.removeEventListener("nutrihelp:tts-toggle-panel", handleTogglePanel);
+      window.removeEventListener("nutrihelp:tts-play", handlePlayRequest);
+    };
+  }, [startSpeech]);
+
   const canSpeak = isSpeechSupported && voiceSettings.enabled;
   const disablePlay =
     !canSpeak ||
@@ -407,33 +426,35 @@ const TextToSpeechControl = () => {
         zIndex: 1300,
       }}
     >
-      <button
-        type="button"
-        onClick={() => setIsOpen((prev) => !prev)}
-        title="Text-to-Speech"
-        aria-label="Open Text-to-Speech controls"
-        style={{
-          width: "48px",
-          height: "48px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          lineHeight: 0,
-          borderRadius: "999px",
-          border: "none",
-          cursor: "pointer",
-          color: "#fff",
-          background: canSpeak ? "#2563eb" : "#6b7280",
-          boxShadow: "0 8px 20px rgba(0,0,0,0.2)",
-        }}
-      >
-        <FaVolumeUp size={20} />
-      </button>
+      {!hideLauncher ? (
+        <button
+          type="button"
+          onClick={() => setIsOpen((prev) => !prev)}
+          title="Text-to-Speech"
+          aria-label="Open Text-to-Speech controls"
+          style={{
+            width: "48px",
+            height: "48px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            lineHeight: 0,
+            borderRadius: "999px",
+            border: "none",
+            cursor: "pointer",
+            color: "#fff",
+            background: canSpeak ? "#2563eb" : "#6b7280",
+            boxShadow: "0 8px 20px rgba(0,0,0,0.2)",
+          }}
+        >
+          <FaVolumeUp size={20} />
+        </button>
+      ) : null}
 
       {isOpen && (
         <div
           style={{
-            marginTop: "10px",
+            marginTop: hideLauncher ? "0px" : "10px",
             width: "300px",
             background: "#f9fafb",
             border: "1px solid #d1d5db",
@@ -451,17 +472,40 @@ const TextToSpeechControl = () => {
             }}
           >
             <strong style={{ fontSize: "14px" }}>Text to Speech</strong>
-            <span
-              style={{
-                ...statusStyle,
-                fontSize: "12px",
-                borderRadius: "999px",
-                padding: "2px 8px",
-                fontWeight: 600,
-              }}
-            >
-              {statusLabelMap[playbackState]}
-            </span>
+            <div style={{ display: "inline-flex", alignItems: "center", gap: "8px" }}>
+              <span
+                style={{
+                  ...statusStyle,
+                  fontSize: "12px",
+                  borderRadius: "999px",
+                  padding: "2px 8px",
+                  fontWeight: 600,
+                }}
+              >
+                {statusLabelMap[playbackState]}
+              </span>
+              <button
+                type="button"
+                onClick={() => setIsOpen(false)}
+                aria-label="Close Text-to-Speech controls"
+                style={{
+                  width: "26px",
+                  height: "26px",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: 0,
+                  borderRadius: "8px",
+                  border: "1px solid #d1d5db",
+                  background: "#ffffff",
+                  color: "#334155",
+                  cursor: "pointer",
+                  lineHeight: 0,
+                }}
+              >
+                <FaTimes size={13} aria-hidden="true" />
+              </button>
+            </div>
           </div>
 
           {!isSpeechSupported && (

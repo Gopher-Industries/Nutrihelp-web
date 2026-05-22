@@ -212,7 +212,8 @@
 }
 
 .add-meal-search input {
-  width: 100%;
+  flex: 1;
+  min-width: 0;
   border: 0;
   outline: none;
   background: transparent;
@@ -222,6 +223,10 @@
 
 .add-meal-search input::placeholder {
   color: #7b8798;
+}
+
+.add-meal-voice-search {
+  color: #123d73;
 }
 
 .add-meal-suggestions {

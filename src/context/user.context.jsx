@@ -11,6 +11,7 @@ const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "https://localhost:84
 const DEFAULT_SESSION_TTL_MS = 180 * 60 * 1000;
 const DEFAULT_PERSIST_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 const REFRESH_BUFFER_MS = 60 * 1000;
+const AUTH_FAILURE_STATUSES = new Set([400, 401, 403]);
 
 export const UserContext = createContext({
   currentUser: null,
@@ -47,6 +48,16 @@ function toPositiveNumber(value) {
 
 function readRawUser(storage, key) {
   return safeParse(storage.getItem(key));
+}
+
+function isAuthFailureStatus(status) {
+  return AUTH_FAILURE_STATUSES.has(Number(status));
+}
+
+function isAuthFailureError(error) {
+  if (!error) return false;
+  if (error.isAuthFailure) return true;
+  return isAuthFailureStatus(error.status);
 }
 
 function readStoredUser() {
@@ -351,7 +362,12 @@ export const UserProvider = ({ children }) => {
       const session = payload?.data?.session || payload?.session || {};
 
       if (!response.ok || !session?.accessToken) {
-        throw new Error(payload?.error?.message || payload?.error || "Session refresh failed");
+        const refreshError = new Error(
+          payload?.error?.message || payload?.error || "Session refresh failed"
+        );
+        refreshError.status = response.status;
+        refreshError.isAuthFailure = isAuthFailureStatus(response.status);
+        throw refreshError;
       }
 
       const refreshedUser = buildSessionUser(
@@ -374,7 +390,14 @@ export const UserProvider = ({ children }) => {
       return refreshedUser;
     })()
       .catch((error) => {
-        applyUserState(null);
+        if (isAuthFailureError(error)) {
+          applyUserState(null);
+        } else {
+          const activeUser = currentUserRef.current || readStoredUser();
+          if (activeUser) {
+            scheduleRefresh(activeUser);
+          }
+        }
         throw error;
       })
       .finally(() => {
@@ -422,14 +445,34 @@ export const UserProvider = ({ children }) => {
     }
 
     const tryProfile = async (accessToken) => {
-      const response = await fetch(`${API_BASE_URL}/api/auth/profile`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
+      const profileEndpoints = [
+        `${API_BASE_URL}/api/auth/profile`,
+        `${API_BASE_URL}/api/profile`,
+      ];
 
-      const payload = await parseJsonSafe(response);
-      return { response, payload };
+      let lastResult = null;
+
+      for (const endpoint of profileEndpoints) {
+        const response = await fetch(endpoint, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+
+        const payload = await parseJsonSafe(response);
+        lastResult = { response, payload };
+
+        if (response.ok || response.status !== 404) {
+          return lastResult;
+        }
+      }
+
+      return (
+        lastResult || {
+          response: { ok: false, status: 404 },
+          payload: {},
+        }
+      );
     };
 
     try {
@@ -444,9 +487,14 @@ export const UserProvider = ({ children }) => {
       }
 
       if (!profileResult.response.ok) {
-        applyUserState(null);
+        if (isAuthFailureStatus(profileResult.response.status)) {
+          applyUserState(null);
+        } else {
+          applyUserState(activeUser);
+          scheduleRefresh(activeUser);
+        }
         setAuthReady(true);
-        return null;
+        return isAuthFailureStatus(profileResult.response.status) ? null : activeUser;
       }
 
       const verifiedProfile = profileResult.payload?.data?.user || activeUser;
@@ -454,10 +502,22 @@ export const UserProvider = ({ children }) => {
       applyUserState(verifiedUser);
       setAuthReady(true);
       return verifiedUser;
-    } catch (_error) {
-      applyUserState(null);
+    } catch (error) {
+      if (isAuthFailureError(error)) {
+        applyUserState(null);
+        setAuthReady(true);
+        return null;
+      }
+
+      const fallbackUser = currentUserRef.current || storedUser;
+      if (fallbackUser?.token) {
+        applyUserState(fallbackUser);
+        scheduleRefresh(fallbackUser);
+      } else {
+        applyUserState(null);
+      }
       setAuthReady(true);
-      return null;
+      return fallbackUser?.token ? fallbackUser : null;
     }
   }, [applyUserState, refreshSession, scheduleRefresh]);
 
@@ -525,7 +585,7 @@ export const UserProvider = ({ children }) => {
   }, [clearTimers, refreshSession, scheduleRefresh, verifyStoredSession]);
 
   const setCurrentUser = useCallback(
-    (userOrUpdater, options = 0) => {
+    (userOrUpdater, options = undefined) => {
       const previousUser = currentUserRef.current;
       const nextUser =
         typeof userOrUpdater === "function"

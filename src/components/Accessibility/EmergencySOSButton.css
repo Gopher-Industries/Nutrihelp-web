@@ -1,0 +1,165 @@
+.sos-floating-wrap {
+  position: fixed;
+  left: 18px;
+  bottom: 18px;
+  z-index: 1298;
+  display: grid;
+  gap: 10px;
+}
+
+.sos-floating-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sos-main-button {
+  min-height: 56px;
+  border: 1px solid transparent;
+  border-radius: 16px;
+  padding: 8px 14px;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 2px;
+  cursor: pointer;
+  box-shadow: 0 14px 32px rgba(15, 23, 42, 0.24);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.sos-main-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 18px 34px rgba(15, 23, 42, 0.28);
+}
+
+.sos-main-button.ready {
+  background: #b91c1c;
+  color: #ffffff;
+  border-color: #991b1b;
+}
+
+.sos-main-button.setup {
+  background: #ffffff;
+  color: #0f172a;
+  border-color: #b91c1c;
+}
+
+.sos-label {
+  font-size: 17px;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: 0.02em;
+}
+
+.sos-sub-label {
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  opacity: 0.95;
+}
+
+.sos-edit-button {
+  width: 44px;
+  height: 44px;
+  border: 1px solid #b91c1c;
+  border-radius: 12px;
+  background: #ffffff;
+  color: #7f1d1d;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.2);
+}
+
+.sos-editor-card {
+  width: min(330px, calc(100vw - 24px));
+  border: 1px solid rgba(15, 23, 42, 0.18);
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow: 0 20px 42px rgba(15, 23, 42, 0.3);
+  padding: 14px;
+  display: grid;
+  gap: 10px;
+}
+
+.sos-editor-card h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #0f172a;
+}
+
+.sos-editor-card p {
+  margin: 0;
+  font-size: 13px;
+  color: #475569;
+}
+
+.sos-editor-card label {
+  display: grid;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.sos-editor-card input {
+  min-height: 42px;
+  border: 1px solid rgba(100, 116, 139, 0.45);
+  border-radius: 10px;
+  padding: 8px 10px;
+  font-size: 15px;
+}
+
+.sos-editor-error {
+  color: #b91c1c;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.sos-editor-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.sos-editor-actions button {
+  min-height: 38px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.sos-editor-save {
+  background: #b91c1c;
+  color: #ffffff;
+}
+
+.sos-editor-cancel,
+.sos-editor-profile,
+.sos-editor-remove {
+  background: #ffffff;
+  color: #0f172a;
+  border-color: rgba(100, 116, 139, 0.4);
+}
+
+@media (max-width: 768px) {
+  .sos-floating-wrap {
+    left: 12px;
+    bottom: 12px;
+  }
+
+  .sos-main-button {
+    min-height: 52px;
+    padding: 8px 12px;
+  }
+
+  .sos-edit-button {
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+  }
+}
