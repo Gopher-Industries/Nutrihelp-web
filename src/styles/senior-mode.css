@@ -1,0 +1,50 @@
+:root.senior-mode {
+  --text-primary: #0b1220;
+  --text-secondary: #1f2937;
+  --background-color: #ffffff;
+  --background-secondary: #eef2ff;
+  --card-background: #ffffff;
+  --border-color: #334155;
+  --primary-color: #1d4ed8;
+}
+
+body.senior-mode {
+  background: #ffffff;
+  color: #0b1220;
+  font-size: 112%;
+  line-height: 1.65;
+  letter-spacing: 0.01em;
+}
+
+body.senior-mode button,
+body.senior-mode a,
+body.senior-mode input,
+body.senior-mode select,
+body.senior-mode textarea,
+body.senior-mode [role="button"] {
+  font-size: 1.04em;
+}
+
+body.senior-mode button,
+body.senior-mode input,
+body.senior-mode select,
+body.senior-mode textarea {
+  min-height: 48px;
+}
+
+body.senior-mode .main-header.scrolled {
+  background: rgba(255, 255, 255, 0.94);
+}
+
+body.senior-mode .main-nav {
+  border: 2px solid #0f172a;
+  background: #ffffff;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.14);
+}
+
+body.senior-mode :focus-visible {
+  outline: 4px solid #f59e0b;
+  outline-offset: 2px;
+}

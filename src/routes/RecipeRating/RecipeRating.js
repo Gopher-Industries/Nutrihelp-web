@@ -14,6 +14,7 @@ import {
   Users,
 } from "lucide-react";
 import { fetchRecipeReviewFeed } from "../../services/recipeReviewApi";
+import VoiceSearchButton from "../../components/VoiceControl/VoiceSearchButton";
 import "./RecipeRating.css";
 
 const FALLBACK_IMAGE = "/images/meal-mock/placeholder.svg";
@@ -321,6 +322,11 @@ function RecipeRating() {
             value={searchTerm}
             onChange={(event) => setSearchTerm(event.target.value)}
             placeholder="Search recipe, cuisine, reviewer, or comment"
+          />
+          <VoiceSearchButton
+            className="rating-voice-search-btn"
+            ariaLabel="Search recipe ratings with voice"
+            onTranscript={setSearchTerm}
           />
         </div>
 

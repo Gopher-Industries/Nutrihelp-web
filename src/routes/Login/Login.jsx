@@ -14,6 +14,63 @@ import { useNavigate, useLocation } from "react-router-dom"
 import { API_BASE_URL } from "../../utils/authApi"
 import { supabase } from "../../supabaseClient"
 
+const LOGIN_RATE_LIMIT_UNTIL_KEY = "nutrihelp_login_rate_limit_until_v1"
+const DEFAULT_RATE_LIMIT_MS = 60 * 1000
+
+const normalizeErrorText = (value) => String(value || "").trim().toLowerCase()
+
+const isRateLimitedMessage = (value) => {
+  const text = normalizeErrorText(value)
+  return text.includes("too many requests") || text.includes("rate limit")
+}
+
+const readLoginRateLimitUntil = () => {
+  if (typeof window === "undefined") return 0
+
+  const raw = localStorage.getItem(LOGIN_RATE_LIMIT_UNTIL_KEY)
+  const parsed = Number.parseInt(raw || "0", 10)
+  if (!Number.isFinite(parsed)) return 0
+  if (parsed > Date.now()) return parsed
+
+  localStorage.removeItem(LOGIN_RATE_LIMIT_UNTIL_KEY)
+  return 0
+}
+
+const persistLoginRateLimitUntil = (until) => {
+  if (typeof window === "undefined") return
+
+  if (!until || until <= Date.now()) {
+    localStorage.removeItem(LOGIN_RATE_LIMIT_UNTIL_KEY)
+    return
+  }
+
+  localStorage.setItem(LOGIN_RATE_LIMIT_UNTIL_KEY, String(until))
+}
+
+const parseRetryAfterMs = (retryAfterValue) => {
+  if (!retryAfterValue) return 0
+
+  const asSeconds = Number.parseInt(String(retryAfterValue), 10)
+  if (Number.isFinite(asSeconds) && asSeconds > 0) {
+    return asSeconds * 1000
+  }
+
+  const asDate = Date.parse(String(retryAfterValue))
+  if (!Number.isFinite(asDate)) return 0
+
+  return Math.max(0, asDate - Date.now())
+}
+
+const formatCooldown = (seconds) => {
+  const safeSeconds = Math.max(0, Number(seconds) || 0)
+  const minutes = Math.floor(safeSeconds / 60)
+  const remain = safeSeconds % 60
+
+  if (minutes <= 0) return `${remain}s`
+  if (remain === 0) return `${minutes}m`
+  return `${minutes}m ${remain}s`
+}
+
 export default function Login() {
   // Existing UI state (unchanged)
 
@@ -23,6 +80,8 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false)
   const [rememberMe, setRememberMe] = useState(false)
   const [errors, setErrors] = useState({ email: "", password: "" })
+  const [rateLimitUntil, setRateLimitUntil] = useState(() => readLoginRateLimitUntil())
+  const [clockNow, setClockNow] = useState(() => Date.now())
 
   // ADDED / MERGED logic state & context
   const [loading, setLoading] = useState(false)
@@ -37,9 +96,43 @@ export default function Login() {
     return emailRegex.test(email)
   }
 
+  const rateLimitSecondsLeft = Math.max(0, Math.ceil((rateLimitUntil - clockNow) / 1000))
+  const isRateLimited = rateLimitSecondsLeft > 0
+
+  const activateRateLimit = (retryAfterMs) => {
+    const windowMs = Math.max(DEFAULT_RATE_LIMIT_MS, retryAfterMs || 0)
+    const nextUntil = Date.now() + windowMs
+    setRateLimitUntil(nextUntil)
+    persistLoginRateLimitUntil(nextUntil)
+    return windowMs
+  }
+
+  useEffect(() => {
+    if (!rateLimitUntil) return
+
+    const timer = window.setInterval(() => {
+      const nextNow = Date.now()
+      setClockNow(nextNow)
+
+      if (nextNow >= rateLimitUntil) {
+        setRateLimitUntil(0)
+        persistLoginRateLimitUntil(0)
+      }
+    }, 1000)
+
+    return () => window.clearInterval(timer)
+  }, [rateLimitUntil])
+
   // validateLogin preserved but now calls handleSignIn on success (instead of alert)
   const validateLogin = async (e) => {
     e.preventDefault()
+    if (loading) return
+
+    if (isRateLimited) {
+      toast.error(`Too many attempts. Please wait ${formatCooldown(rateLimitSecondsLeft)}.`)
+      return
+    }
+
     let valid = true
     const newErrors = { email: "", password: "" }
 
@@ -65,6 +158,12 @@ export default function Login() {
   // Handles user sign-in using backend authentication API.
 
   const handleSignIn = async () => {
+    if (loading) return
+    if (isRateLimited) {
+      toast.error(`Too many attempts. Please wait ${formatCooldown(rateLimitSecondsLeft)}.`)
+      return
+    }
+
     setLoading(true)
 
     try {
@@ -91,7 +190,25 @@ export default function Login() {
         return
       }
 
+      if (res.status === 429) {
+        const retryAfterMs = parseRetryAfterMs(res.headers.get("retry-after"))
+        const lockedMs = activateRateLimit(retryAfterMs)
+        toast.error(
+          payload?.error ||
+            data?.error ||
+            `Too many requests. Please try again in ${formatCooldown(Math.ceil(lockedMs / 1000))}.`
+        )
+        return
+      }
+
       if (!res.ok) {
+        const backendMessage = payload?.error || payload?.warning || data?.error || data?.warning || ""
+        if (isRateLimitedMessage(backendMessage)) {
+          const lockedMs = activateRateLimit(0)
+          toast.error(`Too many requests. Please try again in ${formatCooldown(Math.ceil(lockedMs / 1000))}.`)
+          return
+        }
+
         toast.error(data.error || data.warning || "Invalid email or password")
         return
       }
@@ -325,6 +442,16 @@ export default function Login() {
       marginTop: "3px",
       margin: "3px 0 0 0",
     },
+    rateLimitNotice: {
+      margin: "0 0 12px 0",
+      fontSize: "13px",
+      color: "#b45309",
+      backgroundColor: "#fff7ed",
+      border: "1px solid #fed7aa",
+      borderRadius: "8px",
+      padding: "8px 10px",
+      lineHeight: 1.45,
+    },
     rememberRow: {
       display: "flex",
       justifyContent: "space-between",
@@ -536,9 +663,19 @@ export default function Login() {
               </a>
             </div>
 
-            <button type="submit" style={styles.mainBtn} disabled={loading}>
-              {loading ? "Signing in..." : "Sign In"}
+            <button type="submit" style={styles.mainBtn} disabled={loading || isRateLimited}>
+              {loading
+                ? "Signing in..."
+                : isRateLimited
+                  ? `Try again in ${formatCooldown(rateLimitSecondsLeft)}`
+                  : "Sign In"}
             </button>
+
+            {isRateLimited ? (
+              <p style={styles.rateLimitNotice}>
+                Too many login attempts. Please wait {formatCooldown(rateLimitSecondsLeft)} before trying again.
+              </p>
+            ) : null}
           </form>
 
           <p style={styles.switchText}>

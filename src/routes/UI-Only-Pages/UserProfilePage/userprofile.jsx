@@ -29,6 +29,14 @@
   import { supabase } from "../../../supabaseClient"
   import ChangePasswordModal from "./ChangePasswordModal"
   import { fetchMyNotifications, markMyNotificationsRead } from "../../../services/notificationApi"
+  import {
+    EMERGENCY_CONTACT_CHANGED_EVENT,
+    EMERGENCY_CONTACT_STORAGE_KEY,
+    isEmergencyPhoneValid,
+    normalizeEmergencyContactUserKey,
+    readEmergencyContact,
+    saveEmergencyContact,
+  } from "../../../utils/emergencyContactManager"
 
 
   /* ============ CONSTANTS ============ */
@@ -68,6 +76,8 @@
     email: "",
     phone: "",
     address: "",
+    emergencyContactName: "",
+    emergencyContactPhone: "",
     goals: [],
     avatar: null,
   }
@@ -239,6 +249,8 @@
       email,
       phone: String(profile.contactNumber || profile.contact_number || profile.phone || "").trim(),
       address: normalizeAddress(profile.address),
+      emergencyContactName: "",
+      emergencyContactPhone: "",
       goals,
       avatar: avatarUrl ? { url: withAvatarCacheBust(avatarUrl) } : null,
     }
@@ -1656,6 +1668,9 @@ const getGoalHintTextStyles = () => ({
       ""
 
     const fallbackEmail = currentUser?.email || storedSession?.email || ""
+    const emergencyContactUserKey = normalizeEmergencyContactUserKey(
+      currentUserId || fallbackEmail || "guest"
+    )
 
     useEffect(() => {
       try {
@@ -1695,22 +1710,28 @@ const getGoalHintTextStyles = () => ({
 
         const profile = await profileApi.fetchProfile(authToken)
         const mappedForm = mapProfilePayloadToForm(profile, fallbackEmail)
+        const emergencyContact = readEmergencyContact(emergencyContactUserKey)
+        const mappedFormWithEmergency = {
+          ...mappedForm,
+          emergencyContactName: emergencyContact.name || "",
+          emergencyContactPhone: emergencyContact.phone || "",
+        }
 
         if (!mounted) return
 
         setForm((prev) => {
-          const mergedGoals = (prev.goals || []).length ? prev.goals : mappedForm.goals
+          const mergedGoals = (prev.goals || []).length ? prev.goals : mappedFormWithEmergency.goals
           return {
             ...prev,
-            ...mappedForm,
+            ...mappedFormWithEmergency,
             goals: mergedGoals,
           }
         })
         setServerSnapshot((prev) => {
-          const mergedGoals = (prev.goals || []).length ? prev.goals : mappedForm.goals
+          const mergedGoals = (prev.goals || []).length ? prev.goals : mappedFormWithEmergency.goals
           return {
             ...prev,
-            ...mappedForm,
+            ...mappedFormWithEmergency,
             goals: mergedGoals,
           }
         })
@@ -1732,7 +1753,45 @@ const getGoalHintTextStyles = () => ({
     return () => {
       mounted = false
     }
-  }, [authToken, fallbackEmail, isChangePasswordOpen, profileReloadKey])
+  }, [authToken, emergencyContactUserKey, fallbackEmail, isChangePasswordOpen, profileReloadKey])
+
+  useEffect(() => {
+    const syncEmergencyContact = () => {
+      if (isEditing) return
+      const storedEmergencyContact = readEmergencyContact(emergencyContactUserKey)
+
+      setForm((prev) => ({
+        ...prev,
+        emergencyContactName: storedEmergencyContact.name || "",
+        emergencyContactPhone: storedEmergencyContact.phone || "",
+      }))
+      setServerSnapshot((prev) => ({
+        ...prev,
+        emergencyContactName: storedEmergencyContact.name || "",
+        emergencyContactPhone: storedEmergencyContact.phone || "",
+      }))
+    }
+
+    const handleEmergencyContactChanged = (event) => {
+      const changedKey = normalizeEmergencyContactUserKey(event?.detail?.userKey || "")
+      if (changedKey !== emergencyContactUserKey) return
+      syncEmergencyContact()
+    }
+
+    const handleStorageChange = (event) => {
+      if (event.key && event.key !== EMERGENCY_CONTACT_STORAGE_KEY) return
+      syncEmergencyContact()
+    }
+
+    syncEmergencyContact()
+    window.addEventListener(EMERGENCY_CONTACT_CHANGED_EVENT, handleEmergencyContactChanged)
+    window.addEventListener("storage", handleStorageChange)
+
+    return () => {
+      window.removeEventListener(EMERGENCY_CONTACT_CHANGED_EVENT, handleEmergencyContactChanged)
+      window.removeEventListener("storage", handleStorageChange)
+    }
+  }, [emergencyContactUserKey, isEditing])
 
   useEffect(() => {
     let mounted = true
@@ -1875,6 +1934,9 @@ const getGoalHintTextStyles = () => ({
       if (touched.firstName && !form.firstName?.trim()) e.firstName = "First name is required."
       if (touched.email && !emailOk(form.email)) e.email = "Please enter a valid email address."
       if (touched.phone && form.phone && !phoneOk(form.phone)) e.phone = "Phone must contain 8-15 digits."
+      if (touched.emergencyContactPhone && form.emergencyContactPhone && !isEmergencyPhoneValid(form.emergencyContactPhone)) {
+        e.emergencyContactPhone = "Emergency phone must contain 8-15 digits."
+      }
       if (touched.address && form.address?.trim().length > 255) e.address = "Address must be 255 characters or less."
       return e
     }, [form, touched])
@@ -2028,6 +2090,8 @@ const getGoalHintTextStyles = () => ({
         lastName: true,
         email: true,
         phone: true,
+        emergencyContactName: true,
+        emergencyContactPhone: true,
         address: true,
       }
       setTouched((prev) => ({ ...prev, ...nextTouched }))
@@ -2037,6 +2101,9 @@ const getGoalHintTextStyles = () => ({
       if (!form.firstName?.trim()) errors.firstName = "First name is required."
       if (!emailOk(form.email)) errors.email = "Please enter a valid email address."
       if (form.phone && !phoneOk(form.phone)) errors.phone = "Phone must contain 8-15 digits."
+      if (form.emergencyContactPhone && !isEmergencyPhoneValid(form.emergencyContactPhone)) {
+        errors.emergencyContactPhone = "Emergency phone must contain 8-15 digits."
+      }
       if (form.address?.trim().length > 255) errors.address = "Address must be 255 characters or less."
       return errors
     }
@@ -2055,6 +2122,22 @@ const getGoalHintTextStyles = () => ({
         toast.error("Please sign in again before saving your profile.")
         return
       }
+
+      const savedEmergencyContact = saveEmergencyContact(emergencyContactUserKey, {
+        name: form.emergencyContactName,
+        phone: form.emergencyContactPhone,
+      })
+
+      setForm((prev) => ({
+        ...prev,
+        emergencyContactName: savedEmergencyContact.name || "",
+        emergencyContactPhone: savedEmergencyContact.phone || "",
+      }))
+      setServerSnapshot((prev) => ({
+        ...prev,
+        emergencyContactName: savedEmergencyContact.name || "",
+        emergencyContactPhone: savedEmergencyContact.phone || "",
+      }))
 
       setIsSaving(true)
 
@@ -2556,6 +2639,29 @@ const getGoalHintTextStyles = () => ({
                   onChange={(v) => set("address", v)}
                   onBlur={() => mark("address")}
                   error={inlineErrors.address}
+                  disabled={!isEditing || isSaving || isProfileLoading}
+                  width={width}
+                />
+              </div>
+
+              <div style={getGrid2Styles(width)}>
+                <FormField
+                  label="Emergency Contact Name"
+                  value={form.emergencyContactName}
+                  onChange={(v) => set("emergencyContactName", v)}
+                  onBlur={() => mark("emergencyContactName")}
+                  placeholder="Who should we call?"
+                  error={inlineErrors.emergencyContactName}
+                  disabled={!isEditing || isSaving || isProfileLoading}
+                  width={width}
+                />
+                <FormField
+                  label="Emergency Contact Phone"
+                  value={form.emergencyContactPhone}
+                  onChange={(v) => set("emergencyContactPhone", v)}
+                  onBlur={() => mark("emergencyContactPhone")}
+                  placeholder="Enter emergency phone"
+                  error={inlineErrors.emergencyContactPhone}
                   disabled={!isEditing || isSaving || isProfileLoading}
                   width={width}
                 />

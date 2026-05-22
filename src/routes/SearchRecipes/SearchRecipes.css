@@ -188,7 +188,8 @@
 }
 
 .search-recipes-search input {
-  width: 100%;
+  flex: 1;
+  min-width: 0;
   border: 0;
   outline: none;
   background: transparent;
@@ -198,6 +199,10 @@
 
 .search-recipes-search input::placeholder {
   color: #7b8798;
+}
+
+.search-recipes-voice-search {
+  color: #123d73;
 }
 
 .community-explore-btn {

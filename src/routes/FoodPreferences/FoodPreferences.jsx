@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import "./FoodPreferences.css";
 import preferenceHeroPanel from "../../images/mealPlan/banner_image.jpg";
+import VoiceSearchButton from "../../components/VoiceControl/VoiceSearchButton";
 
 const API_BASE = process.env.REACT_APP_API_BASE_URL || "https://localhost:8443";
 
@@ -934,13 +935,20 @@ export default function FoodPreferences() {
 
             <article className="preference-group-card preference-group-card--dislike">
               <h4>Disliked Ingredients</h4>
-              <input
-                type="text"
-                className="preference-search"
-                placeholder="Search ingredient name..."
-                value={dislikeQuery}
-                onChange={(event) => setDislikeQuery(event.target.value)}
-              />
+              <div className="preference-search-wrap">
+                <input
+                  type="text"
+                  className="preference-search"
+                  placeholder="Search ingredient name..."
+                  value={dislikeQuery}
+                  onChange={(event) => setDislikeQuery(event.target.value)}
+                />
+                <VoiceSearchButton
+                  className="preference-voice-search-btn"
+                  ariaLabel="Search ingredients with voice"
+                  onTranscript={setDislikeQuery}
+                />
+              </div>
               {displayedDislikeOptions.length === 0 ? (
                 <p className="preference-group-empty">No ingredient options found.</p>
               ) : (

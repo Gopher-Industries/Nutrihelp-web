@@ -1,0 +1,33 @@
+.nh-voice-search-button {
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex: 0 0 auto;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.nh-voice-search-button:hover:not(:disabled) {
+  background: rgba(37, 99, 235, 0.1);
+}
+
+.nh-voice-search-button:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25);
+}
+
+.nh-voice-search-button.is-listening {
+  color: #dc2626;
+  background: rgba(220, 38, 38, 0.1);
+}
+
+.nh-voice-search-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}

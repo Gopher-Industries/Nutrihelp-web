@@ -6,6 +6,7 @@ import { fetchRecipeLibraryForAddMeal } from "../../services/recipeLibraryApi";
 import recipeApi from "../../services/recepieApi";
 import { fetchRecipeReviewSummaries, getRecipeReviewKey } from "../../services/recipeReviewApi";
 import GuidedTour from "../../components/GuidedTour/GuidedTour";
+import VoiceSearchButton from "../../components/VoiceControl/VoiceSearchButton";
 import {
   clearCrossPageTourFlow,
   readCrossPageTourFlow,
@@ -502,6 +503,11 @@ function SearchRecipes() {
               value={searchTerm}
               onChange={(event) => setSearchTerm(event.target.value)}
               placeholder="Search by recipe, cuisine, tag, or meal type"
+            />
+            <VoiceSearchButton
+              className="search-recipes-voice-search"
+              ariaLabel="Search recipes with voice"
+              onTranscript={setSearchTerm}
             />
           </label>
           <button

@@ -27,6 +27,7 @@ import {
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import GuidedTour from "../../components/GuidedTour/GuidedTour";
+import VoiceSearchButton from "../../components/VoiceControl/VoiceSearchButton";
 import PersonalizedPlanForm from "./PersonalizedPlanForm";
 import PersonalizedWeeklyPlan from "./PersonalizedWeeklyPlan";
 
@@ -2090,6 +2091,14 @@ const Meal = () => {
                   }
                 }}
                 placeholder="Search for foods, recipes, or meals"
+              />
+              <VoiceSearchButton
+                className="add-meal-voice-search"
+                ariaLabel="Search meals with voice"
+                onTranscript={(spokenText) => {
+                  setQuery(spokenText);
+                  setIsSuggestionOpen(true);
+                }}
               />
             </label>
 

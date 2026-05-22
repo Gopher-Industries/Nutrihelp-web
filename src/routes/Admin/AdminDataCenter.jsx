@@ -50,6 +50,7 @@ import {
   updateAdminUserRole,
 } from "../../services/adminDataApi";
 import { deleteRecipeReviewByAdmin, fetchRecipeReviewFeed } from "../../services/recipeReviewApi";
+import VoiceSearchButton from "../../components/VoiceControl/VoiceSearchButton";
 import "./AdminDataCenter.css";
 
 const TAB_CONFIG = {
@@ -2723,6 +2724,11 @@ export default function AdminDataCenter() {
               onChange={(event) => setSearchQuery(event.target.value)}
               placeholder="Search records, recipes, references..."
             />
+            <VoiceSearchButton
+              className="admin-top-search-voice-btn"
+              ariaLabel="Search admin records with voice"
+              onTranscript={setSearchQuery}
+            />
           </div>
 
           <div className="admin-topbar-actions">
@@ -4335,11 +4341,20 @@ export default function AdminDataCenter() {
                   <div className="community-feedback-controls">
                     <label>
                       Search
-                      <input
-                        value={communityReviewFilters.query}
-                        onChange={(event) => onCommunityReviewFilterChange("query", event.target.value)}
-                        placeholder="Search recipe, reviewer, or comment"
-                      />
+                      <div className="community-feedback-search-input-wrap">
+                        <input
+                          value={communityReviewFilters.query}
+                          onChange={(event) => onCommunityReviewFilterChange("query", event.target.value)}
+                          placeholder="Search recipe, reviewer, or comment"
+                        />
+                        <VoiceSearchButton
+                          className="community-feedback-voice-btn"
+                          ariaLabel="Search community feedback with voice"
+                          onTranscript={(spokenText) =>
+                            onCommunityReviewFilterChange("query", spokenText)
+                          }
+                        />
+                      </div>
                     </label>
                     <label>
                       Source

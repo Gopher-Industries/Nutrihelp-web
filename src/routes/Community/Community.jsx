@@ -18,6 +18,7 @@ import {
 import CreatePost from './components/CreatePost';
 import ImageModal from './components/ImageModal';
 import EditPost from './components/EditPost';
+import VoiceSearchButton from '../../components/VoiceControl/VoiceSearchButton';
 import './Community.css';
 
 const Community = () => {
@@ -316,6 +317,14 @@ const Community = () => {
               onFocus={() => setShowSearchSuggestions(searchQuery.length > 0)}
               onBlur={() => setTimeout(() => setShowSearchSuggestions(false), 200)}
               className="search-input"
+            />
+            <VoiceSearchButton
+              className="community-voice-search-btn"
+              ariaLabel="Search community posts with voice"
+              onTranscript={(spokenText) => {
+                setSearchQuery(spokenText);
+                setShowSearchSuggestions(spokenText.length > 0);
+              }}
             />
 
             {showSearchSuggestions && (

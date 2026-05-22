@@ -150,6 +150,14 @@
   color: var(--input-placeholder);
 }
 
+.health-news-voice-search-btn {
+  color: #005BBB;
+}
+
+.dark-mode .health-news-voice-search-btn {
+  color: var(--text-primary);
+}
+
 .search-button {
   padding: 12px 25px;
   background: var(--gradient-primary);

@@ -1,6 +1,6 @@
 // chat/ChatPage.jsx
 import React, { useEffect, useRef, useState } from "react";
-import { FaMicrophone, FaStop, FaSpinner } from "react-icons/fa";
+import { FaMicrophone, FaStop, FaSpinner, FaTimes } from "react-icons/fa";
 import BaseApi from "../../services/baseApi";
 import "./ChatPage.css";
 
@@ -406,7 +406,7 @@ export default function ChatPage({ compact = false, onClose }) {
                 aria-label="Close assistant"
                 onClick={onClose}
               >
-                ×
+                <FaTimes size={16} aria-hidden="true" />
               </button>
             ) : null}
           </div>

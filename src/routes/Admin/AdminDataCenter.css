@@ -177,12 +177,17 @@
 }
 
 .admin-search input {
-  width: 100%;
+  flex: 1;
+  min-width: 0;
   border: 0;
   outline: none;
   background: transparent;
   color: var(--admin-ink);
   font-size: 14px;
+}
+
+.admin-top-search-voice-btn {
+  color: #4b5563;
 }
 
 .admin-topbar-actions {
@@ -1340,6 +1345,17 @@
   font-weight: 900;
 }
 
+.community-feedback-search-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.community-feedback-search-input-wrap input {
+  flex: 1;
+  min-width: 0;
+}
+
 .community-feedback-controls input,
 .community-feedback-controls select {
   width: 100%;
@@ -1350,6 +1366,10 @@
   color: var(--admin-ink);
   padding: 8px 10px;
   font-size: 12px;
+}
+
+.community-feedback-voice-btn {
+  color: #475569;
 }
 
 .community-feedback-controls input:focus,

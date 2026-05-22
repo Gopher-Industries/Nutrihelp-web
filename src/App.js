@@ -2,8 +2,10 @@ import React, { useContext, useEffect, useState } from "react";
 import "semantic-ui-css/semantic.min.css";
 import "./App.css";
 import { initializeFontSize } from "./utils/fontSizeManager";
+import { initializeSeniorMode } from "./utils/seniorModeManager";
 import "./styles/global-dark-mode.css";
 import "./styles/root-style-system.css";
+import "./styles/senior-mode.css";
 
 import {
   BrowserRouter as Router,
@@ -75,6 +77,7 @@ import AdminAuditDashboard from "./routes/AdminAudit/AdminAuditDashboard";
 import AdminDataCenter from "./routes/Admin/AdminDataCenter";
 import AdminRecipeLibraryPage from "./routes/Admin/AdminRecipeLibraryPage";
 import { isAuthPath } from "./utils/ttsRouteUtils";
+import ElderlyUtilityHub from "./components/Accessibility/ElderlyUtilityHub";
 /* -------------------------------
    GLOBAL AUTHENTICATED LAYOUT
 -------------------------------- */
@@ -82,6 +85,8 @@ function GlobalAuthenticatedLayout() {
   const location = useLocation();
   const { currentUser } = useContext(UserContext);
   const [assistantOpen, setAssistantOpen] = useState(false);
+  const emergencyContactUserKey =
+    currentUser?.id || currentUser?.user_id || currentUser?.email || "";
 
   const shouldHideGlobalControls = isAuthPath(location.pathname);
 
@@ -96,7 +101,8 @@ function GlobalAuthenticatedLayout() {
   return (
     <>
       <MainNavbar />
-      {currentUser ? <TextToSpeechControl /> : null}
+      {currentUser ? <TextToSpeechControl hideLauncher /> : null}
+      {currentUser ? <ElderlyUtilityHub userKey={emergencyContactUserKey} /> : null}
       {currentUser && assistantOpen ? (
         <ChatPage compact onClose={() => setAssistantOpen(false)} />
       ) : null}
@@ -131,6 +137,7 @@ function App() {
 
   useEffect(() => {
     initializeFontSize();
+    initializeSeniorMode();
   }, []);
 
   return (
