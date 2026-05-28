@@ -6,6 +6,7 @@ import React, {
   useRef,
   useState,
 } from "react";
+import { supabase } from "../supabaseClient";
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "https://localhost:8443";
 const DEFAULT_SESSION_TTL_MS = 180 * 60 * 1000;
@@ -276,6 +277,7 @@ export const UserProvider = ({ children }) => {
   const refreshTimerRef = useRef(null);
   const refreshPromiseRef = useRef(null);
   const refreshSessionRef = useRef(async () => null);
+  const authMutationRef = useRef(0);
 
   const clearTimers = useCallback(() => {
     if (logoutTimerRef.current) {
@@ -342,6 +344,7 @@ export const UserProvider = ({ children }) => {
   );
 
   const refreshSession = useCallback(async () => {
+    const mutationAtStart = authMutationRef.current;
     const storedUser = currentUserRef.current || readStoredUser();
     if (!storedUser?.refreshToken) {
       return null;
@@ -385,6 +388,10 @@ export const UserProvider = ({ children }) => {
         storedUser
       );
 
+      if (mutationAtStart !== authMutationRef.current) {
+        return null;
+      }
+
       applyUserState(refreshedUser);
       scheduleRefresh(refreshedUser);
       return refreshedUser;
@@ -419,6 +426,15 @@ export const UserProvider = ({ children }) => {
 
   const logOut = useCallback(async () => {
     const storedUser = currentUserRef.current || readStoredUser();
+    authMutationRef.current += 1;
+    refreshPromiseRef.current = null;
+    applyUserState(null);
+
+    try {
+      await supabase.auth.signOut();
+    } catch (_error) {
+      // Best-effort provider logout only.
+    }
 
     if (storedUser?.refreshToken) {
       try {
@@ -431,8 +447,6 @@ export const UserProvider = ({ children }) => {
         // Best-effort logout only.
       }
     }
-
-    applyUserState(null);
   }, [applyUserState]);
 
   const verifyStoredSession = useCallback(async () => {
@@ -593,12 +607,14 @@ export const UserProvider = ({ children }) => {
           : userOrUpdater;
 
       if (!nextUser) {
+        authMutationRef.current += 1;
         applyUserState(null);
         setAuthReady(true);
         return;
       }
 
       const sessionUser = buildSessionUser(nextUser, options, previousUser);
+      authMutationRef.current += 1;
       applyUserState(sessionUser);
       scheduleRefresh(sessionUser);
       setAuthReady(true);

@@ -1,10 +1,11 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDarkMode } from "../routes/DarkModeToggle/DarkModeContext";
 import "../styles/mainNavbar.css";
 import UserIcon from "./user-stroke-rounded.tsx";
 import SideMenu from "./SideMenu";
 import { fetchMyNotifications } from "../services/notificationApi";
+import { UserContext } from "../context/user.context";
 
 const RobotIcon = ({ size = 20 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true">
@@ -54,6 +55,7 @@ const HamburgerIcon = ({ size = 20 }) => (
 
 const MainNavbar = () => {
   const { darkMode } = useDarkMode();
+  const { logOut } = useContext(UserContext);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -181,6 +183,15 @@ const MainNavbar = () => {
 
   const closeMobile = () => setMobileOpen(false);
 
+  const handleLogout = async () => {
+    setOpenMenu(null);
+    setMobileOpen(false);
+    if (typeof logOut === "function") {
+      await logOut();
+    }
+    navigate("/login", { replace: true });
+  };
+
   return (
     <>
       <header
@@ -305,14 +316,14 @@ const MainNavbar = () => {
                   >
                     Dietary &amp; Allergies
                   </Link>
-                  <Link
-                    className="dropdown-item"
+                  <button
+                    type="button"
+                    className="dropdown-item logout-button"
                     role="menuitem"
-                    to="/login"
-                    onClick={() => setOpenMenu(null)}
+                    onClick={handleLogout}
                   >
                     Log Out
-                  </Link>
+                  </button>
                 </div>
               )}
             </div>

@@ -43,7 +43,7 @@ const CloseIcon = ({ size = 18 }) => (
 
 const SideMenu = ({ onNavigate, mode = "desktop", onClose }) => {
   const close = () => typeof onNavigate === "function" && onNavigate();
-  const { currentUser } = useContext(UserContext);
+  const { currentUser, logOut } = useContext(UserContext);
   const isAdmin = String(currentUser?.role || "").toLowerCase() === "admin";
 
   // Desktop Mega Menu
@@ -217,7 +217,7 @@ const SideMenu = ({ onNavigate, mode = "desktop", onClose }) => {
             { type: "link", label: "Profile", to: "/userProfile" },
             { type: "link", label: "Dietary Preference", to: "/dietary-requirements" },
             { type: "link", label: "Allergies & Intolerances", to: "/preferences" },
-            { type: "link", label: "Log Out", to: "/login" },
+            { type: "action", label: "Log Out", action: "logout" },
           ],
         },
 
@@ -254,6 +254,14 @@ const SideMenu = ({ onNavigate, mode = "desktop", onClose }) => {
   const doAssistant = () => {
     close();
     navigate("/chat");
+  };
+
+  const doLogout = async () => {
+    close();
+    if (typeof logOut === "function") {
+      await logOut();
+    }
+    navigate("/login", { replace: true });
   };
 
 
@@ -302,6 +310,20 @@ const SideMenu = ({ onNavigate, mode = "desktop", onClose }) => {
                 type="button"
                 className="mobile-menu-item"
                 onClick={doContact}
+                role="menuitem"
+              >
+                <span className="mobile-item-left">{item.label}</span>
+              </button>
+            );
+          }
+
+          if (item.type === "action" && item.action === "logout") {
+            return (
+              <button
+                key={`${item.label}-${idx}`}
+                type="button"
+                className="mobile-menu-item logout-button"
+                onClick={doLogout}
                 role="menuitem"
               >
                 <span className="mobile-item-left">{item.label}</span>

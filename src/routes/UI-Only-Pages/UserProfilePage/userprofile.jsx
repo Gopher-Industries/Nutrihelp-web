@@ -26,7 +26,6 @@
   import profileLogo from "./NutriHelp-logos_black.png"
   import { UserContext } from "../../../context/user.context"
   import profileApi from "../../../services/profileApi"
-  import { supabase } from "../../../supabaseClient"
   import ChangePasswordModal from "./ChangePasswordModal"
   import { fetchMyNotifications, markMyNotificationsRead } from "../../../services/notificationApi"
   import {
@@ -2224,19 +2223,8 @@ const getGoalHintTextStyles = () => ({
     }
 
     const completeLogoutAndRedirect = async () => {
-      try {
-        await supabase.auth.signOut()
-      } catch (_error) {
-        // Ignore Supabase sign-out errors and continue local/session cleanup.
-      }
-
-      localStorage.removeItem("auth_token")
-      localStorage.removeItem("jwt_token")
-      localStorage.removeItem("sso_session")
-      localStorage.removeItem("user_session")
-
       if (typeof logOut === "function") {
-        logOut()
+        await logOut()
       } else if (typeof setCurrentUser === "function") {
         setCurrentUser(null)
       }

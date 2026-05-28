@@ -265,8 +265,11 @@
   text-decoration: none;
   color: var(--text-primary);
   font-size: 16px;
+  font-family: inherit;
   background: transparent;
   border: 1px solid transparent;
+  cursor: pointer;
+  width: 100%;
 }
 
 .dropdown-item .dropdown-notification-badge {
