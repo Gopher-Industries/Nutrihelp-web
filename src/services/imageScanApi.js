@@ -1,4 +1,5 @@
 import BaseApi from "./baseApi";
+import { AI_API_BASE_URL } from "./aiApi";
 
 function normalizeConfidence(value) {
   const parsed = Number(value);
@@ -69,8 +70,38 @@ function normalizeBackendScanResponse(responseBody) {
   };
 }
 
+async function parseJsonResponse(response) {
+  return response.json().catch(() => null);
+}
+
 class ImageScanApi extends BaseApi {
-  async scanSingleImage(file, { topk = 3 } = {}) {
+  constructor() {
+    super();
+    this.aiBaseURL = String(AI_API_BASE_URL || "").trim().replace(/\/+$/, "");
+  }
+
+  async scanWithAi(file, { topk = 3 } = {}) {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const response = await fetch(
+      `${this.aiBaseURL}/ai-model/image-analysis/image-analysis?topk=${topk}`,
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
+
+    const data = await parseJsonResponse(response);
+    if (!response.ok) {
+      const error = new Error(data?.detail || data?.error || data?.message || "Failed to scan image.");
+      error.status = response.status;
+      throw error;
+    }
+    return data;
+  }
+
+  async scanWithApiFallback(file, { topk = 3 } = {}) {
     const formData = new FormData();
     formData.append("image", file);
 
@@ -82,11 +113,23 @@ class ImageScanApi extends BaseApi {
       },
     });
 
-    const data = await response.json().catch(() => null);
+    const data = await parseJsonResponse(response);
     if (!response.ok) {
       throw new Error(data?.detail || data?.error?.message || data?.error || data?.message || "Failed to scan image.");
     }
     return normalizeBackendScanResponse(data);
+  }
+
+  async scanSingleImage(file, { topk = 3 } = {}) {
+    try {
+      return await this.scanWithAi(file, { topk });
+    } catch (error) {
+      if (![404, 500, 502, 503, 504].includes(Number(error?.status || 0))) {
+        throw error;
+      }
+    }
+
+    return this.scanWithApiFallback(file, { topk });
   }
 
   async scanMultipleImages(files, { topk = 3 } = {}) {
