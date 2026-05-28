@@ -18,6 +18,12 @@ export default function MFAform() {
   const { currentUser, setCurrentUser } = useContext(UserContext)
 
   const unwrapApiData = (payload) => (payload && typeof payload === "object" && "data" in payload ? payload.data : payload)
+  const getApiErrorMessage = (payload, fallback) => {
+    const error = payload?.error || payload?.warning || payload?.message
+    if (typeof error === "string") return error
+    if (error?.message) return error.message
+    return fallback
+  }
 
   // prefer explicit email/password passed from previous route, otherwise use user.email (if available)
   const { email: locEmail, password: locPassword, rememberMe = false } = location.state || {}
@@ -143,7 +149,7 @@ export default function MFAform() {
         alert("MFA verification successful!")
       } else {
         // show error from server or generic message
-        const errMsg = data.error || data.message || "Failed to verify MFA token"
+        const errMsg = getApiErrorMessage(data, "Failed to verify MFA token")
         setError(errMsg)
         // optionally clear inputs on failure
         setCodes(["", "", "", "", "", ""])
@@ -183,7 +189,7 @@ export default function MFAform() {
         alert(payload?.message || data.message || "Code resent to your email.")
       } else {
         const data = await parseJsonSafe(resp)
-        const errMsg = data.error || "Failed to resend code"
+        const errMsg = getApiErrorMessage(data, "Failed to resend code")
         setError(errMsg)
       }
     } catch (err) {

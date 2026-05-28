@@ -61,6 +61,13 @@ const parseRetryAfterMs = (retryAfterValue) => {
   return Math.max(0, asDate - Date.now())
 }
 
+const getApiErrorMessage = (payload, fallback) => {
+  const error = payload?.error || payload?.warning || payload?.message
+  if (typeof error === "string") return error
+  if (error?.message) return error.message
+  return fallback
+}
+
 const formatCooldown = (seconds) => {
   const safeSeconds = Math.max(0, Number(seconds) || 0)
   const minutes = Math.floor(safeSeconds / 60)
@@ -194,22 +201,24 @@ export default function Login() {
         const retryAfterMs = parseRetryAfterMs(res.headers.get("retry-after"))
         const lockedMs = activateRateLimit(retryAfterMs)
         toast.error(
-          payload?.error ||
-            data?.error ||
+          getApiErrorMessage(payload, "") ||
+            getApiErrorMessage(data, "") ||
             `Too many requests. Please try again in ${formatCooldown(Math.ceil(lockedMs / 1000))}.`
         )
         return
       }
 
       if (!res.ok) {
-        const backendMessage = payload?.error || payload?.warning || data?.error || data?.warning || ""
+        const backendMessage =
+          getApiErrorMessage(payload, "") ||
+          getApiErrorMessage(data, "")
         if (isRateLimitedMessage(backendMessage)) {
           const lockedMs = activateRateLimit(0)
           toast.error(`Too many requests. Please try again in ${formatCooldown(Math.ceil(lockedMs / 1000))}.`)
           return
         }
 
-        toast.error(data.error || data.warning || "Invalid email or password")
+        toast.error(backendMessage || "Invalid email or password")
         return
       }
 
