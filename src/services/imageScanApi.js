@@ -1,24 +1,92 @@
-import AIBaseApi from "./aiApi";
 import BaseApi from "./baseApi";
 
-class ImageScanApi extends AIBaseApi {
+function normalizeConfidence(value) {
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed)) return 0;
+  return Math.max(0, Math.min(1, parsed > 1 ? parsed / 100 : parsed));
+}
+
+function parseRawFoodLabel(rawLabel) {
+  const label = String(rawLabel || "").trim();
+  if (!label) return "";
+  return label.replace(/:\s*~?\s*\d+(?:\.\d+)?\s*calories\s*per\s*100\s*grams$/i, "").trim();
+}
+
+function normalizeBackendScanResponse(responseBody) {
+  const payload = responseBody?.data?.scan || responseBody?.data || responseBody || {};
+  const classification =
+    payload.classification ||
+    responseBody?.data?.classification ||
+    responseBody?.classification ||
+    {};
+  const confidence = normalizeConfidence(classification.confidence);
+  const label =
+    classification.label ||
+    parseRawFoodLabel(classification.rawLabel) ||
+    parseRawFoodLabel(classification.raw_label);
+
+  const alternatives = Array.isArray(classification.alternatives)
+    ? classification.alternatives
+    : [];
+  const topk = alternatives
+    .map((item) => ({
+      label: item.label || parseRawFoodLabel(item.rawLabel),
+      score: normalizeConfidence(item.confidence ?? item.score),
+    }))
+    .filter((item) => item.label);
+
+  if (label && !topk.some((item) => item.label === label)) {
+    topk.unshift({ label, score: confidence });
+  }
+
+  const calories = classification.calories || payload.nutrition || null;
+  const calorieValue =
+    calories && typeof calories === "object"
+      ? calories.value ?? calories.estimated_calories
+      : null;
+
+  return {
+    label,
+    raw_label: classification.rawLabel || classification.raw_label || label,
+    confidence,
+    is_unclear: Boolean(classification.uncertain || payload.status === "uncertain"),
+    unclear_reason: classification.uncertain ? "Low confidence image classification." : "",
+    retake_needed: false,
+    topk,
+    matches: topk,
+    nutrition:
+      calorieValue != null
+        ? {
+            available: true,
+            display_name: label,
+            estimated_calories: calorieValue,
+            serving_description: calories.unit || "per 100g",
+            source: "image_classification",
+          }
+        : null,
+    explainability: payload.explainability || responseBody?.data?.explainability || null,
+    scan: payload,
+  };
+}
+
+class ImageScanApi extends BaseApi {
   async scanSingleImage(file, { topk = 3 } = {}) {
     const formData = new FormData();
-    formData.append("file", file);
+    formData.append("image", file);
 
-    const response = await fetch(
-      `${this.baseURL}/ai-model/image-analysis/image-analysis?topk=${topk}`,
-      {
-        method: "POST",
-        body: formData,
-      }
-    );
+    const response = await fetch(`${this.baseURL}/imageClassification?topk=${topk}`, {
+      method: "POST",
+      body: formData,
+      headers: {
+        ...(this.getAuthToken() && { Authorization: `Bearer ${this.getAuthToken()}` }),
+      },
+    });
 
     const data = await response.json().catch(() => null);
     if (!response.ok) {
-      throw new Error(data?.detail || data?.error || "Failed to scan image.");
+      throw new Error(data?.detail || data?.error?.message || data?.error || data?.message || "Failed to scan image.");
     }
-    return data;
+    return normalizeBackendScanResponse(data);
   }
 
   async scanMultipleImages(files, { topk = 3 } = {}) {
