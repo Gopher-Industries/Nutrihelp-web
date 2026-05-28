@@ -15,3 +15,8 @@ Videos/
 
 # 忽略 Node.js 相关的本地依赖
 node_modules/
+
+# Local environment files
+.env
+.env.*
+!.env.example
