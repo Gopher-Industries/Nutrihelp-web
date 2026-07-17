@@ -198,7 +198,7 @@ const MainNavbar = () => {
           {/* Left */}
           <div className="nav-left">
             <Link to="/home" className="nav-link">
-              Home TEST
+              Home
             </Link>
 
             <Link to="/scan" className="nav-link nav-link-icon">
