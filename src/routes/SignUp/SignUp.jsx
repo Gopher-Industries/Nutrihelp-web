@@ -93,13 +93,16 @@ export default function SignUp() {
       try {
         const payload = {
           name: `${values.firstName} ${values.lastName}`.trim(),
+          first_name: values.firstName.trim(),
+          last_name: values.lastName.trim(),
           email: values.email.trim().toLowerCase(),
           password: values.password,
           contact_number: values.phone || "0412345678",
           address: "Placeholder address 123",
+          privacy_consent: values.privacyConsent,
         };
 
-        const res = await fetch(`${API_BASE_URL}/api/signup`, {
+        const res = await fetch(`${API_BASE_URL}/api/auth/register`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
