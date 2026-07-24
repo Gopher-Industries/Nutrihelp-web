@@ -169,7 +169,12 @@ export default function SignUp() {
               }
             }
 
-            msg = data.error || data.message || msg;
+            msg =
+              (typeof data.error === "string"
+                ? data.error
+                : data.error?.message) ||
+              data.message ||
+              msg;
           } catch {
             if (text) msg = text;
           }
@@ -187,7 +192,13 @@ export default function SignUp() {
         }
 
         const data = await parseJsonSafe(res);
-        setServerError(data.error || `Sign up failed (HTTP ${res.status})`);
+        setServerError(
+          (typeof data.error === "string"
+            ? data.error
+            : data.error?.message) ||
+          data.message ||
+          `Sign up failed (HTTP ${res.status})`,
+        );
       } catch (error) {
         console.error("Sign up request failed:", error);
         setServerError(
