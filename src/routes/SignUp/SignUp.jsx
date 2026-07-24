@@ -23,6 +23,14 @@ export default function SignUp() {
   const [serverError, setServerError] = useState("");
 
   const handleGoogleSignup = async () => {
+    if (!form.privacyConsent) {
+      setErrors({
+        privacyConsent:
+          "You must agree to the Privacy Policy before creating an account.",
+      });
+      return;
+    }
+
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
@@ -34,7 +42,7 @@ export default function SignUp() {
       setServerError(error.message);
     }
   };
-
+  
   const handleAppleSignup = async () => {
     const message = "Apple sign-in is not configured in this sprint build yet.";
     setServerError(message);
