@@ -578,7 +578,14 @@ export default function SignUp() {
               />
 
               <label htmlFor="privacyConsent" style={{ fontSize: "14px" }}>
-                I agree to the Privacy Policy
+                I have read and agree to the{" "}
+                <a
+                  href="/privacy-policy"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Privacy Policy
+                </a>
               </label>
             </div>
 
