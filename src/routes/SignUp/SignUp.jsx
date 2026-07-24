@@ -60,6 +60,11 @@ export default function SignUp() {
     const phoneErr = validatePhone(values.phone);
     if (phoneErr) err.phone = phoneErr;
 
+    if (!values.privacyConsent) {
+      err.privacyConsent =
+        "You must agree to the Privacy Policy before creating an account.";
+    }
+
     return err;
   };
 
@@ -80,6 +85,7 @@ export default function SignUp() {
       phone: "",
       password: "",
       confirmPassword: "",
+      privacyConsent: false,
     },
     validate,
     async (values) => {
@@ -549,6 +555,34 @@ export default function SignUp() {
                 />
               </div>
             </div>
+
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+                marginTop: "6px",
+                marginBottom: "10px",
+              }}
+            >
+              <input
+                type="checkbox"
+                id="privacyConsent"
+                name="privacyConsent"
+                checked={form.privacyConsent}
+                onChange={handleChange}
+                onBlur={handleBlur}
+              />
+
+              <label htmlFor="privacyConsent" style={{ fontSize: "14px" }}>
+                I agree to the Privacy Policy
+              </label>
+            </div>
+
+            <FieldError
+              error={errors.privacyConsent}
+              touched={touched.privacyConsent}
+            />
 
             {serverError && (
               <p style={{ ...styles.error, marginTop: 8 }}>{serverError}</p>
