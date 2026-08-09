@@ -7,6 +7,8 @@ import { CircleHelp } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import FramerClient from "../../components/framer-client.jsx";
 import GuidedTour from "../../components/GuidedTour/GuidedTour";
+import ExternalRecipeSearch from "../../components/ExternalRecipeSearch";
+import buildCreateRecipePrefill from "../../components/ExternalRecipeSearch/buildCreateRecipePrefill";
 import {
   cuisineListDB,
   getCuisineList,
@@ -128,6 +130,41 @@ function CreateRecipe() {
   const [ingredients, setIngredients] = useState([]);
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
+
+  // Fields the external source could not supply — flagged for manual completion.
+  const [prefillHighlights, setPrefillHighlights] = useState([]);
+  const [prefillNotice, setPrefillNotice] = useState("");
+
+  /**
+   * Applies a mapped external recipe to the form. Every setter the prefill
+   * touches lives here so the wiring stays in one place.
+   */
+  const applyExternalPrefill = (mapResult) => {
+    const { formPatch, ingredientRows, instructions, imagePreviewUrl: sourceImage, highlightFields } =
+      buildCreateRecipePrefill(mapResult.draft, mapResult.unmapped_fields || []);
+
+    setFormData((prev) => ({ ...prev, ...formPatch }));
+    setIngredients(ingredientRows);
+    setRecipeTable(ingredientRows);
+    setInstruction(instructions);
+    if (sourceImage) setImagePreviewUrl(sourceImage);
+
+    setPrefillHighlights(highlightFields);
+    setErrors({});
+    setTouched({});
+
+    const attribution = mapResult.source_meta?.attribution || "the source";
+    setPrefillNotice(
+      highlightFields.length
+        ? `Prefilled from ${attribution}. ${highlightFields.length} field(s) weren't available from the source — please complete them.`
+        : `Prefilled from ${attribution}. Review before saving.`
+    );
+  };
+
+  const clearExternalPrefill = () => {
+    setPrefillHighlights([]);
+    setPrefillNotice("");
+  };
 
   //==================== Handle changes to the fields ====================
 
@@ -592,6 +629,20 @@ function CreateRecipe() {
                   </button>
                 </div>
               </div>
+              <ExternalRecipeSearch
+                onPrefill={applyExternalPrefill}
+                onError={(message) => setPrefillNotice(message)}
+              />
+
+              {prefillNotice && (
+                <div className="create-recipe-prefill-notice" role="status">
+                  <span>{prefillNotice}</span>
+                  <button type="button" onClick={clearExternalPrefill}>
+                    Clear prefill
+                  </button>
+                </div>
+              )}
+
               {/* Recipe Description Section */}
               <div
                 id="no-bg"
