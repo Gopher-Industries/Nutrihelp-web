@@ -38,6 +38,7 @@ export default function ExternalRecipeSearch({ onPrefill, onError }) {
 
   const handleSelect = useCallback(
     async (row) => {
+      const previousResults = results;
       setMappingTitle(row.title);
       setResults([]);
       try {
@@ -45,11 +46,15 @@ export default function ExternalRecipeSearch({ onPrefill, onError }) {
         onPrefill?.(mapped);
       } catch (error) {
         onError?.(error.message || "Couldn't map this recipe — try another or fill it in manually.");
+        // Restore the prior results so a failed map doesn't fall through to the
+        // misleading "No recipes found" empty-state — the matches still exist,
+        // only the mapping attempt failed.
+        setResults(previousResults);
       } finally {
         setMappingTitle("");
       }
     },
-    [onPrefill, onError]
+    [onPrefill, onError, results]
   );
 
   return (
