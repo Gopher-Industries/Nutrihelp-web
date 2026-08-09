@@ -17,6 +17,7 @@ const FIELD_MAP = {
 };
 
 function toFormValue(value) {
+  // Preserve 0 as a valid number, convert null/undefined to empty string
   if (value === null || value === undefined) return "";
   return value;
 }
@@ -34,8 +35,8 @@ export default function buildCreateRecipePrefill(draft = {}, unmappedFields = []
     ingredientCategory: "",
     ingredient: toFormValue(item?.name),
     ingredientQuantity: toFormValue(item?.quantity),
-    // The source carries no cost data. Zero keeps the table's totals valid;
-    // the field is flagged for the user to complete.
+    // The source carries no cost data. Zero keeps the table's totals valid.
+    // Cost and category are flagged in highlightFields to signal the user to complete them.
     ingredientCost: 0,
   }));
 
@@ -43,9 +44,15 @@ export default function buildCreateRecipePrefill(draft = {}, unmappedFields = []
     .map((step) => String(step || "").trim())
     .filter(Boolean);
 
-  const highlightFields = unmappedFields
+  let highlightFields = unmappedFields
     .map((field) => FIELD_MAP[field])
     .filter(Boolean);
+
+  // External sources never supply cost or category data. Flag them whenever
+  // we have prefilled ingredients so users know to complete these fields.
+  if (ingredientRows.length > 0) {
+    highlightFields = [...highlightFields, "ingredientCost", "ingredientCategory"];
+  }
 
   return {
     formPatch,

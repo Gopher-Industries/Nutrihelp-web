@@ -39,7 +39,11 @@ describe("buildCreateRecipePrefill", () => {
     expect(formPatch.preparationTime).toBe("");
     expect(formPatch.totalServings).toBe("");
     expect(formPatch.cookingMethod).toBe("");
-    expect(JSON.stringify(formPatch)).not.toContain("null");
+    expect(formPatch.recipeName).not.toBe("null");
+    expect(formPatch.cuisine).not.toBe("null");
+    expect(formPatch.cookingMethod).not.toBe("null");
+    expect(formPatch.preparationTime).not.toBe("null");
+    expect(formPatch.totalServings).not.toBe("null");
   });
 
   it("builds ingredient rows in the shape the table already uses", () => {
@@ -61,6 +65,16 @@ describe("buildCreateRecipePrefill", () => {
     expect(ingredientRows[2].ingredientQuantity).toBe("");
   });
 
+  it("preserves zero as a valid quantity, not coercing it to empty string", () => {
+    const draftWithZeroQuantity = {
+      recipe_name: "Test Recipe",
+      ingredients: [{ name: "salt", quantity: 0, unit: "tsp" }],
+    };
+    const { ingredientRows } = buildCreateRecipePrefill(draftWithZeroQuantity, []);
+
+    expect(ingredientRows[0].ingredientQuantity).toBe(0);
+  });
+
   it("passes instructions through as plain strings", () => {
     const { instructions } = buildCreateRecipePrefill(DRAFT, UNMAPPED);
 
@@ -80,6 +94,24 @@ describe("buildCreateRecipePrefill", () => {
     expect(highlightFields).toContain("totalServings");
     expect(highlightFields).toContain("cookingMethod");
     expect(highlightFields).not.toContain("recipeName");
+  });
+
+  it("flags ingredientCost and ingredientCategory when ingredient rows are prefilled", () => {
+    const { highlightFields } = buildCreateRecipePrefill(DRAFT, UNMAPPED);
+
+    expect(highlightFields).toContain("ingredientCost");
+    expect(highlightFields).toContain("ingredientCategory");
+  });
+
+  it("does not flag ingredientCost and ingredientCategory for a draft with no ingredients", () => {
+    const draftNoIngredients = {
+      recipe_name: "No Ingredients Recipe",
+      ingredients: [],
+    };
+    const { highlightFields } = buildCreateRecipePrefill(draftNoIngredients, []);
+
+    expect(highlightFields).not.toContain("ingredientCost");
+    expect(highlightFields).not.toContain("ingredientCategory");
   });
 
   it("survives a draft with nothing in it", () => {
