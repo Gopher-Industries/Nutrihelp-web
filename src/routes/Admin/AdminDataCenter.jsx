@@ -51,6 +51,7 @@ import {
 } from "../../services/adminDataApi";
 import { deleteRecipeReviewByAdmin, fetchRecipeReviewFeed } from "../../services/recipeReviewApi";
 import VoiceSearchButton from "../../components/VoiceControl/VoiceSearchButton";
+import ExternalRecipeSearch from "../../components/ExternalRecipeSearch";
 import "./AdminDataCenter.css";
 
 const TAB_CONFIG = {
@@ -740,6 +741,22 @@ export default function AdminDataCenter() {
 
   const onImportFormChange = (key, value) => {
     setImportForm((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const applyExternalPrefillToImportForm = (mapResult) => {
+    const draft = mapResult.draft || {};
+    setImportForm((prev) => ({
+      ...prev,
+      names: draft.recipe_name || prev.names,
+      recipe_name: draft.recipe_name || "",
+      cuisine_hint: draft.cuisine_name || "",
+      cooking_method_hint: draft.cooking_method_name || "",
+      description: draft.description || "",
+      servings: draft.servings ?? "",
+      ingredients: JSON.stringify(draft.ingredients || [], null, 1),
+      instructions: JSON.stringify(draft.instructions || [], null, 1),
+      // calories deliberately untouched — the source has no nutrition data.
+    }));
   };
 
   const onUserRecipeFilterChange = (key, value) => {
@@ -3431,6 +3448,7 @@ export default function AdminDataCenter() {
               <div className="admin-module-panel">
 
                 <form className="admin-form" onSubmit={handleImportDishNames}>
+                  <ExternalRecipeSearch onPrefill={applyExternalPrefillToImportForm} />
                   <label className="span-2">
                     Dish Names (one per line)
                     <textarea
