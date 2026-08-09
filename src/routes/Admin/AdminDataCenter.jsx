@@ -748,11 +748,11 @@ export default function AdminDataCenter() {
     setImportForm((prev) => ({
       ...prev,
       names: draft.recipe_name || prev.names,
-      recipe_name: draft.recipe_name || "",
-      cuisine_hint: draft.cuisine_name || "",
-      cooking_method_hint: draft.cooking_method_name || "",
-      description: draft.description || "",
-      servings: draft.servings ?? "",
+      recipe_name: draft.recipe_name || prev.recipe_name,
+      cuisine_hint: draft.cuisine_name || prev.cuisine_hint,
+      cooking_method_hint: draft.cooking_method_name || prev.cooking_method_hint,
+      description: draft.description || prev.description,
+      servings: draft.servings ?? prev.servings,
       ingredients: JSON.stringify(draft.ingredients || [], null, 1),
       instructions: JSON.stringify(draft.instructions || [], null, 1),
       // calories deliberately untouched — the source has no nutrition data.
@@ -3448,7 +3448,7 @@ export default function AdminDataCenter() {
               <div className="admin-module-panel">
 
                 <form className="admin-form" onSubmit={handleImportDishNames}>
-                  <ExternalRecipeSearch onPrefill={applyExternalPrefillToImportForm} />
+                  <ExternalRecipeSearch onPrefill={applyExternalPrefillToImportForm} onError={setError} />
                   <label className="span-2">
                     Dish Names (one per line)
                     <textarea
