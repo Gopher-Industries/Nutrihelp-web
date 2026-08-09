@@ -134,6 +134,17 @@ function CreateRecipe() {
   // Fields the external source could not supply — flagged for manual completion.
   const [prefillHighlights, setPrefillHighlights] = useState([]);
   const [prefillNotice, setPrefillNotice] = useState("");
+  const highlightClass = (field) =>
+    prefillHighlights.includes(field) ? " create-recipe-field--unmapped" : "";
+  const PREFILL_FIELD_LABELS = {
+    recipeName: "Recipe Name",
+    cuisine: "Cuisine",
+    preparationTime: "Prep Time",
+    totalServings: "Servings",
+    cookingMethod: "Cooking Method",
+    ingredientCost: "Ingredient Cost",
+    ingredientCategory: "Ingredient Category",
+  };
 
   /**
    * Applies a mapped external recipe to the form. Every setter the prefill
@@ -154,9 +165,10 @@ function CreateRecipe() {
     setTouched({});
 
     const attribution = mapResult.source_meta?.attribution || "the source";
+    const labels = highlightFields.map((field) => PREFILL_FIELD_LABELS[field] || field);
     setPrefillNotice(
-      highlightFields.length
-        ? `Prefilled from ${attribution}. ${highlightFields.length} field(s) weren't available from the source — please complete them.`
+      labels.length
+        ? `Prefilled from ${attribution}. These weren't available from the source — please complete them: ${labels.join(", ")}.`
         : `Prefilled from ${attribution}. Review before saving.`
     );
   };
@@ -664,7 +676,7 @@ function CreateRecipe() {
                   >
                     <div
                       id="no-bg"
-                      className="flex flex-col w-full gap-2"
+                      className={`flex flex-col w-full gap-2${highlightClass("recipeName")}`}
                     >
                       <label
                         id="no-bg"
@@ -687,7 +699,7 @@ function CreateRecipe() {
 
                     <div
                       id="no-bg"
-                      className="flex flex-col w-full gap-2"
+                      className={`flex flex-col w-full gap-2${highlightClass("cuisine")}`}
                     >
                       <label
                         id="no-bg"
@@ -777,7 +789,7 @@ function CreateRecipe() {
                 >
                   <div
                     id="no-bg"
-                    className="flex flex-col w-full gap-2"
+                    className={`flex flex-col w-full gap-2${highlightClass("preparationTime")}`}
                   >
                     <label
                       id="no-bg"
@@ -803,7 +815,7 @@ function CreateRecipe() {
 
                   <div
                     id="no-bg"
-                    className="flex flex-col w-full gap-2"
+                    className={`flex flex-col w-full gap-2${highlightClass("totalServings")}`}
                   >
                     <label
                       id="no-bg"
@@ -829,7 +841,7 @@ function CreateRecipe() {
 
                   <div
                     id="no-bg"
-                    className="flex flex-col w-full gap-2"
+                    className={`flex flex-col w-full gap-2${highlightClass("cookingMethod")}`}
                   >
                     <label
                       id="no-bg"
