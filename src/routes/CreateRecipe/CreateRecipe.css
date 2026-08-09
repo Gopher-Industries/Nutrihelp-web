@@ -374,3 +374,8 @@
 .create-recipe-field--unmapped select {
   border-color: #f59e0b !important; background: #fffbeb;
 }
+.create-recipe-source-image-notice {
+  margin: 0.4rem 0 0; padding: 0.5rem 0.75rem;
+  background: #fffbeb; border: 1px solid #f59e0b; border-radius: 0.4rem;
+  font-size: 0.85rem; color: #92400e;
+}

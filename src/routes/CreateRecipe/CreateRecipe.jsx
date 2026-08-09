@@ -94,6 +94,17 @@ function writeCreateRecipeTourStateToStorage(nextState) {
   }
 }
 
+// Backend-supplied field name -> human-readable label for the prefill notice.
+const PREFILL_FIELD_LABELS = {
+  recipeName: "Recipe Name",
+  cuisine: "Cuisine",
+  preparationTime: "Prep Time",
+  totalServings: "Servings",
+  cookingMethod: "Cooking Method",
+  ingredientCost: "Ingredient Cost",
+  ingredientCategory: "Ingredient Category",
+};
+
 // Create Recipe page
 function CreateRecipe() {
   const navigate = useNavigate();
@@ -134,17 +145,10 @@ function CreateRecipe() {
   // Fields the external source could not supply — flagged for manual completion.
   const [prefillHighlights, setPrefillHighlights] = useState([]);
   const [prefillNotice, setPrefillNotice] = useState("");
+  // True only while the shown image preview came from an external source, not an upload.
+  const [isSourceImagePreview, setIsSourceImagePreview] = useState(false);
   const highlightClass = (field) =>
     prefillHighlights.includes(field) ? " create-recipe-field--unmapped" : "";
-  const PREFILL_FIELD_LABELS = {
-    recipeName: "Recipe Name",
-    cuisine: "Cuisine",
-    preparationTime: "Prep Time",
-    totalServings: "Servings",
-    cookingMethod: "Cooking Method",
-    ingredientCost: "Ingredient Cost",
-    ingredientCategory: "Ingredient Category",
-  };
 
   /**
    * Applies a mapped external recipe to the form. Every setter the prefill
@@ -158,7 +162,10 @@ function CreateRecipe() {
     setIngredients(ingredientRows);
     setRecipeTable(ingredientRows);
     setInstruction(instructions);
-    if (sourceImage) setImagePreviewUrl(sourceImage);
+    if (sourceImage) {
+      setImagePreviewUrl(sourceImage);
+      setIsSourceImagePreview(true);
+    }
 
     setPrefillHighlights(highlightFields);
     setErrors({});
@@ -176,6 +183,7 @@ function CreateRecipe() {
   const clearExternalPrefill = () => {
     setPrefillHighlights([]);
     setPrefillNotice("");
+    setIsSourceImagePreview(false);
   };
 
   //==================== Handle changes to the fields ====================
@@ -190,6 +198,7 @@ function CreateRecipe() {
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: undefined }));
     }
+    setPrefillHighlights((prev) => prev.filter((f) => f !== field));
   };
 
   // Replace the previous top-level fetch calls with local state + effect
@@ -344,6 +353,7 @@ function CreateRecipe() {
   };
 
   const handleImageFileChange = (event) => {
+    setIsSourceImagePreview(false);
     const file = event.target.files?.[0];
     if (!file) {
       setSelectedImageName("");
@@ -769,6 +779,11 @@ function CreateRecipe() {
                       <div className="create-recipe-image-preview">
                         <img src={imagePreviewUrl} alt="Selected recipe preview" />
                       </div>
+                    ) : null}
+                    {isSourceImagePreview && imagePreviewUrl ? (
+                      <p className="create-recipe-source-image-notice">
+                        This is a preview from TheMealDB and will not be saved with the recipe — upload your own image to include one.
+                      </p>
                     ) : null}
                   </div>
                 </div>
