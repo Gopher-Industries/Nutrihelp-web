@@ -78,6 +78,7 @@ import AdminDataCenter from "./routes/Admin/AdminDataCenter";
 import AdminRecipeLibraryPage from "./routes/Admin/AdminRecipeLibraryPage";
 import { isAuthPath } from "./utils/ttsRouteUtils";
 import ElderlyUtilityHub from "./components/Accessibility/ElderlyUtilityHub";
+import ScrollToTop from "./components/ScrollToTop/ScrollToTop";
 /* -------------------------------
    GLOBAL AUTHENTICATED LAYOUT
 -------------------------------- */
@@ -143,6 +144,8 @@ function App() {
   return (
     <Router>
       <RouteScrollToTop />
+      <ScrollToTop />
+
       {/* Show navbar only on allowed pages */}
       <GlobalAuthenticatedLayout />
 
@@ -460,7 +463,7 @@ function App() {
             </AuthenticateRoute>
           }
         />
-        
+
 
         <Route path="/auth/callback" element={<AuthCallback />} />
 
