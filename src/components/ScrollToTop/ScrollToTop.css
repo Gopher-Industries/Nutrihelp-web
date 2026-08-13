@@ -1,0 +1,57 @@
+.scroll-to-top {
+  position: fixed;
+  right: 24px;
+  bottom: 90px;
+  width: 48px;
+  height: 48px;
+  border: none;
+  border-radius: 50%;
+  background: #1E5A9A;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 9999;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.scroll-to-top:hover {
+  transform: translateY(-3px);
+  background: #174A80;
+}
+
+.scroll-to-top:focus-visible {
+  outline: 3px solid rgba(30, 90, 154, 0.35);
+  outline-offset: 3px;
+}
+
+/* Home page - KEEPING YOUR EXISTING POSITION */
+.scroll-to-top-home {
+  bottom: 165px;
+}
+
+/* Meal page - ONLY MEAL PAGE */
+.scroll-to-top-meal {
+  bottom: 135px;
+}
+
+@media (max-width: 768px) {
+  .scroll-to-top {
+    right: 16px;
+    bottom: 160px;
+    width: 44px;
+    height: 44px;
+  }
+
+  /* Home page - unchanged */
+  .scroll-to-top-home {
+    bottom: 165px;
+  }
+
+  /* Meal page only */
+  .scroll-to-top-meal {
+    bottom: 130px;
+  }
+}
