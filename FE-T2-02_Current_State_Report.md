@@ -19,8 +19,8 @@ The detailed test cases and screenshot evidence are maintained in the QA Regress
 | Meal Planning | Working | Partially broken | Core meal-plan generation/viewing works. On mobile, AI personalised plan generation and save/reopen are broken. Meal image preview is not visible and there is no specific weekly-plan page. |
 | Recipes | Working | Partially broken | Browsing, opening, searching and filtering work on both. Mobile recipe creation is broken, and recipe image previews are not visible. |
 | Scan | Broken | Broken | Food/barcode scanning and scan-result nutrition information are broken on both web and mobile. |
-| Community | Not Tested | Placeholder | Web community flows were not tested. Mobile Community routes are placeholder/incomplete. |
-| Admin | N/A | N/A | Admin flows were not included in the executed regression pass. |
+| Community | Reachable via URL only | Unreachable | Web Community pages (`/community`, post detail) exist and render but have **no navigation button** — reachable only by typing the URL directly (screenshots attached). On mobile, `CommunityStack` is not mounted in any navigator, so Community is completely unreachable; its screens are placeholders (D-01, D-16). |
+| Admin | Reachable via URL only | N/A | Web Admin area (`/admin` data center, recipe library, integration audit) exists and renders but has **no navigation button** — reachable only via direct URL (screenshots attached); full admin flows not exercised (no admin credentials). Mobile has no Admin capability (N/A, D-15, D-16). |
 
 ## Detailed Live-Test Findings
 
@@ -61,18 +61,18 @@ The detailed test cases and screenshot evidence are maintained in the QA Regress
 
 ### 5. Community
 
-- **COM-01 — View community feed:** Web not tested; mobile is a placeholder.
-- **COM-02 — Create a post:** Web not tested; mobile is a placeholder.
-- **COM-03 — Post detail/leaderboard:** Web not tested; mobile is a placeholder.
+- **COM-01 — View community feed:** Web page exists and renders but is reachable only by entering `/community` directly (no navigation button); screenshots attached. Mobile is an unreachable placeholder.
+- **COM-02 — Create a post:** Web reachable only via URL; mobile unreachable placeholder.
+- **COM-03 — Post detail/leaderboard:** Web reachable only via URL (`/community/post/:id`); mobile unreachable placeholder.
 
-**Overall:** A complete live baseline cannot be claimed for Community on web. Mobile Community is incomplete/placeholder functionality.
+**Overall:** Web Community exists and loads but has no entry point in the UI (URL-only). Mobile Community is unreachable — the `CommunityStack` is not mounted in any navigator and its screens are placeholders.
 
 ### 6. Admin
 
-- **ADM-01 — Access admin area:** N/A in the executed test pass.
-- **ADM-02 — Manage users/content:** N/A in the executed test pass.
+- **ADM-01 — Access admin area:** Web Admin area exists and renders at `/admin` but has **no navigation button** — reachable only by entering the URL (screenshots attached). Full admin actions not exercised (no admin credentials). N/A on mobile (no Admin feature).
+- **ADM-02 — Manage users/content:** Web Admin management pages exist (URL-only, no button); management actions not exercised without admin credentials. N/A on mobile.
 
-**Overall:** Admin functionality was not included in the executed regression scope represented by the QA report.
+**Overall:** Web Admin **exists and loads but has no UI entry point** (URL-only); full flows weren't exercised for lack of admin credentials. Mobile has no Admin capability. This is a deliberate scoping decision, not a claim that Admin is absent on web.
 
 ## Confirmed / Open Defect Baseline
 
@@ -80,10 +80,10 @@ The regression pass and code-level review identified the following items for fol
 
 | ID | Area | Severity | Finding | Status |
 |---|---|---|---|---|
-| D-01 | Community (mobile) | High | Community routes render shared placeholder/“Coming soon” functionality and Community is not available in the mobile tab bar. | Open |
+| D-01 | Community (mobile) | High | Community routes render shared placeholder/“Coming soon” functionality and Community is not in the mobile tab bar. `CommunityStack` is defined but **not mounted in any navigator**, so Community is completely unreachable on mobile. **Handover-doc mismatch:** the handover implied Community was present on mobile — testing contradicts this (regression). | Open |
 | D-02 | Community (web) | Medium | Leaderboard Progress is incomplete and displays a coming-soon state. | Open |
 | D-03 | Meal Planning (mobile) | Medium | EditDailyPlanScreen and MenuScreen are placeholders. | Open |
-| D-04 | Meal Planning (web) | Medium | Shopping List uses hard-coded data and is not fully backend-wired. | Open |
+| D-04 | Meal Planning (web) | Medium | Shopping List uses hard-coded data and is not fully backend-wired. **Handover-doc claim confirmed:** handover described Shopping List v2 as a “UI-only prototype” — verified (hardcoded data + TODO to add the API later). | Open |
 | D-05 | Scan (web) | Medium | Scan Products appears UI-only and requires backend integration/confirmation. | Open / confirm |
 | D-06 | Account (mobile) | Medium | HealthToolsScreen routing points to a placeholder, leaving the built screen unreachable. | Open |
 | D-07 | Home / Account (mobile) | Low | Several routes remain placeholders, including Health News, FAQ, Dietary Requirements, Shopping List and Appointments. | Open |
@@ -95,6 +95,7 @@ The regression pass and code-level review identified the following items for fol
 | D-13 | Security / hygiene (web) | Low | Firebase web API configuration is hard-coded rather than sourced from environment/configuration. | Open |
 | D-14 | Reliability (mobile) | Low | Empty catch blocks can silently swallow errors in several mobile flows. | Open |
 | D-15 | Admin (mobile) | Low | No Admin capability exists on mobile. | By design / confirm |
+| D-16 | Navigation (web) | Medium | Web Community (`/community`) and Admin (`/admin`) pages exist and render, but have no navigation links/buttons anywhere in the UI — they can only be reached by manually entering the URL. Users cannot discover them. | Open |
 
 ## Sprint 1/2 Planning Recommendations
 
