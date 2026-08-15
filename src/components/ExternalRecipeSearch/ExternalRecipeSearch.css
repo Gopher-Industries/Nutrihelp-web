@@ -1,4 +1,16 @@
-.external-recipe-search { position: relative; margin-bottom: 1rem; }
+/*
+ * z-index:40 (plus its own stacking context, below) is deliberate: this
+ * component's floating layers (the results dropdown and the mapping panel)
+ * must render unambiguously above whatever the consuming page places right
+ * after it in normal flow (e.g. CreateRecipe's prefill notice), without the
+ * dropdown pushing that content down the page on every keystroke. Giving the
+ * wrapper itself an explicit z-index (not just its absolutely-positioned
+ * children) establishes a real stacking context here, so the comparison
+ * against a static, non-stacked sibling like the prefill notice is decided
+ * outright by that z-index rather than falling back to ambiguous document
+ * order.
+ */
+.external-recipe-search { position: relative; z-index: 40; margin-bottom: 1rem; }
 .external-recipe-search__label { display: block; font-weight: 600; margin-bottom: 0.35rem; }
 .external-recipe-search__optional { font-weight: 400; opacity: 0.65; }
 .external-recipe-search__input {
@@ -8,10 +20,10 @@
 .external-recipe-search__input:disabled { background: #f1f5f9; }
 .external-recipe-search__status { margin: 0.4rem 0 0; font-size: 0.85rem; color: #475569; }
 .external-recipe-search__results {
-  list-style: none; margin: 0.35rem 0 0; padding: 0; border: 1px solid #e2e8f0;
-  border-radius: 0.5rem; background: #fff; max-height: 22rem; overflow-y: auto;
-  position: absolute; left: 0; right: 0; z-index: 30;
-  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+  list-style: none; margin: 0.35rem 0 0; padding: 0; border: 1px solid #cbd5e1;
+  border-radius: 0.5rem; background: #ffffff; opacity: 1; max-height: 22rem; overflow-y: auto;
+  position: absolute; left: 0; right: 0; z-index: 40;
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.18);
 }
 .external-recipe-search__result {
   display: flex; align-items: center; gap: 0.75rem; width: 100%;
@@ -34,11 +46,14 @@
 }
 
 .external-recipe-search__mapping {
-  position: absolute; left: 0; right: 0; z-index: 30; margin: 0.35rem 0 0;
+  /* Same floating-layer treatment as .external-recipe-search__results:
+     same positioning, same opacity, same stacking — so it covers the same
+     ground the dropdown just vacated just as cleanly. */
+  position: absolute; left: 0; right: 0; z-index: 40; margin: 0.35rem 0 0;
   display: flex; align-items: center; gap: 0.65rem;
-  padding: 0.75rem 0.9rem; border: 1px solid #e2e8f0; border-radius: 0.5rem;
-  background: #f8fafc; color: #0f172a; font-size: 0.85rem; line-height: 1.4;
-  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+  padding: 0.75rem 0.9rem; border: 1px solid #cbd5e1; border-radius: 0.5rem;
+  background: #f8fafc; opacity: 1; color: #0f172a; font-size: 0.85rem; line-height: 1.4;
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.18);
 }
 .external-recipe-search__mapping-text { flex: 1 1 auto; }
 .external-recipe-search__spinner {
