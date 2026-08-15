@@ -182,11 +182,37 @@ function CreateRecipe() {
 
     const attribution = mapResult.source_meta?.attribution || "the source";
     const labels = highlightFields.map((field) => PREFILL_FIELD_LABELS[field] || field);
-    setPrefillNotice(
+    const notice = [
       labels.length
         ? `Prefilled from ${attribution}. These weren't available from the source — please complete them: ${labels.join(", ")}.`
-        : `Prefilled from ${attribution}. Review before saving.`
-    );
+        : `Prefilled from ${attribution}. Review before saving.`,
+    ];
+
+    // Tell the user what happened to their ingredients. The backend computes
+    // this on every map; until now it was thrown away.
+    const resolution = mapResult.ingredient_resolution;
+    if (resolution) {
+      const matched = resolution.matched || 0;
+      const pending = (resolution.unmatched || 0) + (resolution.failed || 0);
+      notice.push(
+        `${matched} ${matched === 1 ? "ingredient" : "ingredients"} matched to existing NutriHelp items; `
+        + `${pending} new ${pending === 1 ? "ingredient" : "ingredients"} will be added when you save.`
+      );
+    }
+
+    // Rows whose displayed name is NutriHelp's name rather than the source's.
+    const renamed = (mapResult.draft?.ingredients || []).filter(
+      (item) =>
+        item?.matched_name
+        && String(item.matched_name).trim().toLowerCase()
+          !== String(item.name || "").trim().toLowerCase()
+    ).length;
+
+    if (renamed > 0) {
+      notice.push(`${renamed} renamed to NutriHelp names.`);
+    }
+
+    setPrefillNotice(notice.join(" "));
   };
 
   const clearExternalPrefill = () => {
