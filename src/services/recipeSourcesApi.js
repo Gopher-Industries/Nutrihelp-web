@@ -44,3 +44,30 @@ export async function mapRecipeSource(source, externalId) {
 
   return payload.data;
 }
+
+/**
+ * Resolves ingredient names to NutriHelp ids, creating the ones that don't
+ * exist yet.
+ *
+ * Called at SAVE time, not at prefill time: this is the only call that writes
+ * to the shared ingredients table, so it must follow a deliberate user action.
+ * Throws on failure — the user is explicitly saving, so they get told.
+ *
+ * @param {Array<{name: string, category?: string}>} ingredients max 30
+ * @returns {Promise<Array<{name, id, category, status}>>}
+ */
+export async function resolveRecipeIngredients(ingredients) {
+  const response = await fetch(`${api.baseURL}/recipe-sources/resolve-ingredients`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...authHeaders() },
+    body: JSON.stringify({ ingredients }),
+  });
+
+  const payload = await response.json().catch(() => ({}));
+
+  if (!response.ok || !payload?.data) {
+    throw new Error(payload?.error || `Ingredient resolution failed (${response.status})`);
+  }
+
+  return payload.data.resolved || [];
+}

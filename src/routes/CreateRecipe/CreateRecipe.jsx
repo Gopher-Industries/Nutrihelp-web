@@ -9,6 +9,7 @@ import FramerClient from "../../components/framer-client.jsx";
 import GuidedTour from "../../components/GuidedTour/GuidedTour";
 import ExternalRecipeSearch from "../../components/ExternalRecipeSearch";
 import buildCreateRecipePrefill from "../../components/ExternalRecipeSearch/buildCreateRecipePrefill";
+import { resolveRecipeIngredients } from "../../services/recipeSourcesApi";
 import {
   cuisineListDB,
   getCuisineList,
@@ -462,11 +463,41 @@ function CreateRecipe() {
 
       const droppedIngredients = [];
 
+      // Rows the backend could not match and that aren't in the local list
+      // either. The backend deliberately does NOT create ingredients at prefill
+      // time — previewing a recipe must leave the shared table alone — so ask
+      // for them now, at the point the user has actually committed to saving.
+      const localId = (row) =>
+        row.ingredientId || resolveOptionId(ingredientsList?.ingredient || [], row.ingredient);
+
+      const unresolvedRows = tableData.filter(
+        (row) => !localId(row) && String(row.ingredient || "").trim()
+      );
+
+      const createdIdsByName = new Map();
+      if (unresolvedRows.length > 0) {
+        try {
+          const resolved = await resolveRecipeIngredients(
+            unresolvedRows.map((row) => ({
+              name: row.ingredient,
+              category: row.ingredientCategory,
+            }))
+          );
+          resolved.forEach((entry) => {
+            if (entry?.id) createdIdsByName.set(String(entry.name || "").trim(), entry.id);
+          });
+        } catch (resolveError) {
+          // Never block a save on this: anything still unresolved falls through
+          // to the dropped-ingredients warning below, same as before.
+          console.error("Ingredient resolution failed:", resolveError);
+        }
+      }
+
       tableData.forEach((row) => {
         // Prefer an id resolved by the backend (external prefill), falling back
-        // to name lookup for manually added rows.
+        // to name lookup for manually added rows, then to one just created.
         const resolvedIngredientId =
-          row.ingredientId || resolveOptionId(ingredientsList?.ingredient || [], row.ingredient);
+          localId(row) || createdIdsByName.get(String(row.ingredient || "").trim());
 
         if (resolvedIngredientId) {
           ingredientId.push(resolvedIngredientId);

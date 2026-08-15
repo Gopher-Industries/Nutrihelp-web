@@ -1,4 +1,8 @@
-import { searchRecipeSources, mapRecipeSource } from "./recipeSourcesApi";
+import {
+  searchRecipeSources,
+  mapRecipeSource,
+  resolveRecipeIngredients,
+} from "./recipeSourcesApi";
 
 describe("recipeSourcesApi", () => {
   beforeEach(() => {
@@ -75,5 +79,41 @@ describe("recipeSourcesApi", () => {
     global.fetch.mockReturnValue(jsonResponse({ success: false, error: "nope" }, false, 500));
 
     await expect(mapRecipeSource("themealdb", "52771")).rejects.toThrow();
+  });
+
+  it("posts ingredients to the resolve endpoint and returns the resolution", async () => {
+    const resolved = [
+      { name: "garlic", id: 7, category: "Fruit & Vegetables", status: "matched" },
+      { name: "penne rigate", id: 501, category: "Pantry", status: "created" },
+    ];
+    global.fetch.mockReturnValue(jsonResponse({ success: true, data: { resolved } }));
+
+    const ingredients = [
+      { name: "garlic", category: "Fruit & Vegetables" },
+      { name: "penne rigate", category: "Pantry" },
+    ];
+    const result = await resolveRecipeIngredients(ingredients);
+
+    expect(result).toEqual(resolved);
+    const [url, options] = global.fetch.mock.calls[0];
+    expect(url).toContain("/recipe-sources/resolve-ingredients");
+    expect(options.method).toBe("POST");
+    expect(JSON.parse(options.body)).toEqual({ ingredients });
+  });
+
+  it("returns an empty array when the endpoint resolves nothing", async () => {
+    global.fetch.mockReturnValue(jsonResponse({ success: true, data: {} }));
+
+    await expect(resolveRecipeIngredients([{ name: "garlic" }])).resolves.toEqual([]);
+  });
+
+  it("throws when resolution fails so the save path can surface it", async () => {
+    global.fetch.mockReturnValue(
+      jsonResponse({ success: false, error: "Validation Error" }, false, 400)
+    );
+
+    await expect(resolveRecipeIngredients([{ name: "garlic" }])).rejects.toThrow(
+      "Validation Error"
+    );
   });
 });
