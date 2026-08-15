@@ -17,23 +17,33 @@ export default function ExternalRecipeSearch({ onPrefill, onError }) {
     if (query.trim().length < MIN_QUERY_LENGTH) {
       setResults([]);
       setSearched(false);
+      // Also retire the in-flight query. Without this, a response for the
+      // longer query the user just deleted back from still matches
+      // latestQueryRef and repopulates the dropdown under a 2-character input.
+      latestQueryRef.current = "";
+      setIsSearching(false);
       return undefined;
     }
 
     const trimmed = query.trim();
     latestQueryRef.current = trimmed;
+    let cancelled = false;
 
     const timer = setTimeout(async () => {
       setIsSearching(true);
       const rows = await searchRecipeSources(trimmed);
-      // Ignore a slow response for a query the user has already moved past.
-      if (latestQueryRef.current !== trimmed) return;
+      // Ignore a slow response for a query the user has already moved past, or
+      // one that lands after the component has gone away.
+      if (cancelled || latestQueryRef.current !== trimmed) return;
       setResults(rows);
       setSearched(true);
       setIsSearching(false);
     }, DEBOUNCE_MS);
 
-    return () => clearTimeout(timer);
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
   }, [query]);
 
   const handleSelect = useCallback(
@@ -74,6 +84,12 @@ export default function ExternalRecipeSearch({ onPrefill, onError }) {
         placeholder="Start from a real recipe — search TheMealDB"
         value={query}
         onChange={(event) => setQuery(event.target.value)}
+        onKeyDown={(event) => {
+          // This input sits inside the host page's <form> on both surfaces, so
+          // Enter would trigger implicit submission — saving or importing a
+          // half-filled recipe mid-typeahead.
+          if (event.key === "Enter") event.preventDefault();
+        }}
         autoComplete="off"
         disabled={Boolean(mappingTitle)}
       />

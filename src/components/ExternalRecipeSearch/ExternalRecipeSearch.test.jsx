@@ -199,6 +199,90 @@ describe("ExternalRecipeSearch", () => {
     expect(screen.getByText("Spicy Arrabiata Penne")).toBeTruthy();
   });
 
+  it("swallows Enter so it cannot submit the host form", () => {
+    const onSubmit = jest.fn();
+    render(
+      <form onSubmit={onSubmit}>
+        <ExternalRecipeSearch onPrefill={jest.fn()} />
+        <button type="submit">Save recipe</button>
+      </form>
+    );
+
+    const input = screen.getByPlaceholderText(/start from a real recipe/i);
+
+    // jsdom does not implement implicit form submission, so a form onSubmit spy
+    // stays silent here with or without the fix. The discriminating assertion is
+    // that the component called preventDefault: fireEvent returns false when the
+    // event was cancelled.
+    const notCancelled = fireEvent.keyDown(input, { key: "Enter", code: "Enter" });
+
+    expect(notCancelled).toBe(false);
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
+
+  it("leaves other keys alone", () => {
+    render(<ExternalRecipeSearch onPrefill={jest.fn()} />);
+
+    const input = screen.getByPlaceholderText(/start from a real recipe/i);
+    const notCancelled = fireEvent.keyDown(input, { key: "a", code: "KeyA" });
+
+    expect(notCancelled).toBe(true);
+  });
+
+  it("drops an in-flight response once the query falls below three characters", async () => {
+    let resolveSearch;
+    searchRecipeSources.mockImplementation(
+      () => new Promise((resolve) => { resolveSearch = resolve; })
+    );
+
+    render(<ExternalRecipeSearch onPrefill={jest.fn()} />);
+
+    typeQuery("arrabiata");
+    await advanceDebounce();
+    expect(searchRecipeSources).toHaveBeenCalledWith("arrabiata");
+
+    // The user deletes back to two characters before the search comes back.
+    typeQuery("ar");
+    await advanceDebounce();
+
+    await act(async () => {
+      resolveSearch([{ ...ROW, external_id: "late-1", title: "Late Linguine" }]);
+      await flushMicrotasks();
+    });
+
+    // The response belongs to a query the user has abandoned — showing it would
+    // put a dropdown under a 2-character input.
+    expect(screen.queryByText("Late Linguine")).toBeFalsy();
+    expect(screen.queryByText(/Searching/i)).toBeFalsy();
+  });
+
+  it("does not set state when a search resolves after unmount", async () => {
+    const errorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+    let resolveSearch;
+    searchRecipeSources.mockImplementation(
+      () => new Promise((resolve) => { resolveSearch = resolve; })
+    );
+
+    const { unmount } = render(<ExternalRecipeSearch onPrefill={jest.fn()} />);
+
+    typeQuery("arrabiata");
+    await advanceDebounce();
+
+    unmount();
+
+    await act(async () => {
+      resolveSearch([ROW]);
+      await flushMicrotasks();
+    });
+
+    // Regression guard rather than a proof: React 18 dropped the
+    // "set state on an unmounted component" warning, so this passes with or
+    // without the cleanup flag. It still catches a resolved-after-unmount
+    // response that throws.
+    expect(errorSpy).not.toHaveBeenCalled();
+    errorSpy.mockRestore();
+  });
+
   it("ignores a stale search response that resolves after a newer query was already typed", async () => {
     let resolveStale;
     let resolveFresh;
