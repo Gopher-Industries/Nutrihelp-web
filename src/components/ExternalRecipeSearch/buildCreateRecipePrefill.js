@@ -36,9 +36,11 @@ export default function buildCreateRecipePrefill(draft = {}, unmappedFields = []
     // vocabulary. recipe_ingredient.cuisine_id is NOT NULL, so an empty
     // category makes the row unsavable.
     ingredientCategory: toFormValue(item?.category),
-    // The backend resolved this name to a NutriHelp ingredient id (creating the
-    // row if it was missing). Carrying the id through means the save path does
-    // not have to match by name — which silently dropped ~75% of ingredients.
+    // The backend matched this name to an existing NutriHelp ingredient id, or
+    // left it null. Carrying the id through means the save path does not have
+    // to match by name — which silently dropped ~75% of ingredients. Nulls are
+    // resolved (and created) at save time, not here: previewing a recipe must
+    // not write to the shared ingredients table.
     ingredientId: item?.ingredient_id ?? null,
     ingredient: toFormValue(item?.matched_name || item?.name),
     ingredientQuantity: toFormValue(item?.quantity),
