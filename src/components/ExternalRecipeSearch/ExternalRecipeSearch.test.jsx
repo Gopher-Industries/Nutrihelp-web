@@ -137,6 +137,28 @@ describe("ExternalRecipeSearch", () => {
     });
   });
 
+  it("replaces the results dropdown with the mapping panel while a selection is in flight", async () => {
+    let resolveMap;
+    mapRecipeSource.mockReturnValue(new Promise((resolve) => { resolveMap = resolve; }));
+    render(<ExternalRecipeSearch onPrefill={jest.fn()} />);
+
+    typeQuery("arrabiata");
+    await advanceDebounce();
+    fireEvent.click(await screen.findByText("Spicy Arrabiata Penne"));
+
+    // The mapping panel takes over the same spot the results dropdown
+    // occupied — the dropdown's own attribution line (only rendered inside
+    // the results list) must be gone, and the mapping status must be present.
+    expect(await screen.findByText(/Mapping recipe/i)).toBeTruthy();
+    expect(screen.queryByText(/Recipes from TheMealDB/i)).toBeFalsy();
+    expect(screen.queryByText("Spicy Arrabiata Penne")).toBeFalsy();
+
+    await act(async () => {
+      resolveMap({ draft: {}, unmapped_fields: [], source_meta: {}, mapper: {} });
+      await flushMicrotasks();
+    });
+  });
+
   it("reports a mapping failure without breaking the form", async () => {
     mapRecipeSource.mockRejectedValue(new Error("mapper exploded"));
     const onError = jest.fn();

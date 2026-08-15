@@ -75,10 +75,13 @@ export default function ExternalRecipeSearch({ onPrefill, onError }) {
       />
 
       {mappingTitle && (
-        <p className="external-recipe-search__status" role="status">
-          Mapping recipe “{mappingTitle}” — this can take up to a minute. You can keep filling the
-          form in manually instead.
-        </p>
+        <div className="external-recipe-search__mapping" role="status">
+          <span className="external-recipe-search__spinner" aria-hidden="true" />
+          <span className="external-recipe-search__mapping-text">
+            Mapping recipe “{mappingTitle}” — this can take up to a minute. You can keep filling
+            the form in manually instead.
+          </span>
+        </div>
       )}
 
       {!mappingTitle && isSearching && (
