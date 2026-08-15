@@ -169,10 +169,10 @@ function CreateRecipe() {
     // The backend fetches the source image server-side and returns it as a
     // base64 data URL, the same format the save path accepts from an uploaded
     // file — so a prefilled recipe keeps its image without the user re-uploading.
-    const sourceImageData = mapResult.source_image || "";
-    if (sourceImage || sourceImageData) {
-      setImagePreviewUrl(sourceImageData || sourceImage);
-      setSourceImageData(sourceImageData);
+    const sourceImageBase64 = mapResult.source_image || "";
+    if (sourceImage || sourceImageBase64) {
+      setImagePreviewUrl(sourceImageBase64 || sourceImage);
+      setSourceImageData(sourceImageBase64);
       setIsSourceImagePreview(true);
     }
 
@@ -192,6 +192,12 @@ function CreateRecipe() {
   const clearExternalPrefill = () => {
     setPrefillHighlights([]);
     setPrefillNotice("");
+    // Drop the source image too. Clearing only the disclosure left the user
+    // still saving TheMealDB's image after discarding the prefill, with nothing
+    // on screen saying where it came from. Only touch the preview when it was
+    // the source's — an image the user uploaded themselves must survive.
+    if (isSourceImagePreview) setImagePreviewUrl("");
+    setSourceImageData("");
     setIsSourceImagePreview(false);
   };
 
