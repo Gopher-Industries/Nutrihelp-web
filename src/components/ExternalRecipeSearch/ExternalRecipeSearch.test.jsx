@@ -120,6 +120,18 @@ describe("ExternalRecipeSearch", () => {
     expect(onPrefill.mock.calls[0][0].draft.recipe_name).toBe("Spicy Arrabiata Penne");
   });
 
+  it("does not show the no-results message after a successful prefill", async () => {
+    render(<ExternalRecipeSearch onPrefill={jest.fn()} />);
+
+    typeQuery("arrabiata");
+    await advanceDebounce();
+    fireEvent.click(await screen.findByText("Spicy Arrabiata Penne"));
+    await act(async () => { await flushMicrotasks(); });
+
+    await waitFor(() => expect(screen.queryByText(/Mapping recipe/i)).toBeNull());
+    expect(screen.queryByText(/No recipes found/i)).toBeNull();
+  });
+
   it("shows a mapping state while the long map call runs", async () => {
     let resolveMap;
     mapRecipeSource.mockReturnValue(new Promise((resolve) => { resolveMap = resolve; }));

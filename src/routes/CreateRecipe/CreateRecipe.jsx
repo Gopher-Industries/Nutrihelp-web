@@ -147,6 +147,9 @@ function CreateRecipe() {
   const [prefillNotice, setPrefillNotice] = useState("");
   // True only while the shown image preview came from an external source, not an upload.
   const [isSourceImagePreview, setIsSourceImagePreview] = useState(false);
+  // Base64 image supplied by an external prefill, saved when the user does not
+  // upload their own file.
+  const [sourceImageData, setSourceImageData] = useState("");
   const highlightClass = (field) =>
     prefillHighlights.includes(field) ? " create-recipe-field--unmapped" : "";
 
@@ -162,8 +165,13 @@ function CreateRecipe() {
     setIngredients(ingredientRows);
     setRecipeTable(ingredientRows);
     setInstruction(instructions);
-    if (sourceImage) {
-      setImagePreviewUrl(sourceImage);
+    // The backend fetches the source image server-side and returns it as a
+    // base64 data URL, the same format the save path accepts from an uploaded
+    // file — so a prefilled recipe keeps its image without the user re-uploading.
+    const sourceImageData = mapResult.source_image || "";
+    if (sourceImage || sourceImageData) {
+      setImagePreviewUrl(sourceImageData || sourceImage);
+      setSourceImageData(sourceImageData);
       setIsSourceImagePreview(true);
     }
 
@@ -354,6 +362,7 @@ function CreateRecipe() {
 
   const handleImageFileChange = (event) => {
     setIsSourceImagePreview(false);
+    setSourceImageData("");
     const file = event.target.files?.[0];
     if (!file) {
       setSelectedImageName("");
@@ -382,6 +391,8 @@ function CreateRecipe() {
     if (fileInputRef.current) fileInputRef.current.value = "";
     setSelectedImageName("");
     setImagePreviewUrl("");
+    setIsSourceImagePreview(false);
+    setSourceImageData("");
   };
 
   const resolveOptionId = (list, selectedValue) => {
@@ -412,6 +423,26 @@ function CreateRecipe() {
 
         window.scrollTo(0, 0);
         toast.error("Please fix the errors in the form.");
+        return;
+      }
+
+      // Every ingredient row needs a category: recipe_ingredient.cuisine_id is
+      // NOT NULL, so a blank one fails the insert with an opaque 500. The manual
+      // add-path already validates this, but rows arriving from an external
+      // prefill bypass that check — catch them here rather than at the database.
+      const rowsMissingCategory = tableData
+        .map((row, index) => ({ row, index }))
+        .filter(({ row }) => !String(row.ingredientCategory || "").trim());
+
+      if (rowsMissingCategory.length > 0) {
+        const names = rowsMissingCategory
+          .map(({ row, index }) => row.ingredient || `row ${index + 1}`)
+          .join(", ");
+        setAttemptedSubmit(true);
+        window.scrollTo(0, 0);
+        toast.error(
+          `Set a category for every ingredient before saving. Missing: ${names}.`
+        );
         return;
       }
 
@@ -484,6 +515,9 @@ function CreateRecipe() {
       } else {
         const recipeDataWithoutImage = {
           ...recipeData,
+          // No uploaded file, but an external prefill may have supplied the
+          // source recipe's image as base64 — save that rather than dropping it.
+          ...(sourceImageData ? { recipe_image: sourceImageData } : {}),
         };
 
         await recipeApi.createRecepie(recipeDataWithoutImage);
@@ -782,7 +816,7 @@ function CreateRecipe() {
                     ) : null}
                     {isSourceImagePreview && imagePreviewUrl ? (
                       <p className="create-recipe-source-image-notice">
-                        This is a preview from TheMealDB and will not be saved with the recipe — upload your own image to include one.
+                        This image comes from TheMealDB and will be saved with your recipe — choose your own image to replace it.
                       </p>
                     ) : null}
                   </div>

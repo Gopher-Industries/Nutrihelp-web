@@ -96,10 +96,39 @@ describe("buildCreateRecipePrefill", () => {
     expect(highlightFields).not.toContain("recipeName");
   });
 
-  it("flags ingredientCost and ingredientCategory when ingredient rows are prefilled", () => {
+  it("flags ingredientCost when ingredient rows are prefilled", () => {
     const { highlightFields } = buildCreateRecipePrefill(DRAFT, UNMAPPED);
 
     expect(highlightFields).toContain("ingredientCost");
+  });
+
+  it("carries the mapper's ingredient category through and does not flag it", () => {
+    const draftWithCategories = {
+      ...DRAFT,
+      ingredients: [
+        { name: "penne rigate", quantity: 1, unit: "pound", notes: null, category: "Pantry" },
+        { name: "garlic", quantity: 3, unit: null, notes: null, category: "Fruit & Vegetables" },
+      ],
+    };
+
+    const { ingredientRows, highlightFields } = buildCreateRecipePrefill(draftWithCategories, UNMAPPED);
+
+    expect(ingredientRows[0].ingredientCategory).toBe("Pantry");
+    expect(ingredientRows[1].ingredientCategory).toBe("Fruit & Vegetables");
+    expect(highlightFields).not.toContain("ingredientCategory");
+  });
+
+  it("flags ingredientCategory when any prefilled row lacks one", () => {
+    const draftMissingCategory = {
+      ...DRAFT,
+      ingredients: [
+        { name: "penne rigate", quantity: 1, unit: "pound", notes: null, category: "Pantry" },
+        { name: "mystery item", quantity: null, unit: null, notes: null },
+      ],
+    };
+
+    const { highlightFields } = buildCreateRecipePrefill(draftMissingCategory, UNMAPPED);
+
     expect(highlightFields).toContain("ingredientCategory");
   });
 

@@ -32,7 +32,10 @@ export default function buildCreateRecipePrefill(draft = {}, unmappedFields = []
   };
 
   const ingredientRows = (draft.ingredients || []).map((item) => ({
-    ingredientCategory: "",
+    // The mapper classifies each ingredient into NutriHelp's category
+    // vocabulary. recipe_ingredient.cuisine_id is NOT NULL, so an empty
+    // category makes the row unsavable.
+    ingredientCategory: toFormValue(item?.category),
     ingredient: toFormValue(item?.name),
     ingredientQuantity: toFormValue(item?.quantity),
     // The source carries no cost data. Zero keeps the table's totals valid.
@@ -48,10 +51,15 @@ export default function buildCreateRecipePrefill(draft = {}, unmappedFields = []
     .map((field) => FIELD_MAP[field])
     .filter(Boolean);
 
-  // External sources never supply cost or category data. Flag them whenever
-  // we have prefilled ingredients so users know to complete these fields.
+  // External sources never supply cost data, so that stays flagged whenever we
+  // prefilled ingredients. Category is now classified by the mapper, so flag it
+  // only if any row actually came back without one.
   if (ingredientRows.length > 0) {
-    highlightFields = [...highlightFields, "ingredientCost", "ingredientCategory"];
+    highlightFields = [...highlightFields, "ingredientCost"];
+
+    if (ingredientRows.some((row) => !String(row.ingredientCategory || "").trim())) {
+      highlightFields = [...highlightFields, "ingredientCategory"];
+    }
   }
 
   return {

@@ -44,6 +44,10 @@ export default function ExternalRecipeSearch({ onPrefill, onError }) {
       try {
         const mapped = await mapRecipeSource(row.source, row.external_id);
         onPrefill?.(mapped);
+        // A completed selection is not a failed search: clearing `searched`
+        // stops the "No recipes found" empty-state from appearing underneath a
+        // prefill that just succeeded.
+        setSearched(false);
       } catch (error) {
         onError?.(error.message || "Couldn't map this recipe — try another or fill it in manually.");
         // Restore the prior results so a failed map doesn't fall through to the
