@@ -5,7 +5,6 @@ import {
   Plus,
   X,
   Edit2,
-  Trash2,
   Bell,
   MapPin,
   User,
@@ -104,6 +103,7 @@ export default function AppointmentsManager() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [submitting, setSubmitting] = useState(false);
+  const [cancellingId, setCancellingId] = useState(null);
 
   // Pagination state <\>
   const [page, setPage] = useState(1);
@@ -127,6 +127,7 @@ export default function AppointmentsManager() {
     phone: "",
     notes: "",
     reminder: "1-day",
+    status: "scheduled",
   });
 
   const [formErrors, setFormErrors] = useState({});
@@ -192,6 +193,7 @@ export default function AppointmentsManager() {
       phone: "",
       notes: "",
       reminder: "1-day",
+      status: "scheduled",
     });
     setEditingId(null);
     setShowAddForm(false);
@@ -301,26 +303,72 @@ export default function AppointmentsManager() {
       phone: appointment.phone || "",
       notes: appointment.notes || "",
       reminder: appointment.reminder || "1-day",
+      status: appointment.status || "scheduled",
     });
     setEditingId(appointment.id);
     setShowAddForm(true);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const handleDelete = async (id) => {
-    if (window.confirm("Are you sure you want to delete this appointment?")) {
-      try {
-        setError(null);
-        await appointmentApi.deleteAppointment(id);
-        toast.success("Appointment deleted successfully!");
-        // Refreshs the appointments list to reflect the deletion...
-        await fetchAppointments();
-      } catch (err) {
-        console.error("Error deleting appointment:", err);
-        toast.error(
-          err.message || "Failed to delete appointment. Please try again.",
-        );
-      }
+  const handleCancelAppointment = async (appointment) => {
+    const confirmed = window.confirm(
+      "Are you sure you want to cancel this appointment?",
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      setCancellingId(appointment.id);
+      setError(null);
+
+      const appointmentData = {
+        title: appointment.title || "",
+        doctor: appointment.doctor || "",
+        type: appointment.type || "",
+        date: appointment.date || "",
+        time: appointment.time || "",
+        location: appointment.location || "",
+        address: appointment.address || "",
+        phone: appointment.phone || "",
+        notes: appointment.notes || "",
+        reminder: appointment.reminder || "1-day",
+        status: "cancelled",
+      };
+
+      const response = await appointmentApi.updateAppointment(
+        appointment.id,
+        appointmentData,
+      );
+
+      const updatedAppointment =
+        response.appointment || {
+          ...appointment,
+          status: "cancelled",
+        };
+
+      setAppointments((currentAppointments) =>
+        currentAppointments.map((item) =>
+          item.id === appointment.id
+            ? updatedAppointment
+            : item,
+        ),
+      );
+
+      toast.success("Appointment cancelled successfully!");
+      setViewFilter("cancelled");
+
+      await fetchAppointments();
+    } catch (err) {
+      console.error("Error cancelling appointment:", err);
+
+      toast.error(
+        err.message ||
+        "Failed to cancel appointment. Please try again.",
+      );
+    } finally {
+      setCancellingId(null);
     }
   };
 
@@ -333,8 +381,10 @@ export default function AppointmentsManager() {
   const now = new Date();
   const filteredAppointments = sortedAppointments.filter((apt) => {
     const aptDate = new Date(`${apt.date}T${apt.time}`);
-    if (viewFilter === "upcoming") return aptDate >= now;
-    if (viewFilter === "past") return aptDate < now;
+    const isCancelled = String(apt.status || "").toLowerCase() === "cancelled";
+    if (viewFilter === "upcoming") return aptDate >= now && !isCancelled;
+    if (viewFilter === "past") return aptDate < now && !isCancelled;
+    if (viewFilter === "cancelled") return isCancelled;
     return true;
   });
 
@@ -383,6 +433,7 @@ export default function AppointmentsManager() {
             {[
               { value: "upcoming", label: "Upcoming" },
               { value: "past", label: "Past" },
+              { value: "cancelled", label: "Cancelled" },
               { value: "all", label: "All" },
             ].map((filter) => (
               <button
@@ -609,7 +660,9 @@ export default function AppointmentsManager() {
                 ? "You have no upcoming appointments scheduled."
                 : viewFilter === "past"
                   ? "No past appointments to show."
-                  : 'Click "Add Appointment" to schedule your first appointment.'}
+                  : viewFilter === "cancelled"
+                    ? "You have no cancelled appointments."
+                    : 'Click "Add Appointment" to schedule your first appointment.'}
             </p>
           </div>
         ) : (
@@ -617,6 +670,8 @@ export default function AppointmentsManager() {
             <div className="appointments-list">
               {filteredAppointments.map((apt) => {
                 const isPast = new Date(`${apt.date}T${apt.time}`) < now;
+                const isCancelled =
+                  String(apt.status || "").toLowerCase() === "cancelled";
 
                 return (
                   <div
@@ -631,24 +686,32 @@ export default function AppointmentsManager() {
                             {apt.type}
                           </div>
                         )}
+
                       </div>
 
                       <div className="appointment-actions">
-                        <button
-                          onClick={() => handleEdit(apt)}
-                          className="btn-edit"
-                        >
-                          <Edit2 size={18} />
-                          Edit
-                        </button>
+                        {!isCancelled && (
+                          <>
+                            <button
+                              onClick={() => handleEdit(apt)}
+                              className="btn-edit"
+                            >
+                              <Edit2 size={22} />
+                              Edit
+                            </button>
 
-                        <button
-                          onClick={() => handleDelete(apt.id)}
-                          className="btn-delete"
-                        >
-                          <Trash2 size={18} />
-                          Delete
-                        </button>
+                            <button
+                              onClick={() => handleCancelAppointment(apt)}
+                              className="btn-delete"
+                              disabled={cancellingId === apt.id}
+                            >
+                              <X size={22} />
+                              {cancellingId === apt.id
+                                ? "Cancelling..."
+                                : "Cancel Appointment"}
+                            </button>
+                          </>
+                        )}
                       </div>
                     </div>
 
