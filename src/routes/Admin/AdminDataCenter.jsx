@@ -753,8 +753,14 @@ export default function AdminDataCenter() {
       cooking_method_hint: draft.cooking_method_name || prev.cooking_method_hint,
       description: draft.description || prev.description,
       servings: draft.servings ?? prev.servings,
-      ingredients: JSON.stringify(draft.ingredients || [], null, 1),
-      instructions: JSON.stringify(draft.instructions || [], null, 1),
+      // Only overwrite when the draft actually has something. Stringifying
+      // unconditionally replaced whatever the admin had typed with "[]".
+      ingredients: draft.ingredients?.length
+        ? JSON.stringify(draft.ingredients, null, 1)
+        : prev.ingredients,
+      instructions: draft.instructions?.length
+        ? JSON.stringify(draft.instructions, null, 1)
+        : prev.instructions,
       // calories deliberately untouched — the source has no nutrition data.
     }));
   };
