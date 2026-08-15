@@ -460,14 +460,30 @@ function CreateRecipe() {
       cuisineId = resolveOptionId(cuisines, formData.cuisine);
       cookingMethodId = resolveOptionId(cookingMethods, formData.cookingMethod);
 
+      const droppedIngredients = [];
+
       tableData.forEach((row) => {
-        const resolvedIngredientId = resolveOptionId(ingredientsList?.ingredient || [], row.ingredient);
+        // Prefer an id resolved by the backend (external prefill), falling back
+        // to name lookup for manually added rows.
+        const resolvedIngredientId =
+          row.ingredientId || resolveOptionId(ingredientsList?.ingredient || [], row.ingredient);
+
         if (resolvedIngredientId) {
           ingredientId.push(resolvedIngredientId);
           ingredientQuantityList.push(parsePositiveNumberInput(row.ingredientQuantity).value);
           ingredientCostList.push(parseIngredientCostInput(row.ingredientCost));
+        } else {
+          // Never drop an ingredient silently — the user should know what did
+          // not make it into the saved recipe.
+          droppedIngredients.push(row.ingredient);
         }
       });
+
+      if (droppedIngredients.length > 0) {
+        toast.error(
+          `These ingredients aren't in NutriHelp and won't be saved: ${droppedIngredients.join(", ")}.`
+        );
+      }
 
       // Format data to match backend expectations
       const recipeData = {

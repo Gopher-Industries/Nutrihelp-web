@@ -55,7 +55,32 @@ describe("buildCreateRecipePrefill", () => {
       ingredient: "penne rigate",
       ingredientQuantity: 1,
       ingredientCost: 0,
+      ingredientId: null,
     });
+  });
+
+  it("carries the backend-resolved ingredient id and matched name", () => {
+    const resolvedDraft = {
+      ...DRAFT,
+      ingredients: [
+        {
+          name: "chopped tomatoes",
+          quantity: 400,
+          unit: "g",
+          notes: null,
+          category: "Fruit & Vegetables",
+          ingredient_id: 9,
+          matched_name: "Tomato",
+          resolution: "matched",
+        },
+      ],
+    };
+
+    const { ingredientRows } = buildCreateRecipePrefill(resolvedDraft, UNMAPPED);
+
+    expect(ingredientRows[0].ingredientId).toBe(9);
+    // The NutriHelp name is shown, so the row matches what the save path stores.
+    expect(ingredientRows[0].ingredient).toBe("Tomato");
   });
 
   it("keeps an ingredient whose quantity the source did not give", () => {
