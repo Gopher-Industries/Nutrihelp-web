@@ -7,6 +7,9 @@ import { CircleHelp } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import FramerClient from "../../components/framer-client.jsx";
 import GuidedTour from "../../components/GuidedTour/GuidedTour";
+import ExternalRecipeSearch from "../../components/ExternalRecipeSearch";
+import buildCreateRecipePrefill from "../../components/ExternalRecipeSearch/buildCreateRecipePrefill";
+import { resolveRecipeIngredients } from "../../services/recipeSourcesApi";
 import {
   cuisineListDB,
   getCuisineList,
@@ -92,6 +95,17 @@ function writeCreateRecipeTourStateToStorage(nextState) {
   }
 }
 
+// Backend-supplied field name -> human-readable label for the prefill notice.
+const PREFILL_FIELD_LABELS = {
+  recipeName: "Recipe Name",
+  cuisine: "Cuisine",
+  preparationTime: "Prep Time",
+  totalServings: "Servings",
+  cookingMethod: "Cooking Method",
+  ingredientCost: "Ingredient Cost",
+  ingredientCategory: "Ingredient Category",
+};
+
 // Create Recipe page
 function CreateRecipe() {
   const navigate = useNavigate();
@@ -129,6 +143,90 @@ function CreateRecipe() {
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
 
+  // Fields the external source could not supply — flagged for manual completion.
+  const [prefillHighlights, setPrefillHighlights] = useState([]);
+  const [prefillNotice, setPrefillNotice] = useState("");
+  // True only while the shown image preview came from an external source, not an upload.
+  const [isSourceImagePreview, setIsSourceImagePreview] = useState(false);
+  // Base64 image supplied by an external prefill, saved when the user does not
+  // upload their own file.
+  const [sourceImageData, setSourceImageData] = useState("");
+  const highlightClass = (field) =>
+    prefillHighlights.includes(field) ? " create-recipe-field--unmapped" : "";
+
+  /**
+   * Applies a mapped external recipe to the form. Every setter the prefill
+   * touches lives here so the wiring stays in one place.
+   */
+  const applyExternalPrefill = (mapResult) => {
+    const { formPatch, ingredientRows, instructions, imagePreviewUrl: sourceImage, highlightFields } =
+      buildCreateRecipePrefill(mapResult.draft, mapResult.unmapped_fields || []);
+
+    setFormData((prev) => ({ ...prev, ...formPatch }));
+    setIngredients(ingredientRows);
+    setRecipeTable(ingredientRows);
+    setInstruction(instructions);
+    // The backend fetches the source image server-side and returns it as a
+    // base64 data URL, the same format the save path accepts from an uploaded
+    // file — so a prefilled recipe keeps its image without the user re-uploading.
+    const sourceImageBase64 = mapResult.source_image || "";
+    if (sourceImage || sourceImageBase64) {
+      setImagePreviewUrl(sourceImageBase64 || sourceImage);
+      setSourceImageData(sourceImageBase64);
+      setIsSourceImagePreview(true);
+    }
+
+    setPrefillHighlights(highlightFields);
+    setErrors({});
+    setTouched({});
+
+    const attribution = mapResult.source_meta?.attribution || "the source";
+    const labels = highlightFields.map((field) => PREFILL_FIELD_LABELS[field] || field);
+    const notice = [
+      labels.length
+        ? `Prefilled from ${attribution}. These weren't available from the source — please complete them: ${labels.join(", ")}.`
+        : `Prefilled from ${attribution}. Review before saving.`,
+    ];
+
+    // Tell the user what happened to their ingredients. The backend computes
+    // this on every map; until now it was thrown away.
+    const resolution = mapResult.ingredient_resolution;
+    if (resolution) {
+      const matched = resolution.matched || 0;
+      const pending = (resolution.unmatched || 0) + (resolution.failed || 0);
+      notice.push(
+        `${matched} ${matched === 1 ? "ingredient" : "ingredients"} matched to existing NutriHelp items; `
+        + `${pending} new ${pending === 1 ? "ingredient" : "ingredients"} will be added when you save.`
+      );
+    }
+
+    // Rows whose displayed name is NutriHelp's name rather than the source's.
+    const renamed = (mapResult.draft?.ingredients || []).filter(
+      (item) =>
+        item?.matched_name
+        && String(item.matched_name).trim().toLowerCase()
+          !== String(item.name || "").trim().toLowerCase()
+    ).length;
+
+    if (renamed > 0) {
+      notice.push(`${renamed} renamed to NutriHelp names.`);
+    }
+
+    setPrefillNotice(notice.join(" "));
+  };
+
+  const clearExternalPrefill = () => {
+    setPrefillHighlights([]);
+    setPrefillNotice("");
+    // Drop the source image too. Clearing only the disclosure left the user
+    // still saving TheMealDB's image after discarding the prefill, with nothing
+    // on screen saying where it came from. Only touch the preview when it was
+    // the source's — an image the user uploaded themselves must survive.
+    if (isSourceImagePreview) setImagePreviewUrl("");
+    setSourceImageData("");
+    setIsSourceImagePreview(false);
+  };
+
   //==================== Handle changes to the fields ====================
 
   // Generic field change handler - works for any field in formData
@@ -141,6 +239,7 @@ function CreateRecipe() {
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: undefined }));
     }
+    setPrefillHighlights((prev) => prev.filter((f) => f !== field));
   };
 
   // Replace the previous top-level fetch calls with local state + effect
@@ -295,6 +394,8 @@ function CreateRecipe() {
   };
 
   const handleImageFileChange = (event) => {
+    setIsSourceImagePreview(false);
+    setSourceImageData("");
     const file = event.target.files?.[0];
     if (!file) {
       setSelectedImageName("");
@@ -323,6 +424,8 @@ function CreateRecipe() {
     if (fileInputRef.current) fileInputRef.current.value = "";
     setSelectedImageName("");
     setImagePreviewUrl("");
+    setIsSourceImagePreview(false);
+    setSourceImageData("");
   };
 
   const resolveOptionId = (list, selectedValue) => {
@@ -356,6 +459,26 @@ function CreateRecipe() {
         return;
       }
 
+      // Every ingredient row needs a category: recipe_ingredient.cuisine_id is
+      // NOT NULL, so a blank one fails the insert with an opaque 500. The manual
+      // add-path already validates this, but rows arriving from an external
+      // prefill bypass that check — catch them here rather than at the database.
+      const rowsMissingCategory = tableData
+        .map((row, index) => ({ row, index }))
+        .filter(({ row }) => !String(row.ingredientCategory || "").trim());
+
+      if (rowsMissingCategory.length > 0) {
+        const names = rowsMissingCategory
+          .map(({ row, index }) => row.ingredient || `row ${index + 1}`)
+          .join(", ");
+        setAttemptedSubmit(true);
+        window.scrollTo(0, 0);
+        toast.error(
+          `Set a category for every ingredient before saving. Missing: ${names}.`
+        );
+        return;
+      }
+
       setAttemptedSubmit(false);
 
       const file = fileInputRef.current.files[0];
@@ -370,14 +493,60 @@ function CreateRecipe() {
       cuisineId = resolveOptionId(cuisines, formData.cuisine);
       cookingMethodId = resolveOptionId(cookingMethods, formData.cookingMethod);
 
+      const droppedIngredients = [];
+
+      // Rows the backend could not match and that aren't in the local list
+      // either. The backend deliberately does NOT create ingredients at prefill
+      // time — previewing a recipe must leave the shared table alone — so ask
+      // for them now, at the point the user has actually committed to saving.
+      const localId = (row) =>
+        row.ingredientId || resolveOptionId(ingredientsList?.ingredient || [], row.ingredient);
+
+      const unresolvedRows = tableData.filter(
+        (row) => !localId(row) && String(row.ingredient || "").trim()
+      );
+
+      const createdIdsByName = new Map();
+      if (unresolvedRows.length > 0) {
+        try {
+          const resolved = await resolveRecipeIngredients(
+            unresolvedRows.map((row) => ({
+              name: row.ingredient,
+              category: row.ingredientCategory,
+            }))
+          );
+          resolved.forEach((entry) => {
+            if (entry?.id) createdIdsByName.set(String(entry.name || "").trim(), entry.id);
+          });
+        } catch (resolveError) {
+          // Never block a save on this: anything still unresolved falls through
+          // to the dropped-ingredients warning below, same as before.
+          console.error("Ingredient resolution failed:", resolveError);
+        }
+      }
+
       tableData.forEach((row) => {
-        const resolvedIngredientId = resolveOptionId(ingredientsList?.ingredient || [], row.ingredient);
+        // Prefer an id resolved by the backend (external prefill), falling back
+        // to name lookup for manually added rows, then to one just created.
+        const resolvedIngredientId =
+          localId(row) || createdIdsByName.get(String(row.ingredient || "").trim());
+
         if (resolvedIngredientId) {
           ingredientId.push(resolvedIngredientId);
           ingredientQuantityList.push(parsePositiveNumberInput(row.ingredientQuantity).value);
           ingredientCostList.push(parseIngredientCostInput(row.ingredientCost));
+        } else {
+          // Never drop an ingredient silently — the user should know what did
+          // not make it into the saved recipe.
+          droppedIngredients.push(row.ingredient);
         }
       });
+
+      if (droppedIngredients.length > 0) {
+        toast.error(
+          `These ingredients aren't in NutriHelp and won't be saved: ${droppedIngredients.join(", ")}.`
+        );
+      }
 
       // Format data to match backend expectations
       const recipeData = {
@@ -425,6 +594,9 @@ function CreateRecipe() {
       } else {
         const recipeDataWithoutImage = {
           ...recipeData,
+          // No uploaded file, but an external prefill may have supplied the
+          // source recipe's image as base64 — save that rather than dropping it.
+          ...(sourceImageData ? { recipe_image: sourceImageData } : {}),
         };
 
         await recipeApi.createRecepie(recipeDataWithoutImage);
@@ -592,6 +764,20 @@ function CreateRecipe() {
                   </button>
                 </div>
               </div>
+              <ExternalRecipeSearch
+                onPrefill={applyExternalPrefill}
+                onError={(message) => setPrefillNotice(message)}
+              />
+
+              {prefillNotice && (
+                <div className="create-recipe-prefill-notice" role="status">
+                  <span>{prefillNotice}</span>
+                  <button type="button" onClick={clearExternalPrefill}>
+                    Clear prefill
+                  </button>
+                </div>
+              )}
+
               {/* Recipe Description Section */}
               <div
                 id="no-bg"
@@ -613,7 +799,7 @@ function CreateRecipe() {
                   >
                     <div
                       id="no-bg"
-                      className="flex flex-col w-full gap-2"
+                      className={`flex flex-col w-full gap-2${highlightClass("recipeName")}`}
                     >
                       <label
                         id="no-bg"
@@ -636,7 +822,7 @@ function CreateRecipe() {
 
                     <div
                       id="no-bg"
-                      className="flex flex-col w-full gap-2"
+                      className={`flex flex-col w-full gap-2${highlightClass("cuisine")}`}
                     >
                       <label
                         id="no-bg"
@@ -707,6 +893,11 @@ function CreateRecipe() {
                         <img src={imagePreviewUrl} alt="Selected recipe preview" />
                       </div>
                     ) : null}
+                    {isSourceImagePreview && imagePreviewUrl ? (
+                      <p className="create-recipe-source-image-notice">
+                        This image comes from TheMealDB and will be saved with your recipe — choose your own image to replace it.
+                      </p>
+                    ) : null}
                   </div>
                 </div>
               </div>
@@ -726,7 +917,7 @@ function CreateRecipe() {
                 >
                   <div
                     id="no-bg"
-                    className="flex flex-col w-full gap-2"
+                    className={`flex flex-col w-full gap-2${highlightClass("preparationTime")}`}
                   >
                     <label
                       id="no-bg"
@@ -752,7 +943,7 @@ function CreateRecipe() {
 
                   <div
                     id="no-bg"
-                    className="flex flex-col w-full gap-2"
+                    className={`flex flex-col w-full gap-2${highlightClass("totalServings")}`}
                   >
                     <label
                       id="no-bg"
@@ -778,7 +969,7 @@ function CreateRecipe() {
 
                   <div
                     id="no-bg"
-                    className="flex flex-col w-full gap-2"
+                    className={`flex flex-col w-full gap-2${highlightClass("cookingMethod")}`}
                   >
                     <label
                       id="no-bg"
