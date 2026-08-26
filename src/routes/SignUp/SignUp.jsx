@@ -23,6 +23,14 @@ export default function SignUp() {
   const [serverError, setServerError] = useState("");
 
   const handleGoogleSignup = async () => {
+    if (!form.privacyConsent) {
+      setErrors({
+        privacyConsent:
+          "You must agree to the Privacy Policy before creating an account.",
+      });
+      return;
+    }
+
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
@@ -34,7 +42,7 @@ export default function SignUp() {
       setServerError(error.message);
     }
   };
-
+  
   const handleAppleSignup = async () => {
     const message = "Apple sign-in is not configured in this sprint build yet.";
     setServerError(message);
@@ -60,6 +68,11 @@ export default function SignUp() {
     const phoneErr = validatePhone(values.phone);
     if (phoneErr) err.phone = phoneErr;
 
+    if (!values.privacyConsent) {
+      err.privacyConsent =
+        "You must agree to the Privacy Policy before creating an account.";
+    }
+
     return err;
   };
 
@@ -80,6 +93,7 @@ export default function SignUp() {
       phone: "",
       password: "",
       confirmPassword: "",
+      privacyConsent: false,
     },
     validate,
     async (values) => {
@@ -87,13 +101,16 @@ export default function SignUp() {
       try {
         const payload = {
           name: `${values.firstName} ${values.lastName}`.trim(),
+          first_name: values.firstName.trim(),
+          last_name: values.lastName.trim(),
           email: values.email.trim().toLowerCase(),
           password: values.password,
           contact_number: values.phone || "0412345678",
           address: "Placeholder address 123",
+          privacy_consent: values.privacyConsent,
         };
 
-        const res = await fetch(`${API_BASE_URL}/api/signup`, {
+        const res = await fetch(`${API_BASE_URL}/api/auth/register`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
@@ -160,7 +177,12 @@ export default function SignUp() {
               }
             }
 
-            msg = data.error || data.message || msg;
+            msg =
+              (typeof data.error === "string"
+                ? data.error
+                : data.error?.message) ||
+              data.message ||
+              msg;
           } catch {
             if (text) msg = text;
           }
@@ -178,7 +200,13 @@ export default function SignUp() {
         }
 
         const data = await parseJsonSafe(res);
-        setServerError(data.error || `Sign up failed (HTTP ${res.status})`);
+        setServerError(
+          (typeof data.error === "string"
+            ? data.error
+            : data.error?.message) ||
+          data.message ||
+          `Sign up failed (HTTP ${res.status})`,
+        );
       } catch (error) {
         console.error("Sign up request failed:", error);
         setServerError(
@@ -549,6 +577,41 @@ export default function SignUp() {
                 />
               </div>
             </div>
+
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+                marginTop: "6px",
+                marginBottom: "10px",
+              }}
+            >
+              <input
+                type="checkbox"
+                id="privacyConsent"
+                name="privacyConsent"
+                checked={form.privacyConsent}
+                onChange={handleChange}
+                onBlur={handleBlur}
+              />
+
+              <label htmlFor="privacyConsent" style={{ fontSize: "14px" }}>
+                I have read and agree to the{" "}
+                <a
+                  href="/privacy-policy"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Privacy Policy
+                </a>
+              </label>
+            </div>
+
+            <FieldError
+              error={errors.privacyConsent}
+              touched={touched.privacyConsent}
+            />
 
             {serverError && (
               <p style={{ ...styles.error, marginTop: 8 }}>{serverError}</p>

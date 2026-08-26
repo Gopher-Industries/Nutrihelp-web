@@ -22,6 +22,7 @@ import { UserContext } from "./context/user.context";
 
 import Login from "./routes/Login/Login";
 import SignUp from "./routes/SignUp/SignUp";
+import PrivacyPolicy from "./routes/PrivacyPolicy/PrivacyPolicy";
 import ForgotPassword from "./routes/ForgotPassword/ForgotPassword";
 import ForgotPasswordVerify from "./routes/ForgotPassword/ForgotPasswordVerify";
 import ForgotPasswordReset from "./routes/ForgotPassword/ForgotPasswordReset";
@@ -162,6 +163,7 @@ function App() {
         {/* PUBLIC ROUTES */}
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
 
 
         {/* Forgot password flow */}
