@@ -47,6 +47,10 @@ function coverageLabel(coverage) {
 export function formatRecipeNutrition(recipe) {
   if (!recipe) return null;
   const coverage = coverageOf(recipe);
+  // No coverage record means the total predates gram weights: it was worked out
+  // by reading every bare quantity as grams ("2 chicken breasts" as 2 g), which
+  // put "7 kcal per serving" on real dishes. Nobody can vouch for that figure.
+  if (!coverage) return null;
 
   let calories = finiteOrNull(recipe.calories);
   let approximate = false;
