@@ -14,6 +14,7 @@ import {
   buildResolveRequest,
   buildIngredientSavePayload,
   describeNutritionOutcome,
+  formatIngredientQuantity,
 } from "./buildIngredientSavePayload";
 import { describeSavedNutrition } from "../../utils/recipeNutritionLabel";
 import {
@@ -1270,9 +1271,7 @@ function CreateRecipe() {
                                 id="no-bg"
                                 className="border border-gray-300 px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base"
 	                              >
-	                                {[item.ingredientQuantity, item.ingredientUnit]
-	                                  .filter((part) => part !== "" && part !== null && part !== undefined)
-	                                  .join(" ") || item.ingredientNotes}
+	                                {formatIngredientQuantity(item)}
 	                              </td>
 	                              <td
 	                                id="no-bg"

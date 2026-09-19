@@ -107,6 +107,18 @@ export function buildIngredientSavePayload(rows, { idOf, enriched = [] } = {}) {
 }
 
 /**
+ * The quantity as the ingredient table shows it. Never a bare number: "0.25"
+ * with no unit is what let a quarter cup be read as a quarter of a gram.
+ * @returns {string} e.g. "0.25 cup", "400 g", "to taste", or "" when empty
+ */
+export function formatIngredientQuantity(row) {
+  if (!row) return "";
+  const { quantity, unit, notes } = measureOf(row);
+  if (quantity === null) return notes;
+  return `${quantity} ${unit}`;
+}
+
+/**
  * One sentence for the user about how complete the nutrition total will be.
  * @returns {string} empty when the backend sent no summary
  */
