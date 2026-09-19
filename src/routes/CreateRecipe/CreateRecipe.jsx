@@ -15,6 +15,7 @@ import {
   buildIngredientSavePayload,
   describeNutritionOutcome,
 } from "./buildIngredientSavePayload";
+import { describeSavedNutrition } from "../../utils/recipeNutritionLabel";
 import {
   cuisineListDB,
   getCuisineList,
@@ -579,10 +580,13 @@ function CreateRecipe() {
               recipe_image: base64Image,
             };
 
-            await recipeApi.createRecepie(recipeDataWithImage);
+            const saved = await recipeApi.createRecepie(recipeDataWithImage);
             window.dispatchEvent(new Event("recipeUpdated"));
             toast.success("Recipe created successfully.");
-            if (nutritionMessage) toast.info(nutritionMessage);
+            // The saved record knows what the total really covers; the resolve
+            // summary is only a forecast, kept for older backends.
+            const savedNutritionMessage = describeSavedNutrition(saved?.nutrition) || nutritionMessage;
+            if (savedNutritionMessage) toast.info(savedNutritionMessage);
             navigate("/recipe");
           } catch (error) {
             console.error("Error creating recipe with image:", error);
@@ -598,10 +602,13 @@ function CreateRecipe() {
           ...(sourceImageData ? { recipe_image: sourceImageData } : {}),
         };
 
-        await recipeApi.createRecepie(recipeDataWithoutImage);
+        const saved = await recipeApi.createRecepie(recipeDataWithoutImage);
         window.dispatchEvent(new Event("recipeUpdated"));
         toast.success("Recipe created successfully.");
-        if (nutritionMessage) toast.info(nutritionMessage);
+        // The saved record knows what the total really covers; the resolve
+        // summary is only a forecast, kept for older backends.
+        const savedNutritionMessage = describeSavedNutrition(saved?.nutrition) || nutritionMessage;
+        if (savedNutritionMessage) toast.info(savedNutritionMessage);
         navigate("/recipe");
 
         // fetch("http://localhost:80/api/recipe/", {
