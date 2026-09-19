@@ -54,6 +54,9 @@ describe("buildCreateRecipePrefill", () => {
       ingredientCategory: "",
       ingredient: "penne rigate",
       ingredientQuantity: 1,
+      ingredientUnit: "pound",
+      ingredientNotes: "",
+      ingredientSourceMeasure: "",
       ingredientCost: 0,
       ingredientId: null,
     });
@@ -98,6 +101,38 @@ describe("buildCreateRecipePrefill", () => {
     const { ingredientRows } = buildCreateRecipePrefill(draftWithZeroQuantity, []);
 
     expect(ingredientRows[0].ingredientQuantity).toBe(0);
+  });
+
+  it("keeps the unit, so 0.25 cup is never mistaken for 0.25 grams", () => {
+    const { ingredientRows } = buildCreateRecipePrefill(DRAFT, UNMAPPED);
+
+    expect(ingredientRows[0].ingredientUnit).toBe("pound");
+    expect(ingredientRows[1].ingredientUnit).toBe("cup");
+    expect(ingredientRows[1].ingredientQuantity).toBe(0.25);
+  });
+
+  it("keeps the notes and the measure exactly as the source wrote it", () => {
+    const draft = {
+      ...DRAFT,
+      ingredients: [
+        { name: "olive oil", quantity: 0.25, unit: "cup", notes: null, source_measure: "1/4 cup" },
+        { name: "garlic", quantity: null, unit: null, notes: "to taste", source_measure: "To taste" },
+      ],
+    };
+
+    const { ingredientRows } = buildCreateRecipePrefill(draft, UNMAPPED);
+
+    expect(ingredientRows[0].ingredientSourceMeasure).toBe("1/4 cup");
+    expect(ingredientRows[1].ingredientNotes).toBe("to taste");
+    expect(ingredientRows[1].ingredientSourceMeasure).toBe("To taste");
+  });
+
+  it("uses empty strings, never the text null, when the source gives no unit", () => {
+    const { ingredientRows } = buildCreateRecipePrefill(DRAFT, UNMAPPED);
+
+    expect(ingredientRows[2].ingredientUnit).toBe("");
+    expect(ingredientRows[2].ingredientSourceMeasure).toBe("");
+    expect(ingredientRows[0].ingredientNotes).toBe("");
   });
 
   it("passes instructions through as plain strings", () => {
