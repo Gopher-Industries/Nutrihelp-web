@@ -2,6 +2,7 @@ import {
   searchRecipeSources,
   mapRecipeSource,
   resolveRecipeIngredients,
+  resolveRecipeIngredientsWithNutrition,
 } from "./recipeSourcesApi";
 
 describe("recipeSourcesApi", () => {
@@ -115,5 +116,63 @@ describe("recipeSourcesApi", () => {
     await expect(resolveRecipeIngredients([{ name: "garlic" }])).rejects.toThrow(
       "Validation Error"
     );
+  });
+
+  describe("resolveRecipeIngredientsWithNutrition", () => {
+    const resolved = [
+      { name: "garlic", id: 63, status: "matched", grams: 6, grams_source: "usda_portion" },
+    ];
+    const nutrition = {
+      provider: "USDA FoodData Central",
+      weighed: 1,
+      unweighed: 0,
+      filled: 0,
+      missing: 0,
+      complete: true,
+    };
+
+    it("sends each measure so the backend can work out a gram weight", async () => {
+      global.fetch.mockReturnValue(jsonResponse({ success: true, data: { resolved, nutrition } }));
+      const ingredients = [{ name: "garlic", quantity: 2, unit: "cloves", notes: "minced" }];
+
+      await resolveRecipeIngredientsWithNutrition(ingredients);
+
+      const [url, options] = global.fetch.mock.calls[0];
+      expect(url).toContain("/recipe-sources/resolve-ingredients");
+      expect(JSON.parse(options.body)).toEqual({ ingredients });
+    });
+
+    it("returns the resolution together with the nutrition summary", async () => {
+      global.fetch.mockReturnValue(jsonResponse({ success: true, data: { resolved, nutrition } }));
+
+      const result = await resolveRecipeIngredientsWithNutrition([{ name: "garlic" }]);
+
+      expect(result).toEqual({ resolved, nutrition });
+    });
+
+    it("reports no summary when the backend could not enrich", async () => {
+      global.fetch.mockReturnValue(jsonResponse({ success: true, data: { resolved, nutrition: null } }));
+
+      const result = await resolveRecipeIngredientsWithNutrition([{ name: "garlic" }]);
+
+      expect(result.nutrition).toBeNull();
+      expect(result.resolved).toEqual(resolved);
+    });
+
+    it("works against an older backend that returns no nutrition key", async () => {
+      global.fetch.mockReturnValue(jsonResponse({ success: true, data: { resolved } }));
+
+      const result = await resolveRecipeIngredientsWithNutrition([{ name: "garlic" }]);
+
+      expect(result).toEqual({ resolved, nutrition: null });
+    });
+
+    it("throws when resolution fails", async () => {
+      global.fetch.mockReturnValue(jsonResponse({ success: false, error: "nope" }, false, 500));
+
+      await expect(resolveRecipeIngredientsWithNutrition([{ name: "garlic" }])).rejects.toThrow(
+        "nope"
+      );
+    });
   });
 });
