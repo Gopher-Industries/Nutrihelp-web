@@ -9,7 +9,12 @@ import FramerClient from "../../components/framer-client.jsx";
 import GuidedTour from "../../components/GuidedTour/GuidedTour";
 import ExternalRecipeSearch from "../../components/ExternalRecipeSearch";
 import buildCreateRecipePrefill from "../../components/ExternalRecipeSearch/buildCreateRecipePrefill";
-import { resolveRecipeIngredients } from "../../services/recipeSourcesApi";
+import { resolveRecipeIngredientsWithNutrition } from "../../services/recipeSourcesApi";
+import {
+  buildResolveRequest,
+  buildIngredientSavePayload,
+  describeNutritionOutcome,
+} from "./buildIngredientSavePayload";
 import {
   cuisineListDB,
   getCuisineList,
@@ -126,6 +131,11 @@ function CreateRecipe() {
     ingredient: "",
     ingredientQuantity: "",
     ingredientCost: "",
+    // Carried, not typed: the unit and original measure of an imported ingredient.
+    // The form has no unit field, so without these "0.25 cup" would become 0.25 g.
+    ingredientUnit: "",
+    ingredientNotes: "",
+    ingredientSourceMeasure: "",
     // image file (optional)
     imageFile: null,
     // Current Instruction being added
@@ -328,6 +338,12 @@ function CreateRecipe() {
 
   const handelIngredientsInTable = () => {
     const { ingredientCategory, ingredient, ingredientQuantity, ingredientCost } = formData;
+    // Present only while an imported row is being edited; a hand-typed row has none.
+    const carriedMeasure = {
+      ingredientUnit: formData.ingredientUnit || "",
+      ingredientNotes: formData.ingredientNotes || "",
+      ingredientSourceMeasure: formData.ingredientSourceMeasure || "",
+    };
 
     // Validate ingredient fields before adding
     const ingErrors = {};
@@ -358,11 +374,11 @@ function CreateRecipe() {
 
     setIngredients((prev) => [
       ...prev,
-      { ingredientCategory, ingredient, ingredientQuantity: parsedQuantity.value, ingredientCost: parsedCost },
+      { ingredientCategory, ingredient, ingredientQuantity: parsedQuantity.value, ingredientCost: parsedCost, ...carriedMeasure },
     ]);
     setRecipeTable((prev) => [
       ...prev,
-      { ingredientCategory, ingredient, ingredientQuantity: parsedQuantity.value, ingredientCost: parsedCost },
+      { ingredientCategory, ingredient, ingredientQuantity: parsedQuantity.value, ingredientCost: parsedCost, ...carriedMeasure },
     ]);
     setFormData((prev) => ({
       ...prev,
@@ -370,6 +386,9 @@ function CreateRecipe() {
       ingredient: "",
       ingredientQuantity: "",
       ingredientCost: "",
+      ingredientUnit: "",
+      ingredientNotes: "",
+      ingredientSourceMeasure: "",
     }));
     // Clear ingredient related errors
     setErrors(prev => ({
@@ -483,9 +502,6 @@ function CreateRecipe() {
 
       const file = fileInputRef.current.files[0];
 
-      const ingredientId = [];
-      const ingredientQuantityList = [];
-      const ingredientCostList = [];
       let cuisineId;
       let cookingMethodId;
       const userId = currentUser?.user_id ?? currentUser?.id ?? recipeApi.getCurrentUserId?.();
@@ -493,58 +509,35 @@ function CreateRecipe() {
       cuisineId = resolveOptionId(cuisines, formData.cuisine);
       cookingMethodId = resolveOptionId(cookingMethods, formData.cookingMethod);
 
-      const droppedIngredients = [];
-
-      // Rows the backend could not match and that aren't in the local list
-      // either. The backend deliberately does NOT create ingredients at prefill
-      // time — previewing a recipe must leave the shared table alone — so ask
-      // for them now, at the point the user has actually committed to saving.
       const localId = (row) =>
         row.ingredientId || resolveOptionId(ingredientsList?.ingredient || [], row.ingredient);
 
-      const unresolvedRows = tableData.filter(
-        (row) => !localId(row) && String(row.ingredient || "").trim()
-      );
-
-      const createdIdsByName = new Map();
-      if (unresolvedRows.length > 0) {
-        try {
-          const resolved = await resolveRecipeIngredients(
-            unresolvedRows.map((row) => ({
-              name: row.ingredient,
-              category: row.ingredientCategory,
-            }))
-          );
-          resolved.forEach((entry) => {
-            if (entry?.id) createdIdsByName.set(String(entry.name || "").trim(), entry.id);
-          });
-        } catch (resolveError) {
-          // Never block a save on this: anything still unresolved falls through
-          // to the dropped-ingredients warning below, same as before.
-          console.error("Ingredient resolution failed:", resolveError);
-        }
+      // Ask the backend about every ingredient at the point the user has actually
+      // committed to saving. It does two jobs in one call:
+      //  - names it could not match at prefill time are created now (previewing a
+      //    recipe must leave the shared table alone, so this waits for the save);
+      //  - each measure is turned into grams using USDA portion data, because the
+      //    nutrition total can only count weights. "0.25 cup" is not a weight.
+      let enriched = [];
+      let nutritionSummary = null;
+      try {
+        const result = await resolveRecipeIngredientsWithNutrition(buildResolveRequest(tableData));
+        enriched = result.resolved;
+        nutritionSummary = result.nutrition;
+      } catch (resolveError) {
+        // Never block a save on this: rows the form already knows keep their ids,
+        // and anything still unresolved is reported below, same as before.
+        console.error("Ingredient resolution failed:", resolveError);
       }
 
-      tableData.forEach((row) => {
-        // Prefer an id resolved by the backend (external prefill), falling back
-        // to name lookup for manually added rows, then to one just created.
-        const resolvedIngredientId =
-          localId(row) || createdIdsByName.get(String(row.ingredient || "").trim());
+      const ingredientPayload = buildIngredientSavePayload(tableData, { idOf: localId, enriched });
+      const nutritionMessage = describeNutritionOutcome(nutritionSummary);
 
-        if (resolvedIngredientId) {
-          ingredientId.push(resolvedIngredientId);
-          ingredientQuantityList.push(parsePositiveNumberInput(row.ingredientQuantity).value);
-          ingredientCostList.push(parseIngredientCostInput(row.ingredientCost));
-        } else {
-          // Never drop an ingredient silently — the user should know what did
-          // not make it into the saved recipe.
-          droppedIngredients.push(row.ingredient);
-        }
-      });
-
-      if (droppedIngredients.length > 0) {
+      // Never drop an ingredient silently — the user should know what did not
+      // make it into the saved recipe.
+      if (ingredientPayload.dropped.length > 0) {
         toast.error(
-          `These ingredients aren't in NutriHelp and won't be saved: ${droppedIngredients.join(", ")}.`
+          `These ingredients aren't in NutriHelp and won't be saved: ${ingredientPayload.dropped.join(", ")}.`
         );
       }
 
@@ -555,11 +548,16 @@ function CreateRecipe() {
         cuisine_id: cuisineId,
         preparation_time: parsePositiveNumberInput(formData.preparationTime, { integer: true }).value,
         total_servings: parsePositiveNumberInput(formData.totalServings, { integer: true }).value,
-        ingredient_id: ingredientId,
-        ingredient_quantity: ingredientQuantityList,
-        ingredient_cost: ingredientCostList,
-        ingredient_costs: ingredientCostList,
-        ingredientCost: ingredientCostList,
+        ingredient_id: ingredientPayload.ingredient_id,
+        ingredient_quantity: ingredientPayload.ingredient_quantity,
+        ingredient_cost: ingredientPayload.ingredient_cost,
+        ingredient_costs: ingredientPayload.ingredient_cost,
+        ingredientCost: ingredientPayload.ingredient_cost,
+        ingredient_unit: ingredientPayload.ingredient_unit,
+        ingredient_notes: ingredientPayload.ingredient_notes,
+        ingredient_source_measure: ingredientPayload.ingredient_source_measure,
+        ingredient_grams: ingredientPayload.ingredient_grams,
+        ingredient_grams_source: ingredientPayload.ingredient_grams_source,
         ingredient_details: tableData.map((row) => ({
           name: row.ingredient,
           category: row.ingredientCategory,
@@ -584,6 +582,7 @@ function CreateRecipe() {
             await recipeApi.createRecepie(recipeDataWithImage);
             window.dispatchEvent(new Event("recipeUpdated"));
             toast.success("Recipe created successfully.");
+            if (nutritionMessage) toast.info(nutritionMessage);
             navigate("/recipe");
           } catch (error) {
             console.error("Error creating recipe with image:", error);
@@ -602,6 +601,7 @@ function CreateRecipe() {
         await recipeApi.createRecepie(recipeDataWithoutImage);
         window.dispatchEvent(new Event("recipeUpdated"));
         toast.success("Recipe created successfully.");
+        if (nutritionMessage) toast.info(nutritionMessage);
         navigate("/recipe");
 
         // fetch("http://localhost:80/api/recipe/", {
@@ -1123,6 +1123,11 @@ function CreateRecipe() {
                             onBlur={() => setTouched(prev => ({ ...prev, ingredientQuantity: true }))}
                           />
                           <FieldError error={errors.ingredientQuantity} touched={touched.ingredientQuantity} />
+                          {/* The form has no unit field. Say what the number means, so an
+                              imported "0.25 cup" is not read, or re-saved, as grams. */}
+                          <span id="no-bg" className="text-sm text-gray-600 whitespace-nowrap" data-testid="quantity-unit-hint">
+                            {formData.ingredientUnit || "g"}
+                          </span>
                           {/*      <datalist id="units">
                           <option value="ml" />
                           <option value="g" />
@@ -1258,7 +1263,9 @@ function CreateRecipe() {
                                 id="no-bg"
                                 className="border border-gray-300 px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base"
 	                              >
-	                                {item.ingredientQuantity}
+	                                {[item.ingredientQuantity, item.ingredientUnit]
+	                                  .filter((part) => part !== "" && part !== null && part !== undefined)
+	                                  .join(" ") || item.ingredientNotes}
 	                              </td>
 	                              <td
 	                                id="no-bg"
@@ -1296,6 +1303,9 @@ function CreateRecipe() {
 	                                            ingredient: item.ingredient,
 	                                            ingredientQuantity: item.ingredientQuantity,
 	                                            ingredientCost: item.ingredientCost || "",
+	                                            ingredientUnit: item.ingredientUnit || "",
+	                                            ingredientNotes: item.ingredientNotes || "",
+	                                            ingredientSourceMeasure: item.ingredientSourceMeasure || "",
 	                                          }));
                                           handleRemoveTableData(index);
                                         }}
