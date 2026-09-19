@@ -2,6 +2,7 @@ import {
   buildResolveRequest,
   buildIngredientSavePayload,
   describeNutritionOutcome,
+  formatIngredientQuantity,
 } from "./buildIngredientSavePayload";
 
 const OIL = {
@@ -189,5 +190,27 @@ describe("describeNutritionOutcome", () => {
 
   it("says nothing when the backend sent no summary", () => {
     expect(describeNutritionOutcome(null)).toBe("");
+  });
+});
+
+describe("formatIngredientQuantity", () => {
+  it("shows an imported quantity with its unit", () => {
+    expect(formatIngredientQuantity(OIL)).toBe("0.25 cup");
+    expect(formatIngredientQuantity(GARLIC)).toBe("2 cloves");
+  });
+
+  it("shows a hand-typed quantity as grams, because that is what the form means", () => {
+    // Seen in the end-to-end run: imported rows read "0.25 cup" while typed rows
+    // read a bare "20". A bare number is what caused the grams mix-up in the first place.
+    expect(formatIngredientQuantity(MANUAL_TOMATO)).toBe("400 g");
+  });
+
+  it("falls back to the notes when there is no number", () => {
+    expect(formatIngredientQuantity(SALT_TO_TASTE)).toBe("to taste");
+  });
+
+  it("shows nothing when there is nothing to show", () => {
+    expect(formatIngredientQuantity({ ingredient: "Salt", ingredientQuantity: "" })).toBe("");
+    expect(formatIngredientQuantity(null)).toBe("");
   });
 });
