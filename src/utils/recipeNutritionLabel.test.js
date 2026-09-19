@@ -67,12 +67,12 @@ describe("formatRecipeNutrition", () => {
     expect(view.headline).toBe("1,830 kcal");
   });
 
-  it("shows an older recipe that has a total but no coverage record", () => {
-    expect(formatRecipeNutrition({ calories: 500, total_servings: 2 })).toEqual({
-      headline: "250 kcal per serving",
-      approximate: false,
-      label: "",
-    });
+  it("shows nothing for a recipe saved before coverage was recorded", () => {
+    // Those totals treated every bare quantity as grams, so "2 chicken breasts"
+    // counted as 2 g. My Recipes was showing "7 kcal per serving" and
+    // "0 kcal per serving" for real dishes. A figure nobody can vouch for stays hidden.
+    expect(formatRecipeNutrition({ calories: 28, total_servings: 4 })).toBeNull();
+    expect(formatRecipeNutrition({ calories: 28, total_servings: 4, ingredients: { id: [1] } })).toBeNull();
   });
 
   it("shows nothing when there is no figure to stand behind", () => {
