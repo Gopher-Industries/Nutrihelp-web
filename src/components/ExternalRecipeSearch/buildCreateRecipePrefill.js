@@ -44,6 +44,13 @@ export default function buildCreateRecipePrefill(draft = {}, unmappedFields = []
     ingredientId: item?.ingredient_id ?? null,
     ingredient: toFormValue(item?.matched_name || item?.name),
     ingredientQuantity: toFormValue(item?.quantity),
+    // The quantity means nothing without its unit: the form has no unit field, so
+    // a bare 0.25 (cup) used to be saved, and totalled, as 0.25 grams. The unit,
+    // notes and original measure ride along so the save path can ask the backend
+    // for a real gram weight.
+    ingredientUnit: toFormValue(item?.unit),
+    ingredientNotes: toFormValue(item?.notes),
+    ingredientSourceMeasure: toFormValue(item?.source_measure),
     // The source carries no cost data. Zero keeps the table's totals valid.
     // Cost and category are flagged in highlightFields to signal the user to complete them.
     ingredientCost: 0,
