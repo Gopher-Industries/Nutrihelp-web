@@ -17,6 +17,8 @@ import {
   formatIngredientQuantity,
 } from "./buildIngredientSavePayload";
 import { describeSavedNutrition } from "../../utils/recipeNutritionLabel";
+import { readFileAsDataUrl } from "../../utils/readFileAsDataUrl";
+import { useSubmitLock } from "../../hooks/useSubmitLock";
 import {
   cuisineListDB,
   getCuisineList,
@@ -458,9 +460,16 @@ function CreateRecipe() {
   };
 
   //==================== Send data to the Supabase ====================
-  const sendDataToSupabase = async (event) => {
-    event.preventDefault();
+  // A save can take 25 seconds while nutrition is looked up. Without the lock the
+  // button stayed live the whole time and every extra click saved another copy.
+  const { isLocked: isSaving, run: runSave } = useSubmitLock();
 
+  const sendDataToSupabase = (event) => {
+    event.preventDefault();
+    return runSave(saveRecipe);
+  };
+
+  const saveRecipe = async () => {
     try {
       const validationErrors = validateForm();
       if (Object.keys(validationErrors).length > 0) {
@@ -570,71 +579,22 @@ function CreateRecipe() {
         instructions: instruction.join('\n'),
       };
 
-      if (file) {
-        const reader = new FileReader();
-        reader.onloadend = async () => {
-          try {
-            const base64Image = reader.result;
+      // Awaited, so the save lock covers the upload as well. An uploaded file
+      // wins; otherwise an external prefill may have supplied the source recipe's
+      // image as base64, and that is saved rather than dropped.
+      const recipeImage = file ? await readFileAsDataUrl(file) : sourceImageData;
 
-            const recipeDataWithImage = {
-              ...recipeData,
-              recipe_image: base64Image,
-            };
-
-            const saved = await recipeApi.createRecepie(recipeDataWithImage);
-            window.dispatchEvent(new Event("recipeUpdated"));
-            toast.success("Recipe created successfully.");
-            // The saved record knows what the total really covers; the resolve
-            // summary is only a forecast, kept for older backends.
-            const savedNutritionMessage = describeSavedNutrition(saved?.nutrition) || nutritionMessage;
-            if (savedNutritionMessage) toast.info(savedNutritionMessage);
-            navigate("/recipe");
-          } catch (error) {
-            console.error("Error creating recipe with image:", error);
-            toast.error(error.message || "Recipe creation failed.");
-          }
-        };
-        reader.readAsDataURL(file);
-      } else {
-        const recipeDataWithoutImage = {
-          ...recipeData,
-          // No uploaded file, but an external prefill may have supplied the
-          // source recipe's image as base64 — save that rather than dropping it.
-          ...(sourceImageData ? { recipe_image: sourceImageData } : {}),
-        };
-
-        const saved = await recipeApi.createRecepie(recipeDataWithoutImage);
-        window.dispatchEvent(new Event("recipeUpdated"));
-        toast.success("Recipe created successfully.");
-        // The saved record knows what the total really covers; the resolve
-        // summary is only a forecast, kept for older backends.
-        const savedNutritionMessage = describeSavedNutrition(saved?.nutrition) || nutritionMessage;
-        if (savedNutritionMessage) toast.info(savedNutritionMessage);
-        navigate("/recipe");
-
-        // fetch("http://localhost:80/api/recipe/", {
-        //   method: "POST",
-        //   body: JSON.stringify(recipeDataWithoutImage),
-        //   headers: {
-        //     Origin: "http://localhost:3000/",
-        //     "Content-Type": "application/json",
-        //   },
-        // })
-        //   .then((response) => response.json())
-        //   .then((data) => {
-        //     if (data.statusCode === 201) {
-        //       console.log("Data successfully written to Supabase!");
-        //       //alert("Recipe Creation was successful!");
-        //       navigate("/searchRecipes");
-        //     } else {
-        //       console.log(data);
-        //       alert("Recipe Creation was unsuccessful! Please try Again");
-        //     }
-        //   })
-        //   .catch((error) => {
-        //     console.error("Error sending message:", error);
-        //   });
-      }
+      const saved = await recipeApi.createRecepie({
+        ...recipeData,
+        ...(recipeImage ? { recipe_image: recipeImage } : {}),
+      });
+      window.dispatchEvent(new Event("recipeUpdated"));
+      toast.success("Recipe created successfully.");
+      // The saved record knows what the total really covers; the resolve
+      // summary is only a forecast, kept for older backends.
+      const savedNutritionMessage = describeSavedNutrition(saved?.nutrition) || nutritionMessage;
+      if (savedNutritionMessage) toast.info(savedNutritionMessage);
+      navigate("/recipe");
     } catch (error) {
       console.error("Error writing document:", error);
       toast.error(error.message || "Recipe creation failed.");
@@ -1444,16 +1404,26 @@ function CreateRecipe() {
               </div>
 
               {/* Submit Button */}
-              <div id="no-bg" className="flex justify-center">
+              <div id="no-bg" className="flex flex-col items-center gap-3">
                 <button
                   type="submit"
                   id="no-bg"
-                  // disabled={!instructions.trim()}
-                  className="font-[Arial] bg-[#005BBB] text-white w-full max-w-xs px-8 py-3 rounded-full font-semibold text-lg shadow-xl shadow-blue-800/50  hover:bg-[#003f8a] transition duration-300"
+                  disabled={isSaving}
+                  aria-busy={isSaving}
+                  className="font-[Arial] bg-[#005BBB] text-white w-full max-w-xs px-8 py-3 rounded-full font-semibold text-lg shadow-xl shadow-blue-800/50  hover:bg-[#003f8a] transition duration-300 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:bg-[#005BBB] flex items-center justify-center gap-3"
                   data-tour-id="create-recipe-save-button"
+                  data-testid="save-recipe-button"
                 >
-                  Save  Recipe
+                  {isSaving && (
+                    <span aria-hidden="true" className="create-recipe-save-spinner" />
+                  )}
+                  {isSaving ? "Saving..." : "Save  Recipe"}
                 </button>
+                {isSaving && (
+                  <p role="status" className="text-sm text-gray-600" data-testid="save-recipe-status">
+                    Looking up nutrition for your ingredients. This can take up to 30 seconds.
+                  </p>
+                )}
               </div>
             </div>
           </div>
