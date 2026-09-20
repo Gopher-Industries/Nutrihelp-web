@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Clock3, RefreshCcwIcon, Sparkles, Users, ChefHat, ArrowRight, Trash2, Globe2, X } from "lucide-react";
 import recipeApi from "../../services/recepieApi";
+import { formatRecipeNutrition } from "../../utils/recipeNutritionLabel";
 import "../../styles/recipe.css";
 
 const DEFAULT_RECIPE_IMAGE = "/images/meal-mock/placeholder.svg";
@@ -316,6 +317,22 @@ function Recipe() {
                       <p id="no-bg" className="my-recipe-cuisine">
                         {item.cuisine_name || "Personal recipe"}
                       </p>
+                      {(() => {
+                        // A withheld total still shows, as "About ...", with a label
+                        // saying what it covers. Nothing shows when nothing is known.
+                        const nutrition = formatRecipeNutrition(item);
+                        if (!nutrition) return null;
+                        return (
+                          <p id="no-bg" className="my-recipe-nutrition" data-testid="recipe-nutrition">
+                            <strong id="no-bg">{nutrition.headline}</strong>
+                            {nutrition.label && (
+                              <span id="no-bg" className="my-recipe-nutrition-label">
+                                {nutrition.label}
+                              </span>
+                            )}
+                          </p>
+                        );
+                      })()}
 
                       <div className="my-recipe-actions" id="no-bg">
                         <span className="my-recipe-view" id="no-bg">

@@ -638,6 +638,24 @@
   line-height: 1.45;
 }
 
+.my-recipe-nutrition {
+  margin: 8px 0 0;
+  font-size: 0.95rem;
+  line-height: 1.45;
+  color: var(--my-muted);
+}
+
+.my-recipe-nutrition strong {
+  color: inherit;
+  font-weight: 600;
+}
+
+/* The caveat belongs with the figure: "covers 6 of 8 ingredients". */
+.my-recipe-nutrition-label {
+  display: block;
+  font-size: 0.85rem;
+}
+
 .my-recipe-actions {
   display: flex;
   align-items: center;
