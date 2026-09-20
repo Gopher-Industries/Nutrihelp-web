@@ -321,6 +321,38 @@
   content: " →";
 }
 
+/* While a save is running the button is disabled: no arrow, no hover lift. */
+.create-recipe-page .shadow-blue-800\/50[id="no-bg"]:disabled {
+  opacity: 0.75;
+  cursor: not-allowed;
+}
+
+.create-recipe-page .shadow-blue-800\/50[id="no-bg"]:disabled::after {
+  content: "";
+}
+
+.create-recipe-save-spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  border: 3px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #ffffff;
+  animation: create-recipe-save-spin 0.8s linear infinite;
+}
+
+@keyframes create-recipe-save-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .create-recipe-save-spinner {
+    animation-duration: 2.4s;
+  }
+}
+
 @media (min-width: 900px) {
   .create-recipe-page .bg-\[\#d8edfd\][id="no-bg"]:first-of-type > div[id="no-bg"],
   .create-recipe-page .bg-\[\#d8edfd\][id="no-bg"]:nth-of-type(2) > div[id="no-bg"] {
